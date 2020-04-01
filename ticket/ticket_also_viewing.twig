@@ -1,0 +1,5 @@
+<div class="sp-alert sp-alert-info sp-alert-sticky ticket-viewing {% if viewing is empty %}sp-hidden{% endif %}">
+    {% if viewing is not empty %}
+        {{ Lang.get('ticket.also_viewing', { 'name': viewing })|raw }}
+    {% endif %}
+</div>

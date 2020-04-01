@@ -1,0 +1,269 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.macro', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.macro', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ 'ticket.operator.macro.update', record.id ], 'method': 'PUT', 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': 'ticket.operator.macro.store', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('enabled', Lang.get('general.enabled')) }}
+                <div class="sp-input-container">
+                    {{ form_check('enabled', 1, record.exists ? record.enabled : true, {'class': 'sp-toggle', 'id': 'toggle_enabled'}) }}
+                    <label for="toggle_enabled"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.macro_enabled_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('ticket.macro_type') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.macro_type_desc') }}</div>
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                {{ form_label('type', Lang.get('general.type')) }}
+                <div class="sp-input-container">
+                    <label>
+                        <input type="radio" name="type" value="0" {% if Request.old('type') == 0 or (Request.old('type') is null and record.type == 0) %}checked="checked"{% endif %} />
+                        {{ Lang.get('general.manual') }}
+                    </label> &nbsp;
+                    <label>
+                        <input type="radio" name="type" value="2" {% if Request.old('type') == 2 or (Request.old('type') is null and record.type == 2) %}checked="checked"{% endif %} />
+                        {{ Lang.get('general.automatic') }}
+                    </label> &nbsp;
+                    <label>
+                        <input type="radio" name="type" value="1" {% if Request.old('type') == 1 or (Request.old('type') is null and record.type == 1) %}checked="checked"{% endif %} />
+                        {{ Lang.get('general.hook') }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="macro-visibility {% if (Request.old('type') is not null and Request.old('type') != 0) or (Request.old('type') is null and record.type != 0) %}sp-hidden{% endif %}">
+                <div class="sp-form-row">
+                    {{ form_label('public', Lang.get('general.public')) }}
+                    <div class="sp-input-container">
+                        {{ form_check('public', 1, record.user_id|default is empty, {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                        <label for="toggle_public"></label>
+                        <div class="sp-description">{{ Lang.get('ticket.record_public_desc', { 'record': mb_strtolower(Lang.choice('ticket.macro', 1), 'UTF-8') }) }}</div>
+                    </div>
+                </div>
+
+                <div class="sp-form-row sp-form-full usergroups">
+                    {{ form_label('groups', Lang.choice('user.operator_group', 2)) }}
+                    <div class="sp-input-container">
+                        {{ form_select('groups[]', operatorGroups, record.groups.pluck('id').all(), {'multiple': 'multiple'}) }}
+                        <div class="sp-description">{{ Lang.get('ticket.record_group_desc', { 'record': mb_strtolower(Lang.choice('ticket.macro', 1), 'UTF-8') }) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-form-row macro-limit {% if (Request.old('type') is not null and Request.old('type') != 2) or (Request.old('type') is null and record.type != 2) %}sp-hidden{% endif %}">
+                {{ form_label('run_at_most', Lang.get('ticket.macro_run_at_most')) }}
+                <div class="sp-input-container">
+                    {{ form_number('run_at_most', null, {'class': 'sp-w-24', 'min': 1}) }} &nbsp;{{ Lang.get('ticket.macro_run_times') }}
+                    <div class="sp-description">{{ Lang.get('ticket.macro_run_at_most_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full macro-events {% if (Request.old('type') is not null and Request.old('type') != 1) or (Request.old('type') is null and record.type != 1) %}sp-hidden{% endif %}">
+                {{ form_label('events', Lang.choice('general.event', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('events[]', events, record.events.pluck('event_id').all(), {'multiple': 'multiple'}) }}
+                    <div class="sp-description">{{ Lang.get('ticket.macro_events_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full macro-schedules {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp-hidden{% endif %}">
+                {{ form_label('schedules', Lang.choice('ticket.schedule', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('schedules[]', schedules, record.schedules.pluck('id').all(), {'multiple': 'multiple'}) }}
+                    <div class="sp-description">{{ Lang.get('ticket.macro_schedules_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>{{ Lang.get('ticket.macro_condition') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.macro_condition_desc') }}</div>
+
+        <div class="sp-form-container">
+
+            {% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
+
+            {% if oldGroups|default is not empty and oldGroups is not empty %}
+                {# In case there was an error and we're trying to show what they attempted to save #}
+                {% for groupId, group in oldGroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% else %}
+                {% for groupId, group in record.conditiongroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <div class="plan-conditiongroup-type sp-mb-3">
+                    {{ form_select('condition_group_type', { 0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group') },
+                        record.condition_group_type|default is not empty ? record.condition_group_type : 0)
+                    }}
+                </div>
+
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('ticket.macro_action') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.macro_action_desc') }}</div>
+
+        <div class="sp-form-container is-sortable">
+
+            <div class="sp--mx-6">
+                <table class="rule-table sp-table-grid sp-mb-3 {% if oldActions is empty and record.actions.isEmpty() %}sp-hidden{% endif %}">
+                    <thead>
+                        <tr>
+                            <th width="14"></th>
+                            <th>{{ Lang.choice('general.action', 1) }}</th>
+                            <th>{{ Lang.get('general.value') }}</th>
+                            <th width="14"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sortable">
+                        {% include 'operator.' ~ template ~ '.ticket.forms.action' with {'hide': true} %}
+
+                        {% if oldActions|default is not empty and oldActions is not empty %}
+                            {# In case there was an error and we're trying to show what they attempted to save #}
+                            {% for count, rule in oldActions %}
+                                {% include 'operator.' ~ template ~ '.ticket.forms.action' %}
+                            {% endfor %}
+                        {% else %}
+                            {% for count, rule in record.actions %}
+                                {% include 'operator.' ~ template ~ '.ticket.forms.action' %}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.choice('general.action', 1)}), {'class': 'add-rule'}) }}
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script type="text/javascript">
+        var embedImageRoute = laroute.route('core.embed.image');
+        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}";
+
+        $(document).ready(function() {
+            var $inputPublic = $('input[name="public"]');
+
+            var $selectGroups = $('select[name="groups[]"]').selectize()[0].selectize;
+
+            var $inputLimit = $('input[name="run_at_most"]');
+
+            var $selectEvents = $('select[name="events[]"]').selectize({
+                plugins: ['remove_button']
+            })[0].selectize;
+
+            var $selectSchedules = $('select[name="schedules[]"]').selectize({
+                plugins: ['remove_button']
+            })[0].selectize;
+
+            // Toggle type, handle the various options.
+            $('input[name="type"]').on('click', function() {
+                if ($(this).is(':checked')) {
+                    if ($(this).val() == 0) {
+                        $('.macro-visibility').removeClass('sp-hidden');
+                        $('.macro-limit, .macro-events, .macro-schedules').addClass('sp-hidden');
+                        $inputPublic.prop('disabled', false);
+                        $selectGroups.enable();
+                        $selectEvents.clear();
+                        $selectEvents.disable();
+                        $inputLimit.prop('disabled', true);
+                        $selectSchedules.clear();
+                        $selectSchedules.disable();
+                    } else if ($(this).val() == 1) {
+                        $('.macro-visibility, .macro-limit').addClass('sp-hidden');
+                        $('.macro-events, .macro-schedules').removeClass('sp-hidden');
+                        $inputPublic.prop('disabled', true);
+                        $selectGroups.clear();
+                        $selectGroups.disable();
+                        $inputLimit.prop('disabled', true);
+                        $selectEvents.enable();
+                        $selectSchedules.enable();
+                    } else if ($(this).val() == 2) {
+                        $('.macro-visibility, .macro-events').addClass('sp-hidden');
+                        $('.macro-limit, .macro-schedules').removeClass('sp-hidden');
+                        $inputPublic.prop('disabled', true);
+                        $selectGroups.clear();
+                        $selectGroups.disable();
+                        $inputLimit.prop('disabled', false);
+                        $selectEvents.clear();
+                        $selectEvents.disable();
+                        $selectSchedules.enable();
+                    }
+                }
+            });
+            // Want to disable fields not needed on page load.
+            $('input[name="type"]:checked').trigger('click');
+        });
+    </script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/visibility.js') }}"></script>
+{% endblock %}

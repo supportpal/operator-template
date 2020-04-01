@@ -1,0 +1,227 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if title|default is not empty %}
+        {{ title }}
+    {% elseif operator|default is not empty and operator %}
+        {{ Lang.choice("general.operator", 2) }}
+    {% else %}
+        {{ Lang.choice("user.user", 2) }}
+    {% endif %}
+{% endblock %}
+
+{% block precontent %}
+
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                {% if operator|default is not empty and operator and auth_user().hasPermission('create.operator') %}
+                    <a href="{{ route('user.operator.operator.create') }}" class="sp-action sp-button">
+                        <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    </a><!--
+                {% elseif (operator|default is empty or not operator) and auth_user().hasPermission('create.user') %}
+                    <a href="{{ route('user.operator.user.create') }}" class="sp-action sp-button">
+                        <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    </a><!--
+                {% else %}
+                    <!--
+                {% endif %}
+                --><button class="sp-action toggle-filtering">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+
+            <li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                {% if (auth_user().hasPermission('delete.user')) %}
+                    <button class="sp-action delete-user" disabled="disabled" title="{{ Lang.get('general.delete') }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                {% endif %}
+                {% if not groups.isEmpty() and auth_user().hasPermission('update.user') %}
+                    <select class="change-group">
+                        <option value="">{{ Lang.get('user.add_group') }}...</option>
+                        {% for group in groups %}
+                            <option value="{{ group.id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden delete">
+        {% if operator|default is not empty and operator %}
+            {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('general.operator', 1), 'UTF-8') }) }}
+        {% else %}
+            {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('user.user', 1), 'UTF-8') }) }}
+        {% endif %}
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden update">
+        {% if operator|default is not empty and operator %}
+            {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.choice('general.operator', 1), 'UTF-8') }) }}
+        {% else %}
+            {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.choice('user.user', 1), 'UTF-8') }) }}
+        {% endif %}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden update">
+        {% if operator|default is not empty and operator %}
+            {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.choice('general.operator', 1), 'UTF-8') }) }}
+        {% else %}
+            {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.choice('user.user', 1), 'UTF-8') }) }}
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if customSearch %}
+        {% include 'operator.' ~ template ~ '.core.search_tabs' %}
+    {% endif %}
+
+    {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
+
+	{{ table.render('operator.' ~ template ~ '.datatables')|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Filtering
+            $('.update-filtering').on('click', function() {
+                $('.dataTable').on('preXhr.dt', function ( e, settings, data ) {
+                    // Add conditions to parameters
+                    var conditions = $(".sp-condition-group").serializeArray();
+                    $.each(conditions, function(index, value) {
+                        data[value.name] = value.value;
+                    });
+                }).dataTable().api().ajax.reload();
+            });
+
+            // Process delete button
+            $('.sp-quick-actions').on('click', '.delete-user', function() {
+                deleteUser(getSelectedRows());
+            });
+
+            $('.sp-quick-actions').on('change', '.change-group', function() {
+                // Get the group id
+                var groupId = $(this).val();
+
+                // Get URL depending if its operators or users
+                var url;
+                {% if operator|default is not empty and operator %}
+                    url = laroute.route("user.operator.operatorgroup.members.update", { id: groupId });
+                {% else %}
+                    url = laroute.route("user.operator.usergroup.members.update", { id: groupId });
+                {% endif %}
+
+                // Disable the grid options (buttons)
+                $('.sp-grid-actions :input:visible').prop('disabled', true);
+
+                // Update group membership
+                $.ajax({
+                    url: url,
+                    type: 'PUT',
+                    data: { "user": getSelectedRows() }
+                }).done(function(response) {
+                    if (response.status == 'success') {
+                        $('.update.sp-alert-success').show(500).delay(5000).hide(500);
+                    } else {
+                        $('.update.sp-alert-error').show(500).delay(5000).hide(500);
+                    }
+                }).fail(function() {
+                    $('.update.sp-alert-error').show(500).delay(5000).hide(500);
+                }).always(function() {
+                    // Reload table
+                    refreshGrid();
+                });
+
+                // Reset the dropdown to its initial state
+                $(this).val("");
+            });
+        });
+
+        function deleteUser(data) {
+            // Get URL depending if its operators or users
+            var url, section;
+            {% if operator|default is not empty and operator %}
+                url = laroute.route('user.operator.operator.destroymultiple');
+                section = '{{ Lang.choice('general.operator', 2) }}';
+            {% else %}
+                url = laroute.route('user.operator.user.destroymultiple');
+                section = '{{ Lang.choice('user.user', 2) }}';
+            {% endif %}
+
+            var params = {
+                ajax: {
+                    url: url,
+                    data: { 'user': data }
+                }
+            };
+            (new deleteAlert(params))
+                .fireDefault(section, '', {{ relations|json_encode|raw }})
+                .then(function (result) {
+                    if (result.value) {
+                        $('.delete.sp-alert-success').show(500).delay(5000).hide(500);
+
+                        // Reload table
+                        refreshGrid();
+                    }
+                });
+        }
+
+        /*
+         * Refresh the ticket grid automatically every minute
+         */
+        function refreshGrid() {
+            // Disable the grid actions
+            $('.sp-grid-actions').addClass('sp-hidden');
+            $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            // Save the row selection
+            var selection = getSelectedRows();
+            var all_selected = $('input[name="select-all"]').is(':checked');
+
+            // Update the grid
+            $('.dataTable').dataTable().api().ajax.reload(function() {
+                if (selection !== '') {
+                    // Restore the row selection
+                    var array = selection.split(","); // explode the selected rows
+
+                    // Trigger a row click for each previously selected row, this will trigger the necessary properties
+                    // and events. Keep a track of how many we click.
+                    var number_selected = 0;
+                    $.each(array, function(index, item) {
+                        if (item != '' && $('tr#'+item).length) {
+                            $('tr#'+item).trigger('click');
+                            number_selected++;
+                        }
+                    });
+
+                    // Re-check the select all checkbox (only if all rows were selected still).
+                    if (all_selected && number_selected === array.length) {
+                        $('input[name="select-all"]').prop('checked', true);
+                    }
+                }
+            }, false);
+        }
+    </script>
+
+    {% if not auth_user().hasPermission('update.user|delete.user') %}
+        <style type="text/css">
+            input[name='select-all'] {
+                display: none;
+            }
+        </style>
+    {% endif %}
+{% endblock %}

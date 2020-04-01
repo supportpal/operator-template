@@ -1,0 +1,225 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.license_info') }}
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{ Lang.get('core.license_status') }}</h2>
+
+    <div class="sp-form-container">
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_code') }}</label>
+            <div class="sp-input-container">
+                <span id="spanLicenseText">
+                    {{ license_key }} &nbsp;&nbsp;&nbsp;
+                    <button id="spanLicenseUpdate">{{ Lang.get('core.change_license') }}</button>
+                </span>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_status') }}</label>
+            <div class="sp-input-container">
+                <strong class="sp-text-green-600">{{ Lang.get('general.active') }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <h2>{{ Lang.get('core.license_info') }}</h2>
+
+    <div class="sp-form-container">
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_type') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.productName }} -
+                {% if licenseInformation.noBranding|default is not empty and licenseInformation.noBranding == 1 %}
+                    {{ Lang.get('core.no_branding') }}
+                {% else %}
+                    {{ Lang.get('core.branding') }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_owner') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.ownedBy }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_created') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.registered }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_expires') }} {% if monthlyProduct %}*{% endif %}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.expires }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_valid_ip') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.licenseIP }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.license_path') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.licenseDir }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.additional_brands') }}</label>
+            <div class="sp-input-container">
+                {{ licenseInformation.additionalBrands }}
+                {% if licenseInformation.serviceid %}
+                    &nbsp;
+                    (<a href="https://www.supportpal.com/manage/upgrade.php?type=configoptions&id={{ licenseInformation.serviceid }}" target="_blank">{{ Lang.get('core.purchase_more') }}</a>)
+                {% endif %}
+                <div class="sp-description">{{ Lang.get('core.additional_brands_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.no_branding') }}</label>
+            <div class="sp-input-container">
+                {% if licenseInformation.noBranding %}{{ Lang.get('general.enabled') }}{% else %}{{ Lang.get('general.disabled') }}{% endif %}
+                {% if not licenseInformation.noBranding %}
+                    &nbsp;
+                    (<a href="https://www.supportpal.com/manage/upgrade.php?type=configoptions&id={{ licenseInformation.serviceid }}" target="_blank">{{ Lang.get('core.purchase') }}</a>)
+                {% endif %}
+                <div class="sp-description">{{ Lang.get('core.no_branding_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.multi_ip') }}</label>
+            <div class="sp-input-container">
+                {% if licenseInformation.multiIp %}{{ Lang.get('general.enabled') }}{% else %}{{ Lang.get('general.disabled') }}{% endif %}
+                {% if not licenseInformation.multiIp %}
+                    &nbsp;
+                    (<a href="https://www.supportpal.com/manage/upgrade.php?type=configoptions&id={{ licenseInformation.serviceid }}" target="_blank">{{ Lang.get('core.purchase') }}</a>)
+                {% endif %}
+                <div class="sp-description">{{ Lang.get('core.multi_ip_desc') }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    {% if licenseInformation.supportStatus != 'N/A' %}
+        <h2>{{ Lang.get('core.support_status') }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                <label>{{ Lang.get('core.support_status') }}</label>
+                <div class="sp-input-container">
+                    {% if licenseInformation.supportStatus == 'Active' %}
+                        <strong class="sp-text-green-600">{{ licenseInformation.supportStatus }}</strong>
+                        {% if not monthlyProduct %}
+                            &nbsp; ({{ Lang.get('core.renew_support')|raw }})
+                        {% endif %}
+                    {% elseif licenseInformation.supportStatus == 'Expired' %}
+                        <strong class="sp-text-red-600">{{ licenseInformation.supportStatus }}</strong> - {{ Lang.get('core.support_status_desc')|raw }}
+                    {% else %}
+                        {{ licenseInformation.supportStatus }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                <label>{{ Lang.get('core.support_expires') }}</label>
+                <div class="sp-input-container">
+                    {{ licenseInformation.supportExpires }}
+                    {% if monthlyProduct %}
+                        <br />
+                        {{ Lang.get('core.monthly_product') }}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+    <h2>{{ Lang.get('core.version_info') }}</h2>
+
+    <div class="sp-form-container">
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.installed_version') }}</label>
+            <div class="sp-input-container">
+                {{ version.using() }}
+                {% if version.isUpgradeAvailable() %}
+                    &nbsp; <strong class="sp-text-red-600">{{ Lang.get('Licensing::license.update') }}</strong>
+                {% elseif version.isPreRelease() %}
+                    &nbsp; <strong class="sp-text-red-600">{{ Lang.get('Licensing::license.pre_release') }}</strong>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label>{{ Lang.get('core.available_version') }}</label>
+            <div class="sp-input-container">
+                {{ version.latest() }}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript">
+        $(function () {
+            $('#spanLicenseUpdate').on('click', function () {
+
+                Swal.fire({
+                    title: Lang.get('core.change_license'),
+                    input: 'text',
+                    showCancelButton: true,
+                    confirmButtonText: Lang.choice('general.submit', 1),
+                    showLoaderOnConfirm: true,
+                    preConfirm: function (license) {
+                        return $.post(laroute.route('core.operator.about.update'), {licenseCode: license})
+                            .then(function (response) {
+                                if (response.status == 'success') {
+                                    return response;
+                                }
+
+                                throw new Error(response.statusText);
+                            })
+                            .catch(function () {
+                                Swal.showValidationMessage(Lang.get('messages.error_updated', { 'item': Lang.get('core.license_code') }));
+                            })
+                    },
+                    allowOutsideClick: function () {
+                        return ! Swal.isLoading();
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                        Swal.fire(
+                            Lang.get('messages.success'),
+                            Lang.get('messages.success_updated', { 'item': Lang.get('core.license_code') }),
+                            'success'
+                        );
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

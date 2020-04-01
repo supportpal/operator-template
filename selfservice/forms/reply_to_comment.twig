@@ -1,0 +1,89 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('selfservice.reply_to_comment') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    <a href="{{ route('selfservice.operator.comment.index') }}">{{ Lang.choice('selfservice.comment', 2) }}</a>
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    <strong>{{ Lang.get('selfservice.reply_to_comment') }}</strong>
+{% endblock %}
+
+{% block content %}
+
+    {{ form_open({ 'route': 'selfservice.operator.comment.store', 'class': 'validate' }) }}
+
+    <div class="sp-form-container">
+
+        {{ form_hidden('article_id', record.article_id) }}
+        {{ form_hidden('type_id', record.type_id) }}
+        {{ form_hidden('parent_id', record.id) }}
+
+        <div class="sp-form-row">
+            {{ form_label('author', Lang.get('selfservice.comment_by')) }}
+            <div class="sp-input-container">
+                <img src="{{ record.author.avatar_url }}" class="sp-avatar sp-max-w-2xs" />
+                <a href='{{ route("user.operator.user.edit", [ record.author_id ]) }}'>
+                    {{ record.author.formatted_name }}
+                </a>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('author', Lang.choice('selfservice.comment', 1)) }}
+            <div class="sp-input-container">
+                {{ record.purified_text|raw }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('article', Lang.choice('selfservice.article', 1)) }}
+            <div class="sp-input-container">
+                <a href='{{ route("selfservice.operator.article.edit", {
+                    "type": record.article.type_id,
+                    "article": record.article_id
+                }) }}'>
+                    {{ record.article.title }}
+                </a>
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full">
+            {{ form_label('text', Lang.get('general.text')) }}
+            <div class="sp-input-container">
+                {{ form_redactor('text', '<div>@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ '&nbsp;</div>') }}
+            </div>
+        </div>
+
+        {{ form_hidden('status', 1) }}
+
+    </div>
+
+    <div class="sp-form-button">
+        {{ form_submit(Lang.choice('general.submit', 1)) }}
+    </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('textarea[name=text]').redactor({
+                focusEnd: true,
+            });
+        });
+    </script>
+{% endblock %}

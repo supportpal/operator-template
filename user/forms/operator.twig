@@ -1,0 +1,190 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ record.formatted_name }} - {{ Lang.get('general.edit_item', {'item': Lang.choice('general.operator', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('general.operator', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'user.operator.operator.update', record.id ], 'method': 'PUT', 'files': true, 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'user.operator.operator.store', 'files': true, 'class': 'validate' }) }}
+    {% endif %}
+
+        <h2>{{ Lang.get('user.user_details') }}</h2>
+
+        <div class="sp-form-container">
+            {% set profileParameters = {'operator': true, 'managing': true} %}
+            {% include 'operator.' ~ template ~ '.user.forms.operator_profile' with profileParameters %}
+        </div>
+
+        <h2>{{ Lang.get('ticket.settings') }}</h2>
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                {{ form_label('department', Lang.choice('ticket.department', 2)) }}
+                <div class="sp-input-container sp-input-group">
+                    <div class="sp-description">{{ Lang.get('user.op_settings_dept_desc') }}</div>
+                    <div class="sp-mt-2">
+                        {{ Lang.get('user.op_settings_group_dept') }}
+                        {{ form_select('group_departments', departments, record.assignedDepartments([]).pluck('id').all(),
+                            {'multiple': 'multiple', 'disabled': 'disabled'}) }}
+                        <div class="sp-description">{{ Lang.get('user.op_settings_group_dept_desc') }}</div>
+                    </div>
+                    <div class="sp-mt-3">
+                        {{ Lang.get('user.op_settings_individual_dept') }}
+                        {{ form_select('depts[]', departments, record.departments.pluck('id').all(), {'multiple': 'multiple'}) }}
+                        <div class="sp-description">{{ Lang.get('user.op_settings_individual_dept_desc') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('ticket_signature', Lang.get('ticket.ticket_signature')) }}
+                <div class="sp-input-container">
+                    <div style="margin-bottom: 10px;">
+                        {{ form_redactor_mf('ticket_signature', signature) }}
+                    </div>
+                    <div class="sp-description">
+                        {{ Lang.get('user.ticket_signature_desc') }}
+                        {% if auth_user().hasPermission('view.operatorsignature') %}
+                            {{ Lang.get('user.operator_signature_desc', {'route': route('user.operator.operatorsignature')})|raw }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% include 'operator.' ~ template ~ '.user.forms.operator_ticket_settings' %}
+        </div>
+
+        <h2>{{ Lang.get('user.notifications') }}</h2>
+
+        <div class="sp-form-container">
+            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' %}
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Passwords -->
+    <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Signatures -->
+    <script type="text/javascript">
+        var opts = {
+            mergeFields: {
+                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                organisations: '{{ Config.get('settings.organisations_enabled') }}'
+            },
+            groups: $R.options.groups.concat(['sp-image']),
+            plugins: ['sp-mergefields'].concat($R.options.plugins)
+        };
+
+        // Do not initialise redactor on the dummy DOM element.
+        $('textarea[name="ticket_signature"]').redactor(opts);
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+
+            // Generate a new random password
+            $('a#generatePassword').on('click', function() {
+                var password = randomPassword(8);
+
+                if (document.getElementById('password').type == 'text') {
+                    document.getElementById('password').value=password;
+                } else {
+                    document.getElementById('password').type='text';
+                    document.getElementById('password').value=password;
+                    document.getElementById('password').type='password';
+                }
+            });
+
+            // On changing group, fetch newly assigned departments and update department selectizes accordingly
+            var xhr;
+            $('select[name="groups[]"]').selectize({
+                plugins: ['remove_button'],
+                delimiter: ',',
+                placeholder: Lang.get('user.select_group'),
+                onChange: function (values) {
+                    var selectize = $groupDepartments[0].selectize,
+                            deptSelectize = $departments[0].selectize,
+                            deptSelected = deptSelectize.getValue();
+
+                    selectize.load(function(callback) {
+                        xhr && xhr.abort();
+                        xhr = $.ajax({
+                            url: laroute.route(
+                                'user.operator.operator.departments',
+                                {
+                                    id: {{ record.exists ? record.id : 0 }},
+                                    department_ids: '',
+                                    group_ids: values
+                                }
+                            ),
+                            success: function(res) {
+                                // Clear selected values
+                                selectize.clear();
+
+                                // Refresh individual departments list
+                                deptSelectize.clearOptions();
+                                $.each(fullDepartmentOptions, function (index, value) {
+                                    deptSelectize.addOption(value);
+                                });
+
+                                // Select all assigned departments via groups.
+                                // Remove these from individual departments list
+                                $.each(res.data, function (index, value) {
+                                    selectize.addItem(value.id, true);
+                                    deptSelectize.removeOption(value.id);
+                                });
+
+                                // Re-select departments that we had before
+                                deptSelectize.setValue(deptSelected);
+
+                                callback();
+                            },
+                            error: function() {
+                                callback();
+                            }
+                        })
+                    });
+                }
+            });
+
+            var $groupDepartments = $('select[name="group_departments"]').selectize();
+
+            var $departments = $('select[name="depts[]"]').selectize({
+                plugins: ['remove_button']
+            });
+
+            // Save the full list of department options
+            var fullDepartmentOptions = $departments[0].selectize.options;
+
+            // Remove selected group departments from individual departments.
+            $.each($groupDepartments[0].selectize.getValue(), function (index, value) {
+                $departments[0].selectize.removeOption(value);
+            });
+        });
+    </script>
+{% endblock %}

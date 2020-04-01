@@ -1,0 +1,143 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty %}
+    	{{ record.formatted_name }} -
+    {% endif %}
+    {{ Lang.get('core.email_log') }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty %}
+        {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+    {% endif %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.date') }}:</label>
+                <div>
+                    <span class="sp-block sm:sp-inline-block">
+                        {{ form_text('sSearch_0_start', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}<!--
+                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                    </span>
+                    <span class="sp-hidden sm:sp-inline-block">&nbsp;{{ Lang.get('general.to') }}&nbsp;</span>
+                    <span class="sp-block sp-mt-2 sm:sp-inline-block sm:sp-mt-0">
+                        {{ form_text('sSearch_0_end', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.end_date')}) }}<!--
+                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                    </span>
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.type') }}:</label>
+                <div>
+                    {{ form_select('sSearch_1', {'-1': Lang.get('general.select_value'), 0: Lang.get('core.outgoing'), 1: Lang.get('core.incoming'), 2: Lang.get('core.incoming_spam'), 3: Lang.get('core.incoming_throttled')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.recipients', 2) }}:</label>
+                <div>
+                    {{ form_text('sSearch_2', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.from_name') }}:</label>
+                <div>
+                    {{ form_text('sSearch_3', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.from_address') }}:</label>
+                <div>
+                    {{ form_text('sSearch_4', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.subject') }}:</label>
+                <div>
+                    {{ form_text('sSearch_5', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.message', 1) }}:</label>
+                <div>
+                    {{ form_text('sSearch_6', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                   -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+	{{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('click', '.retry', function () {
+                var self = this;
+
+                Swal.fire({
+                    title: "{{ Lang.get('core.reprocess_email') }}",
+                    html: '<p>'
+                        + "{{ Lang.get('core.reprocess_email_desc') }}"
+                        + '<br /><br /><input type="text" id="textEmailLogForm" size="30" /><br /><span class="description">'
+                        + "{{ Lang.get('core.consume_all') }}"
+                    + '</span></p>',
+                    showCancelButton: true,
+                    confirmButtonText: "{{ Lang.get('general.retry') }}",
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        var data = { 'address': $('#textEmailLogForm').val() };
+
+                        return $.get(laroute.route('core.operator.email.log.retry', { 'id': $(self).data('id') }), data)
+                            .then(function (response) {
+                                if (response.status == 'success') {
+                                    return response;
+                                } else if (response.status == 'error') {
+                                    Swal.showValidationMessage(response.message);
+                                } else {
+                                    throw new Error(response.statusText);
+                                }
+                            })
+                            .catch(function () {
+                                Swal.showValidationMessage(Lang.get('messages.error'));
+                            });
+                    },
+                    allowOutsideClick: function () {
+                        return ! Swal.isLoading();
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                        $('.dataTable').dataTable().api().ajax.reload();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

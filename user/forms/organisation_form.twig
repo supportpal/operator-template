@@ -1,0 +1,198 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ record.name }} - {{ Lang.get('user.profile') }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('user.organisation', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {% include 'operator.' ~ template ~ '.user.forms.organisation_tabs' %}
+
+        {{ form_model(record, { 'route': [ 'user.operator.organisation.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'user.operator.organisation.store', 'class': 'validate' }) }}
+    {% endif %}
+        <div class="sp-form-container sp-form-container-t-0">
+
+            {% if record.exists %}
+                {% if brand_count() > 1 %}
+                    <div class="sp-form-row">
+                        {{ form_label('brand_id', Lang.choice('core.brand', 1)) }}
+                        <div class="sp-input-container">
+                            {{ record.brand.name }}
+                            <input type="hidden" name="brand_id" value="{{ record.brand_id }}" />
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" name="brand_id" value="{{ record.brand_id }}" />
+                {% endif %}
+            {% else %}
+                {% if brand_count() > 1 %}
+                    <div class="sp-form-row">
+                        {{ form_label('brand_id', Lang.choice('core.brand', 1)) }}
+                        <div class="sp-input-container">
+                            {{ form_select('brand_id', assignedBrands.pluck('name', 'id'), Config.get('settings.default_brand')) }}
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" name="brand_id" value="{{ Config.get('settings.default_brand') }}" />
+                {% endif %}
+            {% endif %}
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container">
+                    {{ form_text('name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('country', Lang.get('user.country')) }}
+                <div class="sp-input-container">
+                    {{ form_select('country', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + countries(),
+                        record.exists ? record.country : Config.get('settings.default_country')) }}
+                </div>
+            </div>
+
+            {# Check whether we should allow organisations to change their default language #}
+            {% if Config.get('settings.language_frontend_toggle') %}
+                <div class="sp-form-row">
+                    {{ form_label('language_code', Lang.choice('general.language', 1)) }}
+                    <div class="sp-input-container">
+                        {{ form_select('language_code', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + languages,
+                            record.exists ? record.language_code : LanguageFactory.getUserDefault()) }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="sp-form-row">
+                {{ form_label('timezone', Lang.get('general.timezone')) }}
+                <div class="sp-input-container">
+                    {{ form_select('timezone', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + timezones(),
+                        record.exists ? record.timezone : Config.get('settings.default_timezone')) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full sp-form-customfields">
+                {{ form_label('notes', Lang.choice('general.note', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_redactor('notes') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('domain', Lang.choice('general.domain', 2)) }}
+                <div class="sp-input-container">
+                    <select name="domain[]" multiple="multiple">
+                        {% for domain in record.domains %}
+                            <option selected="selected" data-data='{{ domain|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ domain.domain }}'>
+                                {{ domain.domain }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="sp-description">{{ Lang.get('user.organisation_domain_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        {% if customfields is not empty %}
+            <div class="organisation-customfields">
+                <h2>{{ Lang.get('general.custom_fields') }}</h2>
+
+                <div class="sp-form-container">
+                    {% include 'operator.' ~ template ~ '.forms.custom_fields' with {'operator': true} %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Custom fields -->
+    <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+
+            // Date picker
+            $('.datepicker').datepicker();
+
+            // Only applies when creating an organisation as the brand can be changed
+            {% if not record.exists %}
+                // Brand and custom fields membership assignment
+                var brandCustomFields = JSON.parse('{{ brandCustomFields|raw }}');
+
+                // Change the custom fields to show when the brand is changed
+                $(':input[name="brand_id"]').on('change', function() {
+                    var brandId = $(this).val();
+
+                    // Check if each field exists in the currently selected brand
+                    $('[data-field]').each(function () {
+                        if (brandCustomFields[brandId].indexOf($(this).data('field')) === -1) {
+                            $(this).find(':input').prop('disabled', true);
+                            $(this).hide();
+                        } else {
+                            $(this).find(':input').prop('disabled', false);
+
+                            var dependsOn = $(this).data('depends-on-option');
+                            if (typeof dependsOn === 'number') {
+                                $('option[value="'+dependsOn+'"]:selected').is(':visible') ? $(this).show() : $(this).hide();
+                            } else {
+                                $(this).show();
+                            }
+                        }
+                    });
+
+                    // Do we have any fields for this brand? If not, just hide the section
+                    if (brandCustomFields[brandId].length) {
+                        $('.organisation-customfields').show();
+                    } else {
+                        $('.organisation-customfields').hide();
+                    }
+                });
+
+                // Run above code when page loads to remove any fields it shouldn't show for default brand
+                $(':input[name="brand_id"]').trigger('change');
+            {% endif %}
+
+            /**
+             * Add domains for organisation.
+             */
+            $('select[name="domain[]"]').selectize({
+                plugins: ['remove_button'],
+                valueField: 'domain',
+                labelField: 'domain',
+                searchField: [ 'domain' ],
+                create: true,
+                createFilter: function(input) {
+                    return input.length <= 191;
+                },
+                maxItems: null,
+            });
+        });
+    </script>
+{% endblock %}

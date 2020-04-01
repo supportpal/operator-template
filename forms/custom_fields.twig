@@ -1,0 +1,133 @@
+{% for customfield in customfields %}
+    {% if operator|default is not empty %}
+        {% set customfield = customfield|merge({'locked': false}) %}
+    {% endif %}
+
+    {% set attributes = { 'data-depends-on': customfield.depends_on_option_id } %}
+    <div class="sp-form-row {% if customfield.type == 9 %}sp-form-full{% endif %} sp-form-customfields
+                {% if customfield.depends_on_option_id and not customfield.parent_selected %} sp-hidden{% endif %}"
+         data-field="{{ customfield.id }}"
+         data-dependent-children="{{ customfield.children is not empty ? customfield.children|json_encode : "[]" }}"
+         data-depends-on-option="{{ customfield.depends_on_option_id }}">
+    
+        {{ form_label('customfield[' ~ customfield.id ~ ']', customfield.name) }}
+        <div class="sp-input-container">
+            {% if customfield.type == 0 %}
+                <div class="sp-input-group">
+                    <label>
+                        {{ form_radio('customfield[' ~ customfield.id ~ ']', 1,
+                            customfield.value ? true : false,
+                            customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {})
+                        }} {{ Lang.get('general.yes') }}
+                    </label>
+                    <br />
+                    <label>
+                        {{ form_radio('customfield[' ~ customfield.id ~ ']', 0,
+                            customfield.value == '0' ? true : false,
+                            customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {})
+                        }} {{ Lang.get('general.no') }}
+                    </label>
+                </div>
+
+            {% elseif customfield.type == 1 %}
+                <div class="sp-input-group">
+                    <label>
+                        {{ form_check('customfield[' ~ customfield.id ~ ']', 1, customfield.value,
+                            customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {}) }}
+                    </label>
+                </div>
+
+            {% elseif customfield.type == 2 %}
+                {# Filler value for when the checklist is submitted with no values, do not delete! #}
+                <input type="hidden" name="customfield[{{ customfield.id }}][]" value="0" />
+                <div class="sp-input-group">
+                {% for key, option in customfield.options %}
+                    <label>
+                        {{ form_checkbox('customfield[' ~ customfield.id ~ '][]', key,
+                            customfield.value|default is not empty and in_array(key, customfield.value) ? true : false,
+                            customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {}) }} {{ option }}
+                    </label>
+                    {% if not loop.last %}
+                        <br />
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+            {% elseif customfield.type == 3 %}
+                {{ form_text('customfield[' ~ customfield.id ~ ']',
+                    customfield.value|default is not empty ? timeWithOffset(customfield.value, false)|date(Config.get('settings.date_format')) : null,
+                    {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;', 'disabled': customfield.value is not empty and customfield.locked ? 'disabled' : null}) }}
+
+            {% elseif customfield.type == 4 %}
+                {{ form_select('customfield[' ~ customfield.id ~ '][]', customfield.options,
+                    customfield.value,
+                    {'multiple': 'multiple', 'disabled': (customfield.value is not empty and customfield.locked ? 'disabled' : null)}) }}
+
+            {% elseif customfield.type == 5 %}
+                {{ form_select('customfield[' ~ customfield.id ~ ']', {'': Lang.get('customfield.please_select')} + customfield.options,
+                    customfield.value, (customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {})) }}
+
+            {% elseif customfield.type == 6 %}
+                {% if operator|default is not empty %}
+                    <input type="password" name="customfield[{{customfield.id}}]"
+                            autocomplete="new-password"
+                            value="{% if customfield.value is not empty %}{{ customfield.value }}{% endif %}" />
+                {% else %}
+                    {{ form_password('customfield[' ~ customfield.id ~ ']',
+                        (customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {})|merge({'autocomplete': 'new-password'}))
+                    }}
+                    {% if operator|default is empty %}
+                        <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                    {% endif %}
+                {% endif %}
+
+            {% elseif customfield.type == 7 %}
+                <div class="sp-input-group">
+                {% for key, option in customfield.options %}
+                    <label>
+                        {{ form_radio('customfield[' ~ customfield.id ~ ']', key,
+                            customfield.value == key ? true : false,
+                            customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {}) }} {{ option }}
+                    </label>
+                    {% if not loop.last %}
+                        <br />
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+            {% elseif customfield.type == 8 %}
+                {{ form_text('customfield[' ~ customfield.id ~ ']', customfield.value,
+                    customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {}) }}
+
+            {% elseif customfield.type == 9 %}
+                {{ form_redactor('customfield[' ~ customfield.id ~ ']', customfield.value,
+                    customfield.value is not empty and customfield.locked ? {'disabled': 'disabled', 'rows': 5} : {'rows': 5}) }}
+
+            {% elseif customfield.type == 10 %}
+                <div class="sp-table">
+                    <div class="sp-table-row">
+                        <div class="sp-table-cell sp-pr-2"></div>
+                        {% for i in 1..5 %}
+                            <div class="sp-table-cell sp-px-2 sp-text-center"><strong>{{ i }}</strong></div>
+                        {% endfor %}
+                    </div>
+                    {% for key, option in customfield.options %}
+                        <div class="sp-table-row">
+                            <div class="sp-table-cell sp-pr-2">{{ option }}</div>
+                            {% for i in 1..5 %}
+                                <div class="sp-table-cell sp-px-2 sp-text-center">
+                                    {{ form_radio('customfield[' ~ customfield.id ~ '][' ~ key ~ ']', i,
+                                        customfield.value is not empty and array_key_exists(key, customfield.value) and customfield.value[key] == i ? true : false,
+                                        customfield.value is not empty and customfield.locked ? {'class': 'sp-m-0', 'disabled': 'disabled'} : {'class': 'sp-m-0'}) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if customfield.description is not empty %}
+                <div class="sp-description">{{ customfield.description }}</div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

@@ -1,0 +1,115 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice('core.scheduled_task', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-task-run sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+        {{ Lang.get('core.task_ran') }}
+    </div>
+    <div class="sp-task-run sp-alert sp-alert-error sp-alert-sticky sp-hidden">
+        {{ Lang.get('core.task_failed') }}
+        <span class="sp-error-message sp-hidden"></span>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-alert {% if runRecently %}sp-alert-success{% else %}sp-alert-error{% endif %}">
+        <strong>{{ Lang.choice('general.status', 1) }}:</strong>
+        {% if runRecently %}
+            {{ Lang.get('core.cron_running') }}
+        {% else %}
+            {{ Lang.get('core.cron_not_running') }}
+        {% endif %}
+    </div>
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.name') }}:</label>
+                <div id="filter_name"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.description') }}:</label>
+                <div id="filter_description"></div>
+            </div>
+        </div>
+    </div>
+
+    {{ table.render()|raw }}
+
+    <div id="scheduledTaskCron" class="sp-alert sp-alert-warning sp-alert-bottom">
+        <strong>{{ Lang.get('core.cron_settings') }}</strong> &nbsp;-&nbsp; {{ Lang.get('core.cron_makesure')|raw }}
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+		    $(document.body).on('click', '.sp-run-task', function() {
+		        // Make icon spin
+                $(this).find('.fas').addClass('fa-spin');
+
+                // Run task
+		        runTask($(this).data('route'), this);
+		    });
+
+		    /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+
+        function runTask(route, icon) {
+		    // Post email data
+		    $.post(route)
+                .done(function(response) {
+                    if (response.status == 'success') {
+                        $('.sp-task-run.sp-alert-success').show(500).delay(5000).hide(500);
+                    } else {
+                        $('.sp-task-run.sp-alert-error').show(500).delay(5000).hide(500);
+                        if (response.message) {
+                            $('.sp-task-run.sp-alert-error .sp-error-message').show().html('<br />' + response.message);
+                        } else {
+                            $('.sp-task-run.sp-alert-error .sp-error-message').hide();
+                        }
+                    }
+                })
+                .fail(function() {
+		            $('.sp-task-run.sp-alert-error').show(500).delay(5000).hide(500);
+		        })
+                .always(function() {
+                    // Stop spinning icon
+                    $(icon).find('.fas').removeClass('fa-spin');
+
+                    // Reload table
+                    $('.dataTable').dataTable()._fnAjaxUpdate();
+                });
+		}
+    </script>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {% if organisations|default is not empty and organisations %}
+            {{ Lang.get('general.edit_item', {'item': Lang.choice('user.organisation_customfield', 1)}) }}
+        {% else %}
+            {{ Lang.get('general.edit_item', {'item': Lang.choice('user.customfield', 1)}) }}
+        {% endif %}
+    {% else %}
+        {% if organisations|default is not empty and organisations %}
+            {{ Lang.get('general.add_item', {'item': Lang.choice('user.organisation_customfield', 1)}) }}
+        {% else %}
+            {{ Lang.get('general.add_item', {'item': Lang.choice('user.customfield', 1)}) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if organisations|default is not empty and organisations %}
+        {% if record|default is not empty and record.exists %}
+            {{ form_model(record, { 'route': [ 'user.operator.organisationcustomfield.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+        {% else %}
+            {{ form_open({ 'route': 'user.operator.organisationcustomfield.store', 'class': 'validate' }) }}
+        {% endif %}
+    {% else %}
+        {% if record|default is not empty and record.exists %}
+            {{ form_model(record, { 'route': [ 'user.operator.customfield.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+        {% else %}
+            {{ form_open({ 'route': 'user.operator.customfield.store', 'class': 'validate' }) }}
+        {% endif %}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                    <div class="sp-description">{{ Lang.get('customfield.description_desc') }}</div>
+                </div>
+            </div>
+            
+        </div>
+
+        <h2>{{ Lang.get('general.type') }}</h2>
+    
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('type', Lang.get('general.type')) }}
+                <div class="sp-input-container">
+                    {{ form_select('type', {
+                        '0': Lang.get('customfield.boolean'),
+                        '1': Lang.get('customfield.checkbox'),
+                        '2': Lang.get('customfield.checklist'),
+                        '3': Lang.get('customfield.date'),
+                        '4': Lang.get('customfield.multiple'),
+                        '5': Lang.get('customfield.options'),
+                        '6': Lang.get('customfield.password'),
+                        '7': Lang.get('customfield.radio'),
+                        '8': Lang.get('customfield.text'),
+                        '9': Lang.get('customfield.textarea')
+                    }, null, record|default is not empty and record.exists ? {'disabled': 'disabled'} : {}) }}
+                    {% if record|default is not empty and record.exists %}
+                        {{ form_hidden('type') }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp-hidden{% endif %}">
+
+                <div id="sortable">
+                    {% include 'operator.' ~ template ~ '.forms.custom_field_option' with {'hide': true} %}
+
+                    {% for key, option in form_getValueAttribute('options') %}
+                        {% include 'operator.' ~ template ~ '.forms.custom_field_option' %}
+                    {% endfor %}
+                </div>
+
+                <div class="sp-form-row">
+                    <label></label>
+                    <div class="sp-input-container field-add-option">
+                        {{ form_button(Lang.get('general.add_item', {'item': Lang.get('general.option')}), {'class': 'add-option'}) }}
+                        {% if record.exists and record.options is not empty %}
+                            <div class="sp-alert sp-alert-info sp-alert-bottom">
+                                <strong>{{ Lang.choice('general.note', 1) }}:</strong> {{ Lang.get('customfield.option_warning') }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% set searchRoute = organisations ? 'user.operator.organisationcustomfield.search' : 'user.operator.customfield.search' %}
+        {% include 'operator.' ~ template ~ '.forms.custom_field_depends' with {'route': searchRoute} %}
+
+        {% include 'operator.' ~ template ~ '.forms.custom_field_regex' %}
+            
+        <h2>{{ Lang.get('customfield.options') }}</h2>
+    
+        <div class="sp-form-container">
+
+            <div class="visibility" {% if record.depends_on_option_id is not empty %}style="display: none"{% endif %}>
+                {% if brand_count() > 1 %}
+                    <div class="sp-form-row sp-form-full">
+                        {{ form_label('brand[]', Lang.choice('core.brand', 2)) }}
+                        <div class="sp-input-container">
+                            {{ form_select('brand[]', brand_config(null).pluck('name', 'id'), recordBrands, {'multiple': 'multiple'}) }}
+                            <div class="sp-description">{{ Lang.get('customfield.brand_desc') }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" name="brand[]" value="{{ brand_config(null)|first.id }}" />
+                {% endif %}
+            </div>
+
+            <div class="sp-form-row required-field">
+                {{ form_label('required', Lang.get('general.required')) }}
+                <div class="sp-input-container">
+                    {{ form_check('required', 1, record.required|default is not empty ? record.required : 0, {'class': 'sp-toggle', 'id': 'toggle_required'}) }}
+                    <label for="toggle_required"></label>
+                    <div class="sp-description">{{ Lang.get('customfield.required_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('public', Lang.get('customfield.public')) }}
+                <div class="sp-input-container">
+                    {{ form_check('public', 1, record.public|default is not empty ? record.public : 1, {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                    <label for="toggle_public"></label>
+                    <div class="sp-description">{{ Lang.get('customfield.public_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row encrypt-field {% if form_getValueAttribute('type') not in [6,8,9] %}sp-hidden{% endif %}">
+                {{ form_label('encrypted', Lang.get('customfield.encrypted')) }}
+                <div class="sp-input-container">
+                    {% if record|default is not empty and record.exists %}
+                        <input type="hidden" name="encrypted" value="{{ record.encrypted }}" />
+                        {% if record.encrypted %}
+                            <strong style="color: #27ae60;">{{ Lang.get('general.yes') }}</strong>
+                        {% else %}
+                            <strong style="color: #c0392b;">{{ Lang.get('general.no') }}</strong>
+                        {% endif %}
+                    {% else %}
+                        {{ form_check('encrypted', 1, record.encrypted|default is not empty ? record.encrypted : 0, {'class': 'sp-toggle', 'id': 'toggle_encrypted'}) }}
+                        <label for="toggle_encrypted"></label>
+                    {% endif %}
+                    <div class="sp-description">{{ Lang.get('customfield.encrypted_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('locked', Lang.get('customfield.locked')) }}
+                <div class="sp-input-container">
+                    {{ form_check('locked', 1, record.locked|default is not empty ? record.locked : 0, {'class': 'sp-toggle', 'id': 'toggle_locked'}) }}
+                    <label for="toggle_locked"></label>
+                    <div class="sp-description">{{ Lang.get('customfield.locked_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+    
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/customfield.js') }}"></script>
+{% endblock %}

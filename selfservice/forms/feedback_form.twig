@@ -1,0 +1,17 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {{ block('sidebar', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}
+
+{% block title %}
+    {{ block('title', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}
+
+{% block content %}
+    {{ block('content', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}
+
+{% block scripts_footer %}
+    {{ block('scripts_footer', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('core.brand', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('core.brand', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'core.operator.brand.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'core.operator.brand.store', 'class': 'validate' }) }}
+    {% endif %}
+
+        <ul class="sp-tabs">
+            <li id="General" class="sp-active">
+                <a>{{ Lang.get('general.general') }}</a>
+            </li>
+            <li id="Branding">
+                <a>{{ Lang.get('core.branding') }}</a>
+            </li>
+            <li id="Email">
+                <a>{{ Lang.get('general.email') }}</a>
+            </li>
+            <li id="Locale">
+                <a>{{ Lang.get('core.locale') }}</a>
+            </li>
+        </ul>
+
+        <div id="tabGeneral" class="sp-tab-content">
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                    <div class="sp-description">{{ Lang.get('core.brand_name_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('system_url', Lang.get('core.base_url')) }}
+                <div class="sp-input-container">
+                    {{ form_url('system_url', null, {'size': 45}) }}
+                    <div class="sp-description">{{ Lang.get('core.base_url_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('enable_ssl', Lang.get('core.enable_ssl')) }}
+                <div class="sp-input-container sp-input-group">
+                    <label>
+                        {{ form_radio('enable_ssl', -1, true) }}
+                        {{ Lang.get('core.inherit_global_setting') }}
+                    </label><br />
+                    <label>
+                        {{ form_radio('enable_ssl', 1) }}
+                        {{ Lang.get('general.yes') }}
+                    </label><br />
+                    <label>
+                        {{ form_radio('enable_ssl', 0) }}
+                        {{ Lang.get('general.no') }}
+                    </label>
+                    <div class="sp-description">{{ Lang.get('core.enable_ssl_desc') }}</div>
+                </div>
+            </div>
+
+            {% if record|default is empty or not record.exists or Config.get('settings.default_brand') != record.id %}
+                <div class="sp-form-row">
+                    {{ form_label('enabled', Lang.get('general.enabled')) }}
+                    <div class="sp-input-container">
+                        {{ form_check('enabled', 1, record|default is not empty and record.exists ? record.enabled : 1,
+                            { 'class': 'sp-toggle', 'id': 'toggle_enabled' }) }}
+                        <label for="toggle_enabled"></label>
+                        <div class="sp-description">{{ Lang.get('core.brand_enabled_desc') }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="sp-form-row">
+                {{ form_label('group[]', Lang.choice('user.operator_group', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('group[]', groups, recordGroups, {'multiple': 'multiple'}) }}
+                    <div class="sp-description">{{ Lang.get('core.brand_groups_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabBranding" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('brand_colour', Lang.get('general.colour')) }}
+                <div class="sp-input-container">
+                    {{ form_text('brand_colour', null, {'autocomplete': 'new-password'}) }}<br />
+                    {% if record.exists %}<a class="preview-colour">{{ Lang.get('general.preview') }}</a> &nbsp;&middot;&nbsp; {% endif %}
+                    <a class="clear-colour">{{ Lang.get('general.clear') }}</a>
+                    <div class="sp-description">{{ Lang.get('core.brand_colour_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('favicon', Lang.get('core.favicon')) }}
+                <div class="sp-input-container">
+                    {{ form_text('favicon', null, { 'size': 65 }) }}
+                    <div class="sp-description">{{ Lang.get('core.favicon_desc') }}</div>
+                </div>
+            </div>
+
+            <hr />
+
+            <h3>{{ Lang.get('general.frontend') }}</h3>
+
+            <div class="sp-form-row">
+                {{ form_label('frontend_logo', Lang.get('core.logo')) }}
+                <div class="sp-input-container">
+                    {{ form_text('frontend_logo', null, {'size': 65}) }}
+                    <div class="sp-description">{{ Lang.get('core.logo_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('frontend_logo_dark_mode', Lang.get('core.logo_dark_mode')) }}
+                <div class="sp-input-container">
+                    {{ form_text('frontend_logo_dark_mode', null, {'size': 65}) }}
+                    <div class="sp-description">{{ Lang.get('core.logo_dark_mode_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('website_url', Lang.get('core.website_url')) }}
+                <div class="sp-input-container">
+                    {{ form_url('website_url', null, {'size': 65}) }}
+                    <div class="sp-description">{{ Lang.get('core.website_url_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('frontend_template', Lang.get('core.template')) }}
+                <div class="sp-input-container">
+                    {{ form_select('frontend_template', frontendTemplates) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('frontend_template_mode', Lang.get('core.template_mode')) }}
+                <div class="sp-input-container">
+                    {{ form_select('frontend_template_mode', {1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}) }}
+                    <div class="sp-description">{{ Lang.get('core.template_mode_desc') }}</div>
+                </div>
+            </div>
+
+            <hr />
+
+            <h3>{{ Lang.get('core.operator_panel') }}</h3>
+
+            <div class="sp-form-row">
+                {{ form_label('operator_icon', Lang.get('core.logo')) }}
+                <div class="sp-input-container">
+                    {{ form_text('operator_icon', null, {'size': 65}) }}
+                    <div class="sp-description">{{ Lang.get('core.logo_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('operator_template', Lang.get('core.template')) }}
+                <div class="sp-input-container">
+                    {{ form_select('operator_template', operatorTemplates) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('operator_template_mode', Lang.get('core.template_mode')) }}
+                <div class="sp-input-container">
+                    {{ form_select('operator_template_mode', {1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}) }}
+                    <div class="sp-description">{{ Lang.get('core.template_mode_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabEmail" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('default_email', Lang.get('core.default_email_addr')) }}
+                <div class="sp-input-container">
+                    {{ form_text('default_email', null, {'size': 45}) }}
+                    <div class="sp-description">{{ Lang.get('core.default_email_addr_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('global_email_header', Lang.get('core.global_email_header')) }}
+                <div class="sp-input-container">
+                    {{ form_textarea('global_email_header') }}
+                    <div class="sp-description">{{ Lang.get('core.global_email_header_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('global_email_footer', Lang.get('core.global_email_footer')) }}
+                <div class="sp-input-container">
+                    {{ form_textarea('global_email_footer') }}
+                    <div class="sp-description">{{ Lang.get('core.global_email_footer_desc') }}</div>
+                </div>
+            </div>
+
+            <!-- todo option to pick global email, and change the default -->
+            <div class="sp-form-row">
+                {{ form_label('email_method', Lang.get('core.email_method')) }}
+                <div class="sp-input-container sp-input-group">
+                    <label>
+                        {{ form_radio('email_method', 'default', true, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
+                        {{ Lang.get('core.inherit_global_setting') }}
+                    </label><br />
+                    <label>
+                        {{ form_radio('email_method', 'mail', null, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
+                        {{ Lang.get('core.php_mail_function') }}
+                    </label><br />
+                    <label>
+                        {{ form_radio('email_method', 'smtp', null, { 'onclick': "document.getElementById('smtp').style.display = 'block';" }) }}
+                        {{ Lang.get('core.smtp') }}
+                    </label>
+                </div>
+            </div>
+
+            {% include 'operator.' ~ template ~ '.core.forms.smtp_tab' with {'email_method': record.email_method} %}
+        </div>
+
+        <div id="tabLocale" class="sp-tab-content sp-hidden">
+            {% include 'operator.' ~ template ~ '.core.forms.locale_tab' %}
+
+            <div class="sp-form-row">
+                {{ form_label('default_language', Lang.get('general.default_language')) }}
+                <div class="sp-input-container">
+                    {{ form_select('default_language', {'default': Lang.get('general.system_default')} + languages) }}
+                    <div class="sp-description">{{ Lang.get('core.brand_default_lang_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('language_toggle', Lang.get('general.language_toggle')) }}
+                <div class="sp-input-container sp-input-group">
+                    <label>{{ form_radio('language_toggle', 2, true) }} {{ Lang.get('general.system_default') }}</label><br />
+                    <label>{{ form_radio('language_toggle', 1) }} {{ Lang.get('general.show') }}</label><br />
+                    <label>{{ form_radio('language_toggle', 0) }} {{ Lang.get('general.hide') }}</label>
+                    <div class="sp-description">{{ Lang.get('core.brand_lang_toggle_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Code Editor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script type="text/javascript">
+        var sslWarning = new SslWarning({
+            route: "{{ mail_route('core.frontend.home', null, record.id) }}"
+        });
+
+        $(document).ready(function() {
+            {% if record.exists %}
+                sslWarning.init();
+            {% endif %}
+            
+            $('select[name="group[]"]').selectize({
+                plugins: ['remove_button']
+            });
+
+            $('input[name="system_url"]').on('change', function() {
+                sslWarning.setRoute($(this).val());
+            });
+
+            $('input[name="brand_colour"]').minicolors();
+
+            $('.clear-colour').on('click', function() {
+                $('input[name="brand_colour"]').minicolors('value', '');
+            });
+
+            $('.preview-colour').on('click', function() {
+                var colour = $('input[name="brand_colour"]').minicolors('value').replace('#', '');
+                if (colour === '') {
+                    colour = '0'
+                }
+
+                var url = "{{ mail_route('core.frontend.home', null, record.id) }}";
+
+                window.open(url + '?preview=' + colour,'width=800,height=600,scrollbars=yes');
+            });
+        });
+    </script>
+{% endblock %}

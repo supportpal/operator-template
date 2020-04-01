@@ -1,0 +1,128 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('selfservice.tag', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.tag', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    <a href="{{ route('selfservice.operator.tag.index') }}">{{ Lang.choice('selfservice.tag', 2) }}</a>
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    <strong>
+        {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.tag', 1)}) }}
+    </strong>
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'selfservice.operator.tag.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'selfservice.operator.tag.store', 'class': 'validate' }) }}
+    {% endif %}
+
+    <div id="sectionWrapper">
+
+        {# Required by multidimensionaldata.js #}
+        <div class="sp-tab-content">
+
+            {# Hidden option for multidimensionaldata.js #}
+            {% include 'operator.' ~ template ~ '.selfservice.forms.name_translation' with { 'hide': true } %}
+
+            <div class="section-items">
+                {# Default #}
+                <div class="sp-form-container">
+                    {%
+                        include 'operator.' ~ template ~ '.selfservice.forms.name_translation_rows'
+                        with {
+                        'elements': {
+                            'name': { 'name': 'name', 'value': record.getOriginal('name'), 'attributes': {'autofocus': 'autofocus'} },
+                            'slug': { 'name': 'slug', 'value': record.getOriginal('slug') },
+                        }
+                    }
+                    %}
+                </div>
+
+                {# Existing Translations #}
+                {% for locale, translation in translations %}
+                    {% include 'operator.' ~ template ~ '.selfservice.forms.name_translation' %}
+                {% endfor %}
+            </div>
+
+            <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                <div class="sp-form-row">
+                    <label></label>
+                    <div class="sp-input-container">
+                        <select name="languages" title="{{ Lang.get('core.add_another_language') }}" class="add-item-selectize">
+                            <option></option>
+                            {% for code, name in availableLanguages %}
+                                <option value="{{ code }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- selfserviceslug.js dependencies: Sweetalert2, donetyping -->
+    <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/selfserviceslug.js') }}"></script>
+    
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script type="text/javascript">
+        // List of valid translatable attributes.
+        var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
+
+        // Custom attribute mapper for multidimensionaldata.js
+        attributeMapper = function(elem, value, attribute) {
+            var attr = elem.attr(attribute);
+            if (typeof attr !== 'undefined') {
+                elem.attr(attribute, translatableAttributes[value][attr.replace(':default', '')]);
+            }
+        };
+        
+        $(document).ready(function () {
+            // Initialise the slug generator.
+            new SupportPalSlugGenerator({
+                route: {
+                    url: '{{ route('selfservice.operator.tag.slug') }}',
+                    parameters: function ($slug) {
+                        var locale = $slug.parents('.sp-form-container').find('input[name="locale"][type="hidden"]').val();
+                        if (typeof locale === 'undefined') {
+                            locale = null;
+                        }
+
+                        return {
+                            tag: '{{ record.id }}',
+                            locale: locale
+                        }
+                    }
+                }
+            }); 
+        });
+    </script>
+{% endblock %}

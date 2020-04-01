@@ -1,0 +1,101 @@
+<form class="followup-form {% if followup|default is empty %}sp-hidden{% endif %}" data-method="{{ method }}" data-uri="{{ route }}">
+
+    <h2>{{ Lang.get(followup|default is empty ? 'general.add_item' : 'general.edit_item', {'item': Lang.get('ticket.follow_up')}) }}</h2>
+
+    <h3>{{ Lang.choice('general.detail', 2) }}</h3>
+
+    <div class="sp-form-row">
+        {{ form_label('followup_date', Lang.get('ticket.follow_up_date')) }}
+            <div class="sp-input-container">
+                <label class="sp-inline-block sp-mr-2">{{ form_radio('date_type', 0, true) }} {{ Lang.get('ticket.exact_date_time') }}</label>
+                <label class="sp-inline-block">{{ form_radio('date_type', 1) }} {{ Lang.get('ticket.time_from_now') }}</label>
+                <div class="followup-exact sp-mt-2">
+                    <div class="sp-block xs:sp-inline-block">
+                        {{ form_text('followup_date', followup|default is not empty
+                                ? timeWithOffset(followup.time, false)|date(Config.get('settings.date_format'))
+                                : "now"|date(Config.get('settings.date_format'), getTimezone()),
+                            {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
+                    </div>
+                    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+                        {{ form_text('followup_time', followup|default is not empty
+                                ? timeWithOffset(followup.time, false)|date(Config.get('settings.time_format'))
+                                : "now"|date(Config.get('settings.time_format'), getTimezone()),
+                            {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}) }}
+                    </div>
+                </div>
+                <div class="followup-difference sp-mt-2 sp-hidden">
+                    <div class="sp-duration">
+                        {{ form_number('followup_days', 1, {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('followup_hours', 0, {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('followup_minutes', 0, {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div class="sp-form-row followup-status {% if followup|default is not empty %}sp-hidden{% endif %}">
+        {{ form_label('followup_status', Lang.get('ticket.set_status')) }}
+        <div class="sp-input-container">
+            {{ form_select('followup_status', follow_up_statuses) }}
+            <div class="sp-description">{{ Lang.get('ticket.follow_up_status_desc') }}</div>
+        </div>
+    </div>
+
+    {% if ticket.sla_plan_id|default is not empty and ticket.due_time is not empty and 'now'|date('U') < ticket.due_time %}
+        <div class="sp-form-row followup-sla {% if followup|default is not empty %}sp-hidden{% endif %}">
+            {{ form_label('followup_sla', Lang.get('ticket.pause_duetime')) }}
+            <div class="sp-input-container">
+                {{ form_check('followup_sla', 1, 0, {'class': 'sp-toggle', 'id': 'toggle_followup_sla'}) }}
+                <label for="toggle_followup_sla"></label>
+                <div class="sp-description">{{ Lang.get('ticket.pause_duetime_desc') }}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <h3>{{ Lang.choice('general.action', 2) }}</h3>
+
+    <div class="sp-form-container is-sortable">
+
+        {{ form_hidden('ticket_id', ticket.id, {'disabled': 'disabled'}) }}
+
+        <div class="sp--mx-6">
+            <table class="sp-table-grid rule-table sp-mb-3 {% if followup|default is empty or followup.actions.isEmpty() %}sp-hidden{% endif %}">
+                <thead>
+                    <tr>
+                        <th width="14"></th>
+                        <th>{{ Lang.choice('general.action', 1) }}</th>
+                        <th>{{ Lang.get('general.value') }}</th>
+                        <th width="14"></th>
+                    </tr>
+                </thead>
+                <tbody id="sortable">
+                    {% include 'operator.' ~ template ~ '.ticket.forms.action' with {'hide': true} %}
+
+                    {% if followup|default is not empty %}
+                        {% for count, rule in followup.actions %}
+                            {% include 'operator.' ~ template ~ '.ticket.forms.action' %}
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            {{ form_button(Lang.get('general.add_item', {'item': Lang.choice('general.action', 1)}), {'class': 'add-rule'}) }}
+        </div>
+
+    </div>
+
+    <div class="sp-form-button">
+        {{ form_button(Lang.get('general.save'), {'class': 'sp-button-submit save-followup'}) }}
+        {{ form_button(Lang.get('general.cancel'), {'class': 'cancel-followup'}) }}
+    </div>
+
+</form>

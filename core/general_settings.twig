@@ -1,0 +1,297 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.generalsetting') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('core.generalsetting_desc') }}
+{% endblock %}
+
+{% block content %}
+
+{{ form_model(fields, { 'method': 'PUT', 'route': [ 'core.operator.generalsetting.update' ] }) }}
+
+	<ul class="sp-tabs">
+        <li id="System" class="sp-active">
+            <a>{{ Lang.get('general.system') }}</a>
+        </li>
+        <li id="Email">
+            <a>{{ Lang.get('general.email') }}</a>
+        </li>
+        <li id="Locale">
+            <a>{{ Lang.get('core.locale') }}</a>
+        </li>
+        <li id="SimpleAuth">
+            <a>{{ Lang.get('core.simpleauth') }}</a>
+        </li>
+        <li id="Captcha">
+            <a>{{ Lang.get('core.captcha') }}</a>
+        </li>
+        <li id="Debug">
+            <a>{{ Lang.get('core.debug') }}</a>
+        </li>
+	</ul>
+
+    <div id="tabSystem" class="sp-tab-content">
+
+        {% if brand_count() > 1 %}
+            <div class="sp-form-row">
+                {{ form_label('default_brand', Lang.get('core.default_brand')) }}
+                <div class="sp-input-container">
+                    {{ form_select('default_brand', enabledBrands.pluck('name', 'id')) }}
+                    <div class="sp-description">{{ Lang.get('core.default_brand_desc') }}</div>
+                </div>
+            </div>
+        {% else %}
+            {{ form_hidden('default_brand', brand_config(null)|first.id) }}
+        {% endif %}
+
+        <div class="sp-form-row">
+            {{ form_label('admin_folder', Lang.get('core.admin_folder')) }}
+            <div class="sp-input-container">
+                {{ form_text('admin_folder') }}
+                <div class="sp-description">{{ Lang.get('core.admin_folder_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('enable_ssl', Lang.get('core.enable_ssl')) }}
+            <div class="sp-input-container">
+                {{ form_check('enable_ssl', 1, null, {'class': 'sp-toggle', 'id': 'toggle_enable_ssl'}) }}
+                <label for="toggle_enable_ssl"></label>
+                <div class="sp-description">{{ Lang.get('core.enable_ssl_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('pretty_urls', Lang.get('core.pretty_urls')) }}
+            <div class="sp-input-container">
+                {{ form_check('pretty_urls', 1, null, {'class': 'sp-toggle', 'id': 'toggle_pretty_urls'}) }}
+                <label for="toggle_pretty_urls"></label>
+                <div class="sp-description">{{ Lang.get('core.pretty_urls_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('maintenance_mode', Lang.get('core.maintenance_mode')) }}
+            <div class="sp-input-container">
+                {{ form_check('maintenance_mode', 1, null, {'class': 'sp-toggle', 'id': 'toggle_maintenance_mode'}) }}
+                <label for="toggle_maintenance_mode"></label>
+                <div class="sp-description">{{ Lang.get('core.maintenance_mode_desc') }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tabEmail" class="sp-tab-content sp-hidden">
+
+        <div class="sp-form-row">
+            {{ form_label('attachment_size', Lang.get('core.attachment_size')) }}
+            <div class="sp-input-container">
+                {{ form_text('attachment_size') }}
+                <div class="sp-description">{{ Lang.get('core.attachment_size_desc') }}</div>
+            </div>
+        </div>
+
+        {% if isModuleEnabled('Ticket') %}
+            <div class="sp-form-row">
+                {{ form_label('include_operator_name', Lang.get('core.include_operator_name')) }}
+                <div class="sp-input-container">
+                    {{ form_check('include_operator_name', 1, null, {'class': 'sp-toggle', 'id': 'toggle_include_operator_name'}) }}
+                    <label for="toggle_include_operator_name"></label>
+                    <div class="sp-description">{{ Lang.get('core.include_operator_name_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('include_department_name', Lang.get('core.include_dept_name')) }}
+                <div class="sp-input-container">
+                    {{ form_check('include_department_name', 1, null, {'class': 'sp-toggle', 'id': 'toggle_include_department_name'}) }}
+                    <label for="toggle_include_department_name"></label>
+                    <div class="sp-description">{{ Lang.get('core.include_dept_name_desc') }}</div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="sp-form-row">
+            {{ form_label('email_method', Lang.get('core.email_method')) }}
+            <div class="sp-input-container">
+                <label>{{ form_radio('email_method', 'mail', true, {
+                        'onclick': "document.getElementById('smtp').style.display = 'none';"
+                    })
+                }} {{ Lang.get('core.php_mail_function') }}</label> &nbsp;
+                <label>{{ form_radio('email_method', 'smtp', null, {
+                        'onclick': "document.getElementById('smtp').style.display = 'block';"
+                    })
+                }} {{ Lang.get('core.smtp') }}</label>
+            </div>
+        </div>
+
+        {% include 'operator.' ~ template ~ '.core.forms.smtp_tab' with {'record': fields, 'email_method': record.email_method} %}
+
+    </div>
+
+    <div id="tabLocale" class="sp-tab-content sp-hidden">
+
+        {% include 'operator.' ~ template ~ '.core.forms.locale_tab' with {'record': fields} %}
+
+        <div class="sp-form-row">
+            {{ form_label('default_language', Lang.get('general.default_language')) }}
+            <div class="sp-input-container sp-input-group">
+                <div>
+                    <label>
+                        <strong>{{ Lang.get('general.frontend') }}</strong> &nbsp;&nbsp;
+                        {{ form_select('default_frontend_language', languages) }}
+                    </label>
+                </div>
+                <div class="sp-mt-2">
+                    <label>
+                        <strong>{{ Lang.choice('general.operator', 1) }}</strong> &nbsp;&nbsp;
+                        {{ form_select('default_operator_language', languages) }}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('language_toggle', Lang.get('general.language_toggle')) }}
+            <div class="sp-input-container sp-input-group">
+                <div>
+                    <strong>{{ Lang.get('general.frontend') }}</strong> &nbsp;&nbsp;
+                    <label>{{ form_radio('language_frontend_toggle', 1) }} {{ Lang.get('general.show') }}</label> &nbsp;
+                    <label>{{ form_radio('language_frontend_toggle', 0) }} {{ Lang.get('general.hide') }}</label>
+                </div>
+                <div class="sp-mt-2">
+                    <strong>{{ Lang.choice('general.operator', 1) }}</strong> &nbsp;&nbsp;
+                    <label>{{ form_radio('language_operator_toggle', 1) }} {{ Lang.get('general.show') }}</label> &nbsp;
+                    <label>{{ form_radio('language_operator_toggle', 0) }} {{ Lang.get('general.hide') }}</label>
+                </div>
+            </div>
+        </div>
+
+        {# Enabled languages #}
+        {% if languages|length == 1 %}
+            <div class="sp-form-row">
+                {{ form_label('include_locale_in_uri', Lang.get('core.locale_in_uri')) }}
+                <div class="sp-input-container">
+                    {% set checked = fields.include_locale_in_uri|default is empty ? 1 : fields.include_locale_in_uri %}
+                    {{ form_check('include_locale_in_uri', 1, checked, {'class': 'sp-toggle', 'id': 'toggle_include_locale_in_uri'}) }}
+                    <label for="toggle_include_locale_in_uri"></label>
+                    <div class="sp-description">{{ Lang.get('core.locale_in_uri_desc') }}</div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div id="tabSimpleAuth" class="sp-tab-content sp-hidden">
+
+        <div class="sp-form-row">
+            {{ form_label('simpleauth_key', Lang.get('core.simpleauth_key')) }}
+            <div class="sp-input-container">
+                {{ form_text('simpleauth_key', null, {'size': 40}) }}
+                <div class="sp-description">{{ Lang.get('core.simpleauth_key_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('simpleauth_operators', Lang.get('core.simpleauth_operators')) }}
+            <div class="sp-input-container">
+                {{ form_check('simpleauth_operators', 1, null, {'class': 'sp-toggle', 'id': 'toggle_simpleauth_operators'}) }}
+                <label for="toggle_simpleauth_operators"></label>
+                <div class="sp-description">{{ Lang.get('core.simpleauth_operators_desc') }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tabCaptcha" class="sp-tab-content sp-hidden">
+
+        <div class="sp-form-row">
+            {{ form_label('captcha_type', Lang.get('core.captcha_type')) }}
+            <div class="sp-input-container sp-input-group">
+                <label>
+                    {{ form_radio('captcha_type', 0, null,
+                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'none';" })
+                    }}
+                    {{ Lang.get('general.disabled') }}
+                </label><br />
+                <label>
+                    {{ form_radio('captcha_type', 1, null,
+                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'none';" })
+                    }}
+                    {{ Lang.get('core.default_captcha') }}
+                </label><br />
+                <label>
+                    {{ form_radio('captcha_type', 2, null,
+                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'block';" })
+                    }}
+                    Google reCAPTCHA v2 (No CAPTCHA)
+                </label><br />
+                <label>
+                    {{ form_radio('captcha_type', 3, null,
+                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'block';" })
+                    }}
+                    Google Invisible reCAPTCHA
+                </label>
+                <div class="sp-description">{{ Lang.get('core.captcha_type_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="recaptcha {% if fields.captcha_type != 2 and fields.captcha_type != 3 %}hide{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('recaptcha_site_key', Lang.get('core.recaptcha_site_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('recaptcha_site_key', null, { 'size': 45 }) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('recaptcha_secret_key', Lang.get('core.recaptcha_secret_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('recaptcha_secret_key', null, {'size': 45}) }}
+                    <div class="sp-description">{{ Lang.get('core.recaptcha_desc')|raw }}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tabDebug" class="sp-tab-content sp-hidden">
+
+        <div class="sp-form-row">
+            {{ form_label('debug_mode', Lang.get('core.debug_mode')) }}
+            <div class="sp-input-container">
+                {{ form_check('debug_mode', 1, null, {'class': 'sp-toggle', 'id': 'toggle_debug_mode'}) }}
+                <label for="toggle_debug_mode"></label>
+                <div class="sp-description">{{ Lang.get('core.debug_mode_desc') }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="sp-form-button sp-fixed-bottom">
+        {{ form_submit(Lang.get('general.save'), {'id': 'saveGeneralSettings'}) }}
+    </div>
+
+{{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script type="text/javascript">
+        var sslWarning = new SslWarning({
+            route: "{{ mail_route('core.frontend.home') }}"
+        });
+        
+        $(function () {
+            sslWarning.init(); 
+        });
+    </script>
+{% endblock %}

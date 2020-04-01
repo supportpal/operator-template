@@ -1,0 +1,25 @@
+<form class="sp-condition-group sp-my-6 sp-hidden">
+
+    <div class="sp-condition-group-header">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+    </div>
+
+    <div class="sp-condition-group-inner">
+        <table class="sp-hidden">
+            {# Brand new group with one condition #}
+            {% include 'operator.' ~ template ~ '.forms.condition' with {'hide': true} %}
+
+            {% if currentConditions|default is not empty %}
+                {% for condition in currentConditions %}
+                    {% include 'operator.' ~ template ~ '.forms.condition' %}
+                {% endfor %}
+            {% endif %}
+        </table>
+
+        <div class="sp-condition-group-buttons">
+            {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition')}), {'class': 'add-condition  sp-mr-2'}) }}
+            {{ form_button(Lang.get('general.update'), {'class': 'update-filtering'}) }}
+        </div>
+    </div>
+
+</form>

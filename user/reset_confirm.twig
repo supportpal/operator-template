@@ -1,0 +1,66 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content %}
+
+    {% if reset_error|default is not empty and reset_error %}
+
+		<div class="sp-alert sp-alert-error">{{ reset_error }}</div>
+
+		<a href="{{ route('operator.login') }}">
+			<button class="sp-block sp-w-full">{{ Lang.get('user.return_to_login') }}</button>
+		</a>
+
+	{% else %}
+
+		{% if errors|default is not empty and errors.count() %}
+			<div class="sp-alert sp-alert-error">
+				<strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+				{% for error in errors.all() %}
+					{{ error }}<br />
+				{% endfor %}
+			</div>
+		{% elseif error is not defined %}
+			<div class="sp-alert sp-alert-success">{{ Lang.get('user.please_set_password') }}</div>
+		{% else %}
+			<div class="sp-alert sp-alert-error">{{ error }}</div>
+		{% endif %}
+
+		{{ form_open({ 'route': [ 'operator.resetconfirm' ], 'method': 'post', 'class': 'validate' }) }}
+
+            {{ form_hidden('email', Request.input('email')) }}
+            {{ form_hidden('token', Request.input('token')) }}
+
+			<div class="sp-form-row sp-form-full sp-mb-4">
+				<div class="sp-input-container">
+					{{ form_password('password', {'placeholder': Lang.get('general.password'), 'autocomplete': 'new-password'}) }}
+				</div>
+			</div>
+
+			<div class="sp-form-row sp-form-full sp-mb-6">
+				<div class="sp-input-container">
+					{{ form_password('password_confirmation', {'placeholder': Lang.get('user.confirm_password'), 'autocomplete': 'new-password'}) }}
+				</div>
+			</div>
+
+			<div class="sp-form-row sp-form-full sp-m-0">
+				{{ form_submit(Lang.get('general.save'), {'class': 'sp-w-full'}) }}
+			</div>
+
+		{{ form_close() }}
+
+	{% endif %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+	{% if jsValidator|default is not empty %}
+		{{ jsValidator|raw }}
+	{% endif %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+        });
+    </script>
+{% endblock %}

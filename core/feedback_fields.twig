@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ Lang.get('ticket.view_feedback') }}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="{{ get_template_mode() }} sp-m-6 sp-bg-secondary sp-text-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+    <div class="sp-container sp-m-auto">
+        {{ View.fireHook('operator.wrapper_start') }}
+
+        <div class="sp-p-6 sp-pb-0 sp-mt-6 sp-bg-primary sp-shadow sp-break-words sm:sp-mt-8 sm:sp-rounded">
+            {{ View.fireHook('operator.content_start') }}
+
+            {% block feedback_header %}{% endblock %}
+
+            {% if customfields is not empty %}
+                <div class="sp-form-container sp-border-b-0">
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.rating') }}</label>
+                        <div class="sp-input-container">
+                            {% if record.rating == 0 %}
+                                <strong class="sp-text-red-600">{{ Lang.get('general.bad') }}</strong>
+                            {% elseif record.rating == 1 %}
+                                <strong class="sp-text-green-600">{{ Lang.get('general.good') }}</strong>
+                            {% else %}
+                                <strong class="sp-text-yellow-600">{{ Lang.get('general.neutral') }}</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+                </div>
+            {% else %}
+                <div class="sp-alert sp-alert-error sp-alert-bottom">
+                    {{ Lang.get('ticket.feedback_fields_error') }}
+                </div>
+            {% endif %}
+
+            {{ View.fireHook('operator.content_end') }}
+        </div>
+
+        {{ View.fireHook('operator.wrapper_end') }}
+    </div>
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    <!-- General -->
+    <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Custom fields -->
+    <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Disable all inputs.
+            $(':input').prop('disabled', true);
+            $R('textarea.redactor', 'enableReadOnly');
+        });
+    </script>
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

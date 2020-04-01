@@ -1,0 +1,54 @@
+<div class="section-item sp-form-container {% if hide|default is not empty %}sp-hidden{% endif %}">
+
+    {# Required by multidimensionaldata.js #}
+    {{ form_hidden('locale', translation.locale|default is empty ? '' : translation.locale, { 'disabled': 'disabled' }) }}
+
+    <div class="sp-form-row sp-form-full {% if not hide and allLanguages[translation.locale] is empty %}sp-hidden{% endif %}">
+        <label>{{ Lang.choice('general.language', 1) }}</label>
+        <div class="sp-input-container">
+            <span class="item-type">
+                {% if allLanguages[translation.locale] is not empty %}
+                    {{ allLanguages[translation.locale] }}
+                {% endif %}
+            </span> &nbsp;
+
+            {# Only don't show on default #}
+            {% if hide or allLanguages[translation.locale] is not empty %}
+                {{ form_button(Lang.get('general.remove'), { 'class': 'remove-button' }) }}
+            {% endif %}
+        </div>
+    </div>
+
+    {%
+        include 'operator.' ~ template ~ '.selfservice.forms.article_rows'
+        with {
+            'elements': {
+                'title': {
+                    'name': translation.titleAttr|default is empty ? 'title:default' : translation.titleAttr,
+                    'value': hide|default is not empty ? '' : translation.title
+                },
+                'slug': {
+                    'name': translation.slugAttr|default is empty ? 'slug:default' : translation.slugAttr,
+                    'value': hide|default is not empty or clone is not empty ? '' : translation.slug
+                },
+                'keywords':  {
+                    'name': translation.keywordsAttr|default is empty ? 'keywords:default' : translation.keywordsAttr,
+                    'value': hide|default is not empty ? '' : translation.keywords
+                },
+                'excerpt': {
+                    'name': translation.excerptAttr|default is empty ? 'excerpt:default' : translation.excerptAttr,
+                    'value': hide|default is not empty ? '' : translation.excerpt
+                },
+                'text': {
+                    'name': translation.textAttr|default is empty ? 'text:default' : translation.textAttr,
+                    'value': hide|default is not empty ? '' : translation.text
+                },
+                'attachments': {
+                    'name': translation.attachmentAttr|default is empty ? 'attachment:default' : translation.attachmentAttr,
+                    'value': hide|default is not empty ? null : record.attachments.where('locale', translation.locale)
+                }
+            }
+        }
+    %}
+
+</div>

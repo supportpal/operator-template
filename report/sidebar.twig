@@ -1,0 +1,31 @@
+<div class="sp-sidebox">
+    <ul>
+        <li>
+            <a href="{{ route('report.operator.dashboard') }}">
+                {{ Lang.get('report.reports_dashboard') }}
+            </a>
+        </li>
+    </ul>
+</div>
+
+{% for slug, category in list %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex">
+            <div class="sp-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>{{ category.name }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul>
+            {% for item in category.reports %}
+                <li {% if Request.is("*/" ~ slug ~ "/" ~ item.slug) %}class="sp-font-bold"{% endif %}>
+                    <a href="{{ route('report.operator.view', {'category': slug, 'name': item.slug}) }}">{{ item.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}

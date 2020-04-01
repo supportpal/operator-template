@@ -1,0 +1,50 @@
+{% if comments is not empty %}
+    <div class="sp-comments">
+        {% for comment in comments %}
+            <div class="sp-message sp-comment" data-id="{{ comment.id }}">
+                <a name="_comment-{{ comment.id }}"></a>
+
+                <div class="sp-flex">
+                    <div class="sp-flex-initial sp-mr-4">
+                        <img src="{{ comment.author.avatar_url }}" class="sp-avatar sp-max-w-xs {% if comment.parent_id is empty %}md:sp-max-w-md{% endif %}" />
+                    </div>
+                    <div class="sp-flex-grow">
+                        <div class="sp-message-header">
+                            <span class="sp-name sp-font-semibold">
+                                {{ comment.author.formatted_name }}
+                            </span>
+                            &nbsp;<span class="sp-description sp-inline-block">{{ timeago(comment.created_at) }}</span>
+                        </div>
+
+                        <div class="sp-comment-text sp-mt-1 sp-mb-3/2">
+                            {{ comment.purified_text|raw }}
+                        </div>
+
+                        <div class="sp-comment-options sp-text-sm sp-text-secondary print:sp-hidden">
+                            <a class="sp-reply-to-comment sp-description" data-id="{{ comment.id }}">{{ Lang.get('general.reply') }}</a>
+                        </div>
+
+                        {% if comment.children is not empty %}
+                            {% if comment.more|default is not empty and comment_ordering == 1 %}
+                                <button class="sp-show-children-comments sp-button sp-button-sm sp-mt-3" data-parent="{{ comment.id }}">
+                                    {{ Lang.get('selfservice.view_all_replies') }} &raquo;
+                                </button>
+                            {% endif %}
+
+                            {% include 'operator.' ~ template ~ '.selfservice.internal.comment'
+                                with {'comments': comment_ordering == 1 ? comment.children|reverse(true) : comment.children}
+                            %}
+
+                            {% if comment.more|default is not empty and comment_ordering != 1 %}
+                                <button class="sp-show-children-comments sp-button sp-button-sm sp-mt-3" data-parent="{{ comment.id }}">
+                                    {{ Lang.get('selfservice.view_all_replies') }} &raquo;
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endif %}

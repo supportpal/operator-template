@@ -1,0 +1,11 @@
+<ul class="sp-tabs">
+    <li {% if Request.input('tab') == 0 %}class="sp-active"{% endif %}>
+        <a href="{{ route('core.operator.search', {'query': Request.input('query'), 'tab': 0}) }}">{{ Lang.choice('ticket.ticket', 2) }}</a>
+    </li>
+    <li {% if Request.input('tab') == 1 %}class="sp-active"{% endif %}>
+        <a href="{{ route('core.operator.search', {'query': Request.input('query'), 'tab': 1}) }}">{{ Lang.choice('user.user', 2) }}</a>
+    </li>
+    <li {% if Request.input('tab') == 2 %}class="sp-active"{% endif %}>
+        <a href="{{ route('core.operator.search', {'query': Request.input('query'), 'tab': 2}) }}">{{ Lang.choice('user.organisation', 2) }}</a>
+    </li>
+</ul>

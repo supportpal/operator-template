@@ -1,0 +1,21 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.php_info') }}
+{% endblock %}
+
+{% block content %}
+
+    <iframe src="{{ route('core.operator.phpinfo.show') }}" frameborder="0" scrolling="yes" class="sp-w-full"></iframe>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script>
+        $(function() {
+            $('iframe').on('load', function() {
+                $(this).css('height', this.contentWindow.document.body.scrollHeight + 32);
+            })
+        });
+    </script>
+{% endblock %}

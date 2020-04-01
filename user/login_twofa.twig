@@ -1,0 +1,32 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content %}
+
+    <h2 class="sp-mt-0 sp-text-center">{{ Lang.get('user.two_fa') }}</h2>
+
+    {{ form_open({'route': 'operator.login.twofa', 'method': 'POST', 'class': 'validate'}) }}
+
+        {{ form_hidden('email', email) }}
+        {{ form_hidden('twofa_token', twofa_token) }}
+        {{ form_hidden('intended_url', intended_url) }}
+        {{ form_hidden('remember', remember) }}
+
+        <div class="sp-form-row sp-form-full sp-mb-4">
+            <div class="sp-input-container">
+                {{ form_text('twofa_code', null, {'placeholder': Lang.get('user.two_fa_code'), 'autofocus': 'autofocus'}) }}
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full sp-m-0">
+            {{ form_submit(Lang.get('user.login'), {'class': 'sp-w-full'}) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+{% endblock %}

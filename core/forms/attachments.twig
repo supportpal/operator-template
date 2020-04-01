@@ -1,0 +1,83 @@
+{% if input_name|default is empty %}
+    {% set input_name = 'attachment' %}
+{% endif %}
+<div class="sp-attachment-details">
+    <input type="hidden" name="{{ input_name }}[]" disabled="disabled" class="mdd-ignore" />
+    {% if Request.old() is not empty and Request.old()[input_name] is not empty %}
+        {% for hash, file in Request.old()[input_name] %}
+            <input type="hidden" name="{{ input_name }}[{{ hash }}]" id="{{ input_name }}[{{ hash }}]" value="{{ file }}" />
+        {% endfor %}
+    {% endif %}
+</div>
+
+<ul class="sp-attached-files">
+    <li class="sp-flex sp-hidden">
+        <div class="sp-mr-2 sp-truncate">
+            <i class="fas fa-file"></i>&nbsp;
+
+            <span class="sp-file-information">
+                <span class="sp-filename"></span>
+                <span class="sp-description sp-filesize"></span>
+            </span>
+        </div>
+
+        <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+            <i class="fas fa-times sp-text-white"></i>
+        </div>
+
+        <div class="sp-progress-bar">
+            <div class="sp-bar"></div>
+        </div>
+    </li>
+    {% if attachments is not empty and not attachments.isEmpty() %}
+        {% for attachment in attachments %}
+            <li class="sp-flex">
+                <div class="sp-mr-2 sp-truncate">
+                    <i class="fas fa-file"></i>&nbsp;
+
+                    <a href='{{ route(downloadRoute, [ attachment.upload_hash ]) }}' class="sp-file-information">
+                        <span class="sp-filename">{{ attachment.original_name }}</span>
+                        <span class="sp-description sp-filesize">({{ attachment.upload.size }})</span>
+                    </a>
+                </div>
+
+                <div class="sp-delete-attachment sp-bg-red-600"
+                     {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
+                     data-attachment-id="{{ attachment.id }}"
+                     data-hash="{{ attachment.upload_hash }}">
+                    <i class="fas fa-times sp-text-white"></i>
+                </div>
+            </li>
+        {% endfor %}
+    {% elseif Request.old() is not empty and Request.old()[input_name] is not empty %}
+        {% for hash, file in Request.old()[input_name] %}
+            <li class="sp-flex">
+                <div class="sp-mr-2 sp-truncate">
+                    <i class="fas fa-file"></i>&nbsp;
+
+                    <span class="sp-file-information">
+                        <span class="sp-filename sp-ellipsis">{{ file }}</span>
+                        <span class="sp-description sp-filesize"></span>
+                    </span>
+                </div>
+
+                <div class="sp-delete-attachment sp-bg-red-600"
+                     {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
+                     data-hash="{{ hash }}">
+                    <i class="fas fa-times sp-text-white"></i>
+                </div>
+            </li>
+        {% endfor %}
+    {% endif %}
+</ul>
+
+<div class="sp-mt-4">
+    <div class="sp-attachment-dragover sp-hidden">
+        {{ Lang.get('general.drag_and_drop') }}
+    </div>
+
+    <label class="sp-file-input">
+        <a class="sp-button"><i class="fas fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}</a>
+        <input class="sp-file-upload" type="file" name="files[]" data-url="{{ route(route ~ ".upload") }}" multiple="multiple">
+    </label>
+</div>

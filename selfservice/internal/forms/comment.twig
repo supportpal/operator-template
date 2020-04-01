@@ -1,0 +1,44 @@
+{% if article.comments is not empty %}
+    {{ form_open({'route': [ 'selfservice.operator.internal.comment' ], 'method': 'post', 'class': 'add-comment validate with-comments'}) }}
+{% else %}
+    {{ form_open({'route': [ 'selfservice.operator.internal.comment' ], 'method': 'post', 'class': 'add-comment validate'}) }}
+{% endif %}
+
+    {{ form_hidden('article_id', article['id']) }}
+    {{ form_hidden('type_id', type) }}
+    {{ form_hidden('parent_id') }}
+
+    <p class="sp-replying-to sp-description sp-hidden">
+        {{ Lang.get('selfservice.replying_to') }} <strong><span class="sp-reply-name"></span></strong>
+        &nbsp;
+        {{ form_button(Lang.get('general.cancel'), {'class': 'sp-cancel-reply sp-button sp-button-sm'}) }}
+    </p>
+
+    <div class="sp-form-row sp-form-full">
+        {{ form_textarea('text', null, {'placeholder': Lang.choice('selfservice.comment', 1), 'class': 'sp-h-24'}) }}
+    </div>
+
+    <div class="sp-form-row">
+        <div class="sp-input-container">
+            <label>{{ form_check('notify_reply', 1, true) }} {{ Lang.get('selfservice.receive_notifications') }}</label>
+        </div>
+    </div>
+
+    {# Captcha is not disabled and 'Show Captcha' is set to 'Always' #}
+    {% if Config.get('settings.captcha_type') != 0 and Config.get('settings.comment_captcha') == 2 %}
+        {% if Captcha.isVisible() %}
+            <div class="sp-font-bold sp-mb-3">{{ Lang.get('core.captcha') }}</div>
+        {% endif %}
+
+        {{ Captcha.getHtml() }}
+    {% endif %}
+
+    <div class="sp-form-button">
+        {{ form_submit(Lang.choice('general.post', 1)) }}
+    </div>
+
+    {% if article.comments is not empty %}
+        <hr />
+    {% endif %}
+
+{{ form_close() }}

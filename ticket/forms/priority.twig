@@ -1,0 +1,86 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.priority', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.priority', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ 'ticket.operator.priority.update', record.id ], 'method': 'PUT', 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': 'ticket.operator.priority.store', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('colour', Lang.get('general.colour')) }}
+                <div class="sp-input-container">
+                    {{ form_text('colour') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('depts', Lang.get('ticket.department_applicable')) }}
+                <div class="sp-input-container sp-input-group">
+                    <div class="sp-description">
+                        <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                        &nbsp;|&nbsp;
+                        <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                    </div>
+                    {% for department in departments %}
+                        {{ form_checkbox('depts[]', department['id'], in_array(department['id'], recordDepts, true)) }}
+                        {% if department.dashes|default is not empty %}
+                            {{ department.dashes|raw }}{{ department.name|replace({ (department.dashes): '' }) }}
+                        {% else %}
+                            {{ department.name }}
+                        {% endif %}
+                        <br />
+                    {% endfor %}
+                    <div class="sp-description">{{ Lang.get('ticket.department_applicable_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if ($('input[name="colour"]').val() === '') {
+                $('input[name="colour"]').val('#FFFFFF');
+            }
+            $('input[name="colour"]').minicolors();
+        });
+    </script>
+{% endblock %}

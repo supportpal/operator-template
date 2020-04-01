@@ -1,0 +1,31 @@
+<div class="{{ redactorClasses }}">
+    {{ form_redactor('text', redactorText, {"class": "textarea", "size": "50x3", "id": textareaId}) }}
+</div>
+
+<div class="sp-px-1 sp-bg-secondary sp-border sp-border-t-0 sp-border-tertiary sp-rounded-b">
+    {# Don't want to show the add attachment button if it's forwarding form and not allowed attachments #}
+    {% if (ticket.department_email_id is not empty and submit_name != Lang.get('ticket.forward')) or allow_attachments %}
+        <label class="sp-file-input sp-inline-block sp-p-3/2 sp-text-sm sp-cursor-pointer hover:sp-text-secondary">
+            <i class="fas fa-paperclip"></i>
+            <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.add_attachment') }}</span>
+            <input class="sp-file-upload" type="file" name="files[]"
+                   data-url="{{ route('ticket.operator.attachment.upload') }}" multiple="multiple">
+        </label><!--
+        --><div class="redactor-button-separator"></div>
+    {% endif %}
+    <span class="save-draft sp-inline-block sp-px-3/2 sp-py-1 sp-cursor-pointer hover:sp-text-secondary"
+          title="{{ Lang.get('ticket.save_draft') }}">
+        <i class="fas fa-save"></i>
+    </span>
+    <span class="discard-draft sp-inline-block sp-px-3/2 sp-py-1 sp-cursor-pointer hover:sp-text-secondary
+                 {% if draft|default is empty %}sp-hidden{% endif %}"
+          title="{{ Lang.get('ticket.discard_draft') }}">
+        <i class="fas fa-eraser"></i>
+    </span>
+    <span class="draft-success sp-description sp-inline-block sp-p-3/2 sp-pt-0 sp-text-xs sm:sp-pt-3/2
+                 sm:sp-text-sm {% if draft|default is empty %}sp-hidden{% endif %}">
+        {% if draft|default is not empty %}
+            {{ Lang.get('ticket.draft_saved', {'time': formatDate(draft.updated_at)}) }}
+        {% endif %}
+    </span>
+</div>

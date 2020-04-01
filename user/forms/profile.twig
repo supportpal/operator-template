@@ -1,0 +1,229 @@
+    {% if operator is not defined or not operator %}
+        {% if record.exists %}
+            {% if brand_count() > 1 %}
+                <div class="sp-form-row">
+                    {{ form_label('brand_id', Lang.choice('core.brand', 1)) }}
+                    <div class="sp-input-container">
+                        {{ record.brand.name }}
+                        <input type="hidden" name="brand_id" value="{{ record.brand_id }}" />
+                    </div>
+                </div>
+            {% else %}
+                <input type="hidden" name="brand_id" value="{{ Config.get('settings.default_brand') }}" />
+            {% endif %}
+        {% else %}
+            {% if brand_count() > 1 %}
+                <div class="sp-form-row">
+                    {{ form_label('brand_id', Lang.choice('core.brand', 1)) }}
+                    <div class="sp-input-container">
+                        {{ form_select('brand_id', assignedBrands.pluck('name', 'id'), Config.get('settings.default_brand')) }}
+                    </div>
+                </div>
+            {% else %}
+                <input type="hidden" name="brand_id" value="{{ Config.get('settings.default_brand') }}" />
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <div class="sp-form-row">
+        {{ form_label('firstname', Lang.get('user.firstname')) }}
+        <div class="sp-input-container">
+            {{ form_text('firstname', null, record.exists ? {'size': 30} : {'autofocus': 'autofocus', 'size': 30}) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('lastname', Lang.get('user.lastname')) }}
+        <div class="sp-input-container">
+            {{ form_text('lastname', null, {'size': 30}) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('email', Lang.get('general.email')) }}
+        <div class="sp-input-container">
+            {% set emailAttributes = { size: 45 } %}
+            {% if auth_check() and record.id == auth_user().id and auth_user().loggedInViaSSO() %}
+                {% set emailAttributes = emailAttributes|merge({ 'readonly': 'readonly' }) %}
+            {% endif %}
+            {{ form_email('email', record.email, emailAttributes) }}
+            {% if record.exists and managing|default is not empty and managing and (operator is not defined or not operator) %}
+                {% if record.confirmed %}
+                    <div class="sp-description">{{ Lang.get('user.changing_email_desc') }}</div>
+                {% elseif record.password is empty %}
+                    <div class="sp-mt-3">
+                        <strong class="sp-text-red-600">{{ Lang.get('user.unconfirmed') }}</strong> - {{ Lang.get('user.unregistered_user_desc') }}
+                    </div>
+                    {% if managing|default is not empty and managing and (operator is not defined or not operator) %}
+                        <div class="sp-mt-3">
+                            {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="sp-my-3">
+                        <strong class="sp-text-orange-600">{{ Lang.get('user.unconfirmed') }}</strong> - {{ Lang.get('user.unconfirmed_user_desc') }}
+                    </div>
+
+                    {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_confirmation_email'), { 'class': 'confirmation-email' }) }} &nbsp;
+                    {{ form_button('<i class="fas fa-check-square"></i>&nbsp; ' ~ Lang.get('user.mark_as_confirmed'), { 'class': 'mark-confirmed' }) }}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    {% if managing|default is not empty and managing and ((operator is defined and operator) or (record.exists and record.confirmed)) %}
+        <div class="sp-form-row">
+            {{ form_label('active', Lang.get('user.account_active')) }}
+            <div class="sp-input-container">
+                {{ form_check('active', 1, record.active|default is not empty ? record.active : 1, {'class': 'sp-toggle', 'id': 'toggle_active'}) }}
+                <label for="toggle_active"></label>
+                <div class="sp-description">{{ Lang.get('user.account_active_desc') }}</div>
+
+                {% if (not record.exists or record.password is empty) and managing|default is not empty and managing and (operator is not defined or not operator) %}
+                    <br />
+                    {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if not record.exists and managing|default is not empty and managing and (operator is not defined or not operator) %}
+        <div class="sp-form-row">
+            <label></label>
+            <div class="sp-input-container">
+                {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if showPassword is not defined or showPassword %}
+        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) and (operator is not defined or not operator) %}style="display: none"{% endif %}>
+            {{ form_label('password', Lang.get('general.password')) }}
+            <div class="sp-input-container">
+                {{ form_password('password', { 'autocomplete': 'new-password' }) }}
+                {% if record.password|default is not empty %}
+                    <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) and (operator is not defined or not operator) %}style="display: none"{% endif %}>
+            {{ form_label('password_confirmation', Lang.get('user.confirm_password')) }}
+            <div class="sp-input-container">
+                {{ form_password('password_confirmation', { 'autocomplete': 'new-password' }) }}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if record.exists and record.confirmed and record.password is not empty and managing|default is not empty and managing and (operator is not defined or not operator) %}
+        <div class="sp-form-row">
+            <label></label>
+            <div class="sp-input-container">
+                {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_password_reset'), { 'class': 'reset-password' }) }}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if record.exists and record.password is not empty %}
+        <div class="sp-form-row">
+            {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
+            <div class="sp-input-container">
+                {% if record.twofa_enabled %}
+                    {% if record.id == auth_user().id %}
+                        <div class="twofa-enabled sp-text-green-600 sp-font-bold">{{ Lang.get('general.yes') }}</div>
+                        {% if not Config.get('settings.force_2fa_operators', 0) %}
+                            <a class="sp-button" href="{{ route('user.operator.twofa') }}">{{ Lang.get('general.manage') }}</a>
+                        {% endif %}
+                    {% else %}
+                        {{ form_check('twofa_enabled', 1, 1, {'class': 'sp-toggle', 'id': 'toggle_twofa_enabled'}) }}
+                        <label for="toggle_twofa_enabled"></label>
+                    {% endif %}
+                {% else %}
+                    <div class="twofa-enabled sp-text-red-600 sp-font-bold">{{ Lang.get('general.no') }}</div>
+                    {% if record.id == auth_user().id %}
+                        <div class="sp-mt-3">
+                            <a class="sp-button" href="{{ route('user.operator.twofa') }}">{{ Lang.get('general.manage') }}</a>
+                        </div>
+                    {% else %}
+                        <div class="sp-description">{{ Lang.get('user.two_fa_user_enable') }}</div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="sp-form-row">
+        {{ form_label('country', Lang.get('user.country')) }}
+        <div class="sp-input-container">
+            {{ form_select('country', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + countries(),
+                record.exists ? record.country : Config.get('settings.default_country')) }}
+        </div>
+    </div>
+
+    {# Check whether we should allow users to change their default language #}
+    {% if operator|default is not empty and operator and Config.get('settings.language_operator_toggle') %}
+
+    <div class="sp-form-row">
+        {{ form_label('language_code', Lang.choice('general.language', 1)) }}
+        <div class="sp-input-container">
+            {{ form_select('language_code', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + languages,
+                record.exists ? record.language_code : LanguageFactory.getOperatorDefault()) }}
+        </div>
+    </div>
+
+    {% elseif (operator|default is empty or not operator) and (Config.get('settings.language_frontend_toggle')) %}
+
+    <div class="sp-form-row">
+        {{ form_label('language_code', Lang.choice('general.language', 1)) }}
+        <div class="sp-input-container">
+            {{ form_select('language_code', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + languages,
+                record.exists ? record.language_code : LanguageFactory.getUserDefault(Config.get('settings.default_brand'), false)) }}
+        </div>
+    </div>
+
+    {% endif %}
+
+    <div class="sp-form-row">
+        {{ form_label('timezone', Lang.get('general.timezone')) }}
+        <div class="sp-input-container">
+            {{ form_select('timezone', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + timezones(),
+                record.exists ? record.timezone : Config.get('settings.default_timezone')) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('avatar', Lang.get('user.avatar')) }}
+        <div class="sp-input-container">
+            <img class="sp-avatar sp-max-w-2xl sp-mb-3" src="{{ record.avatar_url }}" />
+            {{ form_file('avatar') }}
+        </div>
+    </div>
+
+    {% if groups|default is not empty and groups %}
+        <div class="sp-form-row sp-form-full">
+            {% if operator|default is not empty and operator %}
+                {{ form_label('groups', Lang.choice('user.operator_group', 2)) }}
+            {% else %}
+                {{ form_label('groups', Lang.choice('user.group', 2)) }}
+            {% endif %}
+            <div class="sp-input-container">
+                {{ form_select('groups[]', groups, (userGroups is defined ? userGroups : []), {'multiple': 'multiple'}) }}
+                {% if operator|default is not empty and operator %}
+                    <div class="sp-description">{{ Lang.get('user.select_operator_group_desc') }}</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if managing|default is not empty and managing and (operator|default is empty or not operator) %}
+    <div class="sp-form-row sp-form-full sp-form-customfields">
+        {{ form_label('notes', Lang.choice('general.note', 2)) }}
+        <div class="sp-input-container">
+            {{ form_redactor('notes') }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if operator|default is not empty and operator %}
+        {{ form_hidden('operator', true) }}
+    {% endif %}

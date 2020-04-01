@@ -1,0 +1,14 @@
+<form class="message-form edit" data-route="{{ route('ticket.operator.message.update', [ message.id ]) }}">
+
+    {{ form_hidden('ticket_id', ticket.id) }}
+
+    {# If show_more is true, we will AJAX load the full text in later, but the textarea must still exist for JS #}
+    {{ form_redactor('text', message.show_more is empty ? message.purified_text : '', {"id": 'message-' ~ message.id}) }}
+
+    <div class="sp-mt-4">
+        {{ form_submit(Lang.get('general.save')) }}
+        {{ form_button(Lang.get('general.cancel'), {'class': 'edit-button sp-ml-3'}) }}
+    </div>
+
+
+</form>

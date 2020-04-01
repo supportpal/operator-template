@@ -1,0 +1,150 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice("ticket.department", 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('ticket.operator.department.create') }}"
+                   class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.success_ordering') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.error_ordering') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {{ table.render()|raw }}
+
+    <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
+        <strong>{{ Lang.get('messages.note') }}:</strong> {{ Lang.get('ticket.change_department_order') }}
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript">
+        $(function() {
+            /**
+             * This is a temporary solution to provide group ordering in DataTables. As of
+             * 2015, DataTables is, apparently, "fundamentally" unable to support multiple
+             * <tbody> elements.
+             *
+             * The code *should* run everytime a redraw event is triggered on DataTables and
+             * wrap <tbody> elements around department groups (based on the "group-x" class)
+             */
+            $(document).on('draw.dt', function (e, settings) {
+                // Grab the tbody that currently holds the DataTable
+                var api = new $.fn.dataTable.Api( settings),
+                    groups = [];
+
+                // Get all the row IDs
+                var ids = api.$('tr[id]').map(function() { return this.id; }).get();
+
+                // Try and find the group classes
+                // Use the highest department ID in the for loop
+                for (var i = 1; i <= Math.max.apply(Math, ids); i++) {
+                    // Empty list
+                    var $list = $();
+
+                    // Work through each row and see if it matches the group number, if so add to list
+                    $.each($('.dataTable tbody tr'), function(index) {
+                        if ($(this).data('group') == i) {
+                            $list = $list.add($(this));
+                        }
+                    });
+
+                    // Add list to groups if it contains at least one row
+                    if ($list.length > 0) {
+                        groups.push($list);
+                    }
+                }
+
+                // Check if we've actually got some department groups to iterate over
+                if (groups.length > 0) {
+                    // Remove the original tbody created by DataTables
+                    // .detach() is important here, to ensure that we're still able to access
+                    //  the elements in the original tbody
+                    var tbody = $(api.table().node()).find('tbody').detach();
+
+                    // Wrap each row group in a tbody
+                    for (i = 0; i < groups.length; i++) {
+                        groups[i].wrapAll('<tbody class="group"></tbody>');
+                    }
+
+                    $(api.table().node()).append(tbody.contents());
+                }
+            } );
+
+            // Add sortable table
+            $('table').sortable({
+                draggable: 'tbody',
+                ghostClass: 'sp-opacity-50',
+
+                // Update the order in the database
+                store: {
+                    set: function (sortable) {
+                        // Convert to a comma delimited list of IDs
+                        var newOrder = $('.group tr[id]:not(.child)').map(function(){
+                            return this.id;
+                        }).get().join(',');
+
+                        // Show the alert
+                        Swal.fire({
+                            text: Lang.get('messages.save_order'),
+                            showConfirmButton: true,
+                            showCancelButton: false,
+                            confirmButtonText: Lang.get('general.update'),
+                            showLoaderOnConfirm: true,
+                            onOpen: function () {
+                                Swal.clickConfirm();
+                            },
+                            preConfirm: function () {
+                                return $.post(laroute.route('core.operator.saveOrder', {section: 'department'}), {order: newOrder})
+                                    .then(function (response) {
+                                        if (response.status == 'success') {
+                                            return response;
+                                        }
+
+                                        throw new Error(response.statusText);
+                                    })
+                                    .catch(function () {
+                                        $('.ordering.sp-alert-error').show(500).delay(5000).hide(500);
+
+                                        // Refresh grid so they are back in the original place
+                                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                                    });
+                            },
+                            allowOutsideClick: function () {
+                                return ! Swal.isLoading();
+                            }
+                        }).then(function (result) {
+                            if (result.value) {
+                                $('.ordering.sp-alert-success').show(500).delay(5000).hide(500);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

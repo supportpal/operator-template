@@ -1,0 +1,238 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('general.category', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('general.category', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% if type|default is not empty %}
+        <a href="{{ route('selfservice.operator.type.index', { 'brand': type.brand_id }) }}">{{ type.brand.name }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        <a href="{{ route('selfservice.operator.category.index', { 'type': type.id }) }}">{{ type.name }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% else %}
+        <a href="{{ route('selfservice.operator.category.index') }}">{{ Lang.choice('selfservice.category', 2) }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% endif %}
+    <strong>
+        {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('general.category', 1)}) }}
+    </strong>
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'selfservice.operator.category.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': [ 'selfservice.operator.category.store' ], 'class': 'validate' }) }}
+    {% endif %}
+
+        <div id="sectionWrapper">
+    
+            <h2>{{ Lang.get('general.name') }}</h2>
+    
+            {# Required by multidimensionaldata.js #}
+            <div class="sp-tab-content">
+    
+                {# Hidden option for multidimensionaldata.js #}
+                {% include 'operator.' ~ template ~ '.selfservice.forms.name_translation' with { 'hide': true } %}
+    
+                <div class="section-items">
+                    {# Default #}
+                    <div class="sp-form-container">
+                        {%
+                            include 'operator.' ~ template ~ '.selfservice.forms.name_translation_rows'
+                            with {
+                            'elements': {
+                                'name': { 'name': 'name', 'value': record.getOriginal('name'), 'attributes': {'autofocus': 'autofocus'} },
+                                'slug': { 'name': 'slug', 'value': record.getOriginal('slug') },
+                            }
+                        }
+                        %}
+                    </div>
+    
+                    {# Existing Translations #}
+                    {% for locale, translation in translations %}
+                        {% include 'operator.' ~ template ~ '.selfservice.forms.name_translation' %}
+                    {% endfor %}
+                </div>
+    
+                <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                    <div class="sp-form-row">
+                        <label></label>
+                        <div class="sp-input-container">
+                            <select name="languages" title="{{ Lang.get('core.add_another_language') }}" class="add-item-selectize">
+                                <option></option>
+                                {% for code, name in availableLanguages %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </div>
+
+        <h2>{{ Lang.get('customfield.options') }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('type_id', Lang.choice('selfservice.type', 1)) }}
+                <div class="sp-input-container">
+                    <select name="type_id">
+                        <option value="">{{ Lang.get('selfservice.select_type') }}</option>
+                        {% for brand in brand_config(null) %}
+                            {% if auth_user().isAssignedToBrand(brand.id) %}
+                                <optgroup label="{{ brand.name }}">
+                                    {% for brand_type in brand.types %}
+                                        {% if brand_type.content == 0 %}
+                                            <option value="{{ brand_type.id }}" {% if brand_type.id == record.type_id %}selected="selected"{% endif %}>
+                                                {{ brand_type.name }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </optgroup>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('parent_id', Lang.get('general.parent')) }}
+                <div class="sp-input-container">
+                    {{ form_select('parent_id', categories,
+                        record|default is not empty and record.exists ? record.parent_id : null) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('public', Lang.get('general.public')) }}
+                <div class="sp-input-container">
+                    {{ form_check('public', 1, record|default is not empty and record.exists ? record.published : true,
+                        {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                    <label for="toggle_public"></label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- selfserviceslug.js dependencies: Sweetalert2, donetyping -->
+    <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/selfserviceslug.js') }}"></script>
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script type="text/javascript">
+        // List of valid translatable attributes.
+        var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
+
+        // Custom attribute mapper for multidimensionaldata.js
+        attributeMapper = function(elem, value, attribute) {
+            var attr = elem.attr(attribute);
+            if (typeof attr !== 'undefined') {
+                elem.attr(attribute, translatableAttributes[value][attr.replace(':default', '')]);
+            }
+        };
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Initialise the slug generator.
+            new SupportPalSlugGenerator({
+                route: {
+                    url: '{{ route('selfservice.operator.category.slug') }}',
+                    parameters: function ($slug) {
+                        var typeId = $slug.parents('form').find('select[name="type_id"]').val();
+                        var locale = $slug.parents('.sp-form-container').find('input[name="locale"][type="hidden"]').val();
+                        if (typeof locale === 'undefined') {
+                            locale = null;
+                        }
+
+                        return { category: '{{ record.id }}', type: typeId, locale: locale };
+                    }
+                }
+            });
+
+            /**
+             * AJAX instance for type dropdown.
+             */
+            var xhr;
+
+            // Type dropdown
+            $('select[name="type_id"]').selectize({
+                plugins: ['disableDelete'],
+                onChange: function(value) {
+                    // Only carry on if we have a type
+                    if (!value.length) return;
+
+                    var selectize = parent[0].selectize;
+
+                    // Load the categories for the selected self-service type.
+                    selectize.disable();
+                    selectize.clearOptions();
+                    selectize.load(function(callback) {
+                        xhr && xhr.abort();
+                        xhr = $.ajax({
+                            url: laroute.route('selfservice.operator.type.categories', {'operatorSelfserviceType': value, 'category': '{{ record.id }}'}),
+                            success: function(res) {
+                                // Add None value and update rest of options
+                                selectize.enable();
+                                selectize.addOption({'id': 0, 'name': Lang.get('general.none')});
+                                callback(res.data);
+                                selectize.setValue(0, true);
+                            },
+                            error: function() {
+                                callback();
+                            }
+                        })
+                    });
+                }
+            });
+
+            // Parent dropdown
+            var parent = $('select[name="parent_id"]').selectize({
+                plugins: ['disableDelete'],
+                valueField: 'id',
+                labelField: 'name',
+                searchField: 'name',
+                render: {
+                    item: function(item, escape) {
+                        return '<div class="item">' + escape(item.name) +
+                                (item.hierarchy ? '<span class="description">' + escape(item.hierarchy) + '</span>' : '') +
+                            '</div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div>' + escape(item.name) +
+                                (item.hierarchy ? '<span class="description">' + escape(item.hierarchy) + '</span>' : '') +
+                            '</div>';
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

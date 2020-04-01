@@ -1,0 +1,284 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('ticket.open_new') }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_open({'route': [ 'ticket.operator.ticket.storeStep2' ], 'class': 'validate'}) }}
+
+        <h2>{{ Lang.get('ticket.enter_ticket_details') }}</h2>
+
+        <div class="sp-form-container">
+
+            {{ form_hidden('user', user.id) }}
+            {{ form_hidden('internal', internal) }}
+            {{ form_hidden('brand', brand.id) }}
+            {% if link_message is not empty %}
+                <input type="hidden" name="link_message" value="{{ link_message }}" />
+            {% endif %}
+
+            {% if linked_ticket is not empty %}
+                <div class="sp-form-row">
+                    {{ form_label('linked_ticket', Lang.get('ticket.linked_tickets')) }}
+                    <div class="sp-input-container">
+                        <a href="{{ linked_ticket.operator_url }}" target="_blank">#{{ linked_ticket.number }}</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if brand_count() > 1 %}
+                <div class="sp-form-row">
+                    {{ form_label('brand', Lang.choice('core.brand', 1)) }}
+                    <div class="sp-input-container">
+                        {{ brand.name }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="sp-form-row">
+                {{ form_label('department', Lang.choice('ticket.department', 1)) }}
+                <div class="sp-input-container">
+                    {{ department.name }}
+                    {{ form_hidden('department', department.id) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('status', Lang.choice('general.status', 1)) }}
+                <div class="sp-input-container">
+                    {{ form_select('status', statuses, Config.get('settings.default_open_status'), {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('priority', Lang.choice('ticket.priority', 1)) }}
+                <div class="sp-input-container">
+                    {{ form_select('priority', priorities) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('select', Lang.choice('ticket.tag', 2)) }}
+                <div class="sp-input-container">
+                    <select name="tag[]" multiple="multiple">
+                        {% for tag in tags %}
+                            <option value='{{ tag.name }}' data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                {{ tag.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('assignedto[]', Lang.get('ticket.assigned_to')) }}
+                <div class="sp-input-container">
+                    <select name="assignedto[]" multiple="multiple">
+                        {% for operator in departmentOperators %}
+                            <option {% if operator.id in department.default_assignedto %}selected="selected"{% endif %}
+                                data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
+                                {{ operator.formatted_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('ticket.enter_subject_message') }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('subject', Lang.get('ticket.subject')) }}
+                <div class="sp-input-container">
+                    {{ form_text('subject') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('text', Lang.choice('general.message', 1)) }}
+                <div class="sp-input-container">
+                    <div class="recipients">
+                        <div class="sp-simplified-recipients sp-px-3 sp-py-1 sp-cursor-pointer">
+                            <div class="sp-truncate">
+                                <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.from') }}</span>
+                                {{ fromEmails|first }}
+                            </div>
+                            <div class="sp-truncate">
+                                <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.to') }}</span>
+                                <ul class="sp-recipients-list">
+                                    <!--
+                                    {% for user in toEmails %}
+                                        {# We hide operators that aren't currently emailed, but if they're added to the assigned list then we'll show them #}
+                                        --><li class="{% if internal %}operator operator-{{ user.id }}{% endif %} {% if internal and (defaultAssigned is not empty and user.id not in defaultAssigned) %}sp-hidden{% endif %}">
+                                            {{ user.formatted_name }}
+                                            {% if user.email is not empty %}&lt;{{ user.email }}&gt;{% endif %}<!--
+                                        --></li><!--
+                                    {% endfor %}
+                                    -->
+                                </ul>
+                            </div>
+                            {% if organisationEmails is not empty %}
+                                <div class="sp-truncate">
+                                    <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.cc') }}</span>
+                                    {{ organisationEmails.join(', ') }}
+                                </div>
+                            {% elseif not internal %}
+                                <a class="add-cc sp-text-secondary">{{ Lang.get('ticket.add_cc') }}</a>
+                            {% endif %}
+                        </div>
+                        <div class="sp-full-recipients sp-table sp-w-full sp-hidden">
+                            <div class="sp-table-row">
+                                <div class="sp-table-cell">{{ Lang.get('ticket.from') }}</div>
+                                <div class="sp-table-cell" id="fromAddress">
+                                    {{ form_select('department_email', fromEmails) }}
+                                </div>
+                            </div>
+                            <div class="sp-table-row">
+                                <div class="sp-table-cell">{{ Lang.get('ticket.to') }}</div>
+                                <div class="sp-table-cell">
+                                    <ul class="sp-recipients-list">
+                                        <!--
+                                        {% for user in toEmails %}
+                                            {# We hide operators that aren't currently emailed, but if they're added to the assigned list then we'll show them #}
+                                            --><li class="{% if internal %}operator operator-{{ user.id }}{% endif %} {% if internal and (defaultAssigned is not empty and user.id not in defaultAssigned) %}sp-hidden{% endif %}">
+                                                {{ user.formatted_name }}
+                                                {% if user.email is not empty %}&lt;{{ user.email }}&gt;{% endif %}<!--
+                                            --></li><!--
+                                        {% endfor %}
+                                        -->
+                                    </ul>
+                                </div>
+                            </div>
+                            {% if not internal %}
+                                <div class="sp-table-row cc-emails">
+                                    <div class="sp-table-cell">{{ Lang.get('ticket.cc') }}</div>
+                                    <div class="sp-table-cell" id="fromAddress">
+                                        <select name="cc[]" multiple="multiple">
+                                            {% for email in organisationEmails %}
+                                                <option selected="selected" data-data='{{ {'value': email, 'unremovable': true}|json_encode(constant('JSON_FORCE_OBJECT')) }}'
+                                                        value='{{ email }}'>
+                                                    {{ email }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="sp-redactor-rounded-t-none">
+                        {{ form_redactor('text', signature is not empty ? '<br /><br />' ~ signature : null) }}
+                    </div>
+
+                    {% include 'operator.' ~ template ~ '.core.forms.attachments' with {
+                        'route': 'ticket.operator.attachment',
+                        'downloadRoute': 'ticket.operator.attachment.download',
+                        'attachments': [],
+                        'deleteFromServer': link_message|default is not empty ? false : true
+                    }
+                    %}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                <label></label>
+                <div class="sp-input-container">
+                    {% if not internal %}
+                        <div>
+                            <label>
+                                {{ form_check('send_user_email', 1, operator.default_reply_options['send_email_to_users'],
+                                    department.getUserEmailTemplate('ticket_opened') == -1 ? {'disabled': 'disabled'} : {}) }}
+                                {{ Lang.get('ticket.send_email_to_users') }}
+                            </label>
+                        </div>
+                    {% endif %}
+                    <div {% if not internal %}class="sp-mt-4"{% endif %}>
+                        <label>
+                            {{ form_check('send_operators_email', 1, internal ? 1 : department.notify_operators,
+                                (internal and department.getOperatorEmailTemplate('internal_opened') == -1)
+                            or (not internal and department.getOperatorEmailTemplate('ticket_opened') == -1) ? {'disabled': 'disabled'} : {}) }}
+                            {{ Lang.get('ticket.send_email_to_operators') }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1), { 'id': 'submitNewTicket' }) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        // Routes
+        var embedImageRoute = laroute.route('core.embed.image');
+
+        // Tag permissions (for newticket.js).
+        var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
+
+        // Global variables for redactor plugins
+        var ticketId = null,
+            userId = {{ user.id }},
+            brandId = {{ brand.id }},
+            operatorId = {{ auth_user().id }},
+            internal = {{ internal }},
+            userLanguage = "{{ user.languageOrDefault() }}",
+            allLanguages = {{ languages|sort|json_encode()|raw }};
+    </script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Attachments JS -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script type="text/javascript">
+        new FileUpload();
+    </script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+
+    <script type="text/javascript">
+        // Initialise redactor.
+        var cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
+
+        var redactor_config = {
+            groups: $R.options.groups.concat(['sp-image']),
+            plugins: ['sp-cannedresponses',{% if isModuleEnabled('Selfservice') %}'sp-selfservice'{% endif %}].concat($R.options.plugins)
+        };
+
+        $(document).ready(function() {
+            $('textarea[name="text"]').redactor(redactor_config);
+        });
+    </script>
+
+    <!-- Custom fields -->
+    <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+
+            // Date picker
+            $('.datepicker').datepicker();
+        });
+    </script>
+{% endblock %}

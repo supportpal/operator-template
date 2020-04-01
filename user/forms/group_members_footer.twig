@@ -1,0 +1,10 @@
+<tr>
+    <td class="grid-options" colspan="{{ totalColumns }}">
+        <div class="sp-flex">
+            <div class="sp-flex-grow">{{ form_select('add-user') }}</div>
+            <div class="sp-flex-none sp-pl-3">
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.choice('user.user', 1)}), { 'class': 'add-user' }) }}
+            </div>
+        </div>
+    </td>
+</tr>

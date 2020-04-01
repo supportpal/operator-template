@@ -1,0 +1,42 @@
+<div class="sp-title sp-flex sp-items-center">
+    <div class="sp-flex-grow">
+        {{ Lang.get('ticket.linked_tickets') }}
+    </div>
+    {% if can_update_ticket(auth_user(), ticket) %}
+        <div class="sp-flex-none sp-ml-1">
+            <a class="add-link sp-button sp-button-sm">
+                {{ Lang.get('general.add_link') }}
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="sp-detail">
+    <ul class="linked-tickets {% if ticket.linked is not empty %}sp-mt-1{% endif %} sp-font-normal">
+        {% for linkedTicket in ticket.linked %}
+            <li>
+                <div class="sp-flex sp-items-center">
+                    <div class="sp-flex-grow sp-truncate">
+                        <i class="fas fa-circle" style="color: {{ linkedTicket.status.colour }};"
+                           title="{{ linkedTicket.status.name }}"></i>&nbsp;
+                        <a href="{{ route('ticket.operator.ticket.show', [ linkedTicket.id ]) }}" target="_blank">
+                            {{ linkedTicket.subject }}
+                        </a>
+                    </div>
+                    {% if can_update_ticket(auth_user(), ticket) %}
+                        <div class="sp-flex-none sp-ml-1">
+                            <a title="{{ Lang.get('general.unlink') }}" class="unlink sp-button sp-button-sm sp-text-xs"
+                               data-route="{{ route('ticket.operator.action.unlink') }}" data-id="{{ linkedTicket.id }}">
+                                <i class="fas fa-unlink"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="sp-description sp-text-xs sp-truncate">
+                    {% if linkedTicket.trashed() %}<i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
+                    {{ linkedTicket.user.formatted_name }} &nbsp;&middot;&nbsp; {{ timeago(linkedTicket.created_at) }}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

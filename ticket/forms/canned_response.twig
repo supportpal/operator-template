@@ -1,0 +1,179 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.cannedresponse', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.cannedresponse', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': ['ticket.operator.cannedresponse.update', record.id], 'method': 'PUT', 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': 'ticket.operator.cannedresponse.store', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div id="sectionWrapper">
+
+            <h2>{{ Lang.choice('ticket.response', 2) }}</h2>
+
+            <div class="sp-subtitle-description">{{ Lang.get('ticket.response_desc') }}</div>
+
+            {# Required by multidimensionaldata.js #}
+            <div class="sp-tab-content">
+
+                {# Hidden option for multidimensionaldata.js #}
+                {% include 'operator.' ~ template ~ '.ticket.forms.canned_response_translation' with {'hide': true} %}
+
+                <div class="section-items">
+                    {# Default response #}
+                    <div class="sp-form-container">
+                        {% if record.exists %}
+                            <div class="sp-form-row">
+                                {{ form_label('mergefield', Lang.get('operator.merge_field')) }}
+                                <div class="sp-input-container">
+                                    {{ '{{ ' ~ merge_field_key ~ '.' ~ record.hash ~ '|raw }}' }}
+                                    <div class="sp-description">{{ Lang.get('operator.response_merge_field') }}</div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {%
+                            include 'operator.' ~ template ~ '.ticket.forms.canned_response_rows'
+                            with {
+                                'elements': {
+                                    'name': { 'name': 'name', 'value': record.getOriginal('name'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'text': { 'name': 'text', 'value': record.getOriginal('text') }
+                                }
+                            }
+                        %}
+                    </div>
+
+                    {# Existing Translations #}
+                    {% for translation in translations %}
+                        {% include 'operator.' ~ template ~ '.ticket.forms.canned_response_translation' %}
+                    {% endfor %}
+                </div>
+
+                <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                    <div class="sp-form-row">
+                        <label></label>
+                        <div class="sp-input-container">
+                            <select name="languages" title="{{ Lang.get('core.add_another_language') }}" class="add-item-selectize">
+                                <option></option>
+                                {% for code, name in availableLanguages %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('customfield.options') }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('select', Lang.choice('ticket.tag', 2)) }}
+                <div class="sp-input-container">
+                    <select name="tag[]" multiple="multiple">
+                        {% for tag in tags %}
+                            <option {% if record|default is not empty and record.tags.contains('id', tag.id) %}selected="selected"{% endif %} value='{{ tag.original_name }}'>
+                                {{ tag.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="sp-description">{{ Lang.get('ticket.canned_response_tags_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('public', Lang.get('general.public')) }}
+                <div class="sp-input-container">
+                    {{ form_check('public', 1, record.user_id|default is empty, {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                    <label for="toggle_public"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.record_public_desc', { 'record': mb_strtolower(Lang.choice('ticket.cannedresponse', 1)) }) }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full usergroups">
+                {{ form_label('groups', Lang.choice('user.operator_group', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('groups[]', groups, userGroups, {'multiple': 'multiple'}) }}
+                    <div class="sp-description">{{ Lang.get('ticket.record_group_desc', { 'record': mb_strtolower(Lang.choice('ticket.cannedresponse', 1)) }) }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/visibility.js') }}"></script>
+    <script type="text/javascript">
+        // List of valid translatable attributes.
+        var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
+
+        // Redactor options.
+        var opts = {
+            mergeFields: {
+                tickets: true,
+                organisations: '{{ Config.get('settings.organisations_enabled') }}',
+                canned_responses: false
+            },
+            groups: $R.options.groups.concat(['sp-image']),
+            plugins: ['sp-mergefields'].concat($R.options.plugins)
+        };
+
+        // Custom attribute mapper for multidimensionaldata.js
+        attributeMapper = function(elem, value, attribute) {
+            var attr = elem.attr(attribute);
+            if (typeof attr !== 'undefined')
+                elem.attr(attribute, translatableAttributes[value][attr.replace(':default', '')]);
+        };
+
+        $(document).ready(function() {
+            $('div.section-items textarea').redactor(opts);
+
+            // Tags
+            $('select[name="tag[]"]').selectize({
+                plugins: ['remove_button'],
+                valueField: 'original_name',
+                labelField: 'name',
+                searchField: 'name',
+                create: true,
+                createFilter: function(input) {
+                    return input.length <= 45;
+                },
+                maxItems: null,
+                placeholder: Lang.get("ticket.associate_response_tag")
+            });
+        });
+    </script>
+{% endblock %}

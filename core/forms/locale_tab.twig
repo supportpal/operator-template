@@ -1,0 +1,38 @@
+<div class="sp-form-row">
+    {{ form_label('default_country', Lang.get('core.default_user_country')) }}
+    <div class="sp-input-container">
+        {{ form_select('default_country', (record|default is not empty and record.default_brand is empty ?
+            {'default': Lang.get('general.system_default')} : {}) + countries()) }}
+        <div class="sp-description">{{ Lang.get('core.default_user_country_desc') }}</div>
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('default_timezone', Lang.get('core.system_timezone')) }}
+    <div class="sp-input-container">
+        {{ form_select('default_timezone', (record|default is not empty and record.default_brand is empty ?
+            {'default': Lang.get('general.system_default')} : {}) + timezones()) }}
+        <div class="sp-description">{{ record|default is not empty ?
+            Lang.get('core.brand_timezone_desc') : Lang.get('core.system_timezone_desc') }}</div>
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('date_format', Lang.get('core.date_format')) }}
+    <div class="sp-input-container">
+        {{ form_select('date_format', (record|default is not empty and record.default_brand is empty ?
+            {'default': Lang.get('general.system_default')} : {}) + date_formats(fields.default_timezone)) }}
+        <div class="sp-description">{{ record|default is not empty ?
+            Lang.get('core.brand_date_format_desc') : Lang.get('core.date_format_desc') }}</div>
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('time_format', Lang.get('core.time_format')) }}
+    <div class="sp-input-container">
+        {{ form_select('time_format', (record|default is not empty and record.default_brand is empty ?
+            {'default': Lang.get('general.system_default')} : {}) + time_formats(fields.default_timezone)) }}
+        <div class="sp-description">{{ record|default is not empty ?
+            Lang.get('core.brand_time_format_desc') : Lang.get('core.time_format_desc') }}</div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+    <div class="sp-form-row">
+        {{ form_label('organisation', Lang.choice('user.organisation', 1)) }}
+        <div class="sp-input-container">
+            {{ form_select('organisation', organisations, userOrganisation|default is not empty ? userOrganisation.id : null) }}
+
+            {% if record.exists and userOrganisation|default is not empty %}
+                <div class="sp-mt-3">
+                    <a class="view-organisation sp-button" href="{{ route('user.operator.organisation.edit', userOrganisation.id) }}" target="_blank">
+                        {{ Lang.get('user.view_organisation') }}
+                    </a>
+                </div>
+            {% endif %}
+
+            <input type="hidden" name="organisation_id" {% if userOrganisation|default is not empty %}value="{{ userOrganisation.id }}"{% endif %} />
+        </div>
+    </div>
+
+    <div class="sp-form-row access-level">
+        {{ form_label('organisation_access_level', Lang.get('user.access_level')) }}
+        <div class="sp-input-container">
+            {{ form_select(
+                'organisation_access_level',
+                {
+                    0: Lang.get('user.manager'),
+                    1: Lang.choice('user.user', 1)
+                },
+                userOrganisation|default is not empty ? record.organisation_access_level : '',
+                userOrganisation|default is not empty and userOrganisation.owner_id == record.id ? {'disabled': 'disabled'} : {}
+            ) }}
+            <div class="sp-description">
+                {{ Lang.get('user.access_level_desc')|raw }}
+                {% if userOrganisation|default is not empty and userOrganisation.owner_id == record.id %}
+                    <br />{{ Lang.get('user.access_level_not_owner') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-form-row organisation-notifications {% if userOrganisation|default is empty or record.organisation_access_level == 1 %}sp-hidden{% endif %}">
+        {{ form_label('organisation_notifications', Lang.get('user.notifications')) }}
+        <div class="sp-input-container">
+            {{ form_check('organisation_notifications', 1, record.organisation_notifications|default is not empty ?
+                record.organisation_notifications : Config.get('settings.organisation_notifications'),
+                {'class': 'sp-toggle', 'id': 'toggle_organisation_notifications'}) }}
+            <label for="toggle_organisation_notifications"></label>
+            <div class="sp-description">
+                {{ Lang.get('user.manager_email_notifications_desc') }}
+            </div>
+        </div>
+    </div>

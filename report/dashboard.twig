@@ -1,0 +1,95 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+	{% include 'operator.' ~ template ~ '.report.sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('report.reports_dashboard') }}
+{% endblock %}
+
+{% block content %}
+
+	<hr />
+
+	<div class="sp-flex sp-flex-wrap sp-text-center">
+		<div class="sp-w-full sm:sp-w-1/3">
+			<div class="sp-text-3xl sp-text-red-600">{{ stats.tickets }}</div>
+			{{ Lang.get('report.tickets_opened') }}
+		</div>
+		<div class="sp-w-full sp-my-4 sm:sp-w-1/3 sm:sp-my-0 sm:sp-border-l sm:sp-border-r sm:sp-border-secondary">
+			<div class="sp-text-3xl sp-text-blue-600">{{ stats.confirmed_users }}</div>
+			{{ Lang.get('report.confirmed_users') }}
+		</div>
+		<div class="sp-w-full sm:sp-w-1/3">
+			<div class="sp-text-3xl sp-text-green-600">{{ stats.total_users }}</div>
+			{{ Lang.get('report.total_users') }}
+		</div>
+	</div>
+
+	<hr />
+
+	<h2 class="sp-text-center">{{ Lang.get('report.daily_stats') }}</h2>
+
+	<div id="chartView" class="sp-w-full sp-h-96 md:sp-h-128"></div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+	<script type="text/javascript">
+	    // Load charts
+		google.charts.load('45', {packages: ['corechart']});
+		google.charts.setOnLoadCallback(drawChart);
+
+	    function drawChart() {
+	        try {
+	            var chartData = google.visualization.arrayToDataTable({{ dailyStats|raw }}),
+					chart = new google.visualization.AreaChart(document.getElementById('chartView')),
+					colour = spCssVarThemes.dark['--color-text-primary'],
+					chartTextStyle = $('body').hasClass('sp-theme-dark') ? {color: colour} : {},
+					options = {
+						legend: { position: 'bottom' },
+						chartArea:{left:"8%",top:"5%",width:"87%",height:"80%"},
+						isStacked: true,
+						backgroundColor: { fill:'transparent' },
+						vAxis: {
+							textStyle: chartTextStyle,
+							titleTextStyle: chartTextStyle,
+							baselineColor: colour,
+							gridlines: {
+								color: colour
+							}
+						},
+						hAxis: {
+							textStyle: chartTextStyle,
+							titleTextStyle: chartTextStyle,
+							baselineColor: colour,
+							gridlines: {
+								color: colour
+							}
+						},
+						legend:{
+							textStyle: chartTextStyle,
+							position: "bottom"
+						}
+					};
+
+	            // Draw chart
+	            chart.draw(chartData, options);
+	        } catch(err) {
+	            // Nothing to do here...
+	        }
+	    }
+
+	    $(document).ready(function() {
+	        // Draw the chart
+	        drawChart();
+
+			$(window).on('resize', function() {
+				drawChart();
+			});
+	    });
+	</script>
+{% endblock %}

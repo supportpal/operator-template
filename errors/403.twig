@@ -1,0 +1,15 @@
+{% extends 'operator.' ~ template ~ '.index' %}
+
+{% block title %}
+    403 - {{ Lang.get('messages.forbidden') }}
+{% endblock %}
+
+{% block content %}
+    <div class="sp-alert sp-alert-error sp-alert-with-icon">
+        <i class="sp-alert-icon fas fa-ban"></i>
+        <div class="sp-alert-content">
+            <strong>{{ Lang.get('messages.error') }}!</strong><br />
+            {{ Lang.get('messages.not_permitted') }}
+        </div>
+    </div>
+{% endblock %}

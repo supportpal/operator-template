@@ -1,0 +1,37 @@
+<div class="sp-translatable-modal sp-absolute sp-w-full sp-mt-1 sp-bg-primary sp-rounded sp-shadow sp-z-50 sp-hidden">
+    <div class="sp-modal-content sp-p-3 sp-pt-3/2 sp-overflow-auto" style="max-height: 240px;">
+        <div class="sp-no-translations sp-pt-3/2 {% if all.existing|length %}sp-hidden{% endif %}">
+            {{ Lang.get('core.no_existing_translations') }}
+        </div>
+
+        <div class="sp-translations {% if not all.existing|length %}sp-hidden{% endif %}">
+            {% for key, translations in all %}
+                <div class="{{ key }}-translations">
+                    {% for translation in translations %}
+                        <div class="sp-translation sp-pt-3/2 {% if key == 'missing' %}sp-hidden{% endif %}"
+                                data-locale="{{ translation.locale }}"
+                                data-display-name="{{ translation.display_name }}">
+                            <label for="{{ translation.input_name }}" class="sp-block sp-mb-1 sp-font-bold">
+                                <span>{{ translation.display_name }}</span>
+                                <i class="fas fa-times sp-remove-translation sp-float-right sp-my-1 sp-text-red-600 hover:sp-cursor-pointer" aria-hidden="true"></i>
+                            </label>
+                            <input name="{{ translation.input_name }}" type="text" value="{{ translation.value }}"
+                                 {% if key == 'missing' %}disabled="disabled"{% endif %} autocomplete="off" />
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sp-p-3 sp-pt-0 {% if all.missing|length == 0 %}sp-hidden{% endif %}">
+        <select name="sp-translation-add">
+            <option value>{{ Lang.get('core.add_translation') }}...</option>
+            {% for data in all.missing %}
+                <option value='{{ data.locale }}' data-data="{{ data|json_encode(constant('JSON_FORCE_OBJECT')) }}">
+                    {{ data.display_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

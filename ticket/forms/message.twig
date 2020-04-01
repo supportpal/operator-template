@@ -1,0 +1,219 @@
+{% if not ticket.channel.enabled %}
+    <div class="sp-alert sp-alert-error {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-alert-bottom{% endif %}">
+        {{ Lang.get('ticket.channel_deactivated') }}
+    </div>
+{% elseif ChannelFactory.getChannel(ticket.channel.name).requiresAccount and (not ticket.account or not ticket.account.active) %}
+    <div class="sp-alert sp-alert-error {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-alert-bottom{% endif %}">
+        {{ Lang.get('ticket.channel_account_removed') }}
+    </div>
+{% else %}
+    <form class="ticket-reply-form message-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+        {{ form_hidden('reply_type', 0) }}
+
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
+
+            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+                {{ form_hidden('ticket_id', ticketId) }}
+                {{ form_hidden('reply_all', 1) }}
+
+                {% if ticket.department_email_id is not empty %}
+                    <div class="recipients {% if not ticket.internal and (organisationEmails is not empty or ticket.cc is not empty) %}with-cc{% endif %}">
+                        <div class="sp-flex">
+                            <div class="reply-all sp-flex-none {% if ticket.internal or (organisationEmails is empty and ticket.cc is empty) %}sp-hidden{% endif %}">
+                                <div class="sp-dropdown-container">
+                                    <a class="sp-action sp-button sp-button-sm sp-px-2 sp-m-1">
+                                        <i class="sp-icon fas fa-fw fa-reply-all" aria-hidden="true"></i>
+                                        <i class="fas fa-chevron-down sp-text-tertiary sp-text-xs"></i>
+                                    </a>
+                                    <div class="sp-dropdown sp-ml-1">
+                                        <ul>
+                                            <li class="sp-dropdown-item sp-selected" data-value="1">
+                                                <i class="fas fa-fw fa-reply-all" aria-hidden="true"></i>&nbsp;
+                                                {{ Lang.get('ticket.reply_all') }}
+                                            </li>
+                                            <li class="sp-dropdown-item" data-value="0">
+                                                <i class="fas fa-fw fa-reply" aria-hidden="true"></i>&nbsp;
+                                                {{ Lang.get('ticket.reply_without_cc') }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sp-flex-grow sp-overflow-hidden">
+                                <div class="sp-simplified-recipients sp-p-2 sp-pl-1 sp-truncate sp-cursor-pointer">
+                                    <span class="sp-px-2 sp-text-secondary
+                                        {% if not ticket.internal and (organisationEmails is not empty and ticket.cc is not empty) %}sp-hidden{% endif %}">
+                                        {{ Lang.get('ticket.to') }}
+                                    </span>
+
+                                    <span class="sp-reply-recipients sp-hidden">
+                                        {{ toEmails.join(', ') }}
+                                    </span>
+                                    <span class="sp-reply-all-recipients">
+                                        {{ toEmails.concat(organisationEmails).concat(ticket.cc).join(', ') }}
+                                    </span>
+                                </div>
+
+                                <div class="sp-full-recipients sp-table sp-w-full sp-hidden">
+                                    <div class="sp-table-row">
+                                        <div class="sp-table-cell">{{ Lang.get('ticket.from') }}</div>
+                                        <div class="sp-table-cell">{{ form_select('department_email', fromEmails, ticket.department_email_id) }}</div>
+                                    </div>
+                                    <div class="sp-table-row">
+                                        <div class="sp-table-cell">{{ Lang.get('ticket.to') }}</div>
+                                        <div class="sp-table-cell to-emails">{{ toEmails.join(', ') }}</div>
+                                    </div>
+                                    {% if not ticket.internal %}
+                                        <div class="sp-table-row cc-emails ">
+                                            <div class="sp-table-cell">{{ Lang.get('ticket.cc') }}</div>
+                                            <div class="sp-table-cell">
+                                                <select name="cc[]" multiple="multiple">
+                                                    {% for email in organisationEmails %}
+                                                        <option selected="selected" value='{{ email }}'
+                                                                data-data='{{ {'value': email, 'unremovable': true}|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                            {{ email }}
+                                                        </option>
+                                                    {% endfor %}
+                                                    {% for email in ticket.cc %}
+                                                        <option selected="selected" value='{{ email }}'>{{ email }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
+                    'redactorClasses': 'sp-redactor-rounded-none',
+                    'redactorText': draft|default is not empty ? draft.text : (signature is not empty ? '<br /><br />' ~ signature : null),
+                    'textareaId': 'newMessage'
+                } %}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {'ticket': ticket, 'message': draft} %}
+            </div>
+
+            {% include 'operator.' ~ template ~ '.ticket.forms.message_reply_options' with {'note': false} %}
+        </div>
+
+        {% include 'operator.' ~ template ~ '.ticket.forms.message_submit' with {'submit_name': Lang.get('ticket.post_reply')} %}
+    </form>
+
+    <form class="ticket-reply-form notes-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+        {{ form_hidden('reply_type', 1) }}
+
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
+            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+                {{ form_hidden('ticket_id', ticketId) }}
+                {{ form_hidden('reply_all', 1) }}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
+                    'redactorClasses': 'sp-redactor-rounded-b-none sp-redactor-bg-orange',
+                    'redactorText': draft_note|default is not empty ? draft_note.text : null,
+                    'textareaId': 'newNote',
+                    'allow_attachments': true,
+                    'draft': draft_note
+                } %}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {'ticket': ticket, 'message': draft_note, 'allow_attachments': true} %}
+            </div>
+
+            {% include 'operator.' ~ template ~ '.ticket.forms.message_reply_options' with { 'note': true } %}
+        </div>
+
+        {% include 'operator.' ~ template ~ '.ticket.forms.message_submit' with {'submit_name': Lang.get('ticket.post_note')} %}
+    </form>
+
+    <form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+        {{ form_hidden('reply_type', 2) }}
+
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
+            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+                {{ form_hidden('ticket_id', ticketId) }}
+                {{ form_hidden('reply_all', 1) }}
+
+                <div class="recipients sp-table sp-w-full">
+                    <div class="sp-table-row">
+                        <div class="sp-table-cell">{{ Lang.get('ticket.from') }}</div>
+                        <div class="sp-table-cell">
+                            {{ form_select('from_address', fromEmails + {'me': auth_user().formatted_name ~ ' <' ~ auth_user().email ~ '>'},
+                                draft_forward is not empty ? draft_forward.extra.from_address : ticket.department_email_id)
+                            }}
+                        </div>
+                    </div>
+                    <div class="sp-table-row">
+                        <div class="sp-table-cell">{{ Lang.get('ticket.to') }}</div>
+                        <div class="sp-table-cell sp-relative">
+                            <span class="sp-absolute sp-right-0 sp-px-2 sp--mt-7 sp-z-10 sm:sp-px-4 sm:sp-py-2 sm:sp-mt-0">
+                                {% if draft_forward is empty or draft_forward.extra.cc_address is empty %}
+                                    <a class="add-cc sp-text-secondary">{{ Lang.get('ticket.add_cc') }}</a>
+                                {% endif %}
+                                {% if draft_forward is empty or draft_forward.extra.bcc_address is empty %}
+                                    <a class="add-bcc sp-ml-2 sp-text-secondary">{{ Lang.get('ticket.add_bcc') }}</a>
+                                {% endif %}
+                            </span>
+
+                            <select name="to_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.to_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sp-table-row cc-emails {% if draft_forward is empty or draft_forward.extra.cc_address is empty %}sp-hidden{% endif %}">
+                        <div class="sp-table-cell">{{ Lang.get('ticket.cc') }}</div>
+                        <div class="sp-table-cell">
+                            <select name="cc_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.cc_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sp-table-row bcc-emails {% if draft_forward is empty or draft_forward.extra.bcc_address is empty %}sp-hidden{% endif %}">
+                        <div class="sp-table-cell">{{ Lang.get('ticket.bcc') }}</div>
+                        <div class="sp-table-cell">
+                            <select name="bcc_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.bcc_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sp-table-row">
+                        <div class="sp-table-cell">{{ Lang.get('ticket.subject') }}</div>
+                        <div class="sp-table-cell">
+                            {{ form_text('subject', draft_forward is not empty ? draft_forward.extra.subject : 'FW: ' ~ ticket.subject,
+                                {'class': 'sp-w-full'}) }}
+                        </div>
+                    </div>
+                </div>
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
+                    'redactorClasses': 'sp-redactor-rounded-none sp-redactor-bg-purple',
+                    'redactorText': draft_forward is not empty ? draft_forward.text : null,
+                    'textareaId': 'newForward',
+                    'allow_attachments': cumulative_attachment_limit != 0,
+                    'draft': draft_forward
+                } %}
+
+                {% if cumulative_attachment_limit != 0 %}
+                    {% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {'ticket': ticket, 'message': draft_forward, 'allow_attachments': true} %}
+                {% endif %}
+            </div>
+
+            {% include 'operator.' ~ template ~ '.ticket.forms.message_reply_options' with {'forward': true} %}
+        </div>
+
+        {% include 'operator.' ~ template ~ '.ticket.forms.message_submit' with {'submit_name': Lang.get('ticket.forward')} %}
+    </form>
+{% endif %}

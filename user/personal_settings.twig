@@ -1,0 +1,92 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('user.personal_settings') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.personal_settings_desc') }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(record, { 'method': 'PUT', 'route': [ 'user.operator.personalsetting.update' ], 'files': true, 'class': 'validate' }) }}
+
+        <ul class="sp-tabs">
+            <li id="Profile" class="sp-active">
+                <a>{{ Lang.get('user.profile') }}</a>
+            </li>
+            {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
+                <li id="ChangePassword">
+                    <a>{{ Lang.get('user.change_password') }}</a>
+                </li>
+            {% endif %}
+            {% if isModuleEnabled('Ticket') %}
+                <li id="Ticket">
+                    <a>{{ Lang.get('ticket.settings') }}</a>
+                </li>
+            {% endif %}
+            <li id="Notifications">
+                <a>{{ Lang.get('user.notifications') }}</a>
+            </li>
+        </ul>
+
+        <div id="tabProfile" class="sp-tab-content">
+            {% set profileParameters = {'operator': true, 'showPassword': false} %}
+            {% include 'operator.' ~ template ~ '.user.forms.operator_profile' with profileParameters %}
+        </div>
+
+        {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
+            <div id="tabChangePassword" class="sp-tab-content sp-hidden">
+                <div class="sp-form-row">
+                    {{ form_label('current_password', Lang.get('user.current_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('current_password', {'autocomplete': 'off'}) }}
+                        <div class="sp-description">{{ Lang.get('user.personal_confirm_password') }}</div>
+                    </div>
+                </div>
+
+                <div class="sp-form-row password-field">
+                    {{ form_label('password', Lang.get('user.new_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('password', {'autocomplete': 'new-password'}) }}
+                    </div>
+                </div>
+
+                <div class="sp-form-row password-field">
+                    {{ form_label('password_confirmation', Lang.get('user.confirm_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('password_confirmation', {'autocomplete': 'new-password'}) }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div id="tabTicket" class="sp-tab-content sp-hidden">
+            {% include 'operator.' ~ template ~ '.user.forms.operator_ticket_settings' %}
+        </div>
+
+        <div id="tabNotifications" class="sp-tab-content sp-hidden">
+            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' %}
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.get('general.save'), { 'id': 'saveGeneralSettings' }) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+        });
+    </script>
+{% endblock %}

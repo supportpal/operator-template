@@ -1,0 +1,16 @@
+{% set attributes = hide|default is not empty ? { 'disabled': 'disabled' } : [] %}
+
+<div class="sp-form-row">
+    {{ form_label(elements.name.name, Lang.get('general.name')) }}
+    <div class="sp-input-container">
+        {% set nameAttributes = { 'size': 45 }|merge(attributes) %}
+        {{ form_text(elements.name.name, elements.name.value, elements.name.attributes ? nameAttributes|merge(elements.name.attributes) : nameAttributes) }}
+    </div>
+</div>
+
+<div class="sp-form-row sp-form-full">
+    {{ form_label(elements.text.name, Lang.choice('ticket.response', 1)) }}
+    <div class="sp-input-container">
+        {{ form_redactor_mf(elements.text.name, elements.text.value, attributes) }}
+    </div>
+</div>

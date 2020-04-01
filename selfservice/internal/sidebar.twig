@@ -1,0 +1,59 @@
+<div class="sp-sidebox">
+    <form name="search" action="{{ route('selfservice.operator.internal.search', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}" method="get">
+        <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." class="sp-w-full" />
+    </form>
+</div>
+
+{% if categories is not empty and not categories.isEmpty() %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex">
+            <div class="sp-icon">
+                <i class="fas fa-folder"></i>
+            </div>
+            <h3>{{ Lang.choice('selfservice.category', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul>
+            {% for category in categories %}
+                <li>
+                    <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">
+                        {% if category.count is not empty %}
+                            <span class="sp-badge sp-float-right">{{ category.count }}</span>
+                        {% endif %}
+                        <div class="list-item {% if currentCategory is not empty and currentCategory == category.id %}sp-font-bold{% endif %}">
+                            {% if category.dashes is not empty %}{{ category.dashes|raw }}&nbsp;{% endif %}
+                            {{ category.name }}
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% if tags is not empty and not tags.isEmpty() %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex">
+            <div class="sp-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+            <h3>{{ Lang.choice('selfservice.tag', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul>
+            {% for tag in tags %}
+                <li>
+                    <a class="sp-tag" href="{{ route('selfservice.operator.internal.tag', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': tag.slug}) }}">
+                        {{ tag.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

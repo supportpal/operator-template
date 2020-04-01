@@ -1,0 +1,125 @@
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.feedback_form', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.feedback_form', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ routePrefix ~ '.update', record.id ], 'method': 'PUT', 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': routePrefix ~ '.store', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                </div>
+            </div>
+
+            {% block content_container_1 %}{% endblock content_container_1 %}
+
+        </div>
+
+        <h2>{{ Lang.get('ticket.form_conditions') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.form_conditions_desc') }}</div>
+
+        <div class="sp-form-container">
+            {% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
+
+            {% if oldGroups|default is not empty and oldGroups is not empty %}
+                {# In case there was an error and we're trying to show what they attempted to save #}
+                {% for groupId, group in oldGroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% else %}
+                {% for groupId, group in record.conditiongroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <div class="plan-conditiongroup-type sp-mb-3">
+                    {{ form_select('condition_group_type', { 0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group') },
+                        record.condition_group_type|default is not empty ? record.condition_group_type : 0) }}
+                </div>
+
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
+            </div>
+        </div>
+
+        <h2>{{ Lang.get('ticket.form_fields') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.form_fields_desc') }}</div>
+
+        <div class="sp-form-container">
+
+            <div class="sp--mx-6">
+                <table class="field-table sp-table-grid sp-mb-3 {% if oldFields is not defined and record.fields.isEmpty() %}sp-hidden{% endif %}">
+                    <thead>
+                        <tr>
+                            <th>{{ Lang.get('general.type') }}</th>
+                            <th>{{ Lang.get('general.name') }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% include 'operator.' ~ template ~ '.core.forms.feedback_form_field' with {'hide': true} %}
+
+                        {% if oldFields|default is not empty %}
+                            {# In case there was an error and we're trying to show what they attempted to save #}
+                            {% for field in oldFields %}
+                                {% include 'operator.' ~ template ~ '.core.forms.feedback_form_field' %}
+                            {% endfor %}
+                        {% else %}
+                            {% for field in record.fields %}
+                                {% include 'operator.' ~ template ~ '.core.forms.feedback_form_field' %}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.get('general.field')}), {'class': 'add-field'}) }}
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock content %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/formfield.js') }}"></script>
+{% endblock %}

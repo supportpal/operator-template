@@ -1,0 +1,8 @@
+<ul class="sp-tabs">
+    <li{% if not isWidgets %} class="sp-active"{% endif %}>
+        <a {% if isWidgets %} href="{{ route('core.operator.plugin.index') }}"{% endif %}>{{ Lang.choice('core.plugins', 2) }}</a>
+    </li>
+    <li{% if isWidgets %} class="sp-active"{% endif %}>
+        <a{% if not isWidgets %} href="{{ route('core.operator.widget.index') }}"{% endif %}>{{ Lang.choice('core.widget', 2) }}</a>
+    </li>
+</ul>

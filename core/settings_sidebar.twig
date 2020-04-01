@@ -1,0 +1,73 @@
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex {% if module != 'core' %}sp-closed{% endif %}" id="generalSettingsBox">
+        <div class="sp-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+        <h3>{{ Lang.get('general.general') }}</h3>
+        <div class="sp-chevron">
+            <i class="fas {% if module == 'core' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul {% if module != 'core' %}class="sp-hidden"{% endif %}>
+        {% if auth_user().hasPermission('view.apitoken') %}
+            <li {% if route starts with 'core.operator.apitoken' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.apitoken.index') }}">{{ Lang.choice('core.api_token', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.brand') %}
+            <li {% if route starts with 'core.operator.brand' %}class="sp-active"{% endif %} id="brandSettings">
+                <a href="{{ route('core.operator.brand.index') }}">{{ Lang.choice('core.brand', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.emailtemplate') %}
+            <li {% if route starts with 'core.operator.emailtemplate' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.emailtemplate.index') }}">{{ Lang.choice('core.email_template', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.coresetting') %}
+            <li {% if route starts with 'core.operator.generalsetting' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.generalsetting') }}">{{ Lang.get('general.generalsetting') }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ipban') %}
+            <li {% if route starts with 'core.operator.ipban' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.ipban.index') }}">{{ Lang.choice('core.ip_ban', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ipwhitelist') %}
+            <li {% if route starts with 'core.operator.ipwhitelist' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.ipwhitelist.index') }}">{{ Lang.get('core.ip_whitelist') }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.language') %}
+            <li {% if route starts with 'core.operator.language' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.language.index') }}">{{ Lang.choice('general.language', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.module') %}
+            <li {% if route starts with 'core.operator.module' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.module.index') }}">{{ Lang.choice('core.modules', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.scheduledtask') %}
+            <li {% if route starts with 'core.operator.scheduledtask' %}class="sp-active"{% endif %} id="scheduledTaskSetting">
+                <a href="{{ route('core.operator.scheduledtask.index') }}">{{ Lang.choice('core.scheduled_task', 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.spamrule') %}
+            <li {% if route starts with 'core.operator.spamrule' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.spamrule.index') }}">{{ Lang.choice("core.spam_rule", 2) }}</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

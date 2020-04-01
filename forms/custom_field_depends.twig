@@ -1,0 +1,20 @@
+{% set collapseDepends = record.dependsOn.field_id is empty %}
+
+<div class="sp-form-container {% if collapseDepends %}sp-collapsed{% endif %}">
+    <div class="sp-form-row sp-selectize-inline-block">
+        {{ form_label('depends_on_field_id', Lang.get('customfield.depends_on')) }}
+        <div class="sp-input-container">
+            <div class="{% if collapseDepends %}sp-hidden{% endif %}">
+                <div class="sp-mb-3">
+                    {{ form_select('depends_on_field_id', dependentFields, record.dependsOn.field_id, {'data-route': route}) }}
+                </div>
+
+                {% set disabled = dependendFieldOptions|length > 0 ? [] : {'disabled': 'disabled'} %}
+                <div>
+                    {{ form_select('depends_on_option_id', dependendFieldOptions, record.depends_on_option_id, disabled) }}
+                </div>
+            </div>
+            <div class="sp-description">{{ Lang.get('customfield.depends_on_desc') }}</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+{% set route = Route.currentRouteName() %}
+
+<ul class="sp-tabs">
+    <li {% if route == 'user.operator.organisation.edit' %} class="sp-active"{% endif %}>
+        <a href="{{ route('user.operator.organisation.edit', [ record.id ]) }}">
+            {{ Lang.get('user.profile') }}
+        </a>
+    </li>
+    <li {% if route == 'user.operator.organisation.user' %} class="sp-active"{% endif %}>
+        <a href="{{ route('user.operator.organisation.user', [ record.id ]) }}">
+            {{ Lang.choice('user.user', 2) }}
+        </a>
+    </li>
+    {% if isModuleEnabled('Ticket') %}
+        <li {% if route == 'user.operator.organisation.ticket' %} class="sp-active"{% endif %}>
+            <a href="{{ route('user.operator.organisation.ticket', [ record.id ]) }}">
+                {{ Lang.choice('ticket.ticket', 2) }}
+            </a>
+        </li>
+    {% endif %}
+</ul>

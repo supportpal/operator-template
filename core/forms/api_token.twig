@@ -1,0 +1,88 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('core.api_token', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('core.api_token', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'core.operator.apitoken.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'core.operator.apitoken.store', 'class': 'validate' }) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container">
+                    {{ form_text('name', null, {'autofocus': 'autofocus', 'size': 30}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('token', Lang.get('core.token')) }}
+                <div class="sp-input-container">
+                    {{ form_text('token', null, {'size': 40}) }}
+                    <div class="sp-mt-2">
+                        <a class="sp-button regenerate">{{ Lang.get('core.regenerate_token') }}</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                <label>{{ Lang.get('core.access_level') }}</label>
+                <div class="sp-input-container">
+                    <label>
+                        {{ form_radio('access', rw_access, true, {id: null}) }} {{ Lang.get('core.read_write')|raw }}
+                    </label><br />
+                    <label>
+                        {{ form_radio('access', r_access, {id: null}) }} {{ Lang.get('core.read_only') }}
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice("general.submit", 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        function randomString(length) {
+            var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!%&#=+?'
+            var result = '';
+            for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+            return result;
+        }
+
+        // Update token field
+        $(document).ready(function() {
+            if ($('input[name=token]').val() == '') {
+                $('input[name=token]').val(randomString(32));
+            }
+
+            $('.regenerate').on('click', function() {
+                $('input[name=token]').val(randomString(32));
+            });
+        });
+    </script>
+{% endblock %}

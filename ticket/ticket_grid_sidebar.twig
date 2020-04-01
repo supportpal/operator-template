@@ -1,0 +1,173 @@
+{% if filters is not empty and not filters.isEmpty() %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex" id="ticketFiltersSidebox">
+            <div class="sp-icon">
+                <i class="fas fa-filter"></i>
+            </div>
+            <h3>{{ Lang.choice('ticket.filter', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul class="filter-list tickets">
+            {% for filter in filters %}
+                <li>
+                    <a href="{{ route('ticket.operator.ticket') ~ '?filter=' ~ filter.id }}">
+                        <span class="sp-badge sp-ml-1 sp-float-right sp-hidden" data-id="{{ filter.id }}"></span>
+                        <div class="sp-truncate {% if Request.input('filter', 0) == filter.id|trim %}sp-font-bold{% endif %}">
+                            {{ filter.name }}
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+            <li>
+                <a href="{{ route('ticket.operator.trashed_tickets') }}" {% if Route.currentRouteName() == 'ticket.operator.trashed_tickets' %}class="sp-font-bold"{% endif %}>
+                    <i class="fas fa-trash"></i>&nbsp; {{ Lang.get('general.trash') }}
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endif %}
+
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex" id="ticketStatusesSidebox">
+        <div class="sp-icon">
+            <i class="fas fa-circle"></i>
+        </div>
+        <h3>{{ Lang.choice('general.status', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul class="status-list">
+        {% for status in obj_statuses %}
+            <li>
+                <a href="{{ route('ticket.operator.ticket') ~ '?status=' ~ status.id }}">
+                    <span class="sp-badge sp-ml-1 sp-float-right sp-hidden" data-id="{{ status.id }}"></span>
+                    <div class="sp-truncate {% if Request.input('status', 0) == status.id|trim %}sp-font-bold{% endif %}">
+                        <i class="fas fa-circle" style="color: {{ status.colour }};"></i>&nbsp;
+                        {{ status.name }}
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex" id="departmentsSidebox">
+        <div class="sp-icon">
+            <i class="fas fa-folder"></i>
+        </div>
+        <h3>{{ Lang.choice('ticket.department', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul class="department-list">
+        {% for department in obj_departments %}
+            <li>
+                <a href="{{ route('ticket.operator.ticket') ~ '?department=' ~ department.id ~ '&status=' ~ non_resolved_statuses }}">
+                    <span class="sp-badge sp-ml-1 sp-float-right sp-hidden" data-id="{{ department.id }}"></span>
+                    <div class="sp-truncate {% if Request.input('department', 0) == department.id|trim %}sp-font-bold{% endif %}">
+                        {% if department.dashes|default is not empty %}
+                            {{ department.dashes|raw }}{{ department.name|replace({ (department.dashes): '' }) }}
+                        {% else %}
+                            {{ department.name }}
+                        {% endif %}
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% if obj_brands|length > 1 %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex" id="brandsSidebox">
+            <div class="sp-icon">
+                <i class="fas fa-sitemap"></i>
+            </div>
+            <h3>{{ Lang.choice('core.brand', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul class="brand-list">
+            {% for brand in obj_brands %}
+                <li>
+                    <a href="{{ route('ticket.operator.ticket') ~ '?brand=' ~ brand.id }}">
+                        <span class="sp-badge sp-ml-1 sp-float-right sp-hidden" data-id="{{ brand.id }}"></span>
+                        <div class="sp-truncate {% if Request.input('brand', 0) == brand.id|trim %}sp-font-bold{% endif %}">
+                            {{ brand.name }}
+                        </div>
+                    </a>
+                </li>
+            {% else %}
+                {{ Lang.get('general.none') }}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex" id="ticketPrioritySidebox">
+        <div class="sp-icon">
+            <i class="fas fa-flag"></i>
+        </div>
+        <h3>{{ Lang.choice('ticket.priority', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <div class="priority-list">
+        {% for priority in obj_priorities %}
+            <a class="sp-tag" href="{{ route('ticket.operator.ticket') ~ '?priority=' ~ priority.id }}"
+               style="background-color: {{ priority.colour }}; color: {{ priority.colour_text }};">{{ priority.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if obj_tags is not empty and not obj_tags.isEmpty() %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex" id="ticketTagsSidebox">
+            <div class="sp-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+            <h3>{{ Lang.choice('ticket.tag', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <div class="tag-list">
+            {% for tag in obj_tags %}
+                <a class="sp-tag" href="{{ route('ticket.operator.ticket') ~ '?tag=' ~ tag['id'] }}"
+                    style="background-color: {{ tag['colour'] }}; color: {{ tag['colour_text'] }};">{{ tag['name'] }}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% if not recentActivity.isEmpty() %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex" id="recentActivitySidebox">
+            <div class="sp-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>{{ Lang.get('ticket.recent_activity') }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <ul class="recent-activity">
+            <div class="sp-description">{{ Lang.get('general.loading') }}...</div>
+        </ul>
+    </div>
+{% endif %}

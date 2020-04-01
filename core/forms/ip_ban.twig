@@ -1,0 +1,116 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('core.ip_ban', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('core.ip_ban', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'core.operator.ipban.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'core.operator.ipban.store', 'class': 'validate' }) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('event', Lang.choice('general.event', 1)) }}
+                <div class="sp-input-container sp-input-group">
+                    <label>
+                        {{ form_check('event_user', 1, record|default is not empty ? record.event_user : true) }}
+                        {{ Lang.get('core.filter_user_login') }}
+                    </label><br />
+                    <label>
+                        {{ form_check('event_operator', 1, record|default is not empty ? record.event_operator : true) }}
+                        {{ Lang.get('core.filter_operator_login') }}
+                    </label><br />
+                    <label>
+                        {{ form_check('event_api', 1, record|default is not empty ? record.event_api : true) }}
+                        {{ Lang.get('core.filter_api_access') }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ip', Lang.get('general.ip')) }}
+                <div class="sp-input-container">
+                    {{ form_text('ip') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('reason', Lang.get('general.reason')) }}
+                <div class="sp-input-container">
+                    {{ form_text('reason') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('type', Lang.get('general.permanent')) }}
+                <div class="sp-input-container">
+                    {{ form_check('type', 1, record.type, {'class': 'sp-toggle', 'id': 'toggle_type'}) }}
+                    <label for="toggle_type"></label>
+                    <div class="sp-description">{{ Lang.get('core.ip_ban_time_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row expiry {% if record.type is not defined or record.type %}sp-hidden{% endif %}">
+                {{ form_label('expiry', Lang.get('core.expiry_time')) }}
+                <div class="sp-input-container">
+                    <div class="sp-block xs:sp-inline-block">
+                        {{ form_text('expiry_date', expiryDate, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
+                    </div>
+                    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+                        {{ form_text('expiry_timeofday', expiryTimeOfDay, {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}) }}
+                    </div>
+                    <div class="sp-description">{{ Lang.get('core.expiry_time_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Date picker
+            $('.datepicker').datepicker();
+
+            // Timepicker
+            $('.timepicker').timepicker();
+
+            // Handle hiding the expiry if the ban is permanent on page load
+            if ($('input[name="type"]').is(':checked')) {
+                $('.expiry').addClass('sp-hidden');
+            }
+
+            $('input[name="type"]').on('change', function() {
+                if (this.checked) {
+                    $('.expiry').addClass('sp-hidden');
+                } else {
+                    $('.expiry').removeClass('sp-hidden');
+                }
+            });
+        });
+    </script>
+{% endblock %}

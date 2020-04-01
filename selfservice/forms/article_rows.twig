@@ -1,0 +1,54 @@
+{% set attributes = hide|default is not empty ? { 'disabled': 'disabled' } : [] %}
+
+<div class="article">
+    <div class="sp-form-row sp-form-full">
+        {{ form_label(elements.title.name, Lang.get('selfservice.title')) }}
+        <div class="sp-input-container name-input">
+            {{ form_text(elements.title.name, elements.title.value, elements.title.attributes ? attributes|merge(elements.title.attributes) : attributes) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row sp-form-full slug {% if hide_slug or elements.slug.value is empty %}not-edited sp-hidden{% endif %}">
+        {{ form_label(elements.slug.name, Lang.get('selfservice.slug')) }}
+        <div class="sp-input-container">
+            <span class="slug-text">{{ elements.slug.value }}</span> &nbsp;
+            <a class="edit-slug"><i class='fas fa-edit'></i></a>
+            {{ form_text(elements.slug.name, elements.slug.value, attributes|merge({'style': 'visibility: hidden; width: 1px;'})) }}
+            {% if elements.slug.name == 'slug' %}
+                <div class="sp-description">{{ Lang.get('selfservice.slug_desc') }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="sp-form-row sp-form-full">
+        {{ form_label(elements.keywords.name, Lang.choice('selfservice.keyword', 2)) }}
+        <div class="sp-input-container">
+            {{ form_text(elements.keywords.name, elements.keywords.value, attributes) }}
+        </div>
+    </div>
+    
+    <div class="sp-form-row sp-form-full">
+        {{ form_label(elements.excerpt.name, Lang.get('selfservice.excerpt')) }}
+        <div class="sp-input-container">
+            {{ form_textarea(elements.excerpt.name, elements.excerpt.value, { 'style': 'resize: none;', 'rows': 2, 'cols': 40, 'class': 'not-redactor' }|merge(attributes)) }}
+        </div>
+    </div>
+    
+    <div class="sp-form-row sp-form-full">
+        {{ form_label(elements.text.name, Lang.choice('selfservice.article', 1)) }}
+        <div class="sp-input-container">
+            {{ form_redactor(elements.text.name, elements.text.value, attributes, Config.get('purifier.settings.selfservice')) }}
+    
+            {%
+                include 'operator.' ~ template ~ '.core.forms.attachments'
+                with {
+                    'input_name': elements.attachments.name,
+                    'route': 'selfservice.operator.attachment',
+                    'downloadRoute': 'selfservice.operator.attachment.download',
+                    'attachments': elements.attachments.value,
+                    'deleteFromServer': clone is not empty ? false : true
+                }
+            %}
+        </div>
+    </div>
+</div>

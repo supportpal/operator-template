@@ -1,0 +1,68 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice('core.api_token', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('core.operator.apitoken.create') }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.name') }}:</label>
+                <div id="filter_name"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('core.token') }}:</label>
+                <div id="filter_token"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('core.access_level') }}:</label>
+                <div id="filter_access"></div>
+            </div>
+        </div>
+    </div>
+
+    {{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_token", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_access", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% if report.filtering|default is not empty and (report.filtering == 'ticket' or report.filtering == 'user') %}
+<form class="sp-condition-group sp-my-6 sp-hidden md:sp-block">
+
+    <div class="sp-collapsible sp-condition-group-header sp-cursor-pointer">
+        {{ Lang.get('report.filtering') }}
+        <span class="sp-ml-auto">
+            <i class="fas fa-chevron-up"></i>
+        </span>
+    </div>
+
+    <div class="filter-conditions sp-hidden">
+        <div class="sp-condition-group-inner">
+            <table class="sp-hidden">
+                {# Brand new group with one condition #}
+                {% include 'operator.' ~ template ~ '.forms.condition' with {'hide': true} %}
+            </table>
+
+            <div class="sp-px-3 sp-pt-3">
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition')}), {'class': 'add-condition'}) }}
+                {% if report.timeframe is not defined or report.timeframe == 'none' %}
+                    &nbsp;&nbsp;
+                    {{ form_button(Lang.get('general.update'), {'class': 'updateReport'}) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</form>
+{% endif %}

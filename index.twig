@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html class="sp-h-full print:sp-h-auto">
+
+<head>
+    {% block meta %}{% endblock %}
+
+    {% set title = block('title') is defined ? block('title') : '' %}
+    <title>{% if title is not empty %}{{ title|raw }} - {% endif %} SupportPal Operator Panel</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {% block scripts_header %}{% endblock %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="{{ get_template_mode() }} sp-h-full sp-bg-primary sp-text-primary sp-overflow-hidden print:sp-h-auto print:sp-overflow-auto">
+
+{{ View.fireHook('operator.body_start') }}
+
+<header id="header" class="sp-relative sp-w-full sp-bg-primary-800 sp-leading-none sp-z-10002 lg:sp-fixed print:sp-hidden">
+    {{ View.fireHook('operator.header_start') }}
+
+    {% block header %}
+        <div class="sp-flex">
+            <div class="sp-flex-none">
+                <a href="{{ route('core.operator.dashboard') }}" class="sp-block sp-p-2 sm:sp-px-4 hover:sp-bg-primary-900">
+                    <img src="{{ get_icon('resources/assets/operator/images/logo_icon.png') }}"
+                         alt="{{ Config.get('settings.brand_name') }}" class="sp-h-8" />
+                </a>
+            </div>
+
+            <nav class="sp-absolute sp-hidden sp-left-0 sp-w-full sp-min-w-0 sp-bg-primary-800 sp-border-b sp-border-primary-900 sp-top-100
+                        sp-whitespace-no-wrap lg:sp-flex-grow lg:sp-static lg:sp-inline-block lg:sp-w-auto lg:sp-bg-auto lg:sp-border-0">
+                <ul class="sp-relative">
+                    {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.ticket|create.ticket') %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true" id="ticketHeaderDropdown">
+                            <a class="sp-nav-item">
+                                {{ Lang.choice('ticket.ticket', 2) }}
+                                <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs lg:sp-p-0 lg:sp-ml-1 lg:sp-float-none"
+                                   aria-hidden="true"></i>
+                            </a>
+                            <ul class="sp-nav-dropdown">
+                                {% if auth_user().hasPermission('view.ticket') %}
+                                    <li aria-haspopup="false" id="manageTickets">
+                                        <a href="{{ urldecode(route('ticket.operator.ticket', manageTicketsParams)) }}">
+                                            {{ Lang.get('ticket.manage_tickets') }}
+                                        </a>
+                                    </li>
+                                    {% if not recentTickets.isEmpty() %}
+                                        <li class="sp-multi-list" aria-haspopup="false">
+                                            <div class="sp-title">{{ Lang.get('ticket.recent_tickets') }}</div>
+                                            {% for recentTicket in recentTickets %}
+                                                <a href="{{ route('ticket.operator.ticket.show', recentTicket.id) }}" class="sp-group">
+                                                    {% if recentTicket.trashed() %}
+                                                        <i class="fas fa-trash sp-text-secondary" title="{{ Lang.get('general.trash') }}"></i>
+                                                    {% endif %}
+                                                    <i class="fas fa-circle sp-text-xs" style="color: {{ recentTicket.status.colour }};"></i>
+                                                    <span class="sp-description group-hover:sp-text-white">#{{ recentTicket.number }}</span> {{ recentTicket.subject }}
+                                                </a>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                    {% if not recentFilters.isEmpty() %}
+                                        <li class="sp-multi-list" aria-haspopup="false">
+                                            <div class="sp-title">{{ Lang.get('ticket.recent_filters') }}</div>
+                                            {% for recentFilter in recentFilters %}
+                                                <a href="{{ route('ticket.operator.ticket', {'filter': recentFilter.id}) }}">
+                                                    {{ recentFilter.name }}
+                                                </a>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if auth_user().hasPermission('create.ticket') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('ticket.operator.ticket.createStep1') }}">
+                                            {{ Lang.get('ticket.open_new') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('report.operator.view', {'category': 'tickets', 'name': 'feedback'}) }}">
+                                            {{ Lang.get('report.user_feedback') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if auth_user().hasPermission('view.user|view.organisation|view.operator|view.massemail') %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true" id="userHeaderDropdown">
+                            <a class="sp-nav-item">
+                                {{ Lang.choice('user.user', 2) }}
+                                <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs lg:sp-p-0 lg:sp-ml-1 lg:sp-float-none"
+                                   aria-hidden="true"></i>
+                            </a>
+                            <ul class="sp-nav-dropdown">
+                                {% if auth_user().hasPermission('view.user|create.user') %}
+                                    <li aria-haspopup="false" id="manageUserSetting">
+                                        <a href="{{ route('user.operator.user') }}">
+                                            {{ Lang.get('user.manage_users') }}
+                                        </a>
+                                    </li>
+                                    {% if not recentUsers.isEmpty() %}
+                                        <li class="sp-multi-list" aria-haspopup="false">
+                                            <div class="sp-title">{{ Lang.get('user.recent_users') }}</div>
+                                            {% for recentUser in recentUsers %}
+                                                <a href="{{ route('user.operator.user.edit', recentUser.id) }}">
+                                                    {{ recentUser.formatted_name }}
+                                                </a>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if Config.get('settings.organisations_enabled') and auth_user().hasPermission('view.organisation') %}
+                                    <li aria-haspopup="false" id="manageOrgSetting">
+                                        <a href="{{ route('user.operator.organisation') }}">
+                                            {{ Lang.get('user.manage_organisations') }}
+                                        </a>
+                                    </li>
+                                    {% if not recentOrganisations.isEmpty() %}
+                                        <li class="sp-multi-list" aria-haspopup="false">
+                                            <div class="sp-title">{{ Lang.get('user.recent_organisations') }}</div>
+                                            {% for recentOrganisation in recentOrganisations %}
+                                                <a href="{{ route('user.operator.organisation.edit', recentOrganisation.id) }}">
+                                                    {{ recentOrganisation.name }}
+                                                </a>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.operator') %}
+                                    <li aria-haspopup="false" id="manageOperatorSetting">
+                                        <a href="{{ route('user.operator.operator') }}">
+                                            {{ Lang.get('user.manage_operators') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.massemail') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('user.operator.massemail') }}">
+                                            {{ Lang.get('user.mass_email') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if isModuleEnabled('Selfservice')
+                        and auth_user().hasPermission('view.comment|view.selfservicetag|view.selfservicetypes|view.article|view.category')
+                    %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true">
+                            <a class="sp-nav-item">
+                                {{ Lang.get('selfservice.selfservice') }}
+                                <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs lg:sp-p-0 lg:sp-ml-1 lg:sp-float-none"
+                                   aria-hidden="true"></i>
+                            </a>
+                            <ul class="sp-nav-dropdown">
+                                {% if auth_user().hasPermission('view.selfservicetype') %}
+                                    {% if assignedBrands.count() > 1 %}
+                                        <li class="sp-relative" aria-haspopup="true">
+                                            <a class="sp-nav-sub-menu">
+                                                {{ Lang.choice('selfservice.type', 2) }}
+                                                <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
+                                            </a>
+                                            <ul class="sp-nav-dropdown">
+                                                {% for brand in assignedBrands %}
+                                                    <li aria-haspopup="false">
+                                                        <a href="{{ route('selfservice.operator.type.index', brand.id) }}">
+                                                            {{ brand.name }}
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% else %}
+                                        <li aria-haspopup="false">
+                                            <a href="{{ route('selfservice.operator.type.index', assignedBrands.first().id) }}">
+                                                {{ Lang.choice('selfservice.type', 2) }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.category') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('selfservice.operator.category.index') }}">
+                                            {{ Lang.choice('general.category', 2) }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.article') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('selfservice.operator.article.index') }}">
+                                            {{ Lang.choice('selfservice.article', 2) }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.selfservicetag') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('selfservice.operator.tag.index') }}">
+                                            {{ Lang.choice('selfservice.tag', 2) }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.comment') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('selfservice.operator.comment.index') }}" class="lg:sp-rounded-b">
+                                            {{ Lang.choice('selfservice.comment', 2) }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedback'}) }}">
+                                            {{ Lang.get('report.user_feedback') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
+                                    <li class="sp-internal-selfservice sp-relative lg:sp-hidden" aria-haspopup="true">
+                                        <a class="sp-nav-sub-menu">
+                                            {{ Lang.get('selfservice.internal') }}
+                                            <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="sp-nav-dropdown lg:sp-rounded-tr">
+                                            {% for brand in assignedBrands %}
+                                                {% if internalTypes.where('brand_id', brand.id).count() %}
+                                                    <li class="sp-multi-list" aria-haspopup="false">
+                                                        <div class="sp-title">{{ brand.name }}</div>
+                                                        {% for type in internalTypes.where('brand_id', brand.id) %}
+                                                            <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}"
+                                                               {% if type.content == 1 %}target="_blank"{% endif %}>
+                                                                {{ type.name }}
+                                                            </a>
+                                                        {% endfor %}
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if isModuleEnabled('Report') and auth_user().hasPermission('view.reportdashboard') %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                            <a class="sp-nav-item" href="{{ route('report.operator.dashboard') }}">{{ Lang.choice('report.report', 2) }}</a>
+                        </li>
+                    {% endif %}
+                    {% if auth_user().canViewSettings() %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                            <a class="sp-nav-item" id="settingsNavigation" href="{{ route('core.operator.setting') }}">
+                                {{ Lang.choice('general.setting', 2) }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if auth_user().hasPermission('view.plugin') %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                            <a class="sp-nav-item" href="{{ route('core.operator.plugin.index') }}">
+                                {{ Lang.choice('core.plugins', 2) }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if auth_user().hasPermission('view.emaillog|view.emailqueue|view.license|view.operatorlog|view.phpinfo|view.activitylog') %}
+                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true">
+                            <a class="sp-nav-item">
+                                {{ Lang.get('core.utilities') }}
+                                <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs lg:sp-p-0 lg:sp-ml-1 lg:sp-float-none"
+                                   aria-hidden="true"></i>
+                            </a>
+                            <ul class="sp-nav-dropdown">
+                                {% if auth_user().hasPermission('view.emailqueue') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('core.operator.emailqueue') }}">
+                                            {{ Lang.get('core.email_queue') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.license') %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('core.operator.about') }}">
+                                            {{ Lang.get('core.license_info') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.emaillog|view.operatorlog|view.activitylog') %}
+                                    <li class="sp-relative" aria-haspopup="true">
+                                        <a class="sp-nav-sub-menu">
+                                            {{ Lang.choice('core.log', 2) }}
+                                            <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="sp-nav-dropdown lg:sp-rounded-tr">
+                                            {% if auth_user().hasPermission('view.emaillog') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.emaillog') }}" class="lg:sp-rounded-tr">
+                                                        {{ Lang.get('core.email_log') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if auth_user().hasPermission('view.logfiles') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.logfiles.index') }}">
+                                                        {{ Lang.get('core.file_manager') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if auth_user().hasPermission('view.operatorlog') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('user.operator.operatorloginlog') }}">
+                                                        {{ Lang.get('user.operator_login_log') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if auth_user().hasPermission('view.activitylog') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('user.operator.systemactivitylog') }}">
+                                                        {{ Lang.get('user.system_activity_log') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                                {% if auth_user().hasPermission('view.phpinfo|view.systemcleanup') %}
+                                    <li class="sp-relative" aria-haspopup="true">
+                                        <a class="sp-nav-sub-menu lg:sp-rounded-bl">
+                                            {{ Lang.get('general.system') }}
+                                            <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="sp-nav-dropdown lg:sp-rounded-tr">
+                                            {% if auth_user().hasPermission('view.phpinfo') and function_exists('phpinfo') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.phpinfo') }}" class="lg:sp-rounded-tr">
+                                                        {{ Lang.get('core.php_info') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if auth_user().hasPermission('view.systemcleanup') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.systemcleanup') }}">
+                                                        {{ Lang.get('core.system_cleanup') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {{ View.fireHook('operator.navigation') }}
+
+                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                        <a class="sp-nav-item sp-private-messages" href="{{ route('core.operator.message.index') }}">
+                            {{ Lang.choice('general.message', 2) }}
+                            {% if notificationCount|default is not empty and notificationCount > 0 %}
+                                <span class="sp-badge sp-px-2 sp-py-1 sp-ml-1 sp-text-xs">
+                                    {{ notificationCount }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                        <a class="sp-nav-item" href="{{ route('user.operator.personalsetting') }}">
+                            {{ Lang.get('user.personal_settings') }}
+                        </a>
+                    </li>
+                    {% if isModuleEnabled('Ticket') %}
+                        <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                            <a class="sp-nav-item" href="{{ route('user.operator.signature') }}">
+                                {{ Lang.choice('user.signature', 2) }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if not auth_user().twofa_enabled or not Config.get('settings.force_2fa_operators') %}
+                        <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                            <a class="sp-nav-item" href="{{ route('user.operator.twofa') }}">
+                                {{ Lang.get('user.two_fa') }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                        <a class="sp-nav-item" href="{{ route('user.operator.logout') }}">
+                            {{ Lang.get('user.logout') }}
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sp-flex-grow sp-bg-primary-800 sp-z-10 lg:sp-flex-none lg:sp-px-3">
+                <form class="search-form sp-relative" action="{{ route('core.operator.search') }}" method="get" name="search_form" autocomplete="off">
+                    <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." autocomplete="on" class="search" />
+                </form>
+            </div>
+
+            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
+                <div class="sp-private-messages sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3" id="privateMessages">
+                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-text-white">
+                        <div class="sp-flex-auto">
+                            <i class="fas fa-comments sp-text-lg"></i>
+                        </div>
+                        {% if notificationCount|default is not empty and notificationCount > 0 %}
+                            <div class="sp-flex-auto sp-ml-3/2">
+                                <span class="sp-badge sp-px-3/2 sp-py-1/2 sp-text-xs">{{ notificationCount }}</span>
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+
+            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
+                {% if isModuleEnabled('Selfservice') and internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
+                    <div class="sp-hidden lg:sp-inline-block">
+                        <div class="sp-block sp-mx-1">
+                            <ul class="sp-relative">
+                                <li class="sp-internal-selfservice" aria-haspopup="true">
+                                    <div class="sp-nav-item sp-nav-icon-item sp-flex sp-px-1 sp-py-3 sp-text-white sp-leading-normal hover:sp-bg-primary-800">
+                                        <div class="sp-flex-auto sp-py-1 sp-ml-3 sp-mr-2">
+                                            <i class="fas fa-book sp-float-left"></i>
+                                        </div>
+                                        <div class="sp-flex-auto">
+                                            <i class="fas sp-chevron sp-text-xs" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+
+                                    <ul class="sp-nav-dropdown sp-right-0 sp-text-right">
+                                        {% for brand in assignedBrands %}
+                                            {% if internalTypes.where('brand_id', brand.id).count() %}
+                                                <li class="sp-multi-list" aria-haspopup="false">
+                                                    <div class="sp-title">{{ brand.name }}</div>
+                                                    {% for type in internalTypes.where('brand_id', brand.id) %}
+                                                        <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}"
+                                                           {% if type.content == 1 %}target="_blank"{% endif %}>
+                                                            {{ type.name }}
+                                                        </a>
+                                                    {% endfor %}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
+                <div class="sp-hidden lg:sp-inline-block">
+                    <div class="sp-block">
+                        <ul class="sp-relative">
+                            <li aria-haspopup="true">
+                                <div class="sp-nav-item sp-nav-icon-item sp-flex sp-px-1 sp-py-3 sp-pr-5 hover:sp-bg-primary-800">
+                                    <div class="sp-flex-auto sp-mx-2">
+                                        <img src="{{ auth_user().avatar_url }}" alt="{{ Lang.choice('general.operator', 1) }}"
+                                             class="sp-avatar sp-max-w-xs" />
+                                    </div>
+                                    <div class="sp-flex-auto sp-leading-normal">
+                                        <i class="fas sp-chevron sp-text-white sp-text-xs" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <ul class="sp-nav-dropdown sp-right-0 sp-text-right sp-truncate">
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('user.operator.personalsetting') }}">{{ Lang.get('user.personal_settings') }}</a>
+                                    </li>
+                                    {% if isModuleEnabled('Ticket') %}
+                                        <li aria-haspopup="false">
+                                            <a href="{{ route('user.operator.signature') }}">{{ Lang.choice('user.signature', 2) }}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if not auth_user().twofa_enabled or not Config.get('settings.force_2fa_operators') %}
+                                        <li aria-haspopup="false">
+                                            <a href="{{ route('user.operator.twofa') }}">{{ Lang.get('user.two_fa') }}</a>
+                                        </li>
+                                    {% endif %}
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('user.operator.logout') }}">{{ Lang.get('user.logout') }}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-mobile-nav sp-bg-primary-800 sp-p-2 lg:sp-hidden">
+                <div class="sp-px-3/2 sp-py-1 sp-bg-primary-800 sp-rounded sp-border sp-border-white sp-text-white
+                            sp-cursor-pointer hover:sp-bg-white hover:sp-text-primary-800">
+                    <svg focusable="false" viewBox="0 0 24 24">
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {{ View.fireHook('operator.header_end') }}
+</header>
+
+<div id="wrapper" class="sp-flex sp-overflow-hidden lg:sp-pt-12 print:sp-h-auto print:sp-overflow-auto print:sp-pt-0">
+    {{ View.fireHook('operator.wrapper_start') }}
+
+    {% if block('sidebar')|trim is not empty %}
+        <div id="sidebar" class="sp-flex-none sp-h-full sp-w-6 sp-bg-secondary sp-border-r sp-border-tertiary sp-z-10001
+                                 sm:sp-w-8 lg:sp-w-72 print:sp-hidden">
+            <div class="sp-sidebar-inner">
+                {{ View.fireHook('operator.sidebar_start') }}
+
+                {% block sidebar %}{% endblock %}
+
+                {{ View.fireHook('operator.sidebar_end') }}
+
+                <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp-px-3/2 sp-py-2 sp-ml-6 sm:sp-ml-8 lg:sp-ml-72
+                            sp-mb-4 sp-rounded-full sp-shadow-md sp-text-secondary sp-leading-none sp-cursor-pointer
+                            sp-z-10001 hover:sp-text-primary" style="left: -1rem;">
+                    <i class="fas fa-fw sp-chevron"></i>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div id="content" class="sp-content sp-flex-grow sp-relative sp-bg-primary sp-overflow-y-auto print:sp-overflow-x-hidden">
+        {{ View.fireHook('operator.content_start') }}
+
+        {% if Config.get('settings.maintenance_mode') %}
+            <div class="sp-alert sp-alert-warning sp-mb-0 sp-rounded-none">
+                {{ Lang.get('messages.maintenance_mode') }}
+            </div>
+        {% endif %}
+
+        {% block precontent %}{% endblock %}
+
+        <div class="sp-content-inner sp-relative sp-p-6 print:sp-p-0 print:sp-pt-6">
+            {{ View.fireHook('operator.content_inner_start') }}
+
+            {% block pageTitle %}
+                {% if title is not empty %}
+                    {% if docsLink is not empty %}
+                        <div class="sp-flex sp-mb-6">
+                            <div class="sp-flex-grow">
+                    {% endif %}
+
+                    <h1 id="pageTitle" {% if docsLink is not empty %}class="sp-mb-0"{% endif %}>{{ title|raw }}</h1>
+
+                    {% if docsLink is not empty %}
+                            </div>
+                            <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
+                                <a href="{{ docsLink }}" target="_blank"
+                                   class="sp-block sp-mt-1/2 sp-ml-3 sp-text-xl sp-text-gray-400 hover:sp-text-gray-600 sm:sp-mt-2">
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endblock %}
+
+            {% if block('breadcrumb') is not empty %}
+                <div class="breadcrumb">{% block breadcrumb %}{% endblock %}</div>
+            {% endif %}
+
+            {% if block('description') is defined %}
+                <div class="sp-title-description">{{ block('description')|trim|raw }}</div>
+            {% endif %}
+
+            <!-- Box to display success/error messages generated by JavaScript -->
+            <div class="sp-alert sp-hidden" id="js-message-box"></div>
+
+            {% if Session.has('success') %}
+                <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
+            {% elseif (Session.has('error') or Session.has('email_error')) %}
+                <div class="sp-alert sp-alert-error">
+                    {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
+                </div>
+            {% endif %}
+
+            {% if errors|default is not empty and errors.count() %}
+                <div class="sp-alert sp-alert-error">
+                    <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+                    {% for error in errors.unique() %}
+                        {{ Purifier.clean(error) }}<br />
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+
+            {{ View.fireHook('operator.content_inner_end') }}
+        </div>
+
+        {% block postcontent %}{% endblock %}
+
+        {{ View.fireHook('operator.content_end') }}
+    </div>
+
+    {{ View.fireHook('operator.wrapper_end') }}
+</div>
+
+{{ View.fireHook('operator.footer') }}
+
+<!-- Vendor -->
+<script type="text/javascript">
+    paceOptions = {
+        "ajax": {
+            "ignoreURLs": [ "notification", "pollReplies" ]
+        }
+    }
+</script>
+{% include 'operator.' ~ template ~ '.footer_common' %}
+
+<!-- Global Javascript Functions -->
+<script src="{{ asset_rev('resources/assets/operator/js/mobile.js') }}" type="text/javascript"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/search.js') }}"></script>
+
+{% block scripts_footer %}{% endblock %}
+
+<!-- Collapsible side boxes -->
+<script src="{{ asset_rev('resources/assets/operator/js/sidebox.js') }}"></script>
+
+{% set enabled = Config.get('settings.product_tour_enabled', null) %}
+{% if enabled == '1' or enabled is null %}
+    <script src="{{ asset_rev('resources/assets/libs/shepherd/js/shepherd.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/producttour.js') }}" type="text/javascript"></script>
+{% endif %}
+
+{{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

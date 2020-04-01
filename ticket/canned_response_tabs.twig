@@ -1,0 +1,21 @@
+<ul class="sp-tabs">
+    {% if isResponses %}
+        <li class="sp-active">
+            <a>{{ Lang.choice('ticket.response', 2) }}</a>
+        </li>
+        <li>
+            <a href="{{ route('ticket.operator.cannedresponse_tag.index') }}">
+                {{ Lang.choice('ticket.tag', 2) }}
+            </a>
+        </li>
+    {% else %}
+        <li>
+            <a href="{{ route('ticket.operator.cannedresponse.index') }}">
+                {{ Lang.choice('ticket.response', 2) }}
+            </a>
+        </li>
+        <li class="sp-active">
+            <a>{{ Lang.choice('ticket.tag', 2) }}</a>
+        </li>
+    {% endif %}
+</ul>

@@ -1,0 +1,8 @@
+<span class="sp-message-text-trimmed {% if unread %}sp-hidden{% endif %}">{{ message.excerpt }}</span>
+
+<span class="sp-message-text-original {% if message.show_more is empty %}sp-message-text-loaded{% endif %}
+             {% if message.clipped %}sp-message-text-clipped{% endif %} {% if not unread %}sp-hidden{% endif %}">
+    {% if message.show_more is empty %}
+        {{ message.purified_text|raw }}
+    {% endif %}
+</span>

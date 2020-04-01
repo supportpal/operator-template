@@ -1,0 +1,16 @@
+<div class="sp-form-row option {% if hide|default is not empty %}sp-hidden{% endif %}">
+    <label>
+        <i class="fas fa-bars sp-sortable-handle" aria-hidden="true"></i>
+    </label>
+    <div class="sp-input-container">
+        {{ form_hidden('options[' ~ (key is defined ? key : '') ~ '][id]', option is defined ? option.id : null) }}
+
+        <div class="sp-inline-block sp-input-translatable sp-input-translatable-small sp-mr-1">
+            {{ form_translatable_text(option, 'value', 'options[' ~ (key is defined ? key : '') ~ '][value]') }}
+        </div>
+
+        <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+            {{ form_button(Lang.get('general.remove'), {'class': 'remove-option'}) }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+{% if ticket.department_email_id is not empty or allow_attachments %}
+    <div class="sp-attachment-details">
+        <input type="hidden" name="attachment[]" disabled="disabled" />
+        {% for attachment in message.attachments %}
+            <input type="hidden" name="attachment[{{ attachment.upload_hash }}]"
+                   id="attachment[{{ attachment.upload_hash }}]"
+                   value="{{ attachment.original_name }}" />
+        {% endfor %}
+    </div>
+    <ul class="sp-attached-files">
+        <li class="sp-flex sp-hidden">
+            <div class="sp-mr-2 sp-truncate">
+                <i class="fas fa-file"></i>&nbsp;
+
+                <span class="sp-file-information">
+                    <span class="sp-filename"></span>
+                    <span class="sp-description sp-filesize"></span>
+                </span>
+            </div>
+
+            <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+                <i class="fas fa-times sp-text-white"></i>
+            </div>
+
+            <div class="sp-progress-bar">
+                <div class="sp-bar"></div>
+            </div>
+        </li>
+        {% for attachment in message.attachments %}
+            <li class="sp-flex">
+                <div class="sp-mr-2 sp-truncate">
+                    <i class="fas fa-file"></i>&nbsp;
+
+                    <span class="sp-file-information">
+                        <span class="sp-filename">{{ attachment.original_name }}</span>
+                        <span class="sp-description sp-filesize">({{ attachment.upload.size }})</span>
+                    </span>
+                </div>
+
+                <div class="sp-delete-attachment sp-bg-red-600"
+                     data-url="{{ route('ticket.operator.attachment.destroy') }}"
+                     data-attachment-id="{{ attachment.id }}"
+                     data-size="{{ attachment.upload.getOriginal('size') }}"
+                     data-hash="{{ attachment.upload_hash }}"
+                     data-silent="false">
+                    <i class="fas fa-times sp-text-white"></i>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="sp-attachment-dragover sp-mb-0 sp-hidden">
+        {{ Lang.get('general.drag_and_drop') }}
+    </div>
+{% endif %}

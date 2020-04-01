@@ -1,0 +1,75 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('core.spam_rule', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('core.spam_rule', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'core.operator.spamrule.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'core.operator.spamrule.store', 'class': 'validate' }) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('event', Lang.choice('general.event', 1)) }}
+                <div class="sp-input-container sp-input-group">
+                    <label>
+                        {{ form_check('event_message', 1, record|default is not empty ? record.event_message : true) }} {{ Lang.get('core.filter_new_message') }}
+                    </label><br />
+                    <label>
+                        {{ form_check('event_comment', 1, record|default is not empty ? record.event_comment : true) }} {{ Lang.get('core.filter_new_comment') }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('is_regex', Lang.get('general.regex')) }}
+                <div class="sp-input-container">
+                    {{ form_check('is_regex', 1, record.is_regex, {'class': 'sp-toggle', 'id': 'toggle_regex'}) }}
+                    <label for="toggle_regex"></label>
+                    <div class="sp-description">{{ Lang.get('core.spam_is_regex_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('text', Lang.get('core.containing_text')) }}
+                <div class="sp-input-container">
+                    {{ form_text('text') }}
+                    <div class="sp-description">{{ Lang.get('core.containing_text_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('type', Lang.get('general.type')) }}
+                <div class="sp-input-container">
+                    {{ form_select('type', { 0: Lang.get('general.content'), 1: Lang.get('general.sender'), 2: Lang.get('general.content_sender')|raw }) }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+{% endblock %}

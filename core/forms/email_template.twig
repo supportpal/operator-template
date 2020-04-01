@@ -1,0 +1,118 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('core.email_template', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('core.email_template', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'core.operator.emailtemplate.update', record.id ], 'method': 'PUT', 'class': 'validate', 'style': 'min-height: 300px;', 'data-template-id': record.id }) }}
+    {% else %}
+        {{ form_open({ 'route': 'core.operator.emailtemplate.store', 'class': 'validate', 'style': 'min-height: 300px;' }) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                </div>
+            </div>
+
+        </div>
+
+        <div id="sectionWrapper">
+
+            <h2>{{ Lang.get('core.email_content') }}</h2>
+            <div class="sp-subtitle-description">{{ Lang.get('core.email_content_desc') }}</div>
+
+            <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp-hidden{% endif %}">
+                {% for brand in brands %}
+                    <li id="{{ brand.id }}" {% if loop.first %}class="sp-active"{% endif %}>
+                        <a>{{ brand.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            {% for brand in brands %}
+                <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
+                    {# Add an empty item, we use this for DOM cloning when adding new records #}
+                    {% include 'operator.' ~ template ~ '.core.forms.email_template_data' with {'hide': true, 'brand': brand} %}
+
+                    <div class="section-items">
+                        {% for language_code, email_template in brand.templates %}
+                            {% include 'operator.' ~ template ~ '.core.forms.email_template_data' with {'brand': brand} %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="sp-form-container sp-border-t-0 {% if not brand.languages|length %}sp-hidden{% endif %}">
+                        <div class="sp-form-row">
+                            <label></label>
+                            <div class="sp-input-container">
+                                <select name="brand[{{ brand.id }}][language]" title="{{ Lang.get('core.add_another_language') }}" class="add-item-selectize">
+                                    <option></option>
+                                    {% for code, name in brand.languages %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice("general.submit", 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script type="text/javascript">
+        var opts = {
+            syntaxEmailTemplate: true,
+            mergeFields: {
+                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                organisations: "{{ Config.get('settings.organisations_enabled', 1) }}"
+            },
+            groups: $R.options.groups.concat(['sp-image']),
+            plugins: ['sp-mergefields'].concat($R.options.plugins)
+        };
+
+        // Do not initialise redactor on the dummy DOM element.
+        $('div.section-items textarea').redactor(opts);
+    </script>
+{% endblock %}

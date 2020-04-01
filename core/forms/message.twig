@@ -1,0 +1,112 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.choice('general.message', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden delete">
+        {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden delete">
+        {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        {% for message in messages %}
+            <div class="sp-message sp-message-{{ message.id }}">
+                <div class="sp-flex">
+                    <div class="sp-flex-initial sp-hidden sp-mr-4 md:sp-block">
+                        <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-xs md:sp-max-w-md" />
+                    </div>
+                    <div class="sp-flex-grow">
+                        <div class="sp-message-header">
+                            {% if message.user_id == auth_user().id %}
+                                <span class="sp-float-right">
+                                    <button class="as-link delete-confirm" data-route="{{ route('core.operator.message.destroy', message.id) }}" data-id="{{ message.id }}">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </span>
+                            {% endif %}
+
+                            <div class="sp-name sp-text-lg {% if message.user_id == auth_user().id %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
+                                {{ message.user.formatted_name }}
+                            </div>
+                            <div class="sp-description">{{ timeago(message.created_at) }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-message-text">
+                    {{ message.purified_message|raw }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2>{{ Lang.get('general.reply') }}</h2>
+
+    {{ form_open({'method': 'PUT', 'route': ['core.operator.message.update', conversation_id], 'class': 'validate'}) }}
+        {{ form_hidden('conversation_id', conversation_id) }}
+
+        <div class="sp-form-row">
+            <div class="sp-input-container">
+                {{ form_redactor('message') }}
+            </div>
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.get('general.send')) }}
+        </div>
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('textarea').redactor();
+
+            // Open links (not anchors) in a new window/tab. Needs rel="noopener" due to
+            // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
+            $('.sp-message .sp-message-text a').attr('target', '_blank').attr('rel', 'noopener');
+
+            // Delete ticket message
+            $(document.body).on('click', '.delete-confirm', function() {
+                // Save the delete route and message ID
+                var messageId = $(this).data('id'),
+                    params = {
+                    ajax: {
+                        url: $(this).data('route')
+                    }
+                };
+
+                // Show the alert
+                (new deleteAlert(params))
+                    .fireDefault('{{ Lang.choice('general.message', 1) }}')
+                    .then(function (result) {
+                        if (result.value) {
+                            $('.sp-alert-success').show(500).delay(5000).hide(500);
+
+                            // Remove message from view
+                            $('.sp-message-' + messageId).remove();
+                            if (!$('.sp-message').length) {
+                                // No more messages exist, redirect to grid
+                                window.location.href = '{{ route('core.operator.message.index') }}';
+                            }
+                        }
+                    });
+            });
+        });
+    </script>
+{% endblock %}

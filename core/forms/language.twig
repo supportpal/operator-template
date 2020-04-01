@@ -1,0 +1,52 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.edit_item', {'item': Lang.choice('general.language', 1)}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(record, { 'route': [ 'core.operator.language.update', record.code ], 'method': 'PUT', 'class': 'validate' }) }}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('enabled', Lang.get('general.enabled')) }}
+                <div class="sp-input-container">
+                    {{ form_check('enabled', 1, record.enabled, { 'class': 'sp-toggle', 'id': 'toggle_enabled' }) }}
+                    <label for="toggle_enabled"></label>
+                    {% if Config.get('settings.default_frontend_language') == record.code or Config.get('settings.default_operator_language') == record.code %}
+                        <div class="sp-alert sp-alert-warning sp-alert-bottom">{{ Lang.get('core.disabling_default_language') }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice("general.submit", 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+{% endblock %}

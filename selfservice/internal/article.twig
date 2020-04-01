@@ -1,0 +1,134 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ article.title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">
+        {{ type.name }}
+    </a>
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {{ Lang.get('selfservice.viewing_article') }}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.selfservice.internal.sidebar' %}
+{% endblock %}
+
+{% block description %}
+
+    <div class="print:sp-hidden">
+        {% if auth_user().hasPermission('update.article') %}
+            <a href="{{ route('selfservice.operator.article.edit', article.id) }}" class="sp-button sp-button-sm">
+                <i class="fas fa-edit"></i>&nbsp;
+                {{ Lang.get('general.edit') }}
+            </a> &nbsp;
+        {% endif %}
+
+        <a href="javascript:window.print()" class="sp-button sp-button-sm">
+            <i class="fas fa-print"></i>&nbsp;
+            {{ Lang.get('general.print') }}
+        </a>
+    </div>
+
+    <!-- Stats (date, categories, tags) -->
+    {% include 'operator.' ~ template ~ '.selfservice.internal.article_details' %}
+
+{% endblock %}
+
+{% block content %}
+
+    <hr />
+
+    <!-- Article content -->
+    <div class="sp-article">{{ article.purified_text|raw }}</div>
+
+    <!-- Attachments -->
+    {% include 'operator.' ~ template ~ '.selfservice.internal.article_attachments' %}
+
+    {% if related is defined and not related.isEmpty() %}
+        <hr />
+
+        <h3>{{ Lang.get('selfservice.related_articles') }}</h3>
+
+        {% include 'operator.' ~ template ~ '.selfservice.internal.article_related' %}
+    {% endif %}
+
+    {% if Config.get('settings.comments_enabled') and (article.comments is not empty or
+        Config.get('settings.comment_write') == 0 or auth_check()) %}
+        <hr {% if article.comments is empty %}class="print:sp-hidden"{% endif %} />
+
+        <a name="_comments"></a>
+
+        <!-- Comments -->
+        <h2 {% if article.comments is empty %}class="print:sp-hidden"{% endif %}>{{ Lang.choice('selfservice.comment', 2) }}</h2>
+
+        {% if Session.has('comment_success') %}
+            <div class="sp-alert sp-alert-success">{{ Session.get('comment_success') }}</div>
+        {% elseif Session.has('comment_error') %}
+            <div class="sp-alert sp-alert-error">{{ Session.get('comment_error') }}</div>
+        {% endif %}
+
+        <div class="add-comment-form sp-collapsible print:sp-hidden">
+            {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.comment', 1)}) }}
+            <span class="sp-ml-auto">
+                <i class="fas fa-chevron-up"></i>
+            </span>
+        </div>
+        <div class="sp-hidden sp-mt-6">
+            {% include 'operator.' ~ template ~ '.selfservice.internal.forms.comment' with {type: type.id} %}
+        </div>
+
+        {% if article.comments is not empty %}
+            <div class="sp-alert sp-alert-error sp-hidden comments-loading">
+                {{ Lang.get('messages.error_loading_comments') }}
+            </div>
+
+            <div class="sp-my-6 sp-description print:sp-hidden">
+                {{ Lang.get('general.order_by') }}:&nbsp;
+                <select class="sp-comment-ordering">
+                    <option value="0" {{ (comment_ordering == '0') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.oldest') }}</option>
+                    <option value="1" {{ (comment_ordering == '1') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.newest') }}</option>
+                    <option value="2" {{ (comment_ordering == '2') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.highest_rated') }}</option>
+                </select>
+
+                <span class="sp-loading sp-px-4 sp-py-3 sp-ml-2 sp-bg-secondary sp-rounded sp-align-middle sp-hidden">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </div>
+
+            {# Show all the comments #}
+            <div class="sp-comments-block">
+                {% include 'operator.' ~ template ~ '.selfservice.internal.comment' with {'comments': article.comments, 'type': type.id} %}
+            </div>
+
+            {% if comment_total > article.comments|length %}
+                <button class="sp-more-parent-comments sp-button sp-mt-3" data-count="{{ article.comments|length }}">
+                    {{ Lang.get('selfservice.show_more_comments') }}
+                </button>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript">
+        // Variables for asset files
+        var articleId = {{ article.id }};
+        var typeId = {{ type.id }};
+        var commentRoute = "{{ route('selfservice.operator.internal.comment') }}";
+    </script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/frontend/js/article.js') }}"></script>
+
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    {% if Config.get('settings.captcha_type') != 0 and Config.get('settings.registration_captcha') %}
+        {{ Captcha.getJs() }}
+    {% endif %}
+{% endblock %}

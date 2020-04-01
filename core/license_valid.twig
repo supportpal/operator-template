@@ -1,0 +1,13 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content_title %}
+    {{ Lang.get('license.license_valid') }}
+{% endblock %}
+
+{% block content %}
+    <div class="sp-text-center">
+        <a href="{{ route('core.operator.dashboard') }}" class="sp-button">
+            {{ Lang.get('core.go_to_dashboard') }}
+        </a>
+    </div>
+{% endblock %}

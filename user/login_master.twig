@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="sp-h-full">
+
+<head>
+    <title>{% block title %}{{ Lang.get('core.product_name') }} - {{ Lang.get('core.operator_panel') }}{% endblock %}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="{{ get_template_mode() }} sp-h-full sp-bg-secondary sp-text-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+	<div class="sp-login-container sp-flex sp-flex-col sp-justify-center sp-min-h-full">
+        <div class="sp-container sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
+            {{ View.fireHook('operator.wrapper_start') }}
+
+            <div class="sp-p-6 sp-bg-primary-800 sp-text-center xs:sp-rounded-t">
+                {% block logo %}
+                    <img src="{{ get_icon('resources/assets/operator/images/favicon/favicon_white.png') }}"
+                         alt="{{ Lang.get('core.product_name') }}" class="sp-inline sp-max-w-xl" />
+                {% endblock %}
+
+                <h1 class="sp-mt-6 sp-mb-0 sp-text-white sp-text-3xl sp-leading-none">
+                    {% block content_title %}{{ Lang.get('core.operator_panel') }}{% endblock %}
+                </h1>
+            </div>
+
+            <div class="sp-p-6 sp-bg-primary xs:sp-rounded-b">
+                {{ View.fireHook('operator.content_start') }}
+
+			    {% block content %}{% endblock %}
+
+                {{ View.fireHook('operator.content_end') }}
+            </div>
+
+            {{ View.fireHook('operator.wrapper_end') }}
+		</div>
+	</div>
+
+    {{ View.fireHook('operator.footer') }}
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
+
+	{% block scripts_footer %}{% endblock %}
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

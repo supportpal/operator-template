@@ -1,0 +1,148 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content_title %}
+    {{ Lang.get('license.license_invalid') }}
+{% endblock %}
+
+{% block content %}
+    <noscript class="sp-alert sp-alert-error sp-block">
+        {{ Lang.get('core.javascript_required') }}
+    </noscript>
+
+    {% if Session.has('error') and errors|default is empty and not errors.count() %}
+        <div class="sp-alert sp-alert-error">{{ Session.get('error') }}</div>
+    {% endif %}
+    {% if Session.has('success') %}
+        <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
+    {% endif %}
+
+    {% if errors|default is not empty and errors.count() %}
+        <div class="sp-alert sp-alert-error">
+            <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+            {% for error in errors.all() %}
+                {{ error }}<br />
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div>
+
+        {% if licenseResponse is not empty %}
+            <h2 class="sp-mt-0">{{ Lang.get('license.server_response') }}:</h2>
+
+            {{ licenseResponse }}
+        {% else %}
+            <h2 class="sp-mt-0">{{ Lang.get('license.reasons') }}</h2>
+
+            <ul>
+                <li>{{ Lang.get('license.incorrect_license') }}</li>
+                <li>
+                    {{ Lang.get('license.ip_changed') }}
+                    {% if not licenseInformation.multiIp %}
+                        <br />
+                        {{ Lang.get('license.multi_ip_support', {'href': 'https://www.supportpal.com/manage/upgrade.php?type=configoptions&id=' ~ licenseInformation.serviceid|e})|raw }}
+                    {% endif %}
+                </li>
+                <li>{{ Lang.get('license.domain_changed') }}</li>
+            </ul>
+        {% endif %}
+
+        <p>{{ Lang.get('license.need_to_reissue')|raw }}</p>
+
+        <button class="retry sp-button sp-button-submit sp-w-full sp-mb-4">{{ Lang.get('general.retry') }}</button>
+
+        <a class="license-key sp-button sp-w-full sp-mb-4">{{ Lang.get('license.enter_new_key') }}</a>
+
+        <div class="sp-text-center">
+            <a href="https://www.supportpal.com/manage/" class="sp-description" target="_blank">{{ Lang.get('license.assistance') }}</a>
+        </div>
+
+        <div class="enter-license sp-hidden">
+            <hr />
+
+            <h2>{{ Lang.get('license.new_key') }}</h2>
+
+            <p>{{ Lang.get('license.enter_key') }}</p>
+
+            {{ form_open({ 'method': 'POST', 'route': 'core.operator.license.update' }) }}
+                {{ csrf_field() }}
+                {{ form_text('license_key', null, {'class': 'sp-w-full sp-mb-3', 'placeholder': Lang.get('license.license_key')}) }}
+
+                {{ form_submit(Lang.get('license.submit'), {'class': 'sp-w-full'}) }}
+            {{ form_close() }}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block content_footer %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Handle forgotten click
+            $('.license-key').on('click', function() {
+                $('.license-key, .enter-license').toggle();
+                $('.enter-license input[type=text]').trigger('focus');
+            });
+
+            // Handle retry event.
+            $('.retry').on('click', function (e) {
+                e.preventDefault();
+
+                var $this = $(this),
+                    originalText = $this.text();
+
+                // Disable the retry button.
+                $this.prop('disabled', 'disabled');
+
+                Swal.fire({
+                    allowOutsideClick: false,
+                    onBeforeOpen: function () {
+                        Swal.showLoading();
+
+                        // Force a call home to validate the license.
+                        $.get('{{ route('core.operator.license.check') }}')
+                            .done(function (data) {
+                                if (data.status == 'success') {
+                                    var success = function () {
+                                        return Swal.fire({
+                                            type: 'success',
+                                            title: '{{ Lang.get('license.license_valid') }}',
+                                            confirmButtonText: '{{ Lang.get('core.go_to_dashboard') }}',
+                                            showLoaderOnConfirm: true,
+                                            allowOutsideClick: false,
+                                            preConfirm: function () {
+                                                // Redirect the user to the dashboard.
+                                                window.location.replace('{{ route('core.operator.dashboard') }}');
+                                            }
+                                        });
+                                    };
+
+                                    success().then(function (result) {
+                                        if (result.value) {
+                                            success();
+                                            Swal.showLoading();
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('{{ Lang.get('license.license_invalid') }}', data.message, 'error');
+                                }
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire('{{ Lang.get('messages.error') }}', jqXHR.responseText, 'error');
+                            })
+                            .always(function () {
+                                // Enable the retry button.
+                                $this.removeAttr('disabled');
+                                $this.html(originalText);
+                            });
+                    }
+
+                });
+            });
+        });
+    </script>
+{% endblock %}

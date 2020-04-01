@@ -1,0 +1,335 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty %}
+        {{ record.formatted_name }} - {{ Lang.get('user.send_email') }}
+    {% else %}
+        {{ Lang.get('user.mass_email') }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty %}
+        {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+
+        {{ form_open({'route': ['user.operator.user.sendemail', record.id], 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': 'user.operator.massemail.queue', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div class="sp-form-container {% if record|default is not empty %}sp-form-container-t-0{% endif %}">
+
+            {% if record|default is not empty %}
+                <input type="hidden" name="brand_id" value="{{ record.brand_id }}" />
+            {% else %}
+                {% if brand_count(true) > 1 %}
+                    <div class="sp-form-row">
+                        {{ form_label('brand_id', Lang.choice('core.brand', 1)) }}
+                        <div class="sp-input-container">
+                            {{ form_select('brand_id', assignedBrands.pluck('name', 'id'), Config.get('settings.default_brand')) }}
+                            <div class="sp-description">{{ Lang.get('core.mass_email_brand_desc') }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" name="brand_id" value="{{ assignedBrands|first.id }}" />
+                {% endif %}
+            {% endif %}
+
+            <div class="sp-form-row {% if record|default is empty %}sp-form-full{% endif %}">
+                {{ form_label('to[]', Lang.get('ticket.to')) }}
+                <div class="sp-input-container">
+                    {% if record|default is not empty %}
+                        {{ record.formatted_name }} {{ '<' ~ record.email ~ '>' }}
+                    {% else %}
+                        <select name="to[]" multiple="multiple">
+                            <option value="all-users">{{ Lang.get('user.all_users') }}</option>
+                            <option value="all-operators">{{ Lang.get('user.all_operators') }}</option>
+                            <optgroup label="{{ Lang.choice("user.operator_group", 2) }}">
+                                {% for group in operator_groups %}
+                                    <option data-data='{{ group|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ group.id }}'>
+                                        {{ group.name }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                            <optgroup label="{{ Lang.choice("user.group", 2) }}">
+                                {% for group in user_groups %}
+                                    <option data-data='{{ group|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ group.id }}'>
+                                        {{ group.name }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('from_name', Lang.get('general.from')) }}
+                <div class="sp-input-container">
+                    <div class="sp-mb-3 lg:sp-inline-block lg:sp-mb-0 lg:sp-mr-2">
+                        {{ form_text('from_name', '', {'size': 25}) }}
+                    </div>
+                    <div class="md:sp-inline-block">
+                        {{ form_text('from_email', '', {'size': 35}) }}
+                    </div>
+                </div>
+            </div>
+
+            {% if not templates.isEmpty() %}
+                <div class="sp-form-row">
+                    {{ form_label('load_template', Lang.get('user.load_template')) }}
+                    <div class="sp-input-container">
+                        {{ form_select('load_template', templates) }}&nbsp;&nbsp;
+                        {{ form_button(Lang.get('user.clear_template'), {'class': 'clear-form'}) }}
+                        <div class="sp-description">{{ Lang.get('user.load_template_desc') }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('subject', Lang.get('general.subject')) }}
+                <div class="sp-input-container">
+                    {{ form_text('subject', null, record|default is not empty ? {'autofocus': 'autofocus'} : {}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('contents', Lang.choice('general.message', 1)) }}
+                <div class="sp-input-container">
+                    <div>
+                        {{ form_redactor_mf('contents', (record|default is not empty ? '<br /><br />' ~ signature : '')) }}
+                        {% if cumulative_attachment_limit != 0 %}
+                        <ul class="sp-attached-files">
+                            <li class="sp-flex sp-hidden">
+                                <div class="sp-mr-2 sp-truncate">
+                                    <i class="fas fa-file"></i>&nbsp;
+
+                                    <span class="sp-file-information">
+                                        <span class="sp-filename"></span>
+                                        <span class="sp-description sp-filesize"></span>
+                                    </span>
+                                </div>
+
+                                <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+                                    <i class="fas fa-times sp-text-white"></i>
+                                </div>
+
+                                <div class="sp-progress-bar">
+                                    <div class="sp-bar"></div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="sp-attachment-dragover sp-mb-0 sp-hidden">
+                            {{ Lang.get('general.drag_and_drop') }}
+                        </div>
+
+                        <label class="sp-inline-block sp-button sp-mr-3">
+                            <i class="fas fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}
+                            <input class="sp-file-upload sp-hidden" type="file" name="files[]"
+                                   data-url="{{ route('user.operator.attachment.upload') }}" multiple="multiple">
+                        </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="sp-attachment-details">
+                        <input type="hidden" name="attachment[]" disabled="disabled" />
+                    </div>
+                </div>
+            </div>
+
+            {% if record is not defined %}
+                <div class="sp-form-row">
+                    {{ form_label('batch_number', Lang.get('user.email_per_batch')) }}
+                    <div class="sp-input-container">
+                        {{ form_number('batch_number', 50, {'class': 'sp-w-24', 'min': 1}) }}
+                        <div class="sp-description">{{ Lang.get('user.email_per_batch_desc') }}</div>
+                    </div>
+                </div>
+
+                <div class="sp-form-row">
+                    {{ form_label('batch_interval', Lang.get('user.batch_interval')) }}
+                    <div class="sp-input-container">
+                        {{ form_number('batch_interval', 1, {'class': 'sp-w-24', 'min': 1}) }}
+                        <div class="sp-description">{{ Lang.get('user.batch_interval_desc') }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }} <span class="sending-time sp-description"></span>
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- Attachments -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script type="text/javascript">
+        new FileUpload({
+            blueimp: {
+                cumulativeMaxFileSize: {{ cumulative_attachment_limit }}
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var REGEX_EMAIL = '([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@' +
+                      '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)';
+
+            // Build an array of brand names and emails
+            var brandDetails = [];
+            {% for brand in brand_config(null) %}
+                brandDetails[{{ brand.id }}] = {name: '{{ brand.name }}', email: '{{ brand.default_email }}'};
+            {% endfor %}
+
+            // If we have multiple brands
+            if ($('select[name="brand_id"]').length) {
+                var $brandSelectize = $('select[name="brand_id"]').selectize({
+                    plugins: ['disableDelete'],
+                    placeholder: Lang.get('core.select_brand'),
+                    onChange: function (item) {
+                        // Set the from name and email based on the brand
+                        $('input[name="from_name"]').val(brandDetails[item].name);
+                        $('input[name="from_email"]').val(brandDetails[item].email);
+                    }
+                });
+                // Initialise the from details based on pre-selected brand
+                $brandSelectize[0].selectize.setValue($brandSelectize[0].selectize.getValue());
+            } else {
+                // Get brand ID from hidden field
+                var brandId = $('input[name="brand_id"]').val();
+
+                // Set the from name and email based on the brand
+                $('input[name="from_name"]').val(brandDetails[brandId].name);
+                $('input[name="from_email"]').val(brandDetails[brandId].email);
+            }
+
+            {% if record is not defined %}
+            var enablePlugins = ['restore_on_backspace', 'remove_button'];
+                $('select[name="to[]"]').selectize($.extend({ }, emailSelectizeConfig(enablePlugins), {
+                    maxItems: null,
+                    placeholder: Lang.get('user.select_user_groups'),
+                    render: {
+                        item: function(item, escape) {
+                            // Not a user
+                            if (typeof item.formatted_name === 'undefined') {
+                                item.value = item.text;
+                            }
+
+                            return '<div class="item">' + escape(item.value) + '</div>';
+                        },
+                        option: function(item, escape) {
+                            // Not a user
+                            if (typeof item.formatted_name === 'undefined') {
+                                return '<div>' + item.text + '</div>';
+                            }
+
+                            return '<div>' +
+                                '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" /> &nbsp;' +
+                                escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
+                                (item.email ? '<br /><span class="sp-description">' + escape(item.email || '') + '</span>' : '') +
+                                '</div>';
+                        }
+                    },
+                    load: function(query, callback) {
+                        if (!query.length) return callback();
+
+                        // Search for users
+                        $.get(laroute.route('user.operator.search'), { brand_id: $(':input[name="brand_id"]').val(), q: query })
+                            .done(function(res) {
+                                res.data = res.data
+                                    .map(function(value) {
+                                        // Add needed info for search and selected item to work.
+                                        value.value = value.email;
+                                        value.text = value.firstname + ' ' + value.lastname + ' <' + value.email + '>';
+                                        return value;
+                                    });
+
+                                callback(res.data);
+                            })
+                            .fail(function() { callback(); });
+                    },
+                }));
+            {% endif %}
+
+            var instance = $('textarea').redactor({
+                syntaxEmailTemplate: true,
+                mergeFields: {
+                    organisations: '{{ Config.get('settings.organisations_enabled') }}'
+                },
+                groups: $R.options.groups.concat(['sp-image']),
+                plugins: ['sp-mergefields'].concat($R.options.plugins)
+            });
+
+            // Load email template
+            $('select[name="load_template"]').on('change', function() {
+                if ($(this).val() != '0') {
+                    // Fetch email template
+                    $.ajax({
+                        url: laroute.route('core.operator.emailtemplate.show', {
+                            id: $(this).val(),
+                            {% if record.id is not empty %}
+                            user_id: '{{ record.id }}',
+                            {% else %}
+                            brand_id: $(this).parents('form').find(':input[name="brand_id"]').val(),
+                            {% endif %}
+                        }),
+                        type: 'GET',
+                        data: {},
+                        dataType: 'json'
+                    }).done(function(response) {
+                        if (response.status == 'success') {
+                            // Set subject and body
+                            $('input[name="subject"]').val(response.data.subject);
+                            instance.source.setCode(response.data.contents);
+                        }
+                    });
+                }
+            });
+
+            // Clear email template
+            $('.clear-form').on('click', function() {
+                $('input[name=subject]').val('');
+                instance.source.setCode("{{ record|default is not empty ? '<br /><br />' ~ Purifier.clean(signature)|e('js') : '' }}");
+                $('select[name="load_template"]').val(0);
+            });
+
+            // Work out how long it will take to send email when changing any important variable
+            $('select[name="to[]"], input[name="batch_number"], input[name="batch_interval"]').on('change', function() {
+                $.ajax({
+                    url: laroute.route('user.operator.massemail.sendingtime'),
+                    type: 'GET',
+                    data: {
+                        'to': $('select[name="to[]"]').val(),
+                        'number': $('input[name="batch_number"]').val(),
+                        'interval': $('input[name="batch_interval"]').val()
+                    },
+                    dataType: 'json'
+                }).done(function(response) {
+                    if (response.status == 'success') {
+                        // Add sending time next to submit button
+                        $('.sending-time').text(response.data);
+                    } else {
+                        // Some error, hide it
+                        $('.sending-time').text('');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

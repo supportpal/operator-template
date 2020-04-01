@@ -1,0 +1,254 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.module_generalsetting', {'module': Lang.choice('user.user', 1)}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(fields, {'method': 'PUT', 'route': 'user.operator.generalsetting.update'}) }}
+
+        <ul class="sp-tabs">
+            <li id="General">
+                <a>{{ Lang.get('general.general') }}</a>
+            </li>
+            <li id="Users" class="sp-active">
+                <a>{{ Lang.choice('user.user', 2) }}</a>
+            </li>
+            <li id="Operators">
+                <a>{{ Lang.choice('general.operator', 2) }}</a>
+            </li>
+            <li id="Organisations">
+                <a>{{ Lang.choice('user.organisation', 2) }}</a>
+            </li>
+        </ul>
+
+        <div id="tabGeneral" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('toggle_use_gravatar', Lang.get('user.use_gravatar')) }}
+                <div class="sp-input-container">
+                    {{ form_check('use_gravatar', 1, null, {'class': 'sp-toggle', 'id': 'toggle_use_gravatar'}) }}
+                    <label for="toggle_use_gravatar"></label>
+                    <div class="sp-description">{{ Lang.get('user.use_gravatar_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabUsers" class="sp-tab-content">
+            <div class="sp-form-row">
+                {{ form_label('user_name_format', Lang.get('user.user_name_format')) }}
+                <div class="sp-input-container">
+                    {{ form_select('user_name_format', {
+                        0: Lang.get('user.first_last'),
+                        1: Lang.get('user.last_first'),
+                        2: Lang.get('user.first_l'),
+                        3: Lang.get('user.f_last'),
+                        4: Lang.get('user.firstname'),
+                        5: Lang.get('user.lastname')
+                    }) }}
+                    <div class="sp-description">{{ Lang.get('user.user_name_format_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('registration_enabled', Lang.get('user.user_reg_enabled')) }}
+                <div class="sp-input-container">
+                    {{ form_check('registration_enabled', 1, null, {'class': 'sp-toggle', 'id': 'toggle_registration_enabled'}) }}
+                    <label for="toggle_registration_enabled"></label>
+                    <div class="sp-description">{{ Lang.get('user.user_reg_enabled_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row {% if Config.get('settings.captcha_type') == 0 %}sp-hidden{% endif %}">
+                {{ form_label('registration_captcha', Lang.get('user.user_reg_captcha')) }}
+                <div class="sp-input-container">
+                    {{ form_check('registration_captcha', 1, null, {'class': 'sp-toggle', 'id': 'toggle_registration_captcha'}) }}
+                    <label for="toggle_registration_captcha"></label>
+                    <div class="sp-description">{{ Lang.get('user.user_reg_captcha_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('user_password_length', Lang.get('user.password_length')) }}
+                <div class="sp-input-container">
+                    {{ form_number('user_password_length', null, {'class': 'sp-w-24', 'min': 1}) }}
+                    <div class="sp-description">{{ Lang.get('user.password_length_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('user_password_strength', Lang.get('user.password_strength')) }}
+                <div class="sp-input-container">
+                    {{ Lang.get('user.password_str_must_contain') }}<br />
+                    {{ form_check('user_password_strength[letters]', 1, user_password_strength|get('letters', 0)) }}
+                    {{ Lang.get('user.password_str_letters') }}<br />
+                    {{ form_check('user_password_strength[digits]', 1, user_password_strength|get('digits', 0)) }}
+                    {{ Lang.get('user.password_str_digits') }}<br />
+                    {{ form_check('user_password_strength[case]', 1, user_password_strength|get('case', 0)) }}
+                    {{ Lang.get('user.password_str_case') }}<br />
+                    {{ form_check('user_password_strength[symbols]', 1, user_password_strength|get('symbols', 0)) }}
+                    {{ Lang.get('user.password_str_symbols') }}<br />
+                    <div class="sp-description">{{ Lang.get('user.password_strength_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('force_2fa_users', Lang.get('user.force_two_fa')) }}
+                <div class="sp-input-container">
+                    {{ form_check('force_2fa_users', 1, null, {'class': 'sp-toggle', 'id': 'toggle_force_2fa_users'}) }}
+                    <label for="toggle_force_2fa_users"></label>
+                    <div class="sp-description">{{ Lang.get('user.force_two_fa_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ban_after_count_user', Lang.get('user.ban_after_count')) }}
+                <div class="sp-input-container">
+                    {{ form_number('ban_after_count_user', null, {'class': 'sp-w-24', 'min': 0}) }}
+                    <div class="sp-description">{{ Lang.get('user.ban_after_count_user') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ban_length_user', Lang.get('user.ban_length')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_user[days]', banLengthUser['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_user[hours]', banLengthUser['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_user[minutes]', banLengthUser['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">{{ Lang.get('user.ban_length_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabOperators" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('operator_name_format', Lang.get('user.user_name_format')) }}
+                <div class="sp-input-container">
+                    {{ form_select('operator_name_format', {
+                        0: Lang.get('user.first_last'),
+                        1: Lang.get('user.last_first'),
+                        2: Lang.get('user.first_l'),
+                        3: Lang.get('user.f_last'),
+                        4: Lang.get('user.firstname'),
+                        5: Lang.get('user.lastname')
+                    }) }}
+                    <div class="sp-description">{{ Lang.get('user.operator_name_format_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('toggle_ldap_enabled', Lang.get('user.enable_ldap')) }}
+                <div class="sp-input-container">
+                {% if extension_loaded('ldap') %}
+                    {{ form_check('ldap_enabled', 1, null, {'class': 'sp-toggle', 'id': 'toggle_ldap_enabled'}) }}
+                    <label for="toggle_ldap_enabled"></label>
+                    <div class="sp-description">{{ Lang.get('user.enable_ldap_desc') }}</div>
+                {% else %}
+                    <div class="sp-alert sp-alert-warning sp-alert-m-0">
+                        <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
+                        <span>{{ Lang.get('messages.php_ldap_missing') }}</span>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('operator_password_length', Lang.get('user.password_length')) }}
+                <div class="sp-input-container">
+                    {{ form_number('operator_password_length', null, {'class': 'sp-w-24', 'min': 1}) }}
+                    <div class="sp-description">{{ Lang.get('user.password_length_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('operator_password_strength', Lang.get('user.password_strength')) }}
+                <div class="sp-input-container">
+                    {{ Lang.get('user.password_str_must_contain') }}<br />
+                    {{ form_check('operator_password_strength[letters]', 1, operator_password_strength|get('letters', 0)) }}
+                    {{ Lang.get('user.password_str_letters') }}<br />
+                    {{ form_check('operator_password_strength[digits]', 1, operator_password_strength|get('digits', 0)) }}
+                    {{ Lang.get('user.password_str_digits') }}<br />
+                    {{ form_check('operator_password_strength[case]', 1, operator_password_strength|get('case', 0)) }}
+                    {{ Lang.get('user.password_str_case') }}<br />
+                    {{ form_check('operator_password_strength[symbols]', 1, operator_password_strength|get('symbols', 0)) }}
+                    {{ Lang.get('user.password_str_symbols') }}
+                    <div class="sp-description">{{ Lang.get('user.password_strength_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('force_2fa_operators', Lang.get('user.force_two_fa')) }}
+                <div class="sp-input-container">
+                    {{ form_check('force_2fa_operators', 1, null, {'class': 'sp-toggle', 'id': 'toggle_force_2fa_operators'}) }}
+                    <label for="toggle_force_2fa_operators"></label>
+                    <div class="sp-description">{{ Lang.get('user.force_two_fa_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ban_after_count_operator', Lang.get('user.ban_after_count')) }}
+                <div class="sp-input-container">
+                    {{ form_number('ban_after_count_operator', null, {'class': 'sp-w-24', 'min': 0}) }}
+                    <div class="sp-description">{{ Lang.get('user.ban_after_count_operator') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ban_length_operator', Lang.get('user.ban_length')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_operator[days]', banLengthOperator['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_operator[hours]', banLengthOperator['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('ban_length_operator[minutes]', banLengthOperator['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">{{ Lang.get('user.ban_length_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabOrganisations" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('organisations_enabled', Lang.get('user.organisations_enabled')) }}
+                <div class="sp-input-container">
+                    {{ form_check('organisations_enabled', 1, null, {'class': 'sp-toggle', 'id': 'toggle_organisations_enabled'}) }}
+                    <label for="toggle_organisations_enabled"></label>
+                    <div class="sp-description">{{ Lang.get('user.organisations_enabled_desc') }}</div>
+                </div>
+            </div>
+            <div class="sp-form-row">
+                {{ form_label('organisation_notifications', Lang.get('user.manager_notifications')) }}
+                <div class="sp-input-container">
+                    {{ form_check('organisation_notifications', 1, null, {'class': 'sp-toggle', 'id': 'toggle_organisation_notifications'}) }}
+                    <label for="toggle_organisation_notifications"></label>
+                    <div class="sp-description">{{ Lang.get('user.manager_notifications_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.get('general.save')) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}

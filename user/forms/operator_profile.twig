@@ -1,0 +1,20 @@
+{% include 'operator.' ~ template ~ '.user.forms.profile' with profileParameters %}
+
+<div class="sp-form-row">
+    {{ form_label('opsettings[template]', Lang.get('core.template')) }}
+    <div class="sp-input-container">
+        {{ form_select('opsettings[template]', {0: '-- ' ~ Lang.get('general.system_default') ~ ' --'} + templates,
+            record.opsettings.template|default is not empty ? record.opsettings.template : 0
+        ) }}
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('opsettings[template_mode]', Lang.get('core.template_mode')) }}
+    <div class="sp-input-container">
+        {{ form_select(
+            'opsettings[template_mode]',
+            {0: '-- ' ~ Lang.get('general.system_default') ~ ' --', 1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}
+        ) }}
+    </div>
+</div>

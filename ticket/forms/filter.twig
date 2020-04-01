@@ -1,0 +1,105 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.filter', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.filter', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ 'ticket.operator.filter.update', record.id ], 'method': 'PUT', 'class': 'validate'}) }}
+    {% else %}
+        {{ form_open({'route': 'ticket.operator.filter.store', 'class': 'validate'}) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('public', Lang.get('general.public')) }}
+                <div class="sp-input-container">
+                    {{ form_check('public', 1, record.user_id|default is not empty ? 0 : 1, {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                    <label for="toggle_public"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.record_public_desc', {'record': mb_strtolower(Lang.choice('ticket.filter', 1), 'UTF-8')}) }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full usergroups">
+                {{ form_label('groups', Lang.choice('user.operator_group', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('groups[]', operatorGroups, recordGroups, {'multiple': 'multiple'}) }}
+                    <div class="sp-description">{{ Lang.get('ticket.record_group_desc', {'record': mb_strtolower(Lang.choice('ticket.filter', 1), 'UTF-8')}) }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('ticket.filter_condition') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.filter_condition_desc') }}</div>
+
+        <div class="sp-form-container">
+
+            {% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
+            {% if oldGroups|default is not empty and oldGroups is not empty %}
+                {# In case there was an error and we're trying to show what they attempted to save #}
+                {% for groupId, group in oldGroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% else %}
+                {% for groupId, group in record.conditiongroups %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <div class="plan-conditiongroup-type sp-mb-3">
+                    {{ form_select('condition_group_type', { 0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group') },
+                        record.condition_group_type|default is not empty ? record.condition_group_type : 0) }}
+                </div>
+
+                {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+    <div class="sp-alert sp-alert-warning sp-alert-bottom">
+        <strong>{{ Lang.get('ticket.filter_performance') }}</strong>
+        <ul>
+            {{ Lang.get('ticket.filter_performance_desc')|raw }}
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/visibility.js') }}"></script>
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+{% endblock %}

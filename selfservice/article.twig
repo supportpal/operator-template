@@ -1,0 +1,122 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if type|default is not empty %}
+        {{ type.name }}
+    {% else %}
+        {{ Lang.choice('selfservice.article', 2) }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% if type|default is not empty %}
+        <a href="{{ route('selfservice.operator.type.index', { 'brand': type.brand_id }) }}">
+            {{ type.brand.name }}
+        </a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% endif %}
+    <strong>{{ Lang.choice('selfservice.article', 2) }}</strong>
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('selfservice.operator.article.create', type|default is not empty ? {'type': type.id} : {}) }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('selfservice.title') }}:</label>
+                <div id="filter_name"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('selfservice.author') }}:</label>
+                <div id="filter_author"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.category', 1) }}:</label>
+                <div id="filter_category"></div>
+            </div>
+            {% if type|default is empty %}
+                {% if Config.get('brand')|length == 1 %}
+                    <div class="sp-table-row">
+                        <label>{{ Lang.choice('selfservice.type', 1) }}:</label>
+                        <div id="filter_type"></div>
+                    </div>
+                {% else %}
+                    <div class="sp-table-row">
+                        <label>{{ Lang.choice('core.brand', 1) }}:</label>
+                        <div id="filter_brand"></div>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('selfservice.tag', 1) }}:</label>
+                <div id="filter_tag"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('selfservice.published') }}:</label>
+                <div id="filter_published"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('selfservice.registered_users') }}:</label>
+                <div id="filter_protected"></div>
+            </div>
+            {% if type|default is empty or type.view == 1 %}
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('selfservice.pinned') }}:</label>
+                    <div id="filter_pinned"></div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_author", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_category", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {% if type|default is empty %}
+                    {% if Config.get('brand')|length == 1 %}
+                        {column_number : 3, filter_container_id: "filter_type", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                    {% else %}
+                        {column_number : 4, filter_container_id: "filter_brand", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                    {% endif %}
+                {% endif %}
+                {column_number : 5, filter_container_id: "filter_tag", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 6, filter_container_id: "filter_published", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 7, filter_container_id: "filter_protected", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 8, filter_container_id: "filter_pinned", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+{% endblock %}

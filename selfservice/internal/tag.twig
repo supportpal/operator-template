@@ -1,0 +1,32 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.choice('selfservice.tag', 1) }}: {{ tag.name }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">{{ type.name }}</a>
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {{ tag.name }}
+{% endblock %}
+
+{% block description %}
+    {% if auth_user().hasPermission('create.article') %}
+        <a href="{{ route('selfservice.operator.article.create', { 'type': type.id }) }}" class="sp-button print:sp-hidden">
+            <i class="fas fa-plus"></i>&nbsp;
+            {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.selfservice.internal.sidebar' %}
+{% endblock %}
+
+{% block content %}
+
+    {# Show all articles with tag in this type #}
+    {% include 'operator.' ~ template ~ '.selfservice.internal.article_list' with {'articles': articles, 'show_pinned': type.view == 1} %}
+
+{% endblock %}

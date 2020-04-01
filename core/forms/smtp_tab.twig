@@ -1,0 +1,76 @@
+<div id="smtp" {% if email_method != 'smtp' %}style="display: none"{% endif %}>
+    <input type="hidden" name="brand_id" value="{{ record.id }}" />
+
+    <div class="sp-form-row">
+        {{ form_label('smtp_host', Lang.get('core.smtp_host')) }}
+        <div class="sp-input-container">
+            {{ form_text('smtp_host', null, {'size': 45}) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('smtp_port', Lang.get('core.smtp_port')) }}
+        <div class="sp-input-container">
+            {{ form_number('smtp_port', null, {'class': 'sp-w-32', 'min': 0}) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('smtp_encryption', Lang.get('core.smtp_encryption')) }}
+        <div class="sp-input-container">
+            {{ form_select('smtp_encryption', {
+                0     : Lang.get('general.none'),
+                'ssl' : Lang.get('core.ssl'),
+                'tls' : Lang.get('core.tls')
+            }) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('smtp_requires_auth', Lang.get('core.smtp_requires_auth')) }}
+        <div class="sp-input-container">
+            <label>{{ form_radio('smtp_requires_auth', 1, null, {
+                        'onclick': "document.getElementById('smtp_auth').style.display = 'block';"
+                    })
+                }} {{ Lang.get('general.yes') }}</label> &nbsp;
+            <label>{{ form_radio('smtp_requires_auth', 0, true, {
+                        'onclick': "document.getElementById('smtp_auth').style.display = 'none';"
+                    })
+                }} {{ Lang.get('general.no') }}</label>
+        </div>
+    </div>
+
+    <div id="smtp_auth" {% if not record.smtp_requires_auth %}style="display: none"{% endif %}>
+        <div class="sp-form-row">
+            {{ form_label('smtp_username', Lang.get('core.smtp_username')) }}
+            <div class="sp-input-container">
+                {{ form_text('smtp_username', null, {'size': 45}) }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('smtp_password', Lang.get('core.smtp_password')) }}
+            <div class="sp-input-container">
+                {{ form_password('smtp_password', { 'autocomplete': 'new-password' }) }}
+                {% if record.smtp_password is not empty %}
+                    <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            <label></label>
+            <div class="sp-input-container">
+                {{ form_button(Lang.get('core.validate_smtp'), { 'class': 'validate-smtp' }) }} &nbsp;&nbsp;
+                <span class="smtp-validate text-progress sp-text-orange-600 sp-hidden">
+                    <i class='fas fa-spinner fa-spin'></i> {{ Lang.get('messages.in_progress') }}...
+                </span>
+                <span class="smtp-validate text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
+                <span class="smtp-validate text-fail sp-text-red-600 sp-hidden">
+                    {{ Lang.get('messages.error') }}!
+                    <span class="error-message"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

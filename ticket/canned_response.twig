@@ -1,0 +1,74 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice("ticket.cannedresponse", 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('ticket.operator.cannedresponse.create') }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'operator.' ~ template ~ '.ticket.canned_response_tabs' with {'isResponses': true} %}
+
+    <div id="tabResponses" class="tabContent">
+
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_response_name"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.choice('ticket.tag', 1) }}:</label>
+                    <div id="filter_response_tag"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.public') }}:</label>
+                    <div id="filter_response_public"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ responsesTable.render()|raw }}
+
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ responsesTable.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", html_data_type: "selector", html_data_selector: "a", filter_container_id: "filter_response_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_response_tag", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_response_public", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,14 @@
+<div class="sp-message sp-message-{{ message.id }} {% if unread %}sp-message-collapsible{% else %}sp-message-collapsed{% endif %}
+            {% if message.type == 1 %}sp-note{% elseif message.type == 2 %}sp-forward{% endif %}" data-id="{{ message.id }}">
+    {% include 'operator.' ~ template ~ '.ticket.message_header' %}
+
+    <div class="sp-message-text sp-clearfix">
+        {% include 'operator.' ~ template ~ '.ticket.message_text' %}
+    </div>
+
+    <div class="sp-message-text-edit sp-hidden">
+        {% include 'operator.' ~ template ~ '.ticket.forms.edit_message' %}
+    </div>
+
+    {% include 'operator.' ~ template ~ '.ticket.message_attachments' %}
+</div>

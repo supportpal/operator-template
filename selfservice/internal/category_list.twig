@@ -1,0 +1,26 @@
+<h2>{{ Lang.choice('selfservice.category', 2) }}</h2>
+
+{% if not categories.isEmpty() %}
+    <div class="sp-flex sp-flex-wrap">
+        {% for category in categories %}
+            {% if not category.articles.isEmpty() %}
+            <div class="sp-w-full md:sp-w-1/2">
+                <a class='sp-category-title sp-block sp-px-4 sp-py-2 sp-mb-3 sp-bg-secondary sp-rounded sp-font-bold' href='{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}'>
+                    <i class="fas fa-folder-open"></i>&nbsp; {{ category.name }} ({{ category.count }})
+                </a>
+                <ul class="sp-category-article-list">
+                    {% for article in category.articles %}
+                        <li>
+                            <a href='{{ article.url(type) }}'>
+                               {{ article.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    {{ Lang.get('selfservice.no_categories_frontend') }}
+{% endif %}

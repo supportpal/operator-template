@@ -1,0 +1,43 @@
+{% if not otherBrands.isEmpty() %}
+    <div class="sp-alert sp-alert-info other-brands">
+        {{ Lang.choice('user.also_registered_other_brand', otherBrands|length > 1 ? 2 : 1, {'brands': otherBrands.implode(', ')})|raw }}
+    </div>
+{% endif %}
+
+{% set route = Route.currentRouteName() %}
+
+<ul class="sp-tabs">
+    <li {% if route == 'user.operator.user.edit' or route == 'user.operator.user.show' %}class="sp-active"{% endif %}>
+        <a href="{{ route('user.operator.user.edit', [ record.id ]) }}">
+            {{ Lang.get('user.profile') }}
+        </a>
+    </li>
+    {% if auth_user().hasPermission('view.ticket') and isModuleEnabled('Ticket') %}
+        <li {% if route == 'user.operator.user.ticket' %}class="sp-active"{% endif %}>
+            <a href="{{ route('user.operator.user.ticket', [ record.id ]) }}">
+                {{ Lang.choice('ticket.ticket', 2) }}
+            </a>
+        </li>
+    {% endif %}
+    {% if record.email is not empty %}
+        <li {% if route == 'user.operator.user.sendemail' %}class="sp-active"{% endif %}>
+            <a href="{{ route('user.operator.user.sendemail', [ record.id ]) }}">
+                {{ Lang.get('user.send_email') }}
+            </a>
+        </li>
+    {% endif %}
+    {% if auth_user().hasPermission('view.activitylog') %}
+        <li {% if route == 'user.operator.user.activitylog' %}class="sp-active"{% endif %}>
+            <a href="{{ route('user.operator.user.activitylog', [ record.id ]) }}">
+                {{ Lang.get('user.activity_log') }}
+            </a>
+        </li>
+    {% endif %}
+    {% if record.email is not empty and auth_user().hasPermission('view.emaillog') %}
+        <li {% if route == 'user.operator.user.emaillog' %}class="sp-active"{% endif %}>
+            <a href="{{ route('user.operator.user.emaillog', [ record.id ]) }}">
+                {{ Lang.get('core.email_log') }}
+            </a>
+        </li>
+    {% endif %}
+</ul>

@@ -1,0 +1,141 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('ticket.open_new') }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-alert sp-alert-error sp-hidden invalid-user">
+        {{ Lang.get('ticket.invalid_user') }}
+    </div>
+
+    {{ form_open({'route': [ 'ticket.operator.ticket.storeStep1' ], 'class': 'step1 validate'}) }}
+
+        {% if Request.has('link_message') or Request.old('link_message') %}
+            <input type="hidden" name="link_message" value="{{ Request.input('link_message', Request.old('link_message')) }}" />
+        {% endif %}
+
+        <h2>{{ Lang.get('ticket.department_user_details') }}</h2>
+
+        <div class="sp-form-container">
+            {% if brand_count() > 1 %}
+                <div class="sp-form-row">
+                    {{ form_label('brand', Lang.choice('core.brand', 1)) }}
+                    <div class="sp-input-container">
+                        <select name="brand">
+                            <option></option>
+                            {% for brand in assignedBrands %}
+                                {% set brandSelected = (user is not empty and user.brand_id == brand.id) or (selected_brand == brand.id) %}
+                                <option value="{{ brand.id }}" {% if brandSelected %}selected="selected"{% endif %}>
+                                    {{ brand.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% else %}
+                <input type="hidden" name="brand" value="{{ brand_config(null)|first.id }}" />
+            {% endif %}
+
+            <div class="sp-form-row">
+                {{ form_label('department', Lang.choice('ticket.department', 1)) }}
+                <div class="sp-input-container">
+                    {% if brand_count() > 1 and user is empty %}
+                        {{ form_select('department', [], null, { 'disabled': 'disabled' }) }}
+                    {% else %}
+                        <select name="department" id="department">
+                            <option></option>
+                            {% for id, department in departments %}
+                                <option {% if selected_department == id %}selected='selected'{% endif %} data-data='{{ department|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ id }}'>
+                                    {{ department.dashes|raw }}{{ department.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="sp-form-container ticket-type {% if brand_count() > 1 and user is empty and selected_brand is empty %}hide{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('internal', Lang.get('ticket.ticket_type')) }}
+                <div class="sp-input-container sp-w-full">
+                    <label>{{ form_radio('internal', 0, true) }} {{ Lang.get('ticket.user_ticket') }}</label> -
+                    <span class="sp-description">
+                        {% if auth_user().hasPermission('create.user') %}
+                            {{ Lang.get('ticket.user_ticket_desc') }}
+                        {% else %}
+                            {{ Lang.get('ticket.user_ticket_existing_desc') }}
+                        {% endif %}
+                    </span><br />
+
+                    <div class="user-ticket sp-p-3 sp-mt-2 sp-mb-3 sp-bg-primary sp-border sp-border-tertiary sp-rounded">
+                        {% if auth_user().hasPermission('create.user') %}
+                            <label>{{ form_radio('user_type', 0, true) }} {{ Lang.get('ticket.existing_user') }}</label>
+                            &nbsp;&nbsp;
+                            <label>{{ form_radio('user_type', 1) }} {{ Lang.get('ticket.new_user') }}</label>
+                        {% else %}
+                            {{ form_hidden('user_type', 0) }}
+                        {% endif %}
+
+                        <div class="existing-user sp-mt-3" id="existing-user">
+                            <select name="user" data-default-opt="{{ user|json_encode(constant('JSON_FORCE_OBJECT')) }}">
+                                <option></option>
+                            </select>
+                        </div>
+
+                        {% if auth_user().hasPermission('create.user') %}
+                            <div class="new-user sp-hidden">
+                                <div class="sp-form-row">
+                                    {{ form_label('user_firstname', Lang.get('user.firstname')) }}
+                                    <div class="sp-input-container">{{ form_text('user_firstname') }}</div>
+                                </div>
+
+                                <div class="sp-form-row">
+                                    {{ form_label('user_lastname', Lang.get('user.lastname')) }}
+                                    <div class="sp-input-container">{{ form_text('user_lastname') }}</div>
+                                </div>
+
+                                <div class="sp-form-row">
+                                    {{ form_label('user_email', Lang.get('general.email')) }}
+                                    <div class="sp-input-container">{{ form_text('user_email') }}</div>
+                                </div>
+
+                                {% if Config.get('settings.organisations_enabled') %}
+                                    <div class="sp-form-row">
+                                        {{ form_label('user_organisation', Lang.choice('user.organisation', 1)) }}
+                                        <div class="sp-input-container">
+                                            {{ form_text('user_organisation') }} &nbsp;
+                                            <span class="sp-description">({{ Lang.get('general.optional') }})</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="internal-ticket">
+                        {{ form_hidden('user', auth_user.id, { 'disabled': 'disabled' }) }}
+
+                        <label>{{ form_radio('internal', 1) }} {{ Lang.choice('ticket.internal_ticket', 1) }}</label> -
+                        <span class="sp-description">{{ Lang.get('ticket.internal_ticket_desc') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-button continue-button">
+            {{ form_submit(Lang.get('general.continue'), brand_count() > 1 and user is empty and selected_brand is empty ? {'disabled': 'disabled'} : {}) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
+{% endblock %}

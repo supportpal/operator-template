@@ -1,0 +1,1001 @@
+{% extends parent_template %}
+
+{% block meta %}
+    <meta name="recent_tickets" content="{{ recentTickets.pluck('id').implode(',') }}" />
+{% endblock %}
+
+{% block sidebar %}
+    {% if not customSearch and record is not defined %}
+        {% include 'operator.' ~ template ~ '.ticket.ticket_grid_sidebar' %}
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {% if title|default is not empty %}
+        {{ title }}
+    {% else %}
+        {{ Lang.choice('ticket.ticket', 2) }}
+    {% endif %}
+{% endblock %}
+
+{% block description %}
+    {% if description|default is not empty %}
+        {{ description }}
+    {% endif %}
+{% endblock %}
+
+{% block precontent %}
+
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                {% if (auth_user().hasPermission('create.ticket')) %}
+                    <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
+                       class="sp-action sp-button" id="openNewTicket">
+                        <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    </a><!--
+                {% else %}
+                    <!--
+                {% endif %}
+                {% if not Request.input('filter') %}
+                    --><button class="sp-action sp-hidden md:sp-inline-block toggle-filtering" id="filter-columns">
+                        <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    </button>
+                {% else %}
+                    -->
+                {% endif %}
+            </li><!--
+
+            {% if trashed_only %}
+                {% if auth_user().hasPermission('update.ticket|delete.ticket') %}
+                    --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                        {% if (auth_user().hasPermission('update.ticket')) %}
+                            <button class="sp-action restore-ticket" disabled="disabled" title="{{ Lang.get('general.restore') }}">
+                                <i class="fas fa-undo"></i>
+                            </button><!--
+                        {% else %}
+                            <!--
+                        {% endif %}
+                        {% if (auth_user().hasPermission('delete.ticket')) %}
+                        --><button class="sp-action delete-forever-ticket" disabled="disabled" title="{{ Lang.get('general.delete_forever') }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        {% else %}
+                            -->
+                        {% endif %}
+                    </li>
+                {% else %}
+                    -->
+                {% endif %}
+            {% else %}
+                {% if auth_user().hasPermission('update.ticket|delete.ticket_trash') %}
+                    {% if auth_user().hasPermission('update.ticket') %}
+                        --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                            <div class="sp-dropdown-container">
+                                <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_department') }}">
+                                    <i class="fas fa-folder"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                    <div>
+                                        <select name="department">
+                                            <option value="">{{ Lang.get('ticket.change_department') }}...</option>
+                                            {% for department in obj_departments_all %}
+                                                <option value="{{ department.id }}">
+                                                    {% if department.dashes|default is not empty %}
+                                                        {{ department.dashes|raw }}{{ department.name|replace({ (department.dashes): '' }) }}
+                                                    {% else %}
+                                                        {{ department.name }}
+                                                    {% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><!--
+                            --><div class="sp-dropdown-container">
+                                <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_status') }}">
+                                    <i class="fas fa-circle"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                    <div>
+                                        <select name="status">
+                                            <option value="">{{ Lang.get('ticket.change_status') }}...</option>
+                                            {% for status in obj_statuses %}
+                                                <option value="{{ status.id }}" data-data='{{ status|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                    {{ status['name'] }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><!--
+                            --><div class="sp-dropdown-container">
+                                <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                    <div>
+                                        <select name="priority">
+                                            <option value="">{{ Lang.get('ticket.change_priority') }}...</option>
+                                            {% for priority in obj_priorities %}
+                                                <option value="{{ priority.id }}" data-data='{{ priority|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                    {{ priority.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </li><!--
+
+                        --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                            <div class="sp-dropdown-container xs:sp-relative">
+                                <button class="sp-action" title="{{ Lang.get('ticket.assigned_operator') }}">
+                                    <i class="fas fa-user-tie"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1 xs:sp-left-auto xs:sp-right-0
+                                            xs:sp-ml-0 sm:sp-left-0 sm:sp-ml-0">
+                                    <div>
+                                        <select name="assign">
+                                            <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
+                                            {% for operator in obj_operators %}
+                                                <option value="{{ operator.id }}" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                    {{ operator.formatted_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
+                                            <span class="sp-bg-primary sp-px-4">{{ Lang.get('general.or') }}</span>
+                                        </div>
+
+                                        <select name="unassign">
+                                            <option value="">{{ Lang.get('ticket.unassign_operator') }}...</option>
+                                            {% for operator in obj_operators %}
+                                                <option value="{{ operator.id }}" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                    {{ operator.formatted_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><!--
+                            {% if not tags.isEmpty() %}
+                                --><div class="sp-dropdown-container sp-relative">
+                                    <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
+                                        <i class="fas fa-tags"></i>
+                                    </button>
+                                    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 sm:sp-left-0 sm:sp-ml-1 sm:sp-mr-0">
+                                        <div>
+                                            <select name="tag">
+                                                <option value="">{{ Lang.get('ticket.add_tag') }}...</option>
+                                                {% for tag in obj_tags %}
+                                                    <option value="{{ tag.id }}" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                        {{ tag.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
+                                                <span class="sp-bg-primary sp-px-4">{{ Lang.get('general.or') }}</span>
+                                            </div>
+
+                                            <select name="remove_tag">
+                                                <option value="">{{ Lang.get('ticket.remove_tag') }}...</option>
+                                                {% for tag in obj_tags %}
+                                                    <option value="{{ tag.id }}" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                        {{ tag.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                -->
+                            {% endif %}
+                        </li><!--
+
+                        {% if not macros.isEmpty() %}
+                            --><li class="sp-action-group sp-grid-actions sp-inline-block sp-relative sp-hidden">
+                                <div class="sp-dropdown-container">
+                                    <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
+                                    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 sp-mr-1 sm:sp-left-0 sm:sp-ml-1 sm:sp-mr-0">
+                                        <ul class="sp-text-right">
+                                            {% for macro in obj_macros %}
+                                                <li>
+                                                    <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
+                                                        {{ macro.name }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li><!--
+                        {% else %}
+                            <!--
+                        {% endif %}
+                    {% else %}
+                        <!--
+                    {% endif %}
+
+                    --><li class="sp-action-group sp-grid-actions sp-inline-block sp-relative sp-hidden">
+                        {% if auth_user().hasPermission('update.ticket') %}
+                            <button class="sp-action reply-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.reply') }}">
+                                <i class="fas fa-reply"></i>
+                            </button><!--
+                            --><button class="sp-action take-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
+                                <i class="fas fa-thumbtack"></i>
+                            </button><!--
+                            --><button class="sp-action close-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.close') }}">
+                                <i class="fas fa-check"></i>
+                            </button><!--
+                            --><button class="sp-action delete-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
+                                <i class="fas fa-trash"></i>
+                            </button><!--
+                        {% else %}
+                            <!--
+                        {% endif %}
+                        --><div class="sp-dropdown-container">
+                            <button class="sp-action">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 md:sp-right-auto">
+                                <ul>
+                                    {% if auth_user().hasPermission('update.ticket') %}
+                                        <li class="reply-ticket md:sp-hidden">
+                                            <a>{{ Lang.get('general.reply') }}</a>
+                                        </li>
+                                        <li class="take-ticket md:sp-hidden">
+                                            <a>{{ Lang.get('ticket.take') }}</a>
+                                        </li>
+                                        <li class="close-ticket md:sp-hidden">
+                                            <a>{{ Lang.get('general.close') }}</a>
+                                        </li>
+                                        <li class="lock-ticket">
+                                            <a>{{ Lang.get('ticket.close_and_lock') }}</a>
+                                        </li>
+                                        <li class="unlock-ticket">
+                                            <a>{{ Lang.get('ticket.unlock') }}</a>
+                                        </li>
+                                        <li class="watch-ticket">
+                                            <a>{{ Lang.get('ticket.watch') }}</a>
+                                        </li>
+                                        <li class="unwatch-ticket">
+                                            <a>{{ Lang.get('ticket.unwatch') }}</a>
+                                        </li>
+                                        <li class="link-ticket">
+                                            <a>{{ Lang.get('general.link') }}</a>
+                                        </li>
+                                        <li class="merge-ticket">
+                                            <a>{{ Lang.get('ticket.merge') }}</a>
+                                        </li>
+                                        <li class="unmerge-ticket">
+                                            <a>{{ Lang.get('ticket.unmerge') }}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if auth_user().hasPermission('delete.ticket_trash') %}
+                                        <li class="delete-ticket md:sp-hidden">
+                                            <a>{{ Lang.get('general.move_to_trash') }}</a>
+                                        </li>
+                                        <li class="block-ticket">
+                                            <a>{{ Lang.get('ticket.block_user') }}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    -->
+                {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-update">
+        {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-update">
+        {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-trash">
+        {{ Lang.get('messages.success_trashed', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-trash">
+        {{ Lang.get('messages.error_trashed', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-delete">
+        {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-delete">
+        {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ticket-assign"></div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ticket-department"></div>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty %}
+        {% if record.name is not empty %}
+            {% include 'operator.' ~ template ~ '.user.forms.organisation_tabs' %}
+        {% elseif record.formatted_name is not null %}
+            {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+        {% endif %}
+    {% elseif customSearch %}
+        {% include 'operator.' ~ template ~ '.core.search_tabs' %}
+    {% endif %}
+
+    <form class="sp-condition-group sp-my-6 sp-hidden"></form>
+
+	{{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- File upload -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
+
+    {# Only load the sidebar on the main ticket grid. #}
+    {% if not customSearch and record is not defined %}
+        <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/sidebar.js') }}"></script>
+    {% endif %}
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
+    <script type="text/javascript">
+        // Schedule first grid refresh in 60 seconds.
+        var gridTimeout = setTimeout(function() {
+            refreshGrid();
+        }, 60000);
+
+        $(document).ready(function() {
+            // Reference to fileupload.js instance, from mass reply box.
+            var fileUpload;
+
+            /**
+             * Mass Reply file uploads.
+             */
+            $(document)
+                .on('click', '.reply-ticket', function () {
+                    fileUpload = new FileUpload({
+                        registerEvents: false
+                    });
+                    $(fileUpload)
+                        .on('upload:started', function () {
+                            Swal.disableButtons();
+                        })
+                        .on('upload:complete', function () {
+                            Swal.enableButtons();
+                        });
+                    $()
+                })
+                .on('click', '.sp-attached-files .sp-delete-attachment', function(e) {
+                    var url = $(this).data('url');
+                    var hash = $(this).data('hash');
+                    var $listItem = $(this).parents('li');
+
+                    // Hide cross
+                    $(this).hide();
+
+                    // DELETE the file!
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        data: {'hash': hash},
+                        success: function(result) {
+                            if (result.status == 'success'
+                                && (typeof $listItem !== 'undefined' && $listItem instanceof jQuery)
+                            ) {
+                                $('div.sp-attachment-details').find('input[name="attachment['+ hash +']"]').remove();
+                                $listItem.remove();
+                            }
+                        },
+                        error: function(result) {
+                            // Show cross again
+                            $(this).show();
+                        }
+                    });
+                });
+
+            var $datatable = $('.dataTable'),
+                $quickActions = $('.sp-quick-actions');
+
+            // Changing order of grid (delay next refresh of grid by 60 seconds)
+            $datatable.on('order.dt', function () {
+                clearTimeout(gridTimeout);
+                gridTimeout = setTimeout(function() {
+                    refreshGrid();
+                }, 60000);
+            });
+
+            // Load grid filtering for the first time.
+            $('.toggle-filtering').on('click', function () {
+                // The #FollowUp node will be empty if we haven't loaded it before.
+                if ($('form.sp-condition-group').is(':empty')) {
+                    // Show loading icon
+                    $('form.sp-condition-group').html('<div class="sp-p-3"><i class="fas fa-spinner fa-pulse fa-fw"></i></div>');
+
+                    // Fetch view
+                    $.get(
+                        '{{ route("ticket.operator.ticket.filtering") }}', getUrlVars(),
+                        function(response) {
+                            if (response.status == 'success') {
+                                // Update form
+                                $('form.sp-condition-group').html(response.data);
+
+                                // Initialise date picker.
+                                $('.datepicker').datepicker();
+
+                                // If we have default conditions
+                                Filtering.initialise();
+                            } else {
+                                // Show message sp-condition-group refresh
+                                $('form.sp-condition-group').html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
+                            }
+                        }, "json").fail(function() {
+                        // Show message to refresh
+                        $('form.sp-condition-group').html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
+                    });
+                }
+            });
+
+            // Filtering
+            $('.sp-condition-group').on('click', '.update-filtering', function() {
+                clearTimeout(gridTimeout);
+
+                $datatable.on('preXhr.dt', function ( e, settings, data ) {
+                    // DEV-829, remove hardcoded route conditions (?conditions=...)
+                    settings.sAjaxSource = '{{ sAjaxSource }}';
+
+                    // Add conditions to parameters
+                    var conditions = $(".sp-condition-group").serializeArray();
+                    $.each(conditions, function(index, value) {
+                        data[value.name] = value.value;
+                    });
+                }).dataTable().api().ajax.reload();
+
+                // Delay next refresh of grid by 60 seconds.
+                gridTimeout = setTimeout(function() {
+                    refreshGrid();
+                }, 60000);
+            });
+
+            // Process reply button
+            $quickActions.on('click', '.reply-ticket', function() {
+                Swal.fire({
+                    title: Lang.get("ticket.mass_reply"),
+                    html: '<form class="mass-reply sp-text-left">'
+                        + '<div class="sp-alert sp-alert-error sp-hidden attachment"></div>'
+                        + '{{ form_redactor("text") }}'
+                        + '<div class="sp-attachment-details">'
+                        + '    <input type="hidden" name="attachment[]" disabled="disabled" />'
+                        + '</div>'
+                        + '<ul class="sp-attached-files">'
+                        + '    <li class="sp-flex sp-hidden">'
+                        + '        <div class="sp-mr-2 sp-truncate">'
+                        + '            <i class="fas fa-file"></i> &nbsp;'
+                        + '            <span class="sp-file-information">'
+                        + '                <span class="sp-filename"></span>'
+                        + '                <span class="sp-description sp-filesize"></span>'
+                        + '            </span>'
+                        + '        </div>'
+                        + '        <div class="sp-delete-attachment sp-hidden sp-bg-red-600">'
+                        + '            <i class="fas fa-times sp-text-white"></i>'
+                        + '        </div>'
+                        + '        <div class="sp-progress-bar">'
+                        + '            <div class="sp-bar"></div>'
+                        + '        </div>'
+                        + '    </li>'
+                        + '</ul>'
+                        + '<div class="sp-my-4"><label class="sp-file-input sp-button">'
+                        + '    <i class="fas fa-paperclip"></i>&nbsp; ' + Lang.get("general.add_attachment")
+                        + '    <input class="sp-file-upload" type="file" name="files[]" data-url="' + laroute.route("ticket.operator.attachment.upload") + '" multiple="multiple">'
+                        + '</label></div>'
+                        + '<strong>' + Lang.get("ticket.reply_options") + '</strong>:<br />'
+                        + '<label>'
+                        + '    {{ form_check("send_email_to_users", 1, true) }}'
+                        + '    ' + Lang.get("ticket.send_email_to_users")
+                        + '</label><br /><label>'
+                        + '    {{ form_check("send_email_to_operators", 1) }}'
+                        + '    ' + Lang.get("ticket.send_email_to_operators")
+                        + '</label><br /><label>'
+                        + '    {{ form_check("take_ownership", 1) }}'
+                        + '    ' + Lang.get("ticket.take_ownership")
+                        + '</label><br />'
+                        + '{{ form_label("to_status", Lang.get("ticket.set_status")) }} '
+                        + '{{ form_select("to_status", obj_statuses.pluck("name", "id")) }}'
+                        + '</form>',
+                    width: '800',
+                    showCancelButton: true,
+                    onOpen: function () {
+                        $(Swal.getContent()).find('.mass-reply textarea').redactor({
+                            focus: true,
+                            // Key down event causes mass reply modal to hide
+                            callbacks: {
+                                keydown: function (e) {
+                                    e.stopPropagation();
+                                }
+                            }
+                        });
+                    },
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        var data = $(Swal.getContent()).find('form.mass-reply').serializeArray();
+                        // Add other data
+                        data.push({ name: 'reply_type', value: 0 });
+
+                        // Add ticket IDs.
+                        var ids = getSelectedRows().split(',');
+                        for(var i = 0; i < ids.length; i++) {
+                            data.push({ name: 'ticket['+i+']', value: ids[i] });
+                        }
+
+                        var params = {
+                            url: laroute.route('ticket.operator.message.store'),
+                            type: 'POST',
+                            data: data,
+                            dataType: 'json'
+                        };
+
+                        // Post updated data
+                        return $.ajax(params)
+                            .then(function (response) {
+                                if (response.status == 'success') {
+                                    Swal.fire(Lang.get('messages.success_created', { 'item': Lang.choice('general.message', 1) }));
+
+                                    return response;
+                                }
+
+                                throw new Error(response.statusText);
+                            })
+                            .catch(function () {
+                                Swal.showValidationMessage(Lang.get('messages.error_created', { 'item': Lang.choice('general.message', 1) }));
+                            });
+                    },
+                    allowOutsideClick: false
+                }).then(function (result) {
+                    if (result.value) {
+                        refreshGrid();
+                    }
+                    if (result.dismiss == 'cancel') {
+                        // Cancel button was pressed. Clear any uploaded attachments
+                        $('input[name="attachment[]"]:not(:first)').remove();
+                        // Remove the uploads from the file system and the database
+                        $('.attached-files li:not(.hide) .deleteAttachment').trigger('click');
+                    }
+                });
+            });
+
+            // Process take button
+            $quickActions.on('click', '.take-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.take'));
+            });
+            // Process close button
+            $quickActions.on('click', '.close-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.close'));
+            });
+            // Process lock button
+            $quickActions.on('click', '.lock-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.lock'));
+            });
+            // Process unlock button
+            $quickActions.on('click', '.unlock-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.unlock'));
+            });
+            // Process watch button
+            $quickActions.on('click', '.watch-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.watch'));
+            });
+            // Process unwatch button
+            $quickActions.on('click', '.unwatch-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.unwatch'));
+            });
+            // Process link button
+            $quickActions.on('click', '.link-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.link'));
+            });
+            // Process merge button
+            $quickActions.on('click', '.merge-ticket', function() {
+                mergeTickets({ticket: getSelectedRows()});
+            });
+            // Process unmerge button
+            $quickActions.on('click', '.unmerge-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.unmerge'));
+            });
+            $quickActions.on('click', '.restore-ticket', function() {
+                restoreTicket(getSelectedRows());
+            });
+            // Process delete button
+            $quickActions.on('click', '.delete-ticket', function() {
+                deleteTicket(getSelectedRows(), false);
+            });
+            $quickActions.on('click', '.delete-forever-ticket', function() {
+                deleteTicket(getSelectedRows(), false, true);
+            });
+            // Process block button
+            $quickActions.on('click', '.block-ticket', function() {
+                deleteTicket(getSelectedRows(), true, false);
+            });
+
+            // Process department change
+            $quickActions.find('select[name="department"]').selectize({
+                onChange: function (value) {
+                    if (value) {
+                        ticketAction({
+                            ticket: getSelectedRows(),
+                            department_id: value
+                        }, laroute.route('ticket.operator.action.department'));
+
+                        this.clear(true);
+                    }
+                }
+            });
+
+            // Update ticket details
+            var $onChange = function (value) {
+                if (value) {
+                    var data = $(this.$input[0]).serializeArray();
+                    data.push({name: 'ticket', value: getSelectedRows()});
+                    updateTicket(data);
+
+                    this.clear(true);
+                }
+            };
+            $quickActions.find('select[name="priority"]').selectize({
+                render: {
+                    option: function(item, escape) {
+                        return '<div>'
+                            + '<i class="fas fa-flag" style="color: ' + escape(item.colour) +'"></i>'
+                            + '&nbsp; ' + escape(item.name)
+                            + '</div>';
+                    }
+                },
+                onChange: $onChange
+            });
+            $quickActions.find('select[name="status"], select[name="tag"], select[name="remove_tag"]').selectize({
+                render: {
+                    option: function(item, escape) {
+                        return '<div>'
+                            + '<i class="fas fa-circle" style="color: ' + escape(item.colour) +'"></i>'
+                            + '&nbsp; ' + escape(item.name)
+                            + '</div>';
+                    }
+                },
+                onChange: $onChange
+            });
+
+            // Process assign/unassign operator
+            $quickActions.find('select[name="assign"], select[name="unassign"]').selectize({
+                render: {
+                    option: function(item, escape) {
+                        return '<div>'
+                            + '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; '
+                            + escape(item.formatted_name)
+                            + '</div>';
+                    }
+                },
+                onChange: function (value) {
+                    if (value) {
+                        assignOperator(getSelectedRows(), value, $(this.$input[0]).attr('name') == 'unassign');
+
+                        this.clear(true);
+                    }
+                }
+            });
+
+            // Focus on selectize dropdown on clicking on action.
+            $quickActions.find('.sp-action.sp-has-selectize').on('click', function () {
+                $(this).next().find('select')[0].selectize.focus();
+            });
+
+            // Apply macro
+            $quickActions.on('click', '.apply-macro', function() {
+                var text = he.encode($(this).text()),
+                    description = he.encode($(this).data('description')),
+                    macro = $(this).data('macro');
+
+                // Show the alert
+                Swal.fire({
+                    title: Lang.get('ticket.run_macro'),
+                    html: Lang.get('ticket.run_macro_desc', {'macro': text, 'description': description}),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3B91CE",
+                    confirmButtonText: Lang.get('general.run'),
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return ticketAction({ticket: getSelectedRows(), macro_id: macro}, laroute.route('ticket.operator.action.macro'));
+                    },
+                    allowOutsideClick: function () {
+                        return ! Swal.isLoading();
+                    }
+                });
+            });
+
+            $(document).on('change', 'select[name="grid_ordering"], select[name="grid_ordering_direction"]', function() {
+                // Post updated data
+                $.post(
+                    laroute.route('ticket.operator.ticket.saveOrdering'),
+                    {
+                        ordering: $('select[name="grid_ordering"]').val(),
+                        direction: $('select[name="grid_ordering_direction"]').val()
+                    }
+                ).always(function() {
+                    // Reload table
+                    refreshGrid();
+                });
+            });
+        });
+
+        function updateTicket(data) {
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            // Post updated data
+            $.post(
+                laroute.route('ticket.operator.action.update'),
+                data,
+            function(response) {
+                if (response.status == 'success') {
+                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
+                } else {
+                    $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                }
+            }, "json").fail(function() {
+                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+            }).always(function() {
+                // Reload table
+                refreshGrid();
+            });
+        }
+
+        function ticketAction(data, route) {
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            // Post updated data
+            $.post(
+                route,
+                data,
+            function(response) {
+                if (response.status == 'success') {
+                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
+                } else {
+                    // Only show specific error for update department
+                    if (typeof response.message != 'undefined' && route == laroute.route('ticket.operator.action.department')) {
+                        $('.ticket-department.sp-alert-error').text(response.message).show(500).delay(5000).hide(500).text();
+                    } else {
+                        $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                    }
+                }
+            }, "json").fail(function() {
+                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+            }).always(function() {
+                // Reload table
+                refreshGrid();
+            });
+        }
+
+        function mergeTickets(data) {
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            TicketAction.merge(data.ticket.split(','))
+                .then(function (result) {
+                    if (result.value) {
+                        $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
+
+                        // Reload table
+                        refreshGrid();
+                    }
+                });
+        }
+
+        function assignOperator(data, operator, unassign) {
+            // Get route depending if assigning or unassigning operator
+            var route;
+            if (unassign) {
+                route = laroute.route('ticket.operator.action.unassign');
+            } else {
+                route = laroute.route('ticket.operator.action.assign');
+            }
+
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            // Post updated data
+            $.post(
+                route,
+                {
+                    'ticket': data,
+                    'operator': [ operator ]
+                },
+            function(response) {
+                if (response.status == 'success') {
+                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
+                } else {
+                    if (typeof response.message != 'undefined') {
+                        $('.ticket-assign.sp-alert-error').text(response.message).show(500).delay(5000).hide(500).text();
+                    } else {
+                        $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                    }
+                }
+            }, "json").fail(function() {
+                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+            }).always(function() {
+                // Reload table
+                refreshGrid();
+            });
+        }
+
+        function restoreTicket(data) {
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            $.ajax({
+                url: laroute.route('ticket.operator.action.restore'),
+                type: 'POST',
+                data: { 'ticket': data },
+                dataType: 'json'
+            }).done(function(response) {
+                if (response.status == 'success') {
+                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
+                } else {
+                    $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                }
+            }).fail(function() {
+                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+            }).always(function() {
+                // Reload table
+                refreshGrid();
+            });
+        }
+
+        function deleteTicket(data, block, force) {
+            // Are we also blocking?
+            block = typeof block !== 'undefined' ? block : false;
+
+            var type = block ? 'POST' : 'DELETE',
+                route = block ? laroute.route('ticket.operator.action.block') :
+                    (force ? laroute.route('ticket.operator.action.destroy') : laroute.route('ticket.operator.action.trash')),
+                messageDiv = force ? '.tickets-delete' : '.tickets-trash';
+
+            var ajaxParams = {
+                url: route,
+                type: type,
+                data: {'ticket': data},
+                dataType: 'json'
+            };
+
+            // Disable the grid actions and hide any visible dropdowns
+            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            if (force) {
+                var params = {
+                    html: function (html) {
+                        return html + "<br />" + TicketAction.createListFromGrid(data.split(','));
+                    },
+                    ajax: ajaxParams
+                };
+                (new deleteAlert(params))
+                    .fireDefault(Lang.choice('ticket.ticket', 2), '', {{ deleteRelations|json_encode|raw }})
+                    .then(function (result) {
+                        if (result.value) {
+                            $(messageDiv + '.sp-alert-success').show(500).delay(5000).hide(500);
+                            refreshGrid();
+                        }
+                    });
+            } else {
+                $.ajax(ajaxParams)
+                    .then(function(response) {
+                        if (response.status == 'success') {
+                            $(messageDiv + '.sp-alert-success').show(500).delay(5000).hide(500);
+                        } else {
+                            throw new Error(response.statusText);
+                        }
+                    })
+                    .catch(function() {
+                        $(messageDiv + '.sp-alert-error').show(500).delay(5000).hide(500);
+                    })
+                    .always(function() {
+                        refreshGrid();
+                    });
+            }
+        }
+
+        /*
+         * Refresh the ticket grid automatically every minute
+         */
+        function refreshGrid() {
+            clearTimeout(gridTimeout);
+
+            // Disable the grid actions
+            if (! $('tr.selected').length) {
+                $('.sp-grid-actions').addClass('sp-hidden');
+                $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
+            }
+            $('.sp-grid-actions :input').prop('disabled', true);
+
+            // Save the row selection
+            var selection = getSelectedRows();
+            var all_selected = $('input[name="select-all"]').is(':checked');
+
+            // Update the grid
+            $('.dataTable').dataTable().api().ajax.reload(function() {
+                if (selection !== '') {
+                    // Restore the row selection
+                    var array = selection.split(","); // explode the selected rows
+
+                    // Trigger a row click for each previously selected row, this will trigger the necessary properties
+                    // and events. Keep a track of how many we click.
+                    var number_selected = 0;
+                    $.each(array, function(index, item) {
+                        if (item != '' && $('tr#'+item).length) {
+                            $('tr#'+item).trigger('click');
+                            number_selected++;
+                        }
+                    });
+
+                    // Re-check the select all checkbox (only if all rows were selected still).
+                    if (all_selected && number_selected === array.length) {
+                        $('input[name="select-all"]').prop('checked', true);
+                    }
+                }
+
+                // Re-enable the buttons
+                if ($('tr.selected').length) {
+                    $('.sp-grid-actions').removeClass('sp-hidden');
+                    $('.sp-grid-actions :input').prop('disabled', false);
+                    $('.sp-action-group:not(.sp-grid-actions)').addClass('sp-hidden');
+                }
+
+                // Refresh sidebar
+                if (typeof sideBar !== 'undefined') {
+                    sideBar.refresh();
+                }
+            }, false);
+
+            // Schedule next grid update in 60 seconds.
+            gridTimeout = setTimeout(function() {
+                refreshGrid();
+            }, 60000);
+        }
+
+        // Read a page's GET URL variables and return them as an associative array.
+        function getUrlVars()
+        {
+            var vars = {}, hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+    </script>
+{% endblock %}

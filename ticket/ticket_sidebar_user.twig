@@ -1,0 +1,156 @@
+<div>
+    <img src="{{ ticket.user.avatar_url }}" class="sp-avatar sp-max-w-sm" />
+    &nbsp;
+    {% if can_update_ticket(auth_user(), ticket) %}
+        <a class="edit-user sp-font-bold sp-border-b sp-border-primary-800 sp-border-dotted hover:sp-border-solid">
+            {{ ticket.user.formatted_name }}
+        </a>
+    {% else %}
+        {{ ticket.user.formatted_name }}
+    {% endif %}
+    {% if ticket.user.groups is not empty %}
+        {% for group in ticket.user.groups %}
+            <i class="fas fa-circle sp-ml-1" style="color: {{ group.colour }};" title="{{ group.name }}"></i>
+        {% endfor %}
+    {% endif %}
+
+    <div class="update-user sp-hidden">
+        {{ form_select('user', [], null, {'class': 'sp-my-2'}) }}
+
+        {% if auth_user().hasPermission('create.user') %}
+            <div class="create-new-user">
+                <a class="new-user-toggle">
+                    <i class="fas fa-plus" aria-hidden="true"></i>&nbsp; {{ Lang.get('ticket.create_new_user') }}
+                </a>
+
+                <form class="new-user-form sp-hidden sp-my-2">
+                    <input type="hidden" name="ticket" value="{{ ticket.id }}" />
+                    <label>
+                        {{ form_text('firstname', null, { 'placeholder': Lang.get('user.firstname') }) }}
+                    </label><br />
+                    <label>
+                        {{ form_text('lastname', null, { 'placeholder': Lang.get('user.lastname') }) }}
+                    </label><br />
+                    <label>
+                        {{ form_email('email', null, { 'placeholder': Lang.get('general.email') }) }}
+                    </label>
+                    {% if Config.get('settings.organisations_enabled') %}
+                        <br />
+                        <label>
+                            {{ form_select('organisation') }}
+                        </label>
+                        <input type="hidden" name="organisation_id" />
+                    {% endif %}
+
+                    {{ form_button(Lang.get('general.save')) }}
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<hr />
+
+<div>
+    <a class="sp-description" href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">
+        {{ Lang.get('user.profile') }}
+    </a>
+</div>
+
+{% if ticket.user.email|default is not empty %}
+    {% if Config.get('settings.organisations_enabled') and ticket.user.organisation is not empty %}
+        <i class="fas fa-building fa-fw"></i> &nbsp; <a href="{{ ticket.user.organisation.url|raw }}">{{ ticket.user.organisation.name }}</a><br />
+    {% endif %}
+    <i class="fas fa-envelope fa-fw"></i> &nbsp; {{ ticket.user.email }}
+    {% if not ticket.user.confirmed %}
+        <i class="fas fa-exclamation-circle sp-text-orange-600" aria-hidden="true" title="{{ Lang.get('user.unconfirmed_user_desc') }}"></i>
+    {% endif %}<br />
+    {% if ticket.user.confirmed %}
+        <i class="fas fa-calendar fa-fw"></i> &nbsp; {{ Lang.get('user.signed_up') }} {{ timeago(ticket.user.created_at) }}<br />
+
+        {% if ticket.user.last_active_at > 0 %}
+            <i class="fas fa-clock fa-fw"></i> &nbsp; {{ Lang.get('user.last_active') }} {{ timeago(ticket.user.last_active_at) }}<br />
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% if ticket.user.country|default is not empty %}
+    <i class="fas fa-globe fa-fw"></i> &nbsp; {{ countries()[ticket.user.country] }}<br />
+{% endif %}
+
+{% if ticket.user.notes is not empty %}
+    <div class="sp-description sp-mt-3">{{ Lang.choice('general.note', 2) }}</div>
+    <div>{{ Purifier.clean(ticket.user.notes) }}</div>
+{% endif %}
+
+{% if userTickets.count() %}
+    <hr />
+
+    <a class="sp-description" href="{{ route('user.operator.user.ticket', [ ticket.user_id ]) }}">
+        {{ Lang.get('ticket.recent_tickets') }}
+    </a>
+
+    <ul class="sp-mt-1">
+        {% for userTicket in userTickets %}
+        <li class="sp-truncate">
+            <i class="fas fa-circle" style="color: {{ userTicket.status.colour }};"
+                title="{{ userTicket.status.name }}"></i> &nbsp;
+            <a href="{{ route('ticket.operator.ticket.show', [ userTicket.id ]) }}" target="_blank">
+                {{ userTicket.subject }}
+            </a>
+            <div class="sp-description sp-text-xs">
+                {% if userTicket.trashed() %}<i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
+                {{ userTicket.department.name }} &nbsp;&middot;&nbsp; {{ timeago(userTicket.created_at) }}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if not ticket.internal and organisationTickets.count() %}
+    <hr />
+
+    <a class="sp-description" href="{{ route('user.operator.organisation.ticket', [ ticket.user.organisation_id ]) }}">
+        {{ Lang.get('ticket.organisation_tickets') }}
+    </a>
+
+    <ul class="sp-mt-1">
+        {% for organisationTicket in organisationTickets %}
+        <li class="sp-truncate">
+            <i class="fas fa-circle" style="color: {{ organisationTicket.status.colour }};"
+                title="{{ organisationTicket.status.name }}"></i> &nbsp;
+            <a href="{{ route('ticket.operator.ticket.show', [ organisationTicket.id ]) }}" target="_blank">
+                {{ organisationTicket.subject }}
+            </a>
+            <div class="sp-description sp-text-xs">
+                {% if organisationTicket.trashed() %}<i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
+                {{ organisationTicket.department.name }} &nbsp;&middot;&nbsp; {{ timeago(organisationTicket.created_at) }}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if not ticket.internal and otherBrandTickets.count() %}
+    <hr />
+
+    <div class="sp-description">
+        {{ Lang.get('ticket.ticket_other_brands') }}
+    </div>
+
+    <ul class="sp-mt-1">
+        {% for otherBrandTicket in otherBrandTickets %}
+            <li class="sp-truncate">
+                <i class="fas fa-circle" style="color: {{ otherBrandTicket.status.colour }};"
+                    title="{{ otherBrandTicket.status.name }}"></i> &nbsp;
+                <a href="{{ route('ticket.operator.ticket.show', [ otherBrandTicket.id ]) }}" target="_blank">
+                    {{ otherBrandTicket.subject }}
+                </a>
+                <div class="sp-description sp-text-xs">
+                    {% if otherBrandTicket.trashed() %}<i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
+                    {{ otherBrandTicket.brand.name }} &nbsp;&middot;&nbsp; {{ timeago(otherBrandTicket.created_at) }}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

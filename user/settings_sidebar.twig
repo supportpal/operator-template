@@ -1,0 +1,67 @@
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex {% if module != 'user' %}sp-closed{% endif %}" id="userSettingsBox">
+        <div class="sp-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3>{{ Lang.choice('user.user', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas {% if module == 'user' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul {% if module != 'user' %}class="sp-hidden"{% endif %}>
+        {% if auth_user().hasPermission('view.usersetting') %}
+            <li {% if route starts with 'user.operator.generalsetting' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.generalsetting') }}">{{ Lang.get("general.generalsetting") }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ldapaccount') and Config.get('settings.ldap_enabled', 0) == 1 %}
+            <li {% if route starts with 'user.operator.ldapaccount' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.ldapaccount') }}">{{ Lang.choice("user.ldap_account", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.operatorgroup') %}
+            <li {% if route starts with 'user.operator.operatorgroup' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.operatorgroup') }}">{{ Lang.choice("user.operator_group", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.role') %}
+            <li {% if route starts with 'user.operator.role' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.role') }}">{{ Lang.choice("user.operator_role", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.operatorsignature') %}
+            <li {% if route starts with 'user.operator.operatorsignature' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.operatorsignature') }}">{{ Lang.choice("user.operator_signature", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.organisationcustomfield') %}
+            <li {% if route starts with 'user.operator.organisationcustomfield' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.organisationcustomfield.index') }}">{{ Lang.choice("user.organisation_customfield", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.sociallogin') %}
+            <li {% if route starts with 'user.operator.sociallogin' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.sociallogin.index') }}">{{ Lang.get("user.social_login") }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.usercustomfield') %}
+            <li {% if route starts with 'user.operator.customfield' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.customfield.index') }}">{{ Lang.choice("user.customfield", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.usergroup') %}
+            <li {% if route starts with 'user.operator.usergroup' %}class="sp-active"{% endif %}>
+                <a href="{{ route('user.operator.usergroup') }}">{{ Lang.choice("user.group", 2) }}</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

@@ -1,0 +1,290 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if operator|default is not empty and operator %}
+        {% if record|default is not empty and record.exists %}
+            {{ Lang.get('general.edit_item', {'item': Lang.choice('user.operator_group', 1)}) }}
+        {% else %}
+            {{ Lang.get('general.add_item', {'item': Lang.choice('user.operator_group', 1)}) }}
+        {% endif %}
+    {% else %}
+        {% if record|default is not empty and record.exists %}
+            {{ Lang.get('general.edit_item', {'item': Lang.choice('user.group', 1)}) }}
+        {% else %}
+            {{ Lang.get('general.add_item', {'item': Lang.choice('user.group', 1)}) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden member-update">
+        {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.choice('user.group', 1), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden member-update">
+        {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.choice('user.group', 1), 'UTF-8') }) }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% if operator|default is not empty and operator %}
+        {% if record|default is not empty and record.exists %}
+            {{ form_model(record, { 'route': [ 'user.operator.operatorgroup.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+        {% else %}
+            {{ form_open({ 'route': 'user.operator.operatorgroup.store', 'class': 'validate' }) }}
+        {% endif %}
+    {% else %}
+        {% if record|default is not empty and record.exists %}
+            {{ form_model(record, { 'route': [ 'user.operator.usergroup.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+        {% else %}
+            {{ form_open({ 'route': 'user.operator.usergroup.store', 'class': 'validate' }) }}
+        {% endif %}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('colour', Lang.get('general.colour')) }}
+                <div class="sp-input-container">
+                    {{ form_text('colour') }}
+                </div>
+            </div>
+
+            {{ form_hidden('administrator', operator|default is not empty and operator ? 1 : 0) }}
+            {% if operator|default is not empty and operator %}
+                <div class="sp-form-row sp-form-full">
+                    {{ form_label('roles', Lang.choice('user.role', 2)) }}
+                    <div class="sp-input-container">
+                        {{ form_select('roles[]', roles, groupRoles, {'multiple': 'multiple'}) }}
+                    </div>
+                </div>
+
+                {% if brand_count() > 1 %}
+                    <div class="sp-form-row">
+                        {{ form_label('brand', Lang.choice('core.brand', 2)) }}
+                        <div class="sp-input-container">
+                            {{ form_select('brand[]', brand_config(null).pluck('name', 'id'), groupBrands, {'multiple': 'multiple'}) }}
+                            <div class="sp-description">{{ Lang.get('user.group_brand_desc') }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" name="brand[]" value="{{ brand_config(null)|first.id }}" />
+                {% endif %}
+
+                <div class="sp-form-row">
+                    {{ form_label('department', Lang.choice('ticket.department', 2)) }}
+                    <div class="sp-input-container">
+                        <select name="department[]" multiple="multiple">
+                            {% for department in departments %}
+                                <option {% if in_array(department.id, groupDepartments) %}selected="selected"{% endif %}
+                                        data-data='{{ department|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ department.id }}'>
+                                    {{ department.dashes|raw }}{{ department.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="sp-description">{{ Lang.get('user.group_department_desc') }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+    {% if table|default is not empty %}
+        <hr />
+
+        <h2>{{ Lang.get('user.group_members') }}</h2>
+
+        {{ table.render('operator.' ~ template ~ '.datatables')|raw }}
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript">
+        deleteAlert.translationKeys.title = 'user.remove_from';
+        deleteAlert.translationKeys.warning = 'user.remove_from_warn';
+        deleteAlert.translationKeys.confirmButton = '{{ Lang.get('general.yes') }}';
+        deleteAlert.translationKeys.cancelButton = '{{ Lang.get('general.no') }}';
+    </script>
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if ($('input[name="colour"]').val() === '') {
+                $('input[name="colour"]').val('#ffffff');
+            }
+            $('input[name="colour"]').minicolors();
+
+            $('select[name="roles[]"]').selectize({
+                plugins: ['remove_button']
+            });
+
+            var $departmentsSelectize = $('select[name="department[]"]').selectize({
+                plugins: ['remove_button'],
+                valueField: 'id',
+                labelField: 'name',
+                searchField: 'name',
+                render: {
+                    item: function(item, escape) {
+                        return '<div class="item">' + item.dashes + escape(item.name) + '</div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div>' + item.dashes + escape(item.name) + '</div>';
+                    }
+                },
+            });
+
+            var xhr;
+
+            $('select[name="brand[]"]').selectize({
+                plugins: ['remove_button'],
+                dropdownParent: 'body',
+                placeholder: Lang.get('core.select_brand'),
+                onChange: function (values) {
+                    // Get the departments that are associated with these brands.
+                    var selectize = $departmentsSelectize[0].selectize,
+                            selected_items = selectize.getValue();
+                    selectize.disable();
+
+                    // Get the departments that are available for this brand
+                    selectize.load(function (callback) {
+                        xhr && xhr.abort();
+                        xhr = $.ajax({
+                            url: laroute.route(
+                                'ticket.operator.department.searchByBrand',
+                                {'brand_ids': values}
+                            ),
+                            success: function (res) {
+                                // Clear options and add new ones
+                                selectize.clearOptions();
+                                selectize.enable();
+                                callback(res.data);
+
+                                // Select previously selected items.
+                                $.each(selected_items, function (index, value) {
+                                    selectize.addItem(value, true);
+                                });
+                            },
+                            error: function () {
+                                callback();
+                            }
+                        })
+                    });
+                }
+            });
+        });
+    </script>
+
+    {% if record.exists %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // We need to register certain actions once DataTables has completely initialised, otherwise
+            // the table footer does not exist...
+            $('.dataTable').on('init.dt draw.dt', function () {
+                /**
+                 * Search for user
+                 */
+                $('select[name="add-user"]').selectize({
+                    valueField: 'id',
+                    labelField: 'formatted_name',
+                    searchField: [ 'formatted_name', 'email' ],
+                    create: false,
+                    placeholder: Lang.get('user.search_for_user'),
+                    render: {
+                        item: function(item, escape) {
+                            return '<div class="item">' +
+                                    '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp;' +
+                                    escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
+                                    (item.email ? ' <span class="sp-description">' + escape('<' + item.email + '>' || '') + '</span>' : '') +
+                                    '</div>';
+                        },
+                        option: function(item, escape) {
+                            return '<div>' +
+                                    '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp;' +
+                                    escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
+                                    (item.email || item.brand ? '<br /><span class="sp-description">' +
+                                        (item.email ? escape(item.email || '') : '') +
+                                        (item.email && item.brand ? ' - ' : '') +
+                                        (item.brand ? escape(item.brand || '') : '') +
+                                    '</span>' : '') +
+                                    '</div>';
+                        }
+                    },
+                    load: function(query, callback) {
+                        if (!query.length) return callback();
+                        $.ajax({
+                            url: laroute.route('user.operator.search'),
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                q: query,
+                                users: {% if operator|default is not empty and operator %}0{% else %}1{% endif %},
+                                operators: {% if operator|default is not empty and operator %}1{% else %}0{% endif %}
+                            },
+                            error: function() {
+                                callback();
+                            },
+                            success: function(res) {
+                                callback(res.data);
+                            }
+                        });
+                    }
+                });
+
+                $('.add-user').on('click', function() {
+                    // Update group membership
+                    $.ajax({
+                        url: laroute.route("user.operator.usergroup.members.update", { id: {{ record.id }} }),
+                        type: 'PUT',
+                        data: { "user": $('select[name="add-user"]').val() }
+                    }).done(function(response) {
+                        if (response.status == 'success') {
+                            $('.member-update.sp-alert-success').show(500).delay(5000).hide(500);
+                        } else {
+                            $('.member-update.sp-alert-error').show(500).delay(5000).hide(500);
+                        }
+                    }).fail(function() {
+                        $('.member-update.sp-alert-error').show(500).delay(5000).hide(500);
+                    }).always(function() {
+                        // Reload table
+                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                    });
+                });
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}

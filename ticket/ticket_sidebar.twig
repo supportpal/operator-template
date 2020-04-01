@@ -1,0 +1,192 @@
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex" id="ticketDetailsSidebox">
+        <div class="sp-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <h3>{{ Lang.choice('general.detail', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <div>
+        <ul class="sp-tabs sp-flex sp-text-center">
+            <li id="Ticket" class="sp-active sp-w-1/2">
+                <a><i class="fas fa-ticket-alt"></i></a>
+            </li>
+            <li id="User" class="sp-w-1/2">
+                <a><i class="fas fa-user"></i></a>
+            </li>
+        </ul>
+
+        <div id="tabTicket" class="sp-tab-content">
+            <ul class="sp-ticket-details">
+                <li>
+                    <div class="sp-title">{{ Lang.get('general.number') }}</div>
+                    <div class="sp-detail">#{{ ticket.number }}</div>
+                </li>
+                {% if brand_count() > 1 %}
+                    <li>
+                        <div class="sp-title">{{ Lang.choice('core.brand', 1) }}</div>
+                        <div class="sp-detail">
+                            {% if can_update_ticket(auth_user(), ticket) and assignedBrands.count() > 1 %}
+                                <a class="sp-detail-link" href="{{ route('ticket.operator.ticket.move', ticket.id) }}">
+                                    {{ ticket.brand.name }}
+                                </a>
+                            {% else %}
+                                {{ ticket.brand.name }}
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endif %}
+                <li>
+                    <div class="sp-title">{{ Lang.choice('ticket.department', 1) }}</div>
+                    <div class="sp-detail">
+                        {{ form_select(
+                            'department',
+                            departments.pluck('name', 'id'),
+                            ticket.department_id,
+                            can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
+                        ) }}
+                    </div>
+                </li>
+                <li>
+                    <div class="sp-flex sp--m-1">
+                        <div class="sp-w-1/2 sp-p-1">
+                            <div class="sp-title">{{ Lang.choice('general.status', 1) }}</div>
+                            <div class="sp-detail">
+                                {{ form_select(
+                                    'status',
+                                    statuses.pluck('name', 'id'),
+                                    ticket.status_id,
+                                    can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
+                                ) }}
+                            </div>
+                        </div>
+                        <div class="sp-w-1/2 sp-p-1">
+                            <div class="sp-title">{{ Lang.choice('ticket.priority', 1) }}</div>
+                            <div class="sp-detail">
+                                {{ form_select(
+                                    'priority',
+                                    priorities.pluck('name', 'id'),
+                                    ticket.priority_id,
+                                    can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
+                                ) }}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% if can_update_ticket(auth_user(), ticket) %}
+                    <li>
+                        <div class="sp-title">{{ Lang.choice('ticket.tag', 2) }}</div>
+                        <div class="sp-detail">
+                            <select class="assign-tags" name="tag[]" multiple="multiple">
+                                {% for tag in ticket.tags.sortBy('name') %}
+                                    <option selected="selected" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ tag.original_name }}'>
+                                        {{ tag.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="sp-title">{{ Lang.get('ticket.assigned_operator') }}</div>
+                        <div class="sp-detail">
+                            <select id="assignOperator" name="operator[]" multiple="multiple">
+                                {% for operator in ticket.assigned %}
+                                    <option selected="selected" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
+                                        {{ operator.formatted_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </li>
+                {% endif %}
+                {% if not slaplans.isEmpty() %}
+                    <li>
+                        <div class="sp-title">{{ Lang.choice('ticket.sla_plan', 1) }}</div>
+                        <div class="sp-detail">
+                            {{ form_select(
+                                'slaplan',
+                                {0: Lang.get('general.none')} + slaplans.pluck('name', 'id').all(),
+                                ticket.slaplan|default is not empty ? ticket.slaplan.id : 0,
+                                can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
+                            ) }}
+                        </div>
+                    </li>
+                {% endif %}
+                <li>
+                    <div class="sp-title">{{ Lang.get('ticket.due_time') }}</div>
+                    <div class="sp-detail">
+                        {% if can_update_ticket(auth_user(), ticket) %}
+                            <a class="edit-duetime sp-detail-link">
+                                {% if ticket.due_time|default is not empty %}
+                                    {{ format_due_time(ticket.due_time) }}
+                                {% else %}
+                                    {{ Lang.get('ticket.set_due_time') }}
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            {% if ticket.due_time|default is not empty %}
+                                {{ format_due_time(ticket.due_time) }}
+                            {% else %}
+                                {{ Lang.get('general.na') }}
+                            {% endif %}
+                        {% endif %}
+
+                        <div class="update-duetime sp-hidden sp-mt-2">
+                            {{ form_text('duetime_date',
+                                ticket.due_time|default is not empty
+                                ? timeWithOffset(ticket.due_time, false)|date(Config.get('settings.date_format')) : null,
+                                {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
+                            ) }}
+                            {{ form_text('duetime_time',
+                                ticket.due_time|default is not empty
+                                ? timeWithOffset(ticket.due_time, false)|date(Config.get('settings.time_format')) : null,
+                                {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
+                            ) }}
+                            &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
+                            <span class="remove-duetime {% if ticket.due_time|default is empty %}sp-hidden{% endif %}">
+                                &nbsp; <button class="as-link remove"><i class="fas fa-eraser"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                {% if can_update_ticket(auth_user(), ticket) or ticket.linked.count() > 0 %}
+                    <li class="linked-tickets-list sp-pb-0 sp-mb-0">
+                        {% include 'operator.' ~ template ~ '.ticket.ticket_linked' %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div id="tabUser" class="sp-tab-content sp-hidden">
+            {% include 'operator.' ~ template ~ '.ticket.ticket_sidebar_user' %}
+        </div>
+    </div>
+</div>
+
+{{ View.fireHook('operator.sidebar_ticket') }}
+
+<div class="sp-sidebox {% if customfields is empty %}sp-hidden{% endif %}">
+    <div class="sp-collapsible sp-flex" id="ticketCustomfieldSidebox">
+        <div class="sp-icon">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <h3>{{ Lang.choice('customfield.customfield', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <div>
+        <form>
+            <div class="customfields">
+                {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+            </div>
+            {% if can_update_ticket(auth_user(), ticket) %}
+                <button class="save-fields sp-button-submit" type="button">{{ Lang.get('general.save') }}</button>
+            {% endif %}
+        </form>
+    </div>
+</div>

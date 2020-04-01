@@ -1,0 +1,318 @@
+{% extends parent_template %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('selfservice.article', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% if type|default is not empty %}
+        <a href="{{ route('selfservice.operator.type.index', { 'brand': type.brand_id }) }}">{{ type.brand.name }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        <a href="{{ route('selfservice.operator.article.index', { 'type': type.id }) }}">{{ type.name }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% else %}
+        <a href="{{ route('selfservice.operator.article.index') }}">{{ Lang.choice('selfservice.article', 2) }}</a>
+        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    {% endif %}
+    <strong>
+        {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
+    </strong>
+{% endblock %}
+
+{% block content %}
+
+    {% if brandWarning %}
+        <div class="sp-alert sp-alert-warning">
+            <strong>{{ Lang.get('messages.warning') }}:</strong> {{ Lang.get('selfservice.article_brand_warning') }}
+        </div>
+    {% endif %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'selfservice.operator.article.update', record.id ], 'method': 'PUT', 'class': 'validate', 'id': 'articleForm' }) }}
+    {% else %}
+        {{ form_model(record, { 'route': [ 'selfservice.operator.article.store' ], 'method': 'POST', 'class': 'validate', 'id': 'articleForm' }) }}
+    {% endif %}
+
+        <div id="sectionWrapper">
+
+            <h2>{{ Lang.choice('selfservice.article', 1) }}</h2>
+
+            <div class="sp-subtitle-description">{{ Lang.get('selfservice.article_desc') }}</div>
+
+            {# Required by multidimensionaldata.js #}
+            <div class="sp-tab-content">
+
+                {# Hidden option for multidimensionaldata.js #}
+                {% include 'operator.' ~ template ~ '.selfservice.forms.article_translation' with { 'hide': true } %}
+
+                <div class="section-items">
+                    {# Default article #}
+                    <div class="sp-form-container">
+                        {%
+                            include 'operator.' ~ template ~ '.selfservice.forms.article_rows'
+                            with {
+                                'elements': {
+                                    'title': { 'name': 'title', 'value': record.getOriginal('title'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'slug': { 'name': 'slug', 'value': clone is not empty ? '' : record.getOriginal('slug') },
+                                    'keywords': { 'name': 'keywords', 'value': record.getOriginal('keywords') },
+                                    'excerpt': { 'name': 'excerpt', 'value': record.getOriginal('excerpt') },
+                                    'text': { 'name': 'text', 'value': record.getOriginal('text') },
+                                    'attachments': { 'name': 'attachment', 'value': record.attachments.where('locale', null) },
+                                }
+                            }
+                        %}
+                    </div>
+
+                    {# Existing Translations #}
+                    {% for locale, translation in translations %}
+                        {% include 'operator.' ~ template ~ '.selfservice.forms.article_translation' %}
+                    {% endfor %}
+                </div>
+
+                <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                    <div class="sp-form-row">
+                        <label></label>
+                        <div class="sp-input-container">
+                            <select name="languages" title="{{ Lang.get('core.add_another_language') }}" class="add-item-selectize">
+                                <option></option>
+                                {% for code, name in availableLanguages %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <h2>{{ Lang.choice('selfservice.category', 2) }}</h2>
+
+        <div id="categories">
+
+            {# Add an empty item, we use this for DOM cloning when adding new categories #}
+            {% include 'operator.' ~ template ~ '.selfservice.forms.article_categories' with { 'hide': true } %}
+
+            {# Add existing categories, if there aren't any then show an empty box... #}
+            {% for i, record_type in record.types %}
+                {% include 'operator.' ~ template ~ '.selfservice.forms.article_categories' %}
+            {% else %}
+                {% include 'operator.' ~ template ~ '.selfservice.forms.article_categories' with { 'i': 0, 'record_type': record.types.first() } %}
+            {% endfor %}
+
+            <div class="sp-form-container">
+                <div class="sp-form-row">
+                    <label></label>
+                    <div class="sp-input-container">
+                        {{ form_button(Lang.get('selfservice.add_to_another_type'), { 'id': 'add-type' }) }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.choice('selfservice.tag', 2) }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('select', Lang.choice('selfservice.tag', 2)) }}
+                <div class="sp-input-container">
+                    <select name="tag[]" multiple="multiple">
+                        {% for tag in tags %}
+                            <option {% if record|default is not empty and record.tags.contains('id', tag.id) %}selected="selected"{% endif %} value='{{ tag.name }}'>
+                                {{ tag.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>{{ Lang.get('selfservice.visibility') }}</h2>
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('published', Lang.get('selfservice.published')) }}
+                <div class="sp-input-container">
+                    {{ form_check('published', 1, null, {'class': 'sp-toggle', 'id': 'toggle_published'}) }}
+                    <label for="toggle_published"></label>
+                    <div class="sp-description">{{ Lang.get('selfservice.published_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row published_at {% if not record.published %}not-published sp-hidden{% endif %}">
+                {{ form_label('published_date', Lang.get('selfservice.published_date')) }}
+                <div class="sp-input-container">
+                    {% set disabled = not record.published ? { 'disabled': 'disabled' } : {} %}
+                    <div class="sp-block xs:sp-inline-block">
+                        {{ form_text('published_date',
+                            timeWithOffset(record.published_at, false)|date(Config.get('settings.date_format')),
+                            {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}|merge(disabled)
+                        ) }}
+                    </div>
+                    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+                        {{ form_text('published_time',
+                            timeWithOffset(record.published_at, false)|date(Config.get('settings.time_format')),
+                            {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}|merge(disabled)
+                        ) }}
+                    </div>
+                    <div class="sp-description">{{ Lang.get('selfservice.published_date_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row" id="toggle_protected_container">
+                {{ form_label('protected', Lang.get('selfservice.registered_users')) }}
+                <div class="sp-input-container">
+                    {{ form_check('protected', 1, null, {'class': 'sp-toggle', 'id': 'toggle_protected'}) }}
+                    <label for="toggle_protected"></label>
+                    <div class="sp-description">{{ Lang.get('selfservice.registered_users_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('pinned', Lang.get('selfservice.pinned')) }}
+                <div class="sp-input-container">
+                    {{ form_check('pinned', 1, null, {'class': 'sp-toggle', 'id': 'toggle_pinned'}) }}
+                    <label for="toggle_pinned"></label>
+                    <div class="sp-description">{{ Lang.get('selfservice.pinned_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        {% if record.exists and auth_user().hasPermission('view.report') and record.feedback().exists() %}
+        <h2>{{ Lang.get('report.user_feedback') }}</h2>
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                <label>{{ Lang.choice('report.report', 2) }}</label>
+                <div class="sp-input-container">
+                    <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedback', 'article_id': record.id}) }}" class="sp-button">
+                        {{ Lang.get('report.user_feedback') }}
+                    </a><br />
+                    {{ Lang.get('report.user_feedback_desc') }}<br />
+                    <br />
+                    <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedbackratings', 'article_id': record.id}) }}" class="sp-button">
+                        {{ Lang.get('report.user_feedback_ratings') }}
+                    </a><br />
+                    {{ Lang.get('report.user_feedback_ratings_desc') }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if record.exists %}
+        <h2>{{ Lang.get('selfservice.revision_history') }}</h2>
+
+        <div class="sp-form-container">
+            {{ revisions.render()|raw }}
+        </div>
+        {% endif %}
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ revisions.script()|raw }}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- selfserviceslug.js dependencies: Sweetalert2 (above), donetyping -->
+    <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/selfserviceslug.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Initialise the slug generator.
+            new SupportPalSlugGenerator({
+                route: {
+                    url: '{{ route('selfservice.operator.article.slug') }}',
+                    parameters: function ($slug) {
+                        var data = {};
+                        $($slug.parents('form').find(':input[name^="category["]').serializeArray()).each(function(index, obj) {
+                            data[obj.name] = obj.value;
+                        });
+                        var locale = $slug.parents('.sp-form-container').find('input[name="locale"][type="hidden"]').val();
+                        if (typeof locale === 'undefined') {
+                            locale = null;
+                        }
+
+                        return $.extend({}, data, { article: '{{ record.id }}', locale: locale });
+                    }
+                }
+            });
+        });
+    </script>
+
+    <!-- Attachments JS -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script type="text/javascript">
+        $('.article:not(:first)').each(function (index) {
+            new FileUpload({
+                $element: $(this).find('.sp-file-upload'),
+                $container: $(this),
+                inputName: $(this).find('.sp-attachment-details')
+                    .find('input[type=hidden]')
+                    .prop('name')
+                    .replace('[]', '')
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        var tagPermission = {% if auth_user().hasPermission('create.selfservicetag') %}1{% else %}0{% endif %};
+    </script>
+    <script src="{{ asset_rev('resources/assets/operator/js/article.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script type="text/javascript">
+        // List of valid translatable attributes.
+        var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
+
+        // Redactor options (used by article.js and multidimensionaldata.js).
+        var opts = {
+            headers: true
+        };
+
+        // Date picker
+        $('.datepicker').datepicker();
+
+        // Timepicker
+        $('.timepicker').timepicker();
+
+        // Custom attribute mapper for multidimensionaldata.js
+        attributeMapper = function(elem, value, attribute) {
+            var attr = elem.attr(attribute);
+            if (typeof attr !== 'undefined') {
+                // Special case: attachment:default[] should be transformed to attachment:en[]
+                if (attr === 'attachment:default[]') {
+                    elem.attr(attribute, translatableAttributes[value][attr.replace(':default[]', '')] + "[]");
+                } else {
+                    elem.attr(attribute, translatableAttributes[value][attr.replace(':default', '')]);
+                }
+            }
+        };
+    </script>
+{% endblock %}

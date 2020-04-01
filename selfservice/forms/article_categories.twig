@@ -1,0 +1,84 @@
+<div class="category sp-form-container {% if hide|default is not empty %}sp-hidden{% endif %}">
+
+    {% set id = record_type|default is not empty ? record_type.id : '' %}
+    {% set attributes = hide|default is not empty ? { 'disabled': 'disabled' } : {} %}
+    {{ form_hidden('category[' ~ (i is defined ? i : '') ~ '][id]', id, attributes) }}
+
+    <div class="sp-form-row sp-selectize-inline-block">
+        {{ form_label('category[' ~ (i is defined ? i : '') ~ '][type]', Lang.choice('selfservice.type', 1)) }}
+        <div class="sp-input-container">
+            <div class="sp-block sm:sp-inline-block sm:sp-mr-2">
+                <select name="category[{{ i is defined ? i : '' }}][type]"
+                        {% if hide|default is not empty %}disabled="disabled"{% endif %} style="display: inline-block;">
+                    <option value="">{{ Lang.get('selfservice.select_type') }}</option>
+                    {% for brand in assignedBrands %}
+                        <optgroup label="{{ brand.name }}">
+                            {% for brand_type in brand.types %}
+                                {% if brand_type.content == 0 %}
+                                    {% if brand_type.id == record_type.id or (not record.exists and type.id == brand_type.id) %}
+                                        {% set selected = true %}
+                                    {% else %}
+                                        {% set selected = false %}
+                                    {% endif %}
+
+                                    <option value="{{ brand_type.id }}" {% if selected %}selected="selected"{% endif %}>
+                                        {{ brand_type.name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="sp-block sp-mt-2 sm:sp-inline-block sm:sp-mt-0">
+                {{ form_button(Lang.get('general.remove'), {'class': 'remove-button'}) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-form-row sp-form-full">
+        {{ form_label('category[' ~ (i is defined ? i : '') ~ '][categories][]', Lang.choice('selfservice.category', 1)) }}
+        <div class="sp-input-container">
+            <select name="category[{{ i is defined ? i : '' }}][categories][]" multiple="multiple"
+                    {% if hide|default is not empty %}disabled="disabled"{% endif %}>
+
+                {% for category in record_type.categories %}
+                    {% if record|default is not empty and record.categories.contains('id', category.id) %}
+                        {% set selected = true %}
+                    {% elseif not record.exists and Request.input('category') == category.id %}
+                        {% set selected = true %}
+                    {% else %}
+                        {% set selected = false %}
+                    {% endif %}
+
+                    <option data-data='{{ category|json_encode(constant('JSON_FORCE_OBJECT')) }}'
+                            {% if selected %}selected="selected"{% endif %}
+                            value="{{ category.id }}">
+
+                        {{ category.name }} {{ category.hierarchy }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {% if record.exists and record_type|default is not empty %}
+        <div class="sp-form-row type-url">
+            <label>{{ Lang.get('general.url') }}</label>
+            <div class="sp-input-container">
+                {% set url = record.url(record_type, true) %}
+                <a href="{{ url }}" target="_blank">{{ urldecode(url) }}</a>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if record.exists and record_type|default is not empty and record_type.pivot.views > 0 %}
+        <div class="sp-form-row type-views">
+            <label>{{ Lang.get('general.views')|capitalize }}</label>
+            <div class="sp-input-container">
+                {{ record_type.pivot.views }}
+            </div>
+        </div>
+    {% endif %}
+
+</div>

@@ -1,0 +1,104 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice('ticket.customfield', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('ticket.operator.customfield.create') }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.success_ordering') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.error_ordering') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.name') }}:</label>
+                <div id="filter_name"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('customfield.depends_on') }}:</label>
+                <div id="filter_depends"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.type') }}:</label>
+                <div id="filter_type"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.required') }}:</label>
+                <div id="filter_required"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('customfield.public') }}:</label>
+                <div id="filter_public"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('customfield.encrypted') }}:</label>
+                <div id="filter_encrypted"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('customfield.purge') }}:</label>
+                <div id="filter_purge"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('customfield.locked') }}:</label>
+                <div id="filter_locked"></div>
+            </div>
+        </div>
+    </div>
+
+	{{ table.render()|raw }}
+
+    <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
+        <strong>{{ Lang.get('messages.note') }}:</strong> {{ Lang.get('ticket.customfield_order') }}
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 1, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, column_data_type: "text", filter_container_id: "filter_depends", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 3, filter_container_id: "filter_type", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 4, filter_container_id: "filter_required", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 5, filter_container_id: "filter_public", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 6, filter_container_id: "filter_encrypted", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 7, filter_container_id: "filter_purge", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 8, filter_container_id: "filter_locked", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+{% endblock %}

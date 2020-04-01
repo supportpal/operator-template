@@ -1,0 +1,11 @@
+<div class="option sp-input-translatable sp-input-translatable-small {% if hide|default is not empty %}sp-hidden{% endif %}">
+    <i class="fas fa-bars sp-sortable-handle" aria-hidden="true"></i> &nbsp;
+    {{ form_hidden('options[' ~ (option is defined ? option.id : '') ~ '][id]',
+        (option is defined ? option.id : null))
+    }}
+    {{ form_hidden('options[' ~ (option is defined ? option.id : '') ~ '][field_id]',
+        (field is defined ? field.id : null), {'class': 'field-id'})
+    }}
+    {{ form_translatable_text(option, 'value', 'options[' ~ (option is defined ? option.id : '') ~ '][value]') }}&nbsp;
+    {{ form_button(Lang.get('general.remove'), {'class': 'remove-option'}) }}
+</div>

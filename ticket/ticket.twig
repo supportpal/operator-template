@@ -1,0 +1,475 @@
+{% extends parent_template %}
+
+{% block meta %}
+    {% if download %}
+        <meta http-equiv="refresh" content="2;{{ download.direct_operator_url }}" />
+    {% endif %}
+
+    <meta name="notes-url-id" content="{{ notesUrlId }}" />
+    <meta name="messages-url-id" content="{{ messagesUrlId }}" />
+    <meta name="recent_tickets" content="{{ recentTickets.pluck('id').implode(',') }}" />
+{% endblock %}
+
+{% block title %}
+    (#{{ ticket.number }}) {{ ticket.subject }}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.ticket.ticket_sidebar' %}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            {% if ticket.trashed() and auth_user().hasPermission('update.ticket|delete.ticket') %}
+                <li class="sp-action-group sp-inline-block">
+                    {% if auth_user().hasPermission('update.ticket') %}
+                        <button class="sp-action restore-ticket" title="{{ Lang.get('general.restore') }}">
+                            <i class="fas fa-undo"></i>
+                        </button><!--
+                    {% endif %}
+                    {% if auth_user().hasPermission('delete.ticket') %}
+                        --><button class="sp-action delete-forever-ticket" title="{{ Lang.get('general.delete_forever') }}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    {% endif %}
+                </li><!--
+                --><li class="sp-action-group sp-inline-block">
+                    <button class="sp-action expand-messages sp-hidden" title="{{ Lang.get('general.expand_all') }}">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </button><!--
+                    --><button class="sp-action collapse-messages sp-hidden" title="{{ Lang.get('general.collapse_all') }}">
+                        <i class="fas fa-compress"></i>
+                    </button>
+                </li>
+            {% else %}
+                {% if can_update_ticket(auth_user(), ticket) %}
+                    {% if ticket.channel.enabled
+                        and (not ChannelFactory.getChannel(ticket.channel.name).requiresAccount or (ticket.account and ticket.account.active))
+                    %}
+                        <li class="sp-action-group sp-reply-type sp-inline-block">
+                            <button class="sp-action" data-type="0">
+                                <i class="fas fa-reply"></i>
+                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
+                            </button><!--
+                            --><button class="sp-action" data-type="1">
+                                <i class="fas fa-sticky-note"></i>
+                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
+                            </button><!--
+                            --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
+                                <i class="fas fa-share"></i>
+                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('ticket.forward') }}</span>
+                            </button>
+                        </li><!--
+                    {% else %}
+                        <!--
+                    {% endif %}
+
+                    {% if not macros.isEmpty() %}
+                        --><li class="sp-action-group sp-inline-block xs:sp-relative">
+                            <div class="sp-dropdown-container">
+                                <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1">
+                                    <ul class="sp-text-right">
+                                        {% for macro in macros %}
+                                            <li>
+                                                <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
+                                                    {{ macro.name }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </li><!--
+                    {% endif %}
+
+                    --><li class="sp-action-group sp-hidden md:sp-inline-block">
+                        <button class="sp-action take-ticket {% if in_array(auth_user().id, ticket.assigned.pluck('id').all()) and ticket.assigned.count() == 1 %}sp-hidden{% endif %}"
+                                title="{{ Lang.get('ticket.take') }}">
+                            <i class="fas fa-thumbtack"></i>
+                        </button><!--
+                        --><button class="sp-action close-ticket {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}"
+                                   title="{{ Lang.get('general.close') }}">
+                            <i class="fas fa-check"></i>
+                        </button><!--
+                        {% if not ticket.trashed() and auth_user().hasPermission('delete.ticket_trash') %}
+                            --><button class="sp-action delete-ticket" title="{{ Lang.get('general.move_to_trash') }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        {% else %}
+                        -->
+                        {% endif %}
+                    </li><!--
+
+                    --><li class="sp-action-group split-ticket-action sp-inline-block sp-hidden">
+                        {{ form_open({'route': ['ticket.operator.ticket.split', ticket.id]}) }}
+                            <button class="sp-action split-ticket-button" title="{{ Lang.get('ticket.split_selected_replies') }}">
+                                <i class="fas fa-object-ungroup"></i>
+                            </button>
+                        {{ form_close() }}
+                    </li><!--
+                {% else %}
+                    <!--
+                {% endif %}
+
+                --><li class="sp-action-group sp-inline-block sp-relative">
+                    <div class="sp-dropdown-container">
+                        <button class="sp-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <div class="sp-dropdown sp-top-0 {% if can_update_ticket(auth_user(), ticket) %}sp-right-0{% else %}sp-left-0{% endif %} sp-mt-12 sp-mr-1">
+                            <ul {% if can_update_ticket(auth_user(), ticket) %}class="sp-text-right"{% endif %}>
+                                {% if can_update_ticket(auth_user(), ticket) %}
+                                    <li class="take-ticket {% if in_array(auth_user().id, ticket.assigned.pluck('id').all()) and ticket.assigned.count() == 1 %}sp-hidden{% endif %} md:sp-hidden">
+                                        <a>{{ Lang.get('ticket.take') }}</a>
+                                    </li>
+                                    <li class="close-ticket {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %} md:sp-hidden">
+                                        <a>{{ Lang.get('general.close') }}</a>
+                                    </li>
+                                    <li class="lock-ticket {% if ticket.locked %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.close_and_lock') }}</a>
+                                    </li>
+                                    <li class="unlock-ticket {% if not ticket.locked %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.unlock') }}</a>
+                                    </li>
+                                    <li class="watch-ticket {% if in_array(auth_user().id, ticket.watching.pluck('id').all()) %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.watch') }}</a>
+                                    </li>
+                                    <li class="unwatch-ticket {% if not in_array(auth_user().id, ticket.watching.pluck('id').all()) %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.unwatch') }}</a>
+                                    </li>
+                                    <li class="merge-ticket">
+                                        <a>{{ Lang.get('ticket.merge') }}</a>
+                                    </li>
+                                    {% if ticket.merged %}
+                                        <li class="unmerge-ticket">
+                                            <a>{{ Lang.get('ticket.unmerge') }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if not ticket.trashed() and auth_user().hasPermission('delete.ticket_trash') %}
+                                    <li class="delete-ticket md:sp-hidden">
+                                        <a>{{ Lang.get('general.move_to_trash') }}</a>
+                                    </li>
+                                    <li class="block-ticket">
+                                        <a>{{ Lang.get('ticket.block_user') }}</a>
+                                    </li>
+                                {% endif %}
+                                <li class="expand-messages sp-hidden">
+                                    <a>{{ Lang.get('general.expand_all') }}</a>
+                                </li>
+                                <li class="collapse-messages sp-hidden">
+                                    <a>{{ Lang.get('general.collapse_all') }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('ticket.operator.ticket.print', ticket.id) }}" target="_blank">
+                                        {{ Lang.get('general.print') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+
+            {% endif %}
+        </ul>
+    </div>
+
+    {% include 'operator.' ~ template ~ '.ticket.ticket_also_viewing' %}
+
+    <div class="sp-ticket-update sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+        {{ Lang.get('messages.success_updated', {'item': mb_strtolower(Lang.choice('ticket.ticket', 1), 'UTF-8')}) }}
+    </div>
+    <div class="sp-ticket-update sp-alert sp-alert-error sp-alert-sticky sp-hidden">
+        {{ Lang.get('messages.error_updated', {'item': mb_strtolower(Lang.choice('ticket.ticket', 1), 'UTF-8')}) }}
+    </div>
+{% endblock %}
+
+{% block pageTitle %}
+    <div class="sp-flex">
+        <div class="sp-flex-grow">
+            <h1 id="pageTitle" class="sp-ticket-subject {% if can_update_ticket(auth_user(), ticket) %}sp-can-edit-subject{% endif %}">
+                {% if ticket.subject|trim is not empty %}
+                    {{ ticket.subject }}
+                {% else %}
+                    ({{ Lang.get('ticket.no_subject') }})
+                {% endif %}
+            </h1>
+
+            {{ form_text('subject', ticket.subject, {'class': 'sp-edit-subject sp-mb-6 sp-hidden', 'size': 50}) }}
+        </div>
+        <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
+            <a href="{{ docsLink }}" target="_blank"
+               class="sp-block sp-mt-2 sp-ml-3 sp-text-xl sp-text-gray-400 sp-float-right hover:sp-text-gray-600">
+                <i class="fas fa-question-circle"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="sp-title-description">
+        <span class="sp-mr-2 {% if not ticket.locked %}sp-hidden{% endif %}">
+            <i class="fas fa-lock" title="{{ Lang.get('general.locked') }}"></i>
+        </span>
+
+        {% if ticket.trashed() %}
+            <span class="sp-mr-2">
+                <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
+            </span>
+        {% endif %}
+
+        {% if ticket.internal %}
+            <span class="sp-tag sp-bg-red-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.internal') }}</span>
+        {% endif %}
+
+        {% if ticket.merged %}
+            <span class="sp-tag sp-bg-green-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.merged') }}</span>
+        {% endif %}
+
+        {{ Lang.get('general.submitted_by') }}
+        <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+        {% if ticket.user.organisation_id is not empty %}
+            (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+        {% endif %}
+        {{ timeago(ticket.created_at) }}
+        <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% if download %}
+        <div class="sp-alert">
+            <i class="fas fa-times sp-float-right"></i>
+            <strong>{{ Lang.get('ticket.downloading') }}</strong><br />
+            {{ Lang.get('ticket.downloading_desc', {'href': download.direct_operator_url|e})|raw }}
+        </div>
+    {% endif %}
+
+    <div class="sp-alert sp-alert-info followup-warning {% if ticket.followups is empty %}sp-hidden{% endif %}">
+        <i class="fas fa-clock"></i>&nbsp;
+        <span>
+            {{ Lang.get(ticket.followups.count() > 1 ? 'ticket.follow_up_multiple_active' : 'ticket.follow_up_active',
+                {'time': (ticket.followups.first().time > "now"|date('U') ? timeago(ticket.followups.first().time) : Lang.get('general.shortly'))})|raw
+            }}
+        </span>
+    </div>
+
+    {% if feedback|default is not empty and feedback.rating|default is not empty %}
+        <div class="sp-alert {% if feedback.rating == '1' %}sp-alert-success{% elseif feedback.rating == '2' %}sp-alert-warning{% else %}sp-alert-error{% endif %}">
+            <i class="fas {% if feedback.rating == '1' %}fa-smile{% elseif feedback.rating == '2' %}fa-meh{% else %}fa-frown{% endif %}"></i>&nbsp;
+            {{ Lang.get('ticket.feedback_rating_desc', {'rating': mb_strtolower(
+                feedback.rating == '1' ? Lang.get('general.good') : feedback.rating == '2' ? Lang.get('general.neutral') : Lang.get('general.bad'), 'UTF-8')
+            })|raw }}
+            {% if feedback.fields_answered %}
+                <a onclick="window.open('{{ route('ticket.operator.feedback.show', { id: feedback.id }) }}','width=800,height=600,scrollbars=yes');">
+                    {{ Lang.get('ticket.view_feedback') }}
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <ul class="sp-tabs">
+        <li id="Messages" class="sp-active">
+            <a>{{ Lang.choice('general.message', 2) }}</a>
+        </li>
+        <li id="Log">
+            <a>{{ Lang.get('general.log') }}</a>
+        </li>
+        <li id="EscalationRules" {% if ticket.sla_plan_id is empty or ticket.escalationrules().count() == 0 %}class="sp-hidden"{% endif %}>
+            <a>{{ Lang.get('ticket.escalation_rule') }}</a>
+        </li>
+        {% if can_update_ticket(auth_user(), ticket) or ticket.followup is not empty %}
+            <li id="Followup">
+                <a>{{ Lang.get('ticket.follow_ups') }}</a>
+            </li>
+        {% endif %}
+
+        {{ View.fireHook('operator.ticket_tab') }}
+    </ul>
+
+    <div id="tabMessages" class="sp-tab-content">
+        {% if auth_user().isDescendingReplyOrder() %}
+            {% if can_update_ticket(auth_user(), ticket) %}
+                {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' %}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message' with {'ticketId': ticket.id} %}
+            {% endif %}
+
+            {{ View.fireHook('operator.ticket_messages') }}
+        {% endif %}
+
+        {% if (Config.get('settings.ticket_notes_position') != 2 and messages.contains('type', 1)) %}
+            <h2 class="notes-header">{{ Lang.choice('general.note', 2) }}</h2>
+
+            <div class="sp-messages-container">
+                {% for message in messages %}
+                    {% if message.type == 1 %}
+                        {% if (loop.first and auth_user().isDescendingReplyOrder()) or (loop.last and auth_user().isAscendingReplyOrder()) %}
+                            {% set unread = true %}
+                        {% else %}
+                            {% set unread = not lastViewed or lastViewed < message.created_at %}
+                        {% endif %}
+                        {% include 'operator.' ~ template ~ '.ticket.message' with { 'message' : message, 'unread': unread } %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <h2 class="messages-header">{{ Lang.choice('general.message', 2) }}</h2>
+        {% else %}
+            <h2 class="notes-header sp-hidden">{{ Lang.choice('general.note', 2) }}</h2>
+            <div class="sp-messages-container"></div>
+            <h2 class="messages-header sp-hidden">{{ Lang.choice('general.message', 2) }}</h2>
+        {% endif %}
+
+        <div class="sp-messages-container">
+            {% for message in messages %}
+                {% if (Config.get('settings.ticket_notes_position') != 1 or message.type != 1) %}
+                    {% if (loop.first and auth_user().isDescendingReplyOrder()) or (loop.last and auth_user().isAscendingReplyOrder()) %}
+                        {% set unread = true %}
+                    {% else %}
+                        {% set unread = not lastViewed or lastViewed < message.created_at %}
+                    {% endif %}
+                    {% include 'operator.' ~ template ~ '.ticket.message' with { 'message': message, 'unread': unread } %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if auth_user().isAscendingReplyOrder() %}
+            {{ View.fireHook('operator.ticket_messages') }}
+
+            {% if can_update_ticket(auth_user(), ticket) %}
+                {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' %}
+
+                {% include 'operator.' ~ template ~ '.ticket.forms.message' with {'ticketId': ticket.id} %}
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <div id="tabLog" class="sp-tab-content sp-hidden">
+        {{ log.render()|raw }}
+    </div>
+
+    <div id="tabEscalationRules" class="sp-tab-content sp-hidden">
+        <div class="sp-description sp-mb-6">{{ Lang.get('ticket.escalation_rules_desc') }}</div>
+
+        {{ escalationRules.render()|raw }}
+    </div>
+
+    {% if can_update_ticket(auth_user(), ticket) or ticket.followup is not empty %}
+        <div id="tabFollowup" class="sp-tab-content sp-hidden"></div>
+    {% endif %}
+
+    {{ View.fireHook('operator.ticket_tab_content') }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ log.script()|raw }}
+    {{ escalationRules.script()|raw }}
+
+    <!-- Actions for FollowUp tab -->
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- File upload -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script type="text/javascript">
+        new FileUpload({
+            $element: $('.message-form .sp-file-upload'),
+            $container: $('.message-form'),
+            blueimp: {
+                dropZone: $('.message-form').find('.sp-attachment-dragover')
+            }
+        });
+        new FileUpload({
+            $element: $('.notes-form .sp-file-upload'),
+            $container: $('.notes-form'),
+            blueimp: {
+                dropZone: $('.notes-form').find('.sp-attachment-dragover')
+            }
+        });
+    </script>
+
+    <!-- Attachment previews -->
+    <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
+
+    <!-- Custom fields -->
+    <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+
+    <!-- Reply options & Redactor plugins -->
+    <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/ticket_view.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
+
+    <script type="text/javascript">
+        var operatorId = "{{ auth_user().id }}",
+            internal = {{ ticket.internal }},
+            closedStatusId = {{ Config.get('settings.default_resolved_status') }},
+            organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
+            departmentTemplates = {{ ticket.department.email_templates|json_encode()|raw }},
+            userLanguage = "{{ ticket.user.languageOrDefault() }}",
+            allLanguages = {{ languages|sort|json_encode()|raw }},
+            deleteRelations = {{ deleteRelations|json_encode|raw }};
+
+        var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %},
+            cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
+
+        var ticket = new App.ticket({
+            ticketId: "{{ ticket.id }}",
+            userId: "{{ ticket.user_id }}",
+            brandId: "{{ ticket.brand_id }}",
+            replyOrder: '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}',
+            notesPosition: {{ Config.get('settings.ticket_notes_position') }},
+            ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams)) }}",
+            selfservice: {% if isModuleEnabled('Selfservice') %}true{% else %}false{% endif %},
+            {% if signature is not empty %}
+            signature: '<br /><br />' + "{{ Purifier.clean(signature)|e('js') }}",
+            {% endif %}
+        });
+
+        $(document).ready(function() {
+            // Wait for DOM load to set this.
+            ticket.setParameter('forwardFileUpload', new FileUpload({
+                $element: $('.forward-form .sp-file-upload'),
+                $container: $('.forward-form'),
+                blueimp: {
+                    cumulativeMaxFileSize: {{ cumulative_attachment_limit }},
+                    dropZone: $('.forward-form').find('.sp-attachment-dragover')
+                }
+            }));
+
+            // Register redactor
+            $('#newMessage, #newNote, #newForward').redactor($.extend({}, ticket.defaultRedactorConfig(), {
+                callbacks: {
+                    changed: function (html) {
+                        var id = this.element.getElement().attr('id');
+
+                        // Remove the error box if they've entered content.
+                        if (! this.utils.isEmptyHtml(this.source.getCode())) {
+                            $('#'+id+'-error').remove();
+                        }
+                    }
+                }
+            }));
+
+            // Enable hide/show password toggle
+            callHideShowPassword();
+
+            // Date picker
+            $('.datepicker').datepicker();
+
+            // Timepicker
+            $('.timepicker').timepicker();
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ record.subject }}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="{{ get_template_mode() }} xs:sp-m-6 sp-bg-secondary sp-text-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+    <div class="sp-container sp-m-auto">
+        {{ View.fireHook('operator.wrapper_start') }}
+
+        <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded">
+            {{ View.fireHook('operator.content_start') }}
+
+            <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
+
+            <div class="sp-mb-6 md:sp-p-6 md:sp-pb-0 md:sp-border md:sp-border-secondary md:sp-rounded">
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.subject') }}</label>
+                    <div class="sp-input-container">
+                        {{ record.subject }}
+                    </div>
+                </div>
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('general.date') }}</label>
+                    <div class="sp-input-container">
+                        {{ formatDate(record.created_at) }}
+                    </div>
+                </div>
+
+                {% if record.type|default is not empty %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('general.type') }}</label>
+                    <div class="sp-input-container">
+                        {% if record.type == 0 %}
+                            {{ Lang.get('core.outgoing') }}
+                        {% elseif record.type == 1 %}
+                            {{ Lang.get('core.incoming') }}
+                        {% elseif record.type == 2 %}
+                            {{ Lang.get('core.incoming_spam') }}
+                        {% elseif record.type == 3 %}
+                            {{ Lang.get('core.incoming_throttled') }}
+                        {% else %}
+                            {{ Lang.get('core.incoming_rejected') }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.from') }}</label>
+                    <div class="sp-input-container">
+                        {{ record.getFromAddress()|raw }}
+                    </div>
+                </div>
+
+                {% if record.to is not empty %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.to') }}</label>
+                    <div class="sp-input-container">
+                        {{ implode(", ", record.to) }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if record.reply_to is not empty %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('core.reply_to') }}</label>
+                        <div class="sp-input-container">
+                            {{ record.reply_to }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if record.cc is not empty %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.cc') }}</label>
+                        <div class="sp-input-container">
+                            {{ implode(", ", record.cc) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if record.bcc is not empty %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.bcc') }}</label>
+                        <div class="sp-input-container">
+                            {{ implode(", ", record.bcc) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <h2 class="sp-my-6">{{ Lang.get('general.content') }}</h2>
+
+            <div class="sp-email-content sp-p-6 sp-border sp-border-secondary sp-rounded sp-overflow-x-auto">
+                {{ Purifier.clean(record.contents) }}
+            </div>
+
+            {% if record.attachments.count() > 0 %}
+                <div class="sp-email-attachments">
+                    <h2 class="sp-my-6">{{ Lang.choice('general.attachment', 2) }}</h2>
+
+                    <ul class="sp-attached-files">
+                        {% for attachment in record.attachments %}
+                            <li class="sp-email-attachment sp-flex">
+                                <div class="sp-mr-2 sp-truncate">
+                                    <i class="fas fa-file fa-fw"></i>&nbsp;
+
+                                    <span class="sp-file-information">
+                                        <span class="sp-filename">{{ attachment.filename }}</span>
+                                        <span class="sp-description sp-filesize">({{ attachment.size }})</span>
+                                    </span>
+                                </div>
+
+                                <div class="sp-delete-attachment sp-bg-red-600"
+                                     data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}">
+                                    <i class="fas fa-times sp-text-white"></i>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if record.raw is not empty %}
+                <div class="sp-mt-6">
+                    <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
+                        {{ Lang.get('core.view_original') }}
+                    </a> &nbsp;&nbsp;
+                    <a href="{{ route('core.operator.email.log.download_raw', [ record.id ]) }}" target="_blank" class="sp-button">
+                        {{ Lang.get('core.download_original') }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {{ View.fireHook('operator.content_end') }}
+        </div>
+
+        {{ View.fireHook('operator.wrapper_end') }}
+    </div>
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Open links in a new window/tab. Needs rel="noopener" due to
+            // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
+            $('.sp-form-container a').attr('target', '_blank').attr('rel', 'noopener');
+
+            // Delete attachment.
+            $(document).on('click', '.sp-delete-attachment', function (e) {
+                e.preventDefault();
+                
+                var $this = $(this);
+
+                $.ajax({
+                    url: $(this).data('url'),
+                    type: 'DELETE',
+                    data: { '_token': '{{ csrf_token() }}' }
+                }).done(function(response) {
+                    if (response.status == 'success') {
+                        $this.parents('li').remove();
+
+                        // If we've deleted all the attachments, then hide the attachments section.
+                        if ($('li.sp-email-attachment').length === 0) {
+                            $('.sp-email-attachments').remove();
+                        }
+                    } else {
+                        alert($('{{ Lang.get('messages.not_logged_exception')|raw }}').text());
+                    }
+                }).fail(function () {
+                    alert($('{{ Lang.get('messages.not_logged_exception')|raw }}').text());
+                });
+            });
+        });
+    </script>
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

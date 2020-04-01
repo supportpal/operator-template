@@ -1,0 +1,125 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content %}
+
+    {{ form_open({ 'route': 'operator.login', 'method': 'post', 'class': 'sp-login-form validate' }) }}
+
+        {% if intended_url is not null %}
+            {{ form_hidden('intended', intended_url) }}
+        {% endif %}
+
+        {% if Session.has('error') or Session.has('email_error') %}
+            <div class="sp-alert sp-alert-error">
+                {{ implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error') ]))|raw }}
+            </div>
+        {% elseif Session.has('success') %}
+            <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
+        {% endif %}
+
+        {% if errors|default is not empty and errors.count() %}
+            <div class="sp-alert sp-alert-error">
+                <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+                {% for error in errors.all() %}
+                    {{ error }}<br />
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="sp-form-row sp-form-full sp-mb-4">
+            <div class="sp-input-container">
+                {% if Config.get('settings.ldap_enabled', 0) %}
+                    {% set emailPlaceholder = Lang.get('general.email') ~ '/' ~ Lang.get('general.username') %}
+                {% else %}
+                    {% set emailPlaceholder = Lang.get('general.email') %}
+                {% endif %}
+                {{ form_email('email', null, {'class': 'email', 'placeholder': emailPlaceholder, 'autofocus': 'autofocus'}) }}
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full sp-mb-4">
+            <div class="sp-input-container">
+                {{ form_password('password', { 'class': 'password', 'placeholder': Lang.get('general.password') }) }}
+            </div>
+        </div>
+
+        {% if not upgrade_available %}
+            <div class="sp-flex sp-description sp-mb-4">
+                <div class="sp-flex-auto">
+                    <label>
+                        {{ form_check('remember_me', '1') }} {{ Lang.get('user.remember_me') }}
+                    </label>
+                </div>
+                <div class="sp-flex-auto sp-text-right">
+                    <a class="sp-forgot-toggle sp-description sp-cursor-pointer hover:sp-text-primary">
+                        {{ Lang.get('user.forgot_password') }}
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="sp-form-row sp-form-full sp-m-0">
+            {{ form_submit(Lang.get('user.login'), {'class': 'sp-w-full'}) }}
+        </div>
+
+        {% if SamlAuth.exists('operator') %}
+            <div class="sp-description sp-my-6 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
+                <span class="sp-bg-primary sp-px-4">{{ Lang.get('general.or') }}</span>
+            </div>
+            <div class="sp-form-row sp-form-full sp-m-0">
+                <input class="sp-w-full" type="button" onclick="location.href='{{ route('operator.saml_login', {'intended': intended_url}) }}';"
+                       value="{{ Lang.get('user.login_via', {'provider': Config.get('saml.guards.operator.idp.name', Lang.get('user.idp'))}) }}" />
+            </div>
+        {% endif %}
+
+    {{ form_close() }}
+
+    {% if not upgrade_available %}
+
+        {{ form_open({ 'route': 'operator.reset', 'method': 'post', 'class': 'sp-reset-form sp-hidden reset-validate' }) }}
+
+            <div class="sp-form-row sp-form-full sp-mb-4">
+                <div class="sp-input-container">
+                    {{ form_email('email', null, {'placeholder': Lang.get('general.email')}) }}
+                </div>
+            </div>
+
+            <div class="sp-text-center">
+                <div class="sp-form-row sp-form-full sp-mb-0">
+                    <div class="sp-flex sp-w-full">
+                        <div class="sp-flex-auto sp-pr-2">
+                            {{ form_submit(Lang.get('user.reset_password'), {'class': 'sp-w-full'}) }}
+                        </div>
+                        <div class="sp-flex-auto sp-pl-2">
+                            <a class="sp-forgot-toggle sp-button sp-w-full">
+                                {{ Lang.get('general.cancel') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {{ form_close() }}
+
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    {% if resetValidator|default is not empty %}
+        {{ resetValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Handle forgotten click
+            $('.sp-forgot-toggle').on('click', function() {
+                $('.sp-reset-form, .sp-login-form').toggle();
+                $('.sp-reset-form input[name="email"]').trigger('focus');
+            });
+        });
+    </script>
+{% endblock %}

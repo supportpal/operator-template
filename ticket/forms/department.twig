@@ -1,0 +1,414 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('ticket.department', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('ticket.department', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ 'ticket.operator.department.update', record.id ], 'method': 'PUT', 'class': 'validate', 'id': 'departmentForm', 'data-id': record.id}) }}
+    {% else %}
+        {{ form_open({'route': 'ticket.operator.department.store', 'class': 'validate', 'id': 'departmentForm', 'data-id': null}) }}
+    {% endif %}
+
+    <div class="sp-form-container">
+        <div class="sp-form-row">
+            {{ form_label('name', Lang.get('general.name')) }}
+            <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full">
+            {{ form_label('description', Lang.get('general.description')) }}
+            <div class="sp-input-container sp-input-translatable">
+                {{ form_translatable_text(record, 'description') }}
+            </div>
+        </div>
+
+        {% if brands|length > 1 %}
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('brand[]', Lang.choice('core.brand', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('brand[]', brands, record.brands.pluck('id').toArray(), {'multiple': 'multiple'}) }}
+                </div>
+            </div>
+        {% else %}
+            <input type="hidden" name="brand[]" value="{{ brands|keys|first }}" />
+        {% endif %}
+
+        <div class="sp-form-row">
+            {{ form_label('parent', Lang.get('general.parent')) }}
+            <div class="sp-input-container">
+                {{ form_select('parent', parentDepartments, record|default is not empty and record.exists ? record.parent_id : null, {'id': 'parent'}) }}
+                <div class="sp-description">{{ Lang.get('ticket.department_parent_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('public', Lang.get('general.public')) }}
+                <div class="sp-input-container">
+                    {{ form_check('public', 1, record|default is not empty and record.exists ? record.public : true, {'class': 'sp-toggle', 'id': 'toggle_public'}) }}
+                    <label for="toggle_public"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.department_public_desc') }}</div>
+                </div>
+            </div>
+            
+            <div class="sp-form-row">
+                {{ form_label('registered_only', Lang.get('ticket.registered_users')) }}
+                <div class="sp-input-container">
+                    {{ form_check('registered_only', 1, null, {'class': 'sp-toggle', 'id': 'toggle_registered_only'}) }}
+                    <label for="toggle_registered_only"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.registered_users_desc') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-form-container sp-collapsed parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+        <div class="sp-form-row">
+            {{ form_label('ticket_number_format', Lang.get('ticket.ticket_format')) }}
+            <div class="sp-input-container">
+                <div class="sp-hidden">
+                    {{ form_text('ticket_number_format') }}<br />
+                </div>
+                <div class="sp-description">{{ Lang.get('ticket.department_no_format') }}
+                    <span class="sp-hidden"><br />{{ Lang.get('ticket.ticket_format_desc')|raw }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-form-container sp-collapsed">
+        <div class="sp-form-row" id="departmentSettings">
+            {{ form_label('dept_priorities', Lang.get('ticket.department_priority')) }}
+            <div class="sp-input-container sp-input-group">
+                <div class="sp-hidden">
+                    <div class="sp-description">
+                        <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                        &nbsp;|&nbsp;
+                        <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                    </div>
+                    {% for priority in priorities %}
+                        {{ form_checkbox('dept_priorities[]', priority.id, in_array(priority.id, recordPriorities, true)) }}
+                        {{ priority.name }}<br />
+                    {% endfor %}
+                </div>
+                <div class="sp-description">{{ Lang.get('ticket.department_priority_desc') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>{{ Lang.get('ticket.assigned_operator') }}</h2>
+
+    <div class="sp-form-container">
+
+        <div class="sp-form-row sp-form-full">
+            {{ form_label('group', Lang.get('ticket.department_group')) }}
+            <div class="sp-input-container">
+                <select name="group[]" multiple="multiple">
+                    {% for group in groups %}
+                        <option {% if in_array(group.id, recordGroups) %}selected="selected"{% endif %}
+                            data-data='{{ group|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ group.id }}'>
+                            {{ group.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div class="sp-description">{{ Lang.get('ticket.department_group_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full">
+            {{ form_label('dept_operators', Lang.get('ticket.department_operator')) }}
+            <div class="sp-input-container">
+                <select name="dept_operators[]" multiple="multiple">
+                    {% for operator in operators %}
+                        <option {% if in_array(operator.id, recordOperators) %}selected="selected"{% endif %}
+                            data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
+                            {{ operator.formatted_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div class="sp-description">{{ Lang.get('ticket.department_operator_desc') }}</div>
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-form-full">
+            {{ form_label('default_assignedto', Lang.get('ticket.department_default_assign')) }}
+            <div class="sp-input-container">
+                <select name="default_assignedto[]" multiple="multiple">
+                    {% if record.exists %}
+                        {% for operator in record.fetchAssignedOperators() %}
+                            <option {% if in_array(operator.id, record.default_assignedto) %}selected='selected'{% endif %}
+                                data-data='{{ operator|json_encode(constant("JSON_FORCE_OBJECT")) }}' value='{{ operator.id }}'>
+                                {{ operator.formatted_name }}
+                            </option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                <div class="sp-description">{{ Lang.get('ticket.dept_default_assign_desc') }}</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}" id="emailAccounts">
+
+        <h2>{{ Lang.get('ticket.email_accounts') }}</h2>
+
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.email_accounts_desc') }}</div>
+
+        {% if not extension_loaded('imap') %}
+            <div class="sp-alert sp-alert-warning">
+                <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
+                <span>{{ Lang.get('messages.php_imap_missing') }}</span>
+            </div>
+        {% endif %}
+
+        {# Add an empty item, we use this for DOM cloning when adding new emails #}
+        {% include 'operator.' ~ template ~ '.ticket.forms.department_email' with {'hide': true} %}
+
+        {# Add existing emails, if there aren't any then show an empty box... #}
+        {% for i, email in record.emails %}
+            {% include 'operator.' ~ template ~ '.ticket.forms.department_email' %}
+        {% else %}
+            {% include 'operator.' ~ template ~ '.ticket.forms.department_email' with {'i': 0} %}
+        {% endfor %}
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                <label></label>
+                <div class="sp-input-container">
+                    {{ form_button(Lang.get('ticket.add_another_email'), {'class': 'add-email'}) }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="parentToggle" id="emailOptions">
+
+        <h2>{{ Lang.get('ticket.email_options') }}</h2>
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                {{ form_label('notify_frontend_ticket', Lang.get('ticket.email_user_frontend')) }}
+                <div class="sp-input-container">
+                    {{ form_check('notify_frontend_ticket', 1, record|default is not empty and record.exists ? record.notify_frontend_ticket : true,
+                        {'class': 'sp-toggle', 'id': 'toggle_notify_frontend_ticket'}) }}
+                    <label for="toggle_notify_frontend_ticket"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.email_user_frontend_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('notify_email_ticket', Lang.get('ticket.email_user_on_email')) }}
+                <div class="sp-input-container">
+                    {{ form_check('notify_email_ticket', 1, record|default is not empty and record.exists ? record.notify_email_ticket : true,
+                        {'class': 'sp-toggle', 'id': 'toggle_notify_email_ticket'}) }}
+                    <label for="toggle_notify_email_ticket"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.email_user_on_email_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('notify_operators', Lang.get('ticket.email_operators')) }}
+                <div class="sp-input-container">
+                    {{ form_check('notify_operators', 1, null, {'class': 'sp-toggle', 'id': 'toggle_notify_operators'}) }}
+                    <label for="toggle_notify_operators"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.email_operators_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('disable_user_email_replies', Lang.get('ticket.disable_user_email_replies')) }}
+                <div class="sp-input-container">
+                    {{ form_check('disable_user_email_replies', 1, null, {'class': 'sp-toggle', 'id': 'toggle_disable_user_email_replies'}) }}
+                    <label for="toggle_disable_user_email_replies"></label>
+                    <div class="sp-description">{{ Lang.get('ticket.disable_user_email_replies_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-container sp-collapsed parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('from_name', Lang.get('ticket.display_name')) }}
+                <div class="sp-input-container">
+                    <div class="sp-hidden">
+                        {{ form_text('from_name', null, {'style': 'width: 90%;'}) }}
+                    </div>
+                    <div class="sp-description">{{ Lang.get('ticket.display_name_desc') }}
+                        <span class="sp-hidden">{{ Lang.get('ticket.display_name_options')|raw }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>{{ Lang.choice('core.email_template', 2) }}</h2>
+
+        <div id="department-templates" class="sp-subtitle-description">{{ Lang.get('ticket.email_template_desc') }}</div>
+
+        <div class="sp-form-container department-templates">
+
+            <div class="sp-flex sp-flex-wrap sp--m-3">
+
+                <div class="sp-w-full sm:sp-w-1/2 sp-p-3">
+                    <h3>{{ Lang.get('core.user_templates') }}</h3>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_opened', Lang.get('ticket.new_ticket_opened')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_opened', emailTemplates['user_ticket_opened'], record.email_templates['user_ticket_opened']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_reply', Lang.get('ticket.new_operator_reply')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_reply', emailTemplates['user_ticket_reply'], record.email_templates['user_ticket_reply']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_user_ticket_reply', Lang.get('ticket.new_user_reply')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_user_ticket_reply', emailTemplates['user_user_ticket_reply'], record.email_templates['user_user_ticket_reply']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_locked', Lang.get('ticket.reply_to_locked')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_locked', emailTemplates['user_ticket_locked'], record.email_templates['user_ticket_locked']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_waitingresponse', Lang.get('ticket.waiting_for_response')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_waitingresponse', emailTemplates['user_ticket_waitingresponse'], record.email_templates['user_ticket_waitingresponse']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_autoclose', Lang.get('ticket.ticket_auto_closed')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_autoclose', emailTemplates['user_ticket_autoclose'], record.email_templates['user_ticket_autoclose']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_ticket_operatorclose', Lang.get('ticket.closed_by_operator')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_operatorclose', emailTemplates['user_ticket_operatorclose'], record.email_templates['user_ticket_operatorclose']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('user_email_attachmentrejected', Lang.get('ticket.attachment_rejected')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_email_attachmentrejected', emailTemplates['user_email_attachmentrejected'], record.email_templates['user_email_attachmentrejected']) }}
+                        </div>
+                    </div>
+
+                    <div id="disableRepliesTemplate" class="sp-form-row {% if not record.registered_only %}sp-hidden{% endif %}">
+                        {{ form_label('user_ticket_disablereplies', Lang.get('ticket.email_replies_disabled')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_disablereplies', emailTemplates['user_ticket_disablereplies'], record.email_templates['user_ticket_disablereplies']) }}
+                        </div>
+                    </div>
+
+                    <div id="registeredOnlyTemplate" class="sp-form-row {% if not record.registered_only %}sp-hidden{% endif %}">
+                        {{ form_label('user_ticket_registeredonly', Lang.get('ticket.registered_users')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('user_ticket_registeredonly', emailTemplates['user_ticket_registeredonly'], record.email_templates['user_ticket_registeredonly']) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sp-w-full sm:sp-w-1/2 sp-p-3">
+                    <h3>{{ Lang.get('core.operator_templates') }}</h3>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_ticket_opened', Lang.get('ticket.new_ticket_opened')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_ticket_opened', emailTemplates['operator_ticket_opened'], record.email_templates['operator_ticket_opened']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_internal_opened', Lang.get('ticket.new_internal_ticket')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_internal_opened', emailTemplates['operator_internal_opened'], record.email_templates['operator_internal_opened']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_user_ticket_reply', Lang.get('ticket.user_ticket_reply')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_user_ticket_reply', emailTemplates['operator_user_ticket_reply'], record.email_templates['operator_user_ticket_reply']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_operator_ticket_reply', Lang.get('ticket.operator_ticket_reply')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_operator_ticket_reply', emailTemplates['operator_operator_ticket_reply'], record.email_templates['operator_operator_ticket_reply']) }}
+                        </div>
+                    </div>
+                    <div class="sp-form-row">
+                        {{ form_label('operator_ticket_note', Lang.get('ticket.new_ticket_note')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_ticket_note', emailTemplates['operator_ticket_note'], record.email_templates['operator_ticket_note']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_assigned', Lang.get('ticket.assigned_to_ticket')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_assigned', emailTemplates['operator_assigned'], record.email_templates['operator_assigned']) }}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_department_changed', Lang.get('ticket.department_changed')) }}
+                        <div class="sp-input-container">
+                            {{ form_select('operator_department_changed', emailTemplates['operator_department_changed'], record.email_templates['operator_department_changed']) }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="sp-form-button">
+        {{ form_submit(Lang.choice('general.submit', 1)) }}
+    </div>
+
+{{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+    
+    <!-- Translatable.js dependencies: selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/department.js') }}"></script>
+{% endblock %}

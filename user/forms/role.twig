@@ -1,0 +1,152 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('user.operator_role', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('user.operator_role', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, { 'route': [ 'user.operator.role.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+    {% else %}
+        {{ form_open({ 'route': 'user.operator.role.store', 'class': 'validate' }) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+
+            <div class="sp-form-row">
+                {{ form_label('name', Lang.get('general.name')) }}
+                <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
+                    {{ form_translatable_text(record, 'name', null, {'autofocus': 'autofocus'}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('description', Lang.get('general.description')) }}
+                <div class="sp-input-container sp-input-translatable">
+                    {{ form_translatable_text(record, 'description') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('group', Lang.choice('user.operator_group', 2)) }}
+                <div class="sp-input-container">
+                    {{ form_select('group[]', groups, roleGroups, { 'multiple': 'multiple' }) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('operator', Lang.get('general.permissions')) }}
+                <div class="sp-input-container sp-input-group role-options">
+                    <div class="sp-description">
+                        <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                        &nbsp;|&nbsp;
+                        <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                    </div>
+
+                    {% for id, name in modules %}
+                        {% if permissions[id] is not empty %}
+                            <h3>{{ name }}</h3>
+                            <div class="sp-flex sp-flex-wrap">
+                                {% for key, permission in permissions[id] %}
+                                    <div class="sp-w-full sm:sp-w-1/2 xl:sp-w-1/3">
+                                        <label>
+                                            {{ form_check('permission[' ~ key ~ ']', true, in_array(key, rolePermissions),
+                                                record.exists and record.id == 1 ? {'disabled': 'disabled'} : {}) }}
+                                            {{ Lang.get('permission.' ~ permission) }}
+                                        </label>
+                                    </div>
+                                {% else %}
+                                    {{ Lang.get('general.no_permissions_found') }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if plugins|default is not empty %}
+                        <h3>{{ Lang.choice('core.plugins', 2) }}</h3>
+                        <div class="sp-flex sp-flex-wrap">
+                            {% for key, name in plugins %}
+                                <div  class="sp-w-full sm:sp-w-1/2 xl:sp-w-1/3">
+                                    <label>
+                                        {{ form_check('plugin[' ~ key ~ ']', true, in_array(key, pluginPermissions),
+                                            record.exists and record.id == 1 ? {'disabled': 'disabled'} : {}) }}
+                                        {{ name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if permissions['plugin'] is not empty %}
+                            {% for key, name in plugins %}
+                                {% if permissions['plugin'][key] is not empty %}
+                                    <h3>{{ name }}</h3>
+                                    <div class="sp-flex sp-flex-wrap">
+                                        {% for key, permission in permissions['plugin'][key] %}
+                                            <div  class="sp-w-full sm:sp-w-1/2 xl:sp-w-1/3">
+                                                <label>
+                                                    {{ form_check('permission[' ~ key ~ ']', true, in_array(key, rolePermissions),
+                                                        record.exists and record.id == 1 ? {'disabled': 'disabled'} : {}) }}
+                                                    {{ Lang.get(permission) }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if widgets|default is not empty %}
+                        <h3>{{ Lang.choice('core.widget', 2) }}</h3>
+                        <div class="sp-flex sp-flex-wrap">
+                            {% for key, name in widgets %}
+                                <div  class="sp-w-full sm:sp-w-1/2 xl:sp-w-1/3">
+                                    <label>
+                                        {{ form_check('widget[' ~ key ~ ']', true, in_array(key, widgetPermissions),
+                                            record.exists and record.id == 1 ? {'disabled': 'disabled'} : {}) }}
+                                        {{ name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Translatable.js dependencies: Selectize -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Groups
+            $('select[name="group[]"]').selectize({
+                plugins: ['remove_button'],
+                delimiter: ','
+            });
+        });
+    </script>
+{% endblock %}

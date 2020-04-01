@@ -1,0 +1,40 @@
+<div id="sectionWrapper">
+
+    <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp-hidden{% endif %}">
+        {% for brand in brands %}
+            <li id="{{ brand.id }}" {% if loop.first %}class="sp-active"{% endif %}>
+                <a>{{ brand.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% for brand in brands %}
+        <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
+            {# Add an empty item, we use this for DOM cloning when adding new records #}
+            {% include 'operator.' ~ template ~ '.user.forms.signature_content' with {'hide': true, 'brand': brand} %}
+
+            <div class="section-items">
+                {% for department, signature in brand.signatures %}
+                    {% include 'operator.' ~ template ~ '.user.forms.signature_content' with {'brand': brand} %}
+                {% endfor %}
+            </div>
+
+            <div class="sp-form-container sp-border-t-0">
+                <div class="sp-form-row {% if not brand.departments|length %}sp-hidden{% endif %}">
+                    <label></label>
+                    <div class="sp-input-container">
+                        <select name="brand[{{ brand.id }}][department]" title="{{ Lang.get('ticket.add_for_department') }}" class="add-item-selectize">
+                            <option></option>
+                            {% for id, department in brand.departments %}
+                                <option data-data='{{ department|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ id }}'>
+                                    {{ department.dashes|raw }}{{ department.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>

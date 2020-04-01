@@ -1,0 +1,80 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.choice('general.message', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden delete">
+        {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden delete">
+        {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <ul class="sp-tabs">
+        <li id="Inbox" class="sp-active">
+            <a>{{ Lang.get('core.inbox') }}</a>
+        </li>
+        <li id="Compose">
+            <a>{{ Lang.get('core.compose') }}</a>
+        </li>
+    </ul>
+
+    <div id="tabInbox" class="sp-tab-content">
+
+        {{ table.render()|raw }}
+
+    </div>
+
+    <div id="tabCompose" class="sp-tab-content sp-hidden">
+
+        {{ form_open({ 'method': 'POST', 'route': 'core.operator.message.store', 'class': 'validate' }) }}
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('to_user_id', Lang.get('core.send_to')) }}
+                <div class="sp-input-container">
+                    {{ form_select('to_user_id', operators) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('message', Lang.choice('general.message', 1)) }}
+                <div class="sp-input-container">
+                    {{ form_redactor('message') }}
+                </div>
+            </div>
+
+            {{ form_submit(Lang.get('general.send')) }}
+
+        {{ form_close() }}
+
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var instance = $('textarea').redactor();
+
+            $(document).on('click', '.sp-tabs li#Compose', function (e) {
+                instance.editor.startFocus();
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% if 'user.operator.operatorsignature.update' in form_route %}
+        {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.edit_item', {'item': Lang.choice('user.signature', 2)}) }}
+    {% if 'user.operator.operatorsignature.update' in form_route %}
+        - {{ record.formatted_name }}
+    {% endif %}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.signature_desc') }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(record, {'route': form_route, 'method': 'PUT', 'class': 'validate', 'style': 'min-height: 300px;'}) }}
+
+        {% include 'operator.' ~ template ~ '.user.forms.signature' %}
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice("general.submit", 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
+    <script type="text/javascript">
+        var opts = {
+            mergeFields: {
+                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                organisations: '{{ Config.get('settings.organisations_enabled', 1) }}'
+            },
+            groups: $R.options.groups.concat(['sp-image']),
+            plugins: ['sp-mergefields'].concat($R.options.plugins)
+        };
+
+        // Do not initialise redactor on the dummy DOM element.
+        $('div.section-items textarea').redactor(opts);
+    </script>
+{% endblock %}

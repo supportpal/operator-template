@@ -1,0 +1,37 @@
+<!-- Laravel Localisation -->
+<script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/lang.min.js') }}"></script>
+<script type="text/javascript">
+    Lang.addMessages({{ translationStrings|raw }});
+    // Add the messages before setting the locale...
+    Lang.setLocale("{{ App.getLocale() }}");
+</script>
+
+<!-- Laravel Routes -->
+<script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/routes.min.js') }}"></script>
+<script type="text/javascript">
+    laroute.set_absolute({{ Config.get('laroute.absolute', false) }});
+    laroute.set_root_url("{{ url('/') }}");
+    laroute.set_routes({{ routeCollection|raw }});
+    laroute.set_prefix('{{ Config.get('laroute.prefix', '') }}');
+</script>
+
+<!-- Vendor -->
+<script type="text/javascript" src="{{ asset_rev('resources/assets/libs/common.min.js') }}"></script>
+<script src="{{ asset_rev('resources/assets/libs/operator.common.min.js') }}"></script>
+<link data-include href="{{ asset_rev('resources/assets/libs/css/common.min.css') }}" rel="stylesheet" type="text/css" property="stylesheet" />
+
+<!-- General -->
+<script src="{{ asset_rev('resources/assets/general/js/main.js') }}"></script>
+
+{% if auth_check() %}
+    <!-- Notifications library -->
+    <script src="{{ asset_rev('resources/assets/operator/js/notification.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        var notifications = new SupportPalNotifications({
+            type: "{{ Config.get('settings.operator' ~ auth_user().id ~ '.display_notifications') }}",
+            icon: "{{ get_icon('resources/assets/operator/images/favicon/favicon_space.png') }}",
+            timeout: 15000
+        });
+        notifications.poll();
+    </script>
+{% endif %}

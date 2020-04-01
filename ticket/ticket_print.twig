@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ ticket.subject }}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+    <div class="sp-break-words xs:sp-p-6 print:sp-p-0">
+        {{ View.fireHook('operator.content_start') }}
+
+        <!-- Success / failure message box -->
+        <div class="sp-alert sp-hidden"></div>
+
+        <h2 class="sp-ml-4 sp-text-primary xs:sp-mt-0 xs:sp-ml-0">{{ ticket.subject }}</h2>
+
+        <div class="sp-title-description">
+            {% if ticket.trashed() %}
+                <span class="sp-mr-2">
+                    <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
+                </span>
+            {% endif %}
+
+            {% if ticket.internal %}
+                <span class="sp-tag sp-bg-red-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.internal') }}</span>
+            {% endif %}
+
+            {{ Lang.get('general.submitted_by') }}
+            <a href="{{ route('user.operator.user.edit', {'id': ticket.user.id}) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+            {% if ticket.user.organisation_id is not empty %}
+                (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+            {% endif %}
+            <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
+        </div>
+
+        <hr />
+
+        <h3>{{ Lang.get('ticket.ticket_details') }}</h3>
+
+        <div class="sp-p-6 sp-pb-3 sp-bg-primary sp-border sp-border-secondary sp-rounded">
+            <div class="sp-form-row">
+                <label>{{ Lang.get('general.number') }}</label>
+                <div class="sp-input-container">
+                    {{ ticket.number }}
+                </div>
+            </div>
+            <div class="sp-form-row">
+                <label>{{ Lang.get('ticket.submitted') }}</label>
+                <div class="sp-input-container">
+                    {{ formatDate(ticket.created_at) }}
+                </div>
+            </div>
+            {% if brand_count() > 1 %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.choice('core.brand', 1) }}</label>
+                    <div class="sp-input-container">{{ ticket.brand.name }}</div>
+                </div>
+            {% endif %}
+            <div class="sp-form-row">
+                <label>{{ Lang.choice('ticket.department', 1) }}</label>
+                <div class="sp-input-container">{{ ticket.department.name }}</div>
+            </div>
+            <div class="sp-form-row">
+                <label>{{ Lang.choice('general.status', 1) }}</label>
+                <div class="sp-input-container">
+                    <span class="sp-badge" style="background-color: {{ ticket.status.colour }}">
+                        {{ ticket.status.name }}
+                    </span>
+                </div>
+            </div>
+            <div class="sp-form-row">
+                <label>{{ Lang.choice('ticket.priority', 1) }}</label>
+                <div class="sp-input-container">
+                    <span class="sp-badge" style="background-color: {{ ticket.priority.colour }}">
+                        {{ ticket.priority.name }}
+                    </span>
+                </div>
+            </div>
+            {% if ticket.tags.isNotEmpty() %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.choice('ticket.tag', 2) }}</label>
+                    <div class="sp-input-container">
+                        {{ ticket.tags.sortby('name').pluck('name').join(', ') }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if ticket.assigned.isNotEmpty() %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.assigned_operator') }}</label>
+                    <div class="sp-input-container">
+                        {{ ticket.assigned.sortby('formatted_name').pluck('formatted_name').join(', ') }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if ticket.sla_plan_id is not null %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.choice('ticket.sla_plan', 1) }}</label>
+                    <div class="sp-input-container">{{ ticket.slaplan.name }}</div>
+                </div>
+            {% endif %}
+            {% if ticket.due_time is not null %}
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.due_time') }}</label>
+                    <div class="sp-input-container">{{ formatDate(ticket.due_time) }}</div>
+                </div>
+            {% endif %}
+
+            {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+        </div>
+
+        <h3>{{ Lang.choice('general.message', 2) }}</h3>
+
+        <div class="sp-messages-container">
+            {% for message in messages %}
+                {% include 'operator.' ~ template ~ '.ticket.message' with {'message': message, 'unread': true} %}
+            {% endfor %}
+        </div>
+
+        {{ View.fireHook('operator.content_end') }}
+    </div>
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    <!-- Redactor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <!-- File upload -->
+    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+
+    <!-- Attachment previews -->
+    <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
+
+    <!-- Custom fields -->
+    <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Enable hide/show password toggle
+            callHideShowPassword();
+
+            // Date picker
+            $('.datepicker').datepicker();
+
+            // Timepicker
+            $('.timepicker').timepicker();
+
+            var ticket = new App.ticket;
+            ticket.print();
+        });
+    </script>
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

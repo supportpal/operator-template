@@ -1,0 +1,25 @@
+{% extends 'operator.' ~ template ~ '.user.login_master' %}
+
+{% block content %}
+
+    <h2 class="sp-mt-0 sp-text-center">{{ Lang.get('user.two_fa') }}</h2>
+
+    <p>{{ Lang.get('user.two_fa_required') }}</p>
+
+    {{ form_open({'route': 'operator.login.twofa.setup', 'method': 'POST', 'class': 'validate'}) }}
+
+        {{ form_hidden('email', email) }}
+        {{ form_hidden('twofa_token', twofa_token) }}
+        {{ form_hidden('twofa_secret', twofa_secret) }}
+
+        {% include 'operator.' ~ template ~ '.user.forms.twofa' %}
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+{% endblock %}

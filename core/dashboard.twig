@@ -1,0 +1,256 @@
+{% extends parent_template %}
+
+{% block content %}
+
+    {% if widgets|default is not empty %}
+        <div class="sp-mb-6 sm:sp-flex">
+            <div class="sm:sp-flex-grow">
+                <h1 class="sp-my-0" id="dashboardTitle">{{ Lang.get('core.dashboard') }}</h1>
+            </div>
+            <div class="sm:sp-flex-initial sm:sp-my-1/2">
+                <button id="showModal">{{ Lang.get('core.add_remove_widget') }}</button>
+            </div>
+        </div>
+
+        <div class="sp-loading sp-p-3 sp-bg-secondary sp-rounded sp-text-center">
+            {{ Lang.get('general.loading') }}<i class="sp-ellipsis"><i>.</i><i>.</i><i>.</i></i>
+        </div>
+
+        <div class="sp-widget-container sp-overflow-hidden">
+            <div id="widgets" class="sp-flex sp-flex-wrap sp--m-3">
+                <!-- Columns are populated with widgets via AJAX -->
+                <div class="sp-widget-column sp-w-full sp-p-3 md:sp-w-1/2" id="1"></div>
+                <div class="sp-widget-column sp-w-full sp-p-3 md:sp-w-1/2" id="2"></div>
+            </div>
+        </div>
+    {% else %}
+        <h1>{{ Lang.get('general.welcome') }} {{ auth_user().formatted_name }}</h1>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            {% if widgets|default is not empty %}
+
+                // Fetch all the widgets
+                var jhqxr = $.get(laroute.route('core.operator.widgets'));
+                jhqxr.done(function(widgets) {
+
+                    if (!(widgets instanceof Array)) {
+                        return;
+                    }
+
+                    var arrayLength = widgets.length,
+                            $widgets = $('#widgets'),
+                            column1Widgets = [], column2Widgets = [];
+
+                    // Loop over all the widgets and sort them into 2 columns
+                    for (var i = 0; i < arrayLength; i++) {
+                        // Widget object
+                        var widget = widgets[i];
+
+                        // Check the object contains a name and content
+                        if (!widget.hasOwnProperty('name') || !widget.hasOwnProperty('content')) {
+                            console.log("Widget index " + i + " missing name/content property -- skipping.");
+                            continue;
+                        }
+
+                        if (widget.model.user.column == 1) {
+                            column1Widgets.push(widget);
+                        } else if (widget.model.user.column == 2) {
+                            column2Widgets.push(widget);
+                        } else {
+                            // Distribute it to the least full column
+                            if (column1Widgets.length < column2Widgets.length)
+                                column1Widgets.push(widget);
+                            else
+                                column2Widgets.push(widget);
+                        }
+                    }
+
+                    // Write the widgets to column 1
+                    writeWidgetsToColumn($widgets.find('.sp-widget-column:eq(0)'), column1Widgets);
+
+                    // Write the widgets to column 2
+                    writeWidgetsToColumn($widgets.find('.sp-widget-column:eq(1)'), column2Widgets);
+
+                    // Remove the loading bar
+                    $('.sp-loading').hide();
+
+                    // Fire the widgetsLoaded event
+                    $widgets.trigger('widgetsLoaded');
+                });
+
+                // Ability to move widgets around
+                $(".sp-widget-column").sortable({
+                    draggable: '.sp-widget',
+                    ghostClass: 'sp-opacity-50',
+                    group: 'widgets',
+                    handle: '.sp-widget-header',
+                    store: {
+                        set: function (sortable) {
+                            $.post(laroute.route('core.operator.widgets.sort'), {
+                                column: $(sortable.el).attr('id'),
+                                order: sortable.toArray()
+                            })
+                                .fail(function(data) {
+                                    Swal.fire(
+                                        Lang.get('messages.error'),
+                                        Lang.get('messages.error_updated', { 'item': Lang.get('core.dashboard') }),
+                                        'error'
+                                    );
+                                });
+                        }
+                    }
+                });
+
+                // Ability to collapse/minimise widgets
+                $('#widgets').on('click', '.sp-widget-header', function() {
+                    $(this).find('.sp-widget-toggle').toggleClass('fa-chevron-down fa-chevron-up');
+
+                    // Toggle the content
+                    var $widget = $(this).parents('.sp-widget');
+                    $widget.toggleClass('sp-widget-minimised').find('.sp-widget-content').slideToggle();
+
+                    // Update the DB
+                    $.post('{{ route('core.operator.widgets.toggle') }}', {
+                        widget_id: $widget.data('id'),
+                        minimised: $widget.find('.fa-chevron-up').length
+                    });
+                });
+
+                // Ability to show/hide widgets
+                $('#showModal').on('click', function() {
+                    Swal.fire({
+                        title: Lang.get('core.add_remove_widget'),
+                        html:  '<form id="showHideWidgets" action="" method="post" style="text-align: left">' +
+                            '{{ csrf_field() }}' +
+                            '<div class="sp-input-group">' +
+                            '<div class="sp-description">' +
+                            '<a class="check_all">{{ Lang.get('general.check_all') }}</a>' +
+                            '&nbsp;|&nbsp;' +
+                            '<a class="uncheck_all">{{ Lang.get('general.uncheck_all') }}</a>' +
+                            '</div>' +
+                                {% for widget in widgets %}
+                            '<label>' +
+                            '<input type="checkbox" name="widgets[{{ widget.id }}]" value="1" ' +
+                                {% if widget.user|default is not empty and widget.user.enabled %}'checked' + {% endif %} ' />' +
+                            '{{ widget.name }}' +
+                            '</label><br />' +
+                                {% else %}
+                            Lang.get('messages.no_results') +
+                                {% endfor %}
+                            '</div>' +
+                            '</form>',
+                        showCancelButton: true,
+                        confirmButtonText: Lang.get('general.save'),
+                        showLoaderOnConfirm: true,
+                        preConfirm: function () {
+                            var formData = $('#showHideWidgets').serialize();
+
+                            // include unchecked checkboxes. use filter to only include unchecked boxes.
+                            $.each($('form input[type=checkbox]')
+                                    .filter(function(idx){
+                                        return $(this).prop('checked') === false
+                                    }),
+                                function(idx, el){
+                                    // attach matched element names to the formData with a chosen value.
+                                    var emptyVal = 0;
+                                    formData += '&' + $(el).attr('name') + '=' + emptyVal;
+                                }
+                            );
+
+                            return $.post(laroute.route('core.operator.widgets.enable'), formData)
+                                .then(function(response) {
+                                    if (response.status == 'success') {
+                                        return response;
+                                    }
+
+                                    throw new Error(response.statusText);
+                                })
+                                .catch(function () {
+                                    Swal.showValidationMessage(Lang.get('messages.error_updated', { 'item': Lang.get('core.dashboard') }));
+                                });
+                        },
+                        allowOutsideClick: function () {
+                            return ! Swal.isLoading();
+                        }
+                    }).then(function (result) {
+                        if (result.value) {
+                            // Reload after 1 seconds
+                            setTimeout("window.location.reload(true);", 1000);
+
+                            Swal.fire(
+                                Lang.get('messages.success'),
+                                Lang.get('messages.success_updated', { 'item': Lang.get('core.dashboard') }),
+                                'success'
+                            );
+                        }
+                    });
+                });
+            {% endif %}
+        });
+
+        {% if widgets|default is not empty %}
+
+            /**
+             * Write an array of widgets to a particular column
+             *
+             * @param columnSelector  jQuery selector
+             * @param widgets         Array of widgets from AJAX call
+             */
+            function writeWidgetsToColumn(columnSelector, widgets)
+            {
+                if (!widgets instanceof Array) return;
+
+                // Sort the widgets based on their order
+                widgets.sort(function(widget1, widget2){
+                    var a = widget1.model.user.order, b = widget2.model.user.order;
+                    return (a===null)-(b===null) || +(a>b)||-(a<b);
+                });
+
+                for (var i = 0; i < widgets.length; i++) {
+                    createWidget(columnSelector, widgets[i]);
+                }
+            }
+
+            /**
+             * Write a widget to a particular column
+             *
+             * @param columnSelector jQuery selector
+             * @param widget         Widget from AJAX call
+             */
+            function createWidget(columnSelector, widget)
+            {
+                // Check whether widget is minimised
+                var icon = 'fa-chevron-down', style = '', minimised = 0;
+                if (widget.hasOwnProperty('model') && widget.model.user.minimised == 1) {
+                    minimised = 1;
+                    icon = 'fa-chevron-up';
+                    style = 'display: none;';
+                }
+
+                // Add the widget to the appropriate column
+                columnSelector.append(
+                    '<div data-id="'+ widget.id +'" class="sp-widget ' + (minimised ? 'sp-widget-minimised' : '') + '">' +
+                        '<div class="sp-widget-header ">' +
+                            '<i class="sp-widget-toggle fas ' + icon + '" aria-hidden="true"></i>' +
+                            widget.name +
+                        '</div>' +
+                        '<div class="sp-widget-content" style="' + style + '">'+ widget.content +'</div>' +
+                    '</div>'
+                );
+            }
+
+        {% endif %}
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {{ block('sidebar', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}
+
+{% block title %}
+    {{ block('title', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}
+
+{% block content %}
+    {% embed 'operator.' ~ template ~ '.core.forms.feedback_form' %}
+        {% block sidebar %}{% endblock %}
+        {% block title %}{% endblock %}
+        {% block scripts_footer %}{% endblock %}
+
+        {% block content_container_1 %}
+            <div class="sp-form-row">
+                {{ form_label('email_template_id', Lang.choice('core.email_template', 1)) }}
+                <div class="sp-input-container">
+                    {{ form_select('email_template_id', templates, record.email_template_id|default is not empty ? record.email_template_id : 25) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('time_after_resolved', Lang.get('ticket.time_after_resolved')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('resolved_time_days',
+                            resolved_time_days|default is not empty ? resolved_time_days : 1, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('resolved_time_hours',
+                            resolved_time_hours|default is not empty ? resolved_time_hours : 0, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('resolved_time_minutes',
+                            resolved_time_minutes|default is not empty ? resolved_time_minutes : 0, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">{{ Lang.get('ticket.time_after_resolved_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('expiry_time', Lang.get('ticket.expires_after')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('expiry_time_days',
+                            expiry_time_days|default is not empty ? expiry_time_days : 7, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('expiry_time_hours',
+                            expiry_time_hours|default is not empty ? expiry_time_hours : 0, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('expiry_time_minutes',
+                            expiry_time_minutes|default is not empty ? expiry_time_minutes : 0, {'class': 'sp-w-20', 'min': 0})
+                        }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">{{ Lang.get('ticket.expires_after_desc') }}</div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block scripts_footer %}
+    {{ block('scripts_footer', 'operator.' ~ template ~ '.core.forms.feedback_form') }}
+{% endblock %}

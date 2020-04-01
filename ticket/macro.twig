@@ -1,0 +1,194 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice("ticket.macro", 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a class="sp-add-macro sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.success_ordering') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ordering">
+        {{ Lang.get('messages.error_ordering') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <ul class="sp-tabs">
+        <li id="Manual" class="sp-active">
+            <a>{{ Lang.get('general.manual') }}</a>
+        </li>
+        <li id="Automatic">
+            <a>{{ Lang.get('general.automatic') }}</a>
+        </li>
+        <li id="Hook">
+            <a>{{ Lang.get('general.hook') }}</a>
+        </li>
+    </ul>
+
+    <div id="tabManual" class="sp-tab-content">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_manual_name"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.description') }}:</label>
+                    <div id="filter_manual_description"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.enabled') }}:</label>
+                    <div id="filter_manual_enabled"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ manualTable.render()|raw }}
+
+        <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
+            <strong>{{ Lang.choice('general.note', 1) }}:</strong> {{ Lang.get('ticket.macro_order_drag') }}
+        </div>
+    </div>
+
+    <div id="tabAutomatic" class="sp-tab-content sp-hidden">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_automatic_name"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.description') }}:</label>
+                    <div id="filter_automatic_description"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.enabled') }}:</label>
+                    <div id="filter_automatic_enabled"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ automaticTable.render()|raw }}
+
+        <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
+            <strong>{{ Lang.choice('general.note', 1) }}:</strong>
+            {{ Lang.get('ticket.macro_order_processed', {'type': Lang.get('general.automatic')}) }} {{ Lang.get('ticket.macro_order_drag') }}
+        </div>
+    </div>
+
+    <div id="tabHook" class="sp-tab-content sp-hidden">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_hook_name"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.description') }}:</label>
+                    <div id="filter_hook_description"></div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.enabled') }}:</label>
+                    <div id="filter_hook_enabled"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ hookTable.render()|raw }}
+
+        <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
+            <strong>{{ Lang.choice('general.note', 1) }}:</strong>
+            {{ Lang.get('ticket.macro_order_processed', {'type': Lang.get('general.hook')}) }} {{ Lang.get('ticket.macro_order_drag') }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ manualTable.script()|raw }}
+    <!-- Filtering and delay loading some tables -->
+    <script src="{{ asset_rev('resources/assets/operator/js/datatable/deferloading.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_manual_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_manual_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_manual_enabled", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+
+    {{ automaticTable.script()|raw }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_automatic_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_automatic_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_automatic_enabled", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+    {{ hookTable.script()|raw }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_hook_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_hook_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_hook_enabled", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+
+    <!-- Delay loading some tables -->
+    <script src="{{ asset_rev('resources/assets/operator/js/datatable/deferloading.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Handle add macro link.
+            $('.sp-add-macro').on('click', function (e) {
+                location.href = $(this).data('wpurl');
+                if ($('.sp-tabs li.sp-active').is('#Manual')) {
+                    location.href = "{{ route('ticket.operator.macro.create', {'type': 0}) }}";
+                } else if ($('.sp-tabs li.sp-active').is('#Automatic')) {
+                    location.href = "{{ route('ticket.operator.macro.create', {'type': 2}) }}";
+                } else {
+                    location.href = "{{ route('ticket.operator.macro.create', {'type': 1}) }}";
+                }
+            });
+
+            /**
+             * Defer loading some datatables
+             */
+            defferedDatatables({
+                'Automatic': false,
+                'Hook': false
+            });
+        });
+    </script>
+{% endblock %}

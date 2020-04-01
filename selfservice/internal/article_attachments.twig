@@ -1,0 +1,33 @@
+{% if not article.getAttachments().isEmpty() %}
+    <h4 class="sp-mt-6 sp-mb-0">{{ Lang.choice('general.attachment', 2) }}</h4>
+
+    <div class="print:sp-hidden">
+        <ul class="sp-attachments">
+            {% for attachment in article.getAttachments() %}
+                <li>
+                    <a href='{{ attachment.downloadLink(type) }}'>
+                        <div class="sp-flex">
+                            <div class="sp-flex-none">
+                                <span class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp-mt-3/2 sp-mr-3 sp-text-4xl"></span>
+                            </div>
+                            <div class="sp-flex-grow">
+                                <div>{{ attachment.original_name }}</div>
+                                <span class="sp-description">{{ attachment.upload.size }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="sp-hidden print:sp-block">
+        <ul>
+            {% for attachment in article.getAttachments() %}
+                <li>
+                    <a href='{{ attachment.downloadLink(type) }}'>{{ attachment.original_name }}</a>
+                    <span class="sp-description">({{ attachment.upload.size }})</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

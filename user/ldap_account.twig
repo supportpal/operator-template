@@ -1,0 +1,75 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice('user.ldap_account', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('user.operator.ldapaccount.create') }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% if not extension_loaded('ldap') %}
+        <div class="sp-alert sp-alert-warning">
+            <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
+            {{ Lang.get('messages.php_ldap_missing') }}
+        </div>
+    {% endif %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{Lang.get('user.ldap_server') }}:</label>
+                <div id="filter_server"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('user.ldap_username') }}:</label>
+                <div id="filter_username"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('user.ldap_rdn') }}:</label>
+                <div id="filter_rdn"></div>
+            </div>
+        </div>
+    </div>
+
+	{{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, filter_container_id: "filter_server", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_username", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, filter_container_id: "filter_rdn", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+            ]);
+        });
+    </script>
+{% endblock %}

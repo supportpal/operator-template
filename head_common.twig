@@ -1,0 +1,25 @@
+<!-- Meta -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf_token" content="{{ csrf_token() }}" />
+<meta name="date_format" content="{{ Config.get('settings.date_format') }}" />
+<meta name="time_format" content="{{ Config.get('settings.time_format') }}" />
+<meta name="max_file_size" content="{{ max_file_size }}" />
+<meta name="allowed_files" content="{{ allowed_files }}" />
+<meta name="environment" content="{{ Config.get('app.environment') }}" />
+
+<!-- Icons -->
+<link rel="apple-touch-icon" sizes="180x180" href="{{ get_favicon('resources/assets/operator/images/favicon/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ asset('resources/assets/operator/images/favicon/site.webmanifest') }}">
+<link rel="mask-icon" href="{{ asset('resources/assets/operator/images/favicon/safari-pinned-tab.svg') }}" color="#06548c">
+<link rel="shortcut icon" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon.ico') }}">
+<meta name="application-name" content="SupportPal"/>
+<meta name="msapplication-TileColor" content="#06548c">
+<meta name="msapplication-config" content="{{ asset('resources/assets/operator/images/favicon/browserconfig.xml') }}">
+<meta name="theme-color" content="#ffffff">
+
+<!-- CSS -->
+{{ colourScheme|raw }}
+<link data-include href="{{ asset_rev('resources/assets/operator/css/main.min.css') }}" rel="stylesheet" type="text/css" />

@@ -1,0 +1,97 @@
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex {% if module != 'ticket' %}sp-closed{% endif %}" id="ticketSettingsBox">
+        <div class="sp-icon">
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <h3>{{ Lang.choice('ticket.ticket', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas {% if module == 'ticket' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul {% if module != 'ticket' %}class="sp-hidden"{% endif %}>
+        {% if auth_user().hasPermission('view.cannedresponse') %}
+            <li {% if route starts with 'ticket.operator.cannedresponse' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.cannedresponse.index') }}">{{ Lang.choice("ticket.cannedresponse", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.channel') %}
+            <li {% if route starts with 'ticket.operator.channel' or route starts with 'ticket.channel' %}class="sp-active"{% endif %} id="channelSettings">
+                <a href="{{ route('ticket.operator.channel.index') }}">{{ Lang.choice("ticket.channel", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ticketcustomfield') %}
+            <li {% if route starts with 'ticket.operator.customfield' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.customfield.index') }}">{{ Lang.choice("customfield.customfield", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.department') %}
+            <li {% if route starts with 'ticket.operator.department' %}class="sp-active"{% endif %} id="ticketDeptSetting">
+                <a href="{{ route('ticket.operator.department.index') }}">{{ Lang.choice("ticket.department", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ticketfeedbackform') %}
+            <li {% if route starts with 'ticket.operator.feedbackform' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.feedbackform.index') }}">{{ Lang.choice("ticket.feedback_form", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.filter') %}
+            <li {% if route starts with 'ticket.operator.filter' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.filter.index') }}">{{ Lang.choice("ticket.filter", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.ticketsetting') %}
+            <li {% if route starts with 'ticket.operator.generalsetting' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.generalsetting') }}">{{ Lang.get("general.generalsetting") }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.holiday') %}
+            <li {% if route starts with 'ticket.operator.holiday' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.holiday.index') }}">{{ Lang.choice("ticket.holiday", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.macro') %}
+            <li {% if route starts with 'ticket.operator.macro' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.macro.index') }}">{{ Lang.choice("ticket.macro", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.priority') %}
+            <li {% if route starts with 'ticket.operator.priority' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.priority.index') }}">{{ Lang.choice("ticket.priority", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.schedule') %}
+            <li {% if route starts with 'ticket.operator.schedule' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.schedule.index') }}">{{ Lang.choice("ticket.schedule", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.slaplan') %}
+            <li {% if route starts with 'ticket.operator.slaplan' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.slaplan.index') }}">{{ Lang.choice("ticket.sla_plan", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.status') %}
+            <li {% if route starts with 'ticket.operator.status' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.status.index') }}">{{ Lang.choice("general.status", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.tickettag') %}
+            <li {% if route starts with 'ticket.operator.tag' %}class="sp-active"{% endif %}>
+                <a href="{{ route('ticket.operator.tag.index') }}">{{ Lang.choice("ticket.tag", 2) }}</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

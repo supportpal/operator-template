@@ -1,0 +1,15 @@
+{% extends 'operator.' ~ template ~ '.index' %}
+
+{% block title %}
+    404 - {{ Lang.get('messages.page_not_found') }}
+{% endblock %}
+
+{% block content %}
+    <div class="sp-alert sp-alert-error sp-alert-with-icon">
+        <i class="sp-alert-icon fas fa-exclamation-triangle"></i>
+        <div class="sp-alert-content">
+            <strong>{{ Lang.get('messages.page_not_found') }}!</strong><br />
+            {{ Lang.get('messages.cant_find_page') }} {{ Lang.get('messages.please_report') }}
+        </div>
+    </div>
+{% endblock %}

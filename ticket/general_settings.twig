@@ -1,0 +1,150 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.module_generalsetting', {'module': Lang.choice('ticket.ticket', 1)}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(fields, { 'method': 'PUT', 'route': [ 'ticket.operator.generalsetting.update' ] }) }}
+
+        <ul class="sp-tabs">
+            <li id="General" class="sp-active">
+                <a>{{ Lang.get('general.general') }}</a>
+            </li>
+            <li id="Statuses">
+                <a>{{ Lang.choice('general.status', 2) }}</a>
+            </li>
+            <li id="Inactive">
+                <a>{{ Lang.get('ticket.inactive_tickets') }}</a>
+            </li>
+        </ul>
+
+        <div id="tabGeneral" class="sp-tab-content">
+
+            <!-- todo: add jQuery validation and an AJAX call which fetches the ticket validation regex -->
+            <div class="sp-form-row">
+                {{ form_label('ticket_number_format', Lang.get('ticket.ticket_format')) }}
+                <div class="sp-input-container">
+                    {{ form_text('ticket_number_format') }}
+                    <div class="sp-description">{{ Lang.get('ticket.ticket_format_desc')|raw }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ticket_reply_order', Lang.get('ticket.ticket_reply_order')) }}
+                <div class="sp-input-container">
+                    {{ form_select('ticket_reply_order', { 0: Lang.get('general.ascending'), 1: Lang.get('general.descending') }) }}
+                    <div class="sp-description">{{ Lang.get('ticket.ticket_reply_order_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ticket_notes_position', Lang.get('ticket.ticket_notes_position')) }}
+                <div class="sp-input-container">
+                    {{ form_select('ticket_notes_position', {
+                        0: Lang.get('ticket.ticket_notes_top_messages'),
+                        1: Lang.get('ticket.ticket_notes_top'),
+                        2: Lang.get('ticket.ticket_notes_messages')
+                    }) }}
+                    <div class="sp-description">{{ Lang.get('ticket.ticket_notes_position_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('allowed_files', Lang.get('ticket.allowed_files')) }}
+                <div class="sp-input-container">
+                    {{ form_text('allowed_files') }}
+                    <div class="sp-description">{{ Lang.get('ticket.allowed_files_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tabStatuses" class="sp-tab-content sp-hidden">
+
+            <div class="sp-form-row">
+                {{ form_label('default_open_status', Lang.get('ticket.default_open_status')) }}
+                <div class="sp-input-container">
+                    {{ form_select('default_open_status', statuses) }}
+                    <div class="sp-description">{{ Lang.get('ticket.default_open_status_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('default_reply_status', Lang.get('ticket.default_reply_status')) }}
+                <div class="sp-input-container">
+                    {{ form_select('default_reply_status', statuses) }}
+                    <div class="sp-description">{{ Lang.get('ticket.default_reply_status_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('default_resolved_status', Lang.get('ticket.default_resolve_status')) }}
+                <div class="sp-input-container">
+                    {{ form_select('default_resolved_status', statuses) }}
+                    <div class="sp-description">{{ Lang.get('ticket.default_resolve_status_desc') }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tabInactive" class="sp-tab-content sp-hidden">
+
+            <div class="sp-form-row">
+                {{ form_label('waiting_response_time', Lang.get('ticket.waiting_response_time')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('waiting_response_time[days]', waitingTime['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('waiting_response_time[hours]', waitingTime['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('waiting_response_time[minutes]', waitingTime['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">
+                        {{ Lang.get('ticket.waiting_response_time_desc') }}
+                        {{ Lang.get('ticket.inactive_ticket_note') }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('inactive_close_time', Lang.get('ticket.close_inactive_tickets')) }}
+                <div class="sp-input-container">
+                    <div class="sp-duration">
+                        {{ form_number('inactive_close_time[days]', inactiveTime['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('inactive_close_time[hours]', inactiveTime['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                    </div>
+                    <div class="sp-duration">
+                        {{ form_number('inactive_close_time[minutes]', inactiveTime['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                    </div>
+                    <div class="sp-description">
+                        {{ Lang.get('ticket.close_inactive_tickets_desc') }}
+                        {{ Lang.get('ticket.inactive_ticket_note') }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.get('general.save')) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}

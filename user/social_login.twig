@@ -1,0 +1,35 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('user.social_login') }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-flex sp-flex-wrap sp--mx-3">
+        {% for key, provider in providers %}
+            <div class="sp-w-full sp-px-3 sp-pb-6 md:sp-w-1/2 xl:sp-w-1/4">
+                <div class="sp-border sp-border-tertiary sp-rounded">
+                    <div class="sp-px-6 sp-py-4 sp-bg-white sp-border-b sp-border-secondary sp-rounded-t">
+                        <img src="{{ provider.image }}" alt="{{ provider.name }}" class="sp-max-w-4xl" />
+                    </div>
+                    <div class="sp-p-6">
+                        <p class="sp-mt-0">{{ Lang.get('user.social_login_provider_desc', {'provider': provider.name }) }}</p>
+                        <a class="sp-button {% if activeProviders.contains('name', key) %}sp-button-submit{% endif %}" href="{{ route('user.operator.sociallogin.edit', key) }}">
+                            {% if activeProviders.contains('name', key) %}
+                                {{ Lang.get('general.manage') }}
+                            {% else %}
+                                {{ Lang.get('general.activate') }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

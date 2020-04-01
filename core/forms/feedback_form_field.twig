@@ -1,0 +1,56 @@
+<tr class="field {% if hide|default is not empty %}sp-hidden{% endif %}">
+    <td class="field-type" width="120">
+        {{ form_hidden('fields[' ~ (field is defined ? field.id : '') ~ '][id]',
+            (field is defined ? field.id : null))
+        }}
+        {{ form_hidden('fields[' ~ (field is defined ? field.id : '') ~ '][local_id]',
+            (field is defined ? field.id : null), { 'class': 'field-local-id' })
+        }}
+        {{ form_select('fields[' ~ (field is defined ? field.id : '') ~ '][type]', 
+            {
+                '0': Lang.get('customfield.boolean'),
+                '1': Lang.get('customfield.checkbox'),
+                '2': Lang.get('customfield.checklist'),
+                '3': Lang.get('customfield.date'),
+                '4': Lang.get('customfield.multiple'),
+                '5': Lang.get('customfield.options'),
+                '7': Lang.get('customfield.radio'),
+                '10': Lang.get('customfield.rating'),
+                '8': Lang.get('customfield.text'),
+                '9': Lang.get('customfield.textarea')
+            }, (field is defined ? field.type : null), field.isTypeLocked() ? {'disabled': 'disabled'} : {})
+        }}
+        {% if field.isTypeLocked() %}
+            {{ form_hidden('fields[' ~ (field is defined ? field.id : '') ~ '][type]', field.type) }}
+        {% endif %}
+    </td>
+    <td class="field-option">
+        <div class="sp-form-full">
+            <div class="sp-input-translatable">
+                {{ form_translatable_text(field, 'name', 'fields[' ~ (field is defined ? field.id : '') ~ '][name]',
+                    {'placeholder': Lang.get('ticket.feedback_question')})
+                }}
+            </div>
+        </div>
+        <div class="sortable field-option-container">
+            {% include 'operator.' ~ template ~ '.core.forms.feedback_form_field_option' with {'field': (field is defined ? field : null), 'hide': true} %}
+
+            {% if field|default is not empty %}
+                {% for option in field.options %}
+                    {% include 'operator.' ~ template ~ '.core.forms.feedback_form_field_option' %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="field-add-option {% if field is not defined or (field.type != '2' and field.type != '4' and field.type != '5' and field.type != '7' and field.type != '10') %}sp-hidden{% endif %}">
+            {{ form_button(Lang.get('general.add_item', {'item': Lang.get('general.option')}), {'class': 'add-option'}) }}
+            {% if field.exists and field.options is not empty %}
+                <div class="sp-description sp-mt-1">
+                    <strong>{{ Lang.choice('general.note', 1) }}:</strong> {{ Lang.get('customfield.option_warning') }}
+                </div>
+            {% endif %}
+        </div>
+    </td>
+    <td class="sp-text-right" width="12">
+        <i class="fas fa-times sp-cursor-pointer remove-button"></i>
+    </td>
+</tr>

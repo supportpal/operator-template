@@ -1,0 +1,27 @@
+{% extends 'operator.' ~ template ~ '.core.feedback_fields' %}
+
+{% block feedback_header %}
+    <h2 class="sp-mt-0">{{ Lang.get('selfservice.article_feedback') }}</h2>
+
+    <div class="sp-form-row">
+        <label>{{ Lang.choice('selfservice.article', 1) }}</label>
+        <div class="sp-input-container">
+            <a href="{{ route('selfservice.operator.article.edit', record.article.id) }}">
+                {{ record.article.title }}
+            </a>
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        <label>{{ Lang.choice('user.user', 1) }}</label>
+        <div class="sp-input-container">
+            {% if record.user is not empty %}
+                <a href="{{ route('user.operator.user.edit', record.user.id) }}">
+                    {{ record.user.formatted_name }}
+                </a>
+            {% else %}
+                {{ record.user_ip }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

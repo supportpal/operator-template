@@ -1,0 +1,103 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.choice('selfservice.comment', 2) }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ Lang.get('selfservice.selfservice') }}
+    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    <strong>{{ Lang.choice('selfservice.comment', 2) }}</strong>
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden update">
+        {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.choice('selfservice.comment', 1), 'UTF-8') }) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden update">
+        {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.choice('selfservice.comment', 1), 'UTF-8') }) }}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.by')|capitalize }}:</label>
+                <div id="filter_by"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('selfservice.article', 1) }}:</label>
+                <div id="filter_article"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('selfservice.type', 1) }}:</label>
+                <div id="filter_type"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('core.brand', 1) }}:</label>
+                <div id="filter_brand"></div>
+            </div>
+        </div>
+    </div>
+
+    {{ table.render()|raw }}
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <!-- Filter the table -->
+    <script type="text/javascript">
+		$(document).ready(function() {
+			// Update status of comment
+			$(document.body).on('change', '.update-status', function() {
+				var $this = $(this);
+				// Post updated data
+		        $.post(
+					laroute.route("selfservice.operator.comment.updateStatus", { id: $this.parents('tr').attr('id') }),
+		            { status: $this.val() },
+		        function(response) {
+		            if (response.status == 'success') {
+		                $('.update.sp-alert-success').show(500).delay(5000).hide(500);
+		            } else {
+		                $('.update.sp-alert-error').show(500).delay(5000).hide(500);
+		            }
+		        }, "json").fail(function() {
+		            $('.update.sp-alert-error').show(500).delay(5000).hide(500);
+		        }).always(function() {
+		            $('.dataTable').dataTable()._fnAjaxUpdate();
+		        });
+			});
+
+            /**
+             * Initialise the filters
+             */
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_by", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, column_data_type: "text", filter_container_id: "filter_article", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, column_data_type: "html", html_data_type: "selector", html_data_selector: "a", filter_container_id: "filter_type", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 3, column_data_type: "html", html_data_type: "selector", html_data_selector: "a", filter_container_id: "filter_brand", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+            ]);
+
+            // Open links (not anchors) in a new window/tab. Needs rel="noopener" due to
+            // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
+            $(document).on('click', '.dataTable .child a', function() {
+                $(this).attr('target', '_blank').attr('rel', 'noopener');
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.choice('core.email_template', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <a href="{{ route('core.operator.emailtemplate.create') }}" class="sp-action sp-button">
+                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                </a><!--
+                --><button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <ul class="sp-tabs">
+        <li id="User" class="sp-active">
+            <a>{{ Lang.choice('user.user', 1) }}</a>
+        </li>
+        <li id="Operator">
+            <a>{{ Lang.choice('general.operator', 1) }}</a>
+        </li>
+        <li id="Custom">
+            <a>{{ Lang.get('general.custom') }}</a>
+        </li>
+    </ul>
+
+    <div id="tabUser" class="sp-tab-content">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_name_user"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ userTable.render()|raw }}
+    </div>
+
+    <div id="tabOperator" class="sp-tab-content sp-hidden">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_name_operator"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ operatorTable.render()|raw }}
+    </div>
+
+    <div id="tabCustom" class="sp-tab-content sp-hidden">
+        <div class="sp-filter-results sp-hidden">
+            <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+            <div class="sp-table">
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div id="filter_name_custom"></div>
+                </div>
+            </div>
+        </div>
+
+        {{ customTable.render()|raw }}
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ userTable.script()|raw }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name_user", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+
+    {{ operatorTable.script()|raw }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name_operator", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+
+    {{ customTable.script()|raw }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            oTable.yadcf([
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name_custom", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
+            ]);
+        });
+    </script>
+
+    <!-- Delay loading some tables -->
+    <script src="{{ asset_rev('resources/assets/operator/js/datatable/deferloading.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /**
+             * Defer loading some datatables
+             */
+            defferedDatatables({
+                'Operator': false,
+                'Custom': false
+            });
+        });
+    </script>
+{% endblock %}

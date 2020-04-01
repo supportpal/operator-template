@@ -1,0 +1,25 @@
+{% extends 'operator.' ~ template ~ '.core.feedback_fields' %}
+
+{% block feedback_header %}
+    <h2 class="sp-mt-0">{{ Lang.get('ticket.ticket_feedback') }}</h2>
+
+    <div class="sp-form-row">
+        <label>{{ Lang.choice('ticket.ticket', 1) }}</label>
+        <div class="sp-input-container">
+            <a href="{{ route('ticket.operator.ticket.show', record.ticket.id) }}">
+                #{{ record.ticket.number }}
+            </a>
+        </div>
+    </div>
+
+    {% if record.ticket.user is not empty %}
+        <div class="sp-form-row">
+            <label>{{ Lang.choice('user.user', 1) }}</label>
+            <div class="sp-input-container">
+                <a href="{{ route('user.operator.user.edit', record.ticket.user.id) }}">
+                    {{ record.ticket.user.formatted_name }}
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

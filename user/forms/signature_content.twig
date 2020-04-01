@@ -1,0 +1,43 @@
+<div class="section-item sp-form-container sp-border-t-0 {% if hide|default is not empty %}sp-hidden{% endif %}">
+
+    <div class="sp-form-row">
+        {{ form_label('signature[' ~ brand.id ~ '][' ~ department ~ '][department]', Lang.choice('ticket.department', 1)) }}
+        <div class="sp-input-container">
+            {{
+                form_hidden(
+                    'signature[' ~ brand.id ~ '][' ~ department ~ '][department]',
+                    department,
+                    hide|default is not empty ? { 'disabled': 'disabled' } : []
+                )
+            }}
+
+            <span class="item-type">
+                {% if signature.department.name is empty %}
+                    -- {{ Lang.get('general.any') }} --
+                {% else %}
+                    {{ signature.department.name }}
+                {% endif %}
+            </span> &nbsp;
+
+            <!-- Only don't show on default brand, -- Any -- department -->
+            {{ form_button(Lang.get('general.remove'),
+                {'class': 'remove-button' ~ (brand.id == 'Default' and signature.department.name is empty ? ' sp-hidden' : '')}
+            ) }}
+
+        </div>
+    </div>
+
+    <div class="sp-form-row sp-form-full" data-brand="{{ brand.id }}">
+        {{ form_label('signature[' ~ brand.id ~ '][' ~ department ~ '][contents]', Lang.choice('user.signature', 1)) }}
+        <div class="sp-input-container">
+            {{
+                form_redactor_mf(
+                    'signature[' ~ brand.id ~ '][' ~ department ~ '][contents]',
+                    signature.contents,
+                    hide|default is not empty ? {'disabled': 'disabled'} : []
+                )
+            }}
+        </div>
+    </div>
+
+</div>
