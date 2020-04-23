@@ -119,23 +119,18 @@
             <div class="sp-form-row icon-input {% if record.internal == 1 %}sp-hidden{% endif %}">
                 {{ form_label('icon', Lang.get('selfservice.frontend_icon')) }}
                 <div class="sp-input-container">
-                    <div class="sp-input-group">
-                        {% for k, icon in icons %}
-                            <label class="sp-block xs:sp-inline-block sp-text-center">
-                                <img src="{{ asset_rev(icon['location']) }}" class="sp-inline-block" /><br />
-                                {{ form_radio('default_icon', k) }} {{ icon['name'] }}
-                            </label>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
+                    {% set opts = ['fa-book', 'fa-download', 'fa-newspaper'] %}
+                    <select name="icon">
+                        <option></option>
+                        {% for value in opts %}
+                            <option value='{{ value }}' {% if record.icon == value %}selected="selected"{% endif %}></option>
                         {% endfor %}
-                    </div>
-
-                    <div class="sp-description sp-mt-3">{{ Lang.get('selfservice.frontend_icon_desc') }}</div>
-                    {% if record.icon is not empty %}
-                        <br />
-                        {{ form_hidden('existing_icon', 1) }}
-                        <img src="data:image/jpeg;base64, {{ record.icon }}" class="sp-max-w-2xl" />
-                    {% endif %}
-                    {{ form_file('icon') }}
+                        {% if not in_array(record.icon, opts) %}
+                            <option value="{{ record.icon }}" selected="selected"></option>
+                        {% endif %}
+                    </select>
+                    <div class="sp-description">{{ Lang.get('selfservice.frontend_icon_desc')|raw }}</div>
+                    <div class="sp-hidden"><i class="fas fa-fw" id="sp-icon-preview"></i></div>
                 </div>
             </div>
 
@@ -222,6 +217,40 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
+
+    <!-- If custom icon doesn't exist, it'll show a question mark -->
+    <style>i:before { content: "?"; }</style>
+    <script>
+        $(function () {
+            $('select[name="icon"]').selectize({
+                create: true,
+                render: {
+                    item: function(item, escape) {
+                        return '<div><i class="fas fa-fw ' + escape(item.value) + '"></i>&nbsp; ' + escape(item.value) + '</div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div class="sp-flex sp-items-center"><i class="fas fa-3x fa-fw ' + escape(item.value) + '"></i> &nbsp; ' + escape(item.value) + '</div>';
+                    },
+                    option_create: function(data, escape) {
+                        return '<div class="create"><i class="fas fa-fw ' + escape(data.input) + '"></i>&nbsp; ' + escape(data.input) + '</div>';
+                    }
+                },
+                createFilter: function (input) {
+                    var match = input.match(/^fa-[a-z-]+/i);
+                    if (match) {
+                        $('#sp-icon-preview').addClass(input);
+                        var content = window.getComputedStyle(document.getElementById('sp-icon-preview'), ":before")
+                            .getPropertyValue('content');
+                        $('#sp-icon-preview').removeClass(input);
+
+                        return content !== '"?"';
+                    }
+
+                    return false;
+                }
+            });
+        });
+    </script>
 
     <!-- selfserviceslug.js dependencies: Sweetalert2, donetyping -->
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>

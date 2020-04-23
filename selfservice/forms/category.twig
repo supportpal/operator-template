@@ -223,12 +223,12 @@
                 render: {
                     item: function(item, escape) {
                         return '<div class="item">' + escape(item.name) +
-                                (item.hierarchy ? '<span class="description">' + escape(item.hierarchy) + '</span>' : '') +
+                                (item.hierarchy ? '<span class="sp-description">' + escape(item.hierarchy) + '</span>' : '') +
                             '</div>';
                     },
                     option: function(item, escape) {
                         return '<div>' + escape(item.name) +
-                                (item.hierarchy ? '<span class="description">' + escape(item.hierarchy) + '</span>' : '') +
+                                (item.hierarchy ? '<span class="sp-description">' + escape(item.hierarchy) + '</span>' : '') +
                             '</div>';
                     }
                 }

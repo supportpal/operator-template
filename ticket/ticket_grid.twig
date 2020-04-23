@@ -111,7 +111,7 @@
                             </div><!--
                             --><div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
-                                    <i class="fas fa-flag"></i>
+                                    <i class="fas fa-square-full"></i>
                                 </button>
                                 <div class="sp-dropdown sp-top-0 sp-mt-12">
                                     <div>
@@ -203,7 +203,7 @@
                                         <i class="fas fa-magic"></i>
                                     </button>
                                     <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 sp-mr-1 sm:sp-left-0 sm:sp-ml-1 sm:sp-mr-0">
-                                        <ul class="sp-text-right">
+                                        <ul class="sp-text-right sm:sp-text-left">
                                             {% for macro in obj_macros %}
                                                 <li>
                                                     <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
@@ -244,7 +244,7 @@
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
                             <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 md:sp-right-auto">
-                                <ul>
+                                <ul class="sp-text-right md:sp-text-left">
                                     {% if auth_user().hasPermission('update.ticket') %}
                                         <li class="reply-ticket md:sp-hidden">
                                             <a>{{ Lang.get('general.reply') }}</a>
@@ -659,18 +659,17 @@
                     this.clear(true);
                 }
             };
-            $quickActions.find('select[name="priority"]').selectize({
+            $quickActions.find('select[name="priority"], select[name="status"]').selectize({
                 render: {
                     option: function(item, escape) {
                         return '<div>'
-                            + '<i class="fas fa-flag" style="color: ' + escape(item.colour) +'"></i>'
-                            + '&nbsp; ' + escape(item.name)
+                            + item.icon_without_tooltip + '&nbsp; ' + escape(item.name)
                             + '</div>';
                     }
                 },
                 onChange: $onChange
             });
-            $quickActions.find('select[name="status"], select[name="tag"], select[name="remove_tag"]').selectize({
+            $quickActions.find('select[name="tag"], select[name="remove_tag"]').selectize({
                 render: {
                     option: function(item, escape) {
                         return '<div>'
@@ -966,11 +965,15 @@
                     }
                 }
 
-                // Re-enable the buttons
+                // Re-enable the buttons if at least one row selected.
                 if ($('tr.selected').length) {
                     $('.sp-grid-actions').removeClass('sp-hidden');
                     $('.sp-grid-actions :input').prop('disabled', false);
                     $('.sp-action-group:not(.sp-grid-actions)').addClass('sp-hidden');
+                } else {
+                    $('.sp-grid-actions').addClass('sp-hidden');
+                    $('.sp-grid-actions :input').prop('disabled', true);
+                    $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
                 }
 
                 // Refresh sidebar

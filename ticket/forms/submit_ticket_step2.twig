@@ -173,7 +173,7 @@
                     </div>
 
                     <div class="sp-redactor-rounded-t-none">
-                        {{ form_redactor('text', signature is not empty ? '<br /><br />' ~ signature : null) }}
+                        {{ form_redactor('text', signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
                     </div>
 
                     {% include 'operator.' ~ template ~ '.core.forms.attachments' with {

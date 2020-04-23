@@ -54,7 +54,7 @@
         <div class="sp-form-row sp-form-full">
             {{ form_label('text', Lang.get('general.text')) }}
             <div class="sp-input-container">
-                {{ form_redactor('text', '<div>@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ '&nbsp;</div>') }}
+                {{ form_redactor('text', '<p>@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ '&nbsp;</p>') }}
             </div>
         </div>
 

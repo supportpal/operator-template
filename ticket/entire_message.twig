@@ -29,7 +29,8 @@
 
         <hr class="sp-hidden print:sp-block" />
 
-        <div class="sp-message sp-border-0 sp-rounded-none sp-shadow xs:sp-rounded print:sp-p-0 print:sp-shadow-none">
+        <div class="sp-message sp-message-{{ message.id }} sp-border-0 sp-rounded-none sp-shadow xs:sp-rounded print:sp-p-0 print:sp-shadow-none"
+             data-id="{{ message.id }}">
             {{ View.fireHook('operator.content_start') }}
 
             <div class="sp-flex">
@@ -38,12 +39,12 @@
                 </div>
                 <div class="sp-flex-grow">
                     <div class="sp-message-header">
-                            <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
-                                {{ message.user.formatted_name }}
-                            </span>
+                        <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
+                            {{ message.user.formatted_name }}
+                        </span>
                         <span class="sp-relative sp-float-right print:sp-hidden">
                                 {% if can_update_ticket(auth_user(), ticket) %}
-                                    <button class="as-link edit-button" data-id="{{ message.id }}">
+                                    <button class="as-link edit-button">
                                         <i class="fas fa-edit hover:sp-text-secondary" aria-hidden="true"></i>
                                     </button>
                                 {% endif %}
@@ -64,12 +65,11 @@
                                 {% endif %}
                             {% endif %}
                             &nbsp;&middot;&nbsp; {{ formatDate(message.created_at) }}
-                            {% if editHistory.get(message.id) is not null %}
-                                {% set edit = editHistory.get(message.id) %}
-                                <strong title="{{ Lang.get('ticket.edited_message', {'user': edit.formatName(false), 'date': formatDate(edit.created_at)}) }}">
-                                    ({{ Lang.get('general.edited') }})
-                                </strong>
-                            {% endif %}
+                            <div class="sp-message-edit-history sp-inline-block">
+                                {% if editHistory.get(message.id) is not null %}
+                                    {% include 'operator.' ~ template ~ '.ticket.message_edit_history' with {edit: editHistory.get(message.id)} %}
+                                {% endif %}
+                            </div>
                             &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
                             {% set emaillog = message.emaillog.where('type', 1).first() %}
                             {% if emaillog is not null %}
@@ -113,13 +113,13 @@
                 </div>
             </div>
 
-            <div class="sp-message-text {% if edit %}sp-hidden{% endif %}">
+            <div class="sp-message-text">
                 {{ message.purified_text|raw }}
             </div>
 
             {% if can_update_ticket(auth_user(), ticket) %}
-                <div class="sp-message-text-edit {% if not edit %}sp-hidden{% endif %}">
-                    {% include 'operator.' ~ template ~ '.ticket.forms.edit_message' with {'editMessage': message, 'ticketId': ticket.id} %}
+                <div class="sp-message-text-edit sp-hidden">
+                    <i class='fas fa-spinner fa-spin'></i>
                 </div>
             {% endif %}
 
@@ -160,17 +160,31 @@
     <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
 
+    <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
+
     <script type="text/javascript">
         new FileUpload();
+        var ticket = new App.ticket;
 
         $(document).ready(function() {
             {% if Request.has('print') %}
-            window.print();
+                window.print();
             {% endif %}
 
             // Show print dialog when clicking the "Print" button.
             $('.print-button').on('click', function () {
                 window.print();
+            });
+
+            {% if edit %}
+                $('.edit-button').trigger('click');
+            {% endif %}
+
+            // Update message
+            $(document.body).on('submit', '.message-form', function(e) {
+                e.preventDefault();
+
+                ticket.updateMessage($(this), $(this).find('textarea:not(.CodeMirror textarea):eq(0)'));
             });
 
             function showSuccess() {
@@ -194,49 +208,6 @@
             // Open links in a new window/tab. Needs rel="noopener" due to
             // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/
             $('.sp-message-text a').attr('target', '_blank').attr('rel', 'noopener');
-
-            // Initialise edit message redactor box.
-            $('.sp-message-text-edit textarea').redactor();
-
-            $('.edit-button').on('click', function (e) {
-                $('.sp-message-text, .sp-message-text-edit').toggle();
-            });
-
-            // Handle submitting the edit message form.
-            $('form.message-form.edit').on('submit', function (e) {
-                e.preventDefault();
-                $(this).find('input[type="submit"]').prop('disabled', 'disabled');
-
-                var $form = $(this),
-                    data = $form.serializeArray();
-
-                data.push({name: '_token', value: '{{ csrf_token() }}'});
-
-                $.ajax({
-                    url: '{{ route('ticket.operator.message.update', [ message.id ]) }}',
-                    type: 'PUT',
-                    data: data,
-                    dataType: 'json'
-                }).done(function (response) {
-                    if (response.status != 'success') {
-                        showFailure();
-                        return;
-                    }
-
-                    // This has been sanitized at PHP level.
-                    $('.sp-message-text').html(response.data.html);
-
-                    // Remove edit form.
-                    $('.sp-message-text, .sp-message-text-edit').toggle();
-
-                    showSuccess();
-
-                }).fail(function () {
-                    showFailure();
-                }).always(function () {
-                    $form.find('input[type="submit"]').removeAttr("disabled");
-                });
-            });
 
             // Load attachment previews
             App.attachments.loadPreviews($('.sp-message'));

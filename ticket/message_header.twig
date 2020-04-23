@@ -12,7 +12,9 @@
             {% endif %}
             <span class="sp-relative sp-float-right print:sp-hidden">
                 {% if can_update_ticket(auth_user(), ticket) %}
-                    {{ form_check('split', 1, false, {'class': 'split-ticket sp-hidden', 'data-id': message.id}) }} &nbsp;
+                    <span class="split-ticket sp-hidden">
+                        {{ form_check('split', 1, false, {'data-id': message.id}) }} &nbsp;
+                    </span>
 
                     <div class="sp-hidden md:sp-inline-block">
                         <button class="as-link quote-message" data-id="{{ message.id }}">
@@ -84,12 +86,11 @@
                     {% endif %}
                 {% endif %}
                 &nbsp;&middot;&nbsp; {{ timeago(message.created_at) }}
+                    <div class="sp-message-edit-history sp-inline-block">
                         {% if editHistory.get(message.id) is not null %}
-                            {% set edit = editHistory.get(message.id) %}
-                            <strong title="{{ Lang.get('ticket.edited_message', {'user': edit.formatName(false), 'date': formatDate(edit.created_at)}) }}">
-                                ({{ Lang.get('general.edited') }})
-                            </strong>
+                            {% include 'operator.' ~ template ~ '.ticket.message_edit_history' with {edit: editHistory.get(message.id)} %}
                         {% endif %}
+                    </div>
                 &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
                 {% set emaillog = message.emaillog.where('type', 1).first() %}
                 {% if emaillog is not null %}

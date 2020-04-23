@@ -93,8 +93,7 @@
     <ul class="sp-mt-1">
         {% for userTicket in userTickets %}
         <li class="sp-truncate">
-            <i class="fas fa-circle" style="color: {{ userTicket.status.colour }};"
-                title="{{ userTicket.status.name }}"></i> &nbsp;
+            {{ userTicket.status.icon|raw }} &nbsp;
             <a href="{{ route('ticket.operator.ticket.show', [ userTicket.id ]) }}" target="_blank">
                 {{ userTicket.subject }}
             </a>
@@ -117,8 +116,7 @@
     <ul class="sp-mt-1">
         {% for organisationTicket in organisationTickets %}
         <li class="sp-truncate">
-            <i class="fas fa-circle" style="color: {{ organisationTicket.status.colour }};"
-                title="{{ organisationTicket.status.name }}"></i> &nbsp;
+            {{ organisationTicket.status.icon|raw }} &nbsp;
             <a href="{{ route('ticket.operator.ticket.show', [ organisationTicket.id ]) }}" target="_blank">
                 {{ organisationTicket.subject }}
             </a>
@@ -141,8 +139,7 @@
     <ul class="sp-mt-1">
         {% for otherBrandTicket in otherBrandTickets %}
             <li class="sp-truncate">
-                <i class="fas fa-circle" style="color: {{ otherBrandTicket.status.colour }};"
-                    title="{{ otherBrandTicket.status.name }}"></i> &nbsp;
+                {{ otherBrandTicket.status.icon|raw }} &nbsp;
                 <a href="{{ route('ticket.operator.ticket.show', [ otherBrandTicket.id ]) }}" target="_blank">
                     {{ otherBrandTicket.subject }}
                 </a>

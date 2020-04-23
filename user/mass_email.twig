@@ -98,7 +98,7 @@
                 {{ form_label('contents', Lang.choice('general.message', 1)) }}
                 <div class="sp-input-container">
                     <div>
-                        {{ form_redactor_mf('contents', (record|default is not empty ? '<br /><br />' ~ signature : '')) }}
+                        {{ form_redactor_mf('contents', (record|default is not empty ? '<p></p>\n<p></p>' ~ signature : '')) }}
                         {% if cumulative_attachment_limit != 0 %}
                         <ul class="sp-attached-files">
                             <li class="sp-flex sp-hidden">
@@ -305,7 +305,7 @@
             // Clear email template
             $('.clear-form').on('click', function() {
                 $('input[name=subject]').val('');
-                instance.source.setCode("{{ record|default is not empty ? '<br /><br />' ~ Purifier.clean(signature)|e('js') : '' }}");
+                instance.source.setCode("{{ record|default is not empty ? ('<p></p>\n<p></p>' ~ Purifier.clean(signature))|e('js') : '' }}");
                 $('select[name="load_template"]').val(0);
             });
 

@@ -143,6 +143,8 @@
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
     <script type="text/javascript">
+        var ticket = new App.ticket;
+
         $(document).ready(function() {
             // Enable hide/show password toggle
             callHideShowPassword();
@@ -153,7 +155,13 @@
             // Timepicker
             $('.timepicker').timepicker();
 
-            var ticket = new App.ticket;
+            // Update message
+            $(document.body).on('submit', '.message-form', function(event) {
+                event.preventDefault();
+
+                ticket.updateMessage($(this), $(this).find('textarea:not(.CodeMirror textarea):eq(0)'));
+            });
+
             ticket.print();
         });
     </script>

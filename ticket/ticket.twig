@@ -72,7 +72,7 @@
                                     <i class="fas fa-magic"></i>
                                 </button>
                                 <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1">
-                                    <ul class="sp-text-right">
+                                    <ul class="sp-text-right xs:sp-text-left">
                                         {% for macro in macros %}
                                             <li>
                                                 <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
@@ -186,6 +186,9 @@
     <div class="sp-ticket-update sp-alert sp-alert-error sp-alert-sticky sp-hidden">
         {{ Lang.get('messages.error_updated', {'item': mb_strtolower(Lang.choice('ticket.ticket', 1), 'UTF-8')}) }}
     </div>
+    <div class="sp-message-update sp-alert sp-alert-error sp-alert-sticky sp-hidden">
+        {{ Lang.get('messages.error_editing_message') }}
+    </div>
 {% endblock %}
 
 {% block pageTitle %}
@@ -199,7 +202,7 @@
                 {% endif %}
             </h1>
 
-            {{ form_text('subject', ticket.subject, {'class': 'sp-edit-subject sp-mb-6 sp-hidden', 'size': 50}) }}
+            {{ form_text('subject', ticket.subject, {'class': 'sp-edit-subject sp-w-full sp-mb-6 sp-hidden'}) }}
         </div>
         <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
             <a href="{{ docsLink }}" target="_blank"
@@ -303,7 +306,7 @@
         {% if (Config.get('settings.ticket_notes_position') != 2 and messages.contains('type', 1)) %}
             <h2 class="notes-header">{{ Lang.choice('general.note', 2) }}</h2>
 
-            <div class="sp-messages-container">
+            <div class="sp-messages-container" data-position="top">
                 {% for message in messages %}
                     {% if message.type == 1 %}
                         {% if (loop.first and auth_user().isDescendingReplyOrder()) or (loop.last and auth_user().isAscendingReplyOrder()) %}
@@ -323,7 +326,7 @@
             <h2 class="messages-header sp-hidden">{{ Lang.choice('general.message', 2) }}</h2>
         {% endif %}
 
-        <div class="sp-messages-container">
+        <div class="sp-messages-container" data-position="inline">
             {% for message in messages %}
                 {% if (Config.get('settings.ticket_notes_position') != 1 or message.type != 1) %}
                     {% if (loop.first and auth_user().isDescendingReplyOrder()) or (loop.last and auth_user().isAscendingReplyOrder()) %}
@@ -433,7 +436,7 @@
             ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams)) }}",
             selfservice: {% if isModuleEnabled('Selfservice') %}true{% else %}false{% endif %},
             {% if signature is not empty %}
-            signature: '<br /><br />' + "{{ Purifier.clean(signature)|e('js') }}",
+            signature: '<p></p>\n<p></p>' + "{{ Purifier.clean(signature)|e('js') }}",
             {% endif %}
         });
 

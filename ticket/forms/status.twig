@@ -41,7 +41,7 @@
                 <div class="sp-input-container">
                     {{ form_check('auto_close', 1, record|default is not empty ? record.auto_close : true, {'class': 'sp-toggle', 'id': 'toggle_auto_close'}) }}
                     <label for="toggle_auto_close"></label>
-                    <div class="description">{{ Lang.get('ticket.close_inactive_status_desc') }}</div>
+                    <div class="sp-description">{{ Lang.get('ticket.close_inactive_status_desc') }}</div>
                 </div>
             </div>
 

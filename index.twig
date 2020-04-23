@@ -55,7 +55,7 @@
                                                     {% if recentTicket.trashed() %}
                                                         <i class="fas fa-trash sp-text-secondary" title="{{ Lang.get('general.trash') }}"></i>
                                                     {% endif %}
-                                                    <i class="fas fa-circle sp-text-xs" style="color: {{ recentTicket.status.colour }};"></i>
+                                                    {{ recentTicket.status.icon|raw }}
                                                     <span class="sp-description group-hover:sp-text-white">#{{ recentTicket.number }}</span> {{ recentTicket.subject }}
                                                 </a>
                                             {% endfor %}
@@ -398,7 +398,7 @@
 
             <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
                 <div class="sp-private-messages sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3" id="privateMessages">
-                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-text-white">
+                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-mr-2 sp-text-white">
                         <div class="sp-flex-auto">
                             <i class="fas fa-comments sp-text-lg"></i>
                         </div>
@@ -418,7 +418,7 @@
                             <ul class="sp-relative">
                                 <li class="sp-internal-selfservice" aria-haspopup="true">
                                     <div class="sp-nav-item sp-nav-icon-item sp-flex sp-px-1 sp-py-3 sp-text-white sp-leading-normal hover:sp-bg-primary-800">
-                                        <div class="sp-flex-auto sp-py-1 sp-ml-3 sp-mr-2">
+                                        <div class="sp-flex-auto sp-py-1 sp-ml-1 sp-mr-2">
                                             <i class="fas fa-book sp-float-left"></i>
                                         </div>
                                         <div class="sp-flex-auto">

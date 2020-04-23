@@ -89,7 +89,7 @@
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
                     'redactorClasses': 'sp-redactor-rounded-none',
-                    'redactorText': draft|default is not empty ? draft.text : (signature is not empty ? '<br /><br />' ~ signature : null),
+                    'redactorText': draft|default is not empty ? draft.text : (signature is not empty ? '<p></p>\n<p></p>' ~ signature : null),
                     'textareaId': 'newMessage'
                 } %}
 

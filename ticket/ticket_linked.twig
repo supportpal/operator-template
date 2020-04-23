@@ -17,8 +17,7 @@
             <li>
                 <div class="sp-flex sp-items-center">
                     <div class="sp-flex-grow sp-truncate">
-                        <i class="fas fa-circle" style="color: {{ linkedTicket.status.colour }};"
-                           title="{{ linkedTicket.status.name }}"></i>&nbsp;
+                        {{ linkedTicket.status.icon|raw }}&nbsp;
                         <a href="{{ route('ticket.operator.ticket.show', [ linkedTicket.id ]) }}" target="_blank">
                             {{ linkedTicket.subject }}
                         </a>
