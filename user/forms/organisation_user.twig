@@ -16,75 +16,77 @@
 
     {{ form_model(record, {'route': ['user.operator.organisation.updateUsers', record.id], 'method': 'POST', 'class': 'validate'}) }}
 
-        {% if record.users is not empty %}
-            <div class="sp--mx-6">
-                <table class="sp-table-grid sp-organisation-users">
-                    <thead>
+        <div class="sp--mx-6">
+            <table class="sp-table-grid sp-organisation-users">
+                <thead>
+                    <tr>
+                        <th>{{ Lang.get('general.name') }}</th>
+                        <th class="sp-hidden md:sp-table-cell" width="160">{{ Lang.get('user.access_level') }}</th>
+                        <th class="sp-hidden md:sp-table-cell" width="16"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in record.users %}
+                        <tr class="existing-row">
+                            <td class="sp-name">
+                                <img src="{{ user.avatar_url }}" class="sp-avatar sp-max-w-xs" />&nbsp;
+                                {{ user.formattedname }}
+                                {% if user.email %}
+                                    <span class="sp-description">{{ '<' ~ user.email ~ '>' }}</span>
+                                {% endif %}
+                                {% if record.isOwner(user.id) %}
+                                    <span class="sp-badge sp-ml-1/2">{{ Lang.get('user.owner') }}</span>
+                                {% endif %}
+                                {% if user.confirmed == 0 %}
+                                    <span class="sp-badge sp-ml-1/2 sp-bg-gray-600">{{ Lang.get('user.unconfirmed') }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="sp-access-level {% if record.owner_id == user.id %}sp-no-remove{% endif %}">
+                                {{ form_select('access_level[' ~ user.id ~ ']', {
+                                    0: Lang.get('user.manager'),
+                                    1: Lang.choice('user.user', 1)
+                                },
+                                    user.organisation_access_level, record.owner_id == user.id ?
+                                    {'disabled': 'disabled', 'class': 'access-level'} : {'class': 'access-level'}) }}
+                            </td>
+                            <td class="{% if record.owner_id != user.id %}sp-remove{% else %}sp-hidden md:sp-table-cell{% endif %}">
+                                {% if record.owner_id != user.id %}
+                                    <a data-user="{{ user.id }}" class="remove-button sp-hidden md:sp-inline-block">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                    <button data-user="{{ user.id }}" class="remove-button md:sp-hidden">
+                                        <i class="fas fa-times"></i>&nbsp;
+                                        {{ Lang.get('general.remove') }}
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
                         <tr>
-                            <th>{{ Lang.get('general.name') }}</th>
-                            <th class="sp-hidden md:sp-table-cell" width="160">{{ Lang.get('user.access_level') }}</th>
-                            <th class="sp-hidden md:sp-table-cell" width="16"></th>
+                            <td class="sp-description" colspan="3">{{ Lang.get('core.sZeroRecords') }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in record.users %}
-                            <tr class="existing-row">
-                                <td class="sp-name">
-                                    <img src="{{ user.avatar_url }}" class="sp-avatar sp-max-w-xs" />&nbsp;
-                                    {{ user.formattedname }}
-                                    {% if user.email %}
-                                        <span class="sp-description">{{ '<' ~ user.email ~ '>' }}</span>
-                                    {% endif %}
-                                    {% if record.isOwner(user.id) %}
-                                        <span class="sp-badge sp-ml-1/2">{{ Lang.get('user.owner') }}</span>
-                                    {% endif %}
-                                    {% if user.confirmed == 0 %}
-                                        <span class="sp-badge sp-ml-1/2 sp-bg-gray-600">{{ Lang.get('user.unconfirmed') }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="sp-access-level {% if record.owner_id == user.id %}sp-no-remove{% endif %}">
-                                    {{ form_select('access_level[' ~ user.id ~ ']', {
-                                        0: Lang.get('user.manager'),
-                                        1: Lang.choice('user.user', 1)
-                                    },
-                                        user.organisation_access_level, record.owner_id == user.id ?
-                                        {'disabled': 'disabled', 'class': 'access-level'} : {'class': 'access-level'}) }}
-                                </td>
-                                <td class="{% if record.owner_id != user.id %}sp-remove{% else %}sp-hidden md:sp-table-cell{% endif %}">
-                                    {% if record.owner_id != user.id %}
-                                        <a data-user="{{ user.id }}" class="remove-button sp-hidden md:sp-inline-block">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <button data-user="{{ user.id }}" class="remove-button md:sp-hidden">
-                                            <i class="fas fa-times"></i>&nbsp;
-                                            {{ Lang.get('general.remove') }}
-                                        </button>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        <tr class="new-row sp-hidden">
-                            <td class="sp-block sp-pt-4 sp-pr-6 sp-border-b-0 md:sp-table-cell md:sp-pt-2 md:sp-pr-3 md:sp-border-b">
-                                {{ form_select('user', [], null, {'placeholder': Lang.get('user.start_typing_name')}) }}
-                            </td>
-                            <td class="sp-block sp-pl-6 sp-border-b-0 md:sp-table-cell md:sp-pl-3 md:sp-border-b">
-                                {{ form_select('access_level_new[]', { 0: Lang.get('user.manager'), 1: Lang.choice('user.user', 1) }, 1, {'class': 'access-level'}) }}
-                            </td>
-                            <td class="sp-block sp-pl-6 sp-pb-4 md:sp-pl-3 md:sp-pb-2 md:sp-table-cell">
-                                <a class="remove-button sp-hidden md:sp-inline-block">
-                                    <i class="fas fa-times"></i>
-                                </a>
+                    {% endfor %}
+                    <tr class="new-row sp-hidden">
+                        <td class="sp-name">
+                            {{ form_select('user', [], null, {'placeholder': Lang.get('user.start_typing_name')}) }}
+                        </td>
+                        <td class="sp-access-level">
+                            {{ form_select('access_level_new[]', { 0: Lang.get('user.manager'), 1: Lang.choice('user.user', 1) }, 1, {'class': 'access-level'}) }}
+                        </td>
+                        <td class="sp-remove">
+                            <a class="remove-button sp-hidden md:sp-inline-block">
+                                <i class="fas fa-times"></i>
+                            </a>
 
-                                <button class="remove-button md:sp-hidden">
-                                    <i class="fas fa-times"></i>&nbsp;
-                                    {{ Lang.get('general.remove') }}
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
+                            <button class="remove-button md:sp-hidden">
+                                <i class="fas fa-times"></i>&nbsp;
+                                {{ Lang.get('general.remove') }}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="sp-form-button">
             {{ form_submit(Lang.choice('general.save', 1)) }}

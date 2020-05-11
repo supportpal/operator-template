@@ -35,7 +35,7 @@
                                data-download-url="{{ attachment.direct_operator_url }}">
                         {% endif %}
                     {% else %}
-                        <a class="sp-group" href="{{ route('ticket.operator.attachment.download', [ attachment.upload_hash ]) }}">
+                        <a class="sp-group" href="{{ attachment.direct_operator_url }}">
                     {% endif %}
                         <div class="sp-preview sp-relative sp-h-20 sp--mx-4 sp--mt-2 sp-mb-2 sp-rounded-t sp-text-center">
                             <div class="sp-h-20 sp-bg-primary sp-border sp-border-b-0 sp-border-secondary sp-rounded-t

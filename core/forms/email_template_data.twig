@@ -48,7 +48,7 @@
         {{ form_label('template[' ~ brand.id ~ '][' ~ language_code ~ '][contents]', Lang.get('core.email_content')) }}
         <div class="sp-input-container">
             {{
-                form_redactor_mf(
+                form_source_code(
                     'template[' ~ brand.id ~ '][' ~ language_code ~ '][contents]',
                     email_template.contents,
                     hide|default is not empty ? { 'disabled': 'disabled' } : []

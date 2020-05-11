@@ -194,7 +194,7 @@
             <div class="sp-form-row sp-form-full">
                 {{ form_label('global_email_header', Lang.get('core.global_email_header')) }}
                 <div class="sp-input-container">
-                    {{ form_textarea('global_email_header') }}
+                    {{ form_source_code('global_email_header') }}
                     <div class="sp-description">{{ Lang.get('core.global_email_header_desc') }}</div>
                 </div>
             </div>
@@ -202,7 +202,7 @@
             <div class="sp-form-row sp-form-full">
                 {{ form_label('global_email_footer', Lang.get('core.global_email_footer')) }}
                 <div class="sp-input-container">
-                    {{ form_textarea('global_email_footer') }}
+                    {{ form_source_code('global_email_footer') }}
                     <div class="sp-description">{{ Lang.get('core.global_email_footer_desc') }}</div>
                 </div>
             </div>
@@ -305,6 +305,17 @@
                 var url = "{{ mail_route('core.frontend.home', null, record.id) }}";
 
                 window.open(url + '?preview=' + colour,'width=800,height=600,scrollbars=yes');
+            });
+
+            // Add CodeMirror editor.
+            $('textarea[name=global_email_header]').sourcecode();
+            $('textarea[name=global_email_footer]').sourcecode();
+
+            // The editor needs refreshing if it's rendered while out-of-view for some reason..
+            $('.sp-tabs li').on('click', function () {
+                $('.CodeMirror').each(function(i, el){
+                    el.CodeMirror.refresh();
+                });
             });
         });
     </script>

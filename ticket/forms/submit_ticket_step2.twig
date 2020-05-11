@@ -226,6 +226,8 @@
         {{ jsValidator|raw }}
     {% endif %}
 
+    <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
+
     <script type="text/javascript">
         // Routes
         var embedImageRoute = laroute.route('core.embed.image');
@@ -234,13 +236,16 @@
         var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
 
         // Global variables for redactor plugins
-        var ticketId = null,
-            userId = {{ user.id }},
-            brandId = {{ brand.id }},
-            operatorId = {{ auth_user().id }},
+        var operatorId = {{ auth_user().id }},
             internal = {{ internal }},
             userLanguage = "{{ user.languageOrDefault() }}",
             allLanguages = {{ languages|sort|json_encode()|raw }};
+
+        var ticket = new App.ticket({
+            ticketId: null,
+            userId: "{{ user.id }}",
+            brandId: "{{ brand.id }}"
+        });
     </script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
 
@@ -257,6 +262,8 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
 
     <script type="text/javascript">
+        var ticket = new App.ticket;
+
         // Initialise redactor.
         var cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
 

@@ -7,7 +7,7 @@
         {{ Lang.get('ticket.channel_account_removed') }}
     </div>
 {% else %}
-    <form class="ticket-reply-form message-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+    <form class="ticket-reply-form message-form validate {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6 sp-hidden{% endif %}">
         {{ form_hidden('reply_type', 0) }}
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">

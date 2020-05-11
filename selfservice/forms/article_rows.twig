@@ -30,7 +30,7 @@
     <div class="sp-form-row sp-form-full">
         {{ form_label(elements.excerpt.name, Lang.get('selfservice.excerpt')) }}
         <div class="sp-input-container">
-            {{ form_textarea(elements.excerpt.name, elements.excerpt.value, { 'style': 'resize: none;', 'rows': 2, 'cols': 40, 'class': 'not-redactor' }|merge(attributes)) }}
+            {{ form_textarea(elements.excerpt.name, elements.excerpt.value, {'style': 'resize: none;', 'rows': 2, 'cols': 40}|merge(attributes)) }}
         </div>
     </div>
     

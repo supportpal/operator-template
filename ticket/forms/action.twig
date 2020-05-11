@@ -316,7 +316,7 @@
             <div class="sp-mb-3">
                 <a class="er-wh-toggle-headers sp-font-bold">{{ Lang.get('ticket.add_remove_headers') }}</a>
                 <div class="{% if value.headers is empty %}sp-hidden{% endif %}">
-                    {{ form_textarea(inputPrefix ~ '[value_text][headers]', value.headers, {'class': 'codemirror'}) }}
+                    {{ form_source_code(inputPrefix ~ '[value_text][headers]', value.headers, {'class': 'codemirror'}) }}
                 </div>
             </div>
             <div class="sp-mb-3">
@@ -329,7 +329,7 @@
                 {% set types = { 'application/json': 'application/json', 'application/xml': 'application/xml', 'application/x-www-form-urlencoded': 'application/x-www-form-urlencoded' } %}
                 {{ form_select(inputPrefix ~ '[value_text][content_type]', types, value.content_type) }}
                 <div class="sp-mt-3">
-                    {{ form_redactor(inputPrefix ~ '[value_text][content]', value.content, {'rows': 5, 'class': 'text', 'data-plugins': ['sp-sourcemode']|json_encode}) }}
+                    {{ form_source_code(inputPrefix ~ '[value_text][content]', value.content, {'class': 'codemirror'}) }}
                 </div>
             </div>
             <button class="test-webhook" data-route="{{ route('ticket.operator.macro.webhook.test') }}">

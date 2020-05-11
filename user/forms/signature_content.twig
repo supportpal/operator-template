@@ -34,7 +34,9 @@
                 form_redactor_mf(
                     'signature[' ~ brand.id ~ '][' ~ department ~ '][contents]',
                     signature.contents,
-                    hide|default is not empty ? {'disabled': 'disabled'} : []
+                    hide|default is not empty ? {'disabled': 'disabled'} : [],
+                    [],
+                    false
                 )
             }}
         </div>

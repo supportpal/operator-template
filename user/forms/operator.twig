@@ -47,7 +47,7 @@
                 {{ form_label('ticket_signature', Lang.get('ticket.ticket_signature')) }}
                 <div class="sp-input-container">
                     <div style="margin-bottom: 10px;">
-                        {{ form_redactor_mf('ticket_signature', signature) }}
+                        {{ form_redactor_mf('ticket_signature', signature, [], [], false) }}
                     </div>
                     <div class="sp-description">
                         {{ Lang.get('user.ticket_signature_desc') }}
