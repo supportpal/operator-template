@@ -49,15 +49,30 @@
                     %}
                         <li class="sp-action-group sp-reply-type sp-inline-block">
                             <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
-                                <i class="fas fa-reply"></i>
+                                <span class="fa-stack sp-text-2xs">
+                                    <i class="fas fa-reply fa-stack-2x"></i>
+                                    <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
+                                </span>
                                 <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
                             </button><!--
                             --><button class="sp-action" data-type="1">
-                                <i class="fas fa-sticky-note"></i>
+                                <span class="fa-stack sp-text-2xs">
+                                    <i class="fas fa-sticky-note fa-stack-2x"></i>
+                                    <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
+                                </span>
                                 <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
                             </button><!--
                             --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
-                                <i class="fas fa-share"></i>
+                                <span class="fa-stack sp-text-2xs">
+                                    <i class="fas fa-share fa-stack-2x"></i>
+                                    <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
+                                </span>
                                 <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('ticket.forward') }}</span>
                             </button>
                         </li><!--
@@ -466,7 +481,7 @@
             }));
 
             // Enable hide/show password toggle
-            callHideShowPassword();
+            $('input[type=password]').hideShowPassword();
 
             // Date picker
             $('.datepicker').datepicker();

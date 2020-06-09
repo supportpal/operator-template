@@ -321,10 +321,16 @@
             </div>
             <div class="sp-mb-3">
                 {% set methods = {'GET': 'GET', 'POST': 'POST', 'PUT': 'PUT', 'PATCH': 'PATCH', 'DELETE': 'DELETE'} %}
-                {{ form_select(inputPrefix ~ '[value_text][method]', methods, value.method, {'class': 'er-wh-method', 'style': 'width: 10%'}) }}
-                {{ form_text(inputPrefix ~ '[value_text][url]', value.url, {'placeholder': 'http://www.example.com/webhook', 'style': 'width: 89%'}) }}
+                <div class="sp-flex">
+                    <div class="sp-flex-none sp-mr-3">
+                        {{ form_select(inputPrefix ~ '[value_text][method]', methods, value.method, {'class': 'er-wh-method'}) }}
+                    </div>
+                    <div class="sp-flex-grow">
+                        {{ form_text(inputPrefix ~ '[value_text][url]', value.url, {'placeholder': 'http://www.example.com/webhook', 'class': 'sp-w-full'}) }}
+                    </div>
+                </div>
             </div>
-            <div class="er-wh-content" class="sp-mb-3 {% if value.method not in ['POST','PUT','PATCH'] %}sp-hidden{% endif %}">
+            <div class="er-wh-content sp-mb-3 {% if value.method not in ['POST','PUT','PATCH'] %}sp-hidden{% endif %}">
                 <strong>{{ Lang.get('general.content') }}</strong>
                 {% set types = { 'application/json': 'application/json', 'application/xml': 'application/xml', 'application/x-www-form-urlencoded': 'application/x-www-form-urlencoded' } %}
                 {{ form_select(inputPrefix ~ '[value_text][content_type]', types, value.content_type) }}

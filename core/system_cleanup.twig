@@ -117,12 +117,16 @@
                     <h3 class="sp-px-6 sp-py-3 sp-my-0 sp-bg-secondary sp-rounded-t">{{ Lang.get('core.system_cache') }}</h3>
                     <div class="sp-p-6">
                         <p class="sp-mt-0">{{ Lang.get('core.system_cache_desc') }}</p>
-                        {{ form_button(Lang.get('core.empty'), {'class': 'system-cache'}) }}
+                        <button class="system-cache" type="button" data-route="{{ route('core.operator.systemcleanup.empty') }}">
+                            {{ Lang.get('core.empty') }}
+                        </button>
                     </div>
                     <h3 class="sp-px-6 sp-py-3 sp-my-0 sp-bg-secondary">{{ Lang.get('core.template_cache') }}</h3>
                     <div class="sp-p-6">
                         <p class="sp-mt-0">{{ Lang.get('core.template_cache_desc') }}</p>
-                        {{ form_button(Lang.get('core.empty'), {'class': 'template-cache'}) }}
+                        <button class="template-cache" type="button" data-route="{{ route('core.operator.systemcleanup.empty') }}">
+                            {{ Lang.get('core.empty') }}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -149,7 +153,9 @@
                         <h4>{{ Lang.get('core.manually_prune') }}</h4>
                         {{ form_text('date', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
                         <div class="sp-button-group sp-mt-3">
-                            {{ form_button(Lang.get('core.prune'), {'class': 'attachments'}) }}
+                            <button class="attachments" type="button" data-route="{{ route('core.operator.systemcleanup.purge') }}">
+                                {{ Lang.get('core.prune') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -177,7 +183,9 @@
                         <h4>{{ Lang.get('core.manually_prune') }}</h4>
                         {{ form_text('date', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
                         <div class="sp-button-group sp-mt-3">
-                            {{ form_button(Lang.get('core.prune'), {'class': 'exports'}) }}
+                            <button class="exports" type="button" data-route="{{ route('core.operator.systemcleanup.purge') }}">
+                                {{ Lang.get('core.prune') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -212,7 +220,9 @@
                         <h4>{{ Lang.get('core.manually_prune') }}</h4>
                         {{ form_text('date', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
                         <div class="sp-button-group sp-mt-3">
-                            {{ form_button(Lang.get('core.prune'), {'class': 'activity-log'}) }}
+                            <button class="activity-log" type="button" data-route="{{ route('core.operator.systemcleanup.purge') }}">
+                                {{ Lang.get('core.prune') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -240,7 +250,9 @@
                         <h4>{{ Lang.get('core.manually_prune') }}</h4>
                         {{ form_text('date', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
                         <div class="sp-button-group sp-mt-3">
-                            {{ form_button(Lang.get('core.prune'), {'class': 'email-log'}) }}
+                            <button class="email-log" type="button" data-route="{{ route('core.operator.systemcleanup.purge') }}">
+                                {{ Lang.get('core.prune') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -267,7 +279,9 @@
                         <h4>{{ Lang.get('core.manually_prune') }}</h4>
                         {{ form_text('date', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
                         <div class="sp-button-group sp-mt-3">
-                            {{ form_button(Lang.get('core.prune'), {'class': 'login-log'}) }}
+                            <button class="login-log" type="button" data-route="{{ route('core.operator.systemcleanup.purge') }}">
+                                {{ Lang.get('core.prune') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -286,24 +300,17 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('form.sp-cleanup button').on('click', function() {
-                // Determine which route to use
-                var route;
-                if ($(this).parent().parent().hasClass('sp-purge')) {
-                    route = laroute.route('core.operator.systemcleanup.purge');
-                } else {
-                    route = laroute.route('core.operator.systemcleanup.empty');
-                }
-
                 // Get name and date if needed
                 var name = $(this).attr('class');
                 var date = null;
-                if ($(this).prev().hasClass('datepicker')) {
-                    date = $(this).prev().val();
+                if ($(this).parents('.sp-purge').find('.datepicker').length) {
+                    date = $(this).parents('.sp-purge').find('.datepicker')[0]
+                        ._flatpickr.selectedDates[0].getUnixTime();
                 }
 
                 // Make AJAX call
                 $.ajax({
-                    url: route,
+                    url: $(this).data('route'),
                     type: 'POST',
                     data: {
                         name: name,

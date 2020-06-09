@@ -262,8 +262,6 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
 
     <script type="text/javascript">
-        var ticket = new App.ticket;
-
         // Initialise redactor.
         var cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
 
@@ -282,7 +280,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             // Enable hide/show password toggle
-            callHideShowPassword();
+            $('input[type=password]').hideShowPassword();
 
             // Date picker
             $('.datepicker').datepicker();

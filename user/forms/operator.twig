@@ -95,7 +95,7 @@
                 organisations: '{{ Config.get('settings.organisations_enabled') }}'
             },
             groups: $R.options.groups.concat(['sp-image']),
-            plugins: ['sp-mergefields'].concat($R.options.plugins)
+            plugins: $R.options.plugins.concat(['sp-mergefields'])
         };
 
         // Do not initialise redactor on the dummy DOM element.
@@ -105,7 +105,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             // Enable hide/show password toggle
-            callHideShowPassword();
+            $('input[type=password]').hideShowPassword();
 
             // Generate a new random password
             $('a#generatePassword').on('click', function() {

@@ -148,7 +148,7 @@
                 canned_responses: false
             },
             groups: $R.options.groups.concat(['sp-image']),
-            plugins: ['sp-mergefields'].concat($R.options.plugins)
+            plugins: $R.options.plugins.concat(['sp-mergefields'])
         };
 
         // Custom attribute mapper for multidimensionaldata.js

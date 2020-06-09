@@ -92,7 +92,7 @@
                         {% endif %}
                     </div>
                 &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
-                {% set emaillog = message.emaillog.where('type', 1).first() %}
+                {% set emaillog = message.emaillog.where('type', '!=', 0).first() %}
                 {% if emaillog is not null %}
                     <div class="sp-dropdown-container">
                         <span class="sp-action">

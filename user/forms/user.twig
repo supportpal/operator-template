@@ -156,7 +156,7 @@
             }
 
             // Enable hide/show password toggle
-            callHideShowPassword();
+            $('input[type=password]').hideShowPassword();
 
             // Generate a new random password
             $('a#generatePassword').on('click', function() {
@@ -243,9 +243,9 @@
             // Show notifications options for managers only
             $('select[name="organisation_access_level"]').on('change', function() {
                 if ($(this).val() == 1 || ! $(this).is(':visible')) {
-                    $('.organisation-notifications').hide().find(':input').prop('disabled', true);
+                    $('.organisation-notifications').addClass('sp-hidden').find(':input').prop('disabled', true);
                 } else {
-                    $('.organisation-notifications').show().find(':input').prop('disabled', false);
+                    $('.organisation-notifications').removeClass('sp-hidden').find(':input').prop('disabled', false);
                 }
             });
 

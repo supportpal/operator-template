@@ -273,7 +273,7 @@
                     organisations: '{{ Config.get('settings.organisations_enabled') }}'
                 },
                 groups: $R.options.groups.concat(['sp-image']),
-                plugins: ['sp-mergefields'].concat($R.options.plugins)
+                plugins: $R.options.plugins.concat(['sp-mergefields'])
             });
 
             // Load email template

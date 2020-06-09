@@ -20,7 +20,7 @@
         <div class="sp-alert sp-hidden"></div>
 
         {% if not Request.has('print') %}
-            <button class="print-button sp-ml-3 sp-float-right print:sp-hidden">
+            <button class="print-button sp-button-submit sp-ml-3 sp-float-right print:sp-hidden">
                 <i class="fas fa-print"></i>&nbsp; {{ Lang.get('general.print') }}
             </button>
         {% endif %}
@@ -71,7 +71,7 @@
                                 {% endif %}
                             </div>
                             &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
-                            {% set emaillog = message.emaillog.where('type', 1).first() %}
+                            {% set emaillog = message.emaillog.where('type', '!=', 0).first() %}
                             {% if emaillog is not null %}
                                 <div class="sp-dropdown-container">
                                     <span class="sp-action">
