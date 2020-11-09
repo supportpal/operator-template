@@ -58,33 +58,6 @@
                 {column_number : 1, filter_container_id: "filter_status", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
                 {column_number : 2, column_data_type: "text", filter_container_id: "filter_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'}
             ]);
-
-            $(document.body).on('click', '.uninstall-plugable', function() {
-                // Get URL
-                var url = $(this).data('link'),
-                    showAlert = function () {
-                        Swal.fire({
-                            title: Lang.get('messages.are_you_sure'),
-                            text: "{{ Lang.get('core.uninstall_plugable_warning', {'plugable': mb_strtolower(Lang.choice('core.widget', 1), 'UTF-8')}) }}",
-                            type: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#e74c3c",
-                            confirmButtonText: Lang.get('messages.yes_im_sure'),
-                            showLoaderOnConfirm: true,
-                            allowOutsideClick: false,
-                            preConfirm: function () {
-                                window.location.href = url;
-                            }
-                        });
-                    };
-
-                showAlert().then(function (result) {
-                    if (result.value) {
-                        showAlert();
-                        Swal.showLoading();
-                    }
-                });
-            });
         });
     </script>
 {% endblock %}

@@ -14,7 +14,7 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} sp-h-full sp-bg-primary sp-text-primary sp-overflow-hidden print:sp-h-auto print:sp-overflow-auto">
+<body class="{{ get_template_mode() }} sp-h-full sp-bg-primary sp-text-primary print:sp-h-auto">
 
 {{ View.fireHook('operator.body_start') }}
 
@@ -383,7 +383,7 @@
                         </li>
                     {% endif %}
                     <li class="sp-block lg:sp-hidden" aria-haspopup="false">
-                        <a class="sp-nav-item" href="{{ route('user.operator.logout') }}">
+                        <a class="sp-nav-item logout-link" data-url="{{ route('user.operator.logout') }}" data-method="post" rel="nofollow">
                             {{ Lang.get('user.logout') }}
                         </a>
                     </li>
@@ -478,7 +478,9 @@
                                         </li>
                                     {% endif %}
                                     <li aria-haspopup="false">
-                                        <a href="{{ route('user.operator.logout') }}">{{ Lang.get('user.logout') }}</a>
+                                        <a class="logout-link" data-url="{{ route('user.operator.logout') }}" data-method="post">
+                                            {{ Lang.get('user.logout') }}
+                                        </a>
                                     </li>
                                 </ul>
                             </li>
@@ -505,18 +507,18 @@
     {{ View.fireHook('operator.wrapper_start') }}
 
     {% if block('sidebar')|trim is not empty %}
-        <div id="sidebar" class="sp-flex-none sp-h-full sp-w-6 sp-bg-secondary sp-border-r sp-border-tertiary sp-z-10001
-                                 sm:sp-w-8 lg:sp-w-72 print:sp-hidden">
-            <div class="sp-sidebar-inner">
+        <div id="sidebar" class="sp-flex-none sp-w-6 sp-bg-secondary sp-border-r sp-border-tertiary sp-z-10001 sm:sp-w-8 print:sp-hidden
+                                 {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? 'sp-sidebar-closed' : 'lg:sp-w-72' }}">
+            <div class="sp-sidebar-inner sp-h-full">
                 {{ View.fireHook('operator.sidebar_start') }}
 
                 {% block sidebar %}{% endblock %}
 
                 {{ View.fireHook('operator.sidebar_end') }}
 
-                <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp-px-3/2 sp-py-2 sp-ml-6 sm:sp-ml-8 lg:sp-ml-72
-                            sp-mb-4 sp-rounded-full sp-shadow-md sp-text-secondary sp-leading-none sp-cursor-pointer
-                            sp-z-10001 hover:sp-text-primary" style="left: -1rem;">
+                <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp-px-3/2 sp-py-2 sp-ml-6 sm:sp-ml-8 sp-mb-4 sp-rounded-full
+                            sp-shadow-md sp-text-secondary sp-leading-none sp-cursor-pointer sp-z-10001 hover:sp-text-primary
+                            {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? '' : 'lg:sp-ml-72' }}" style="left: -1rem;">
                     <i class="fas fa-fw sp-chevron"></i>
                 </div>
             </div>
@@ -524,77 +526,80 @@
     {% endif %}
 
     <div id="content" class="sp-content sp-flex-grow sp-relative sp-bg-primary sp-overflow-y-auto print:sp-overflow-x-hidden">
-        {{ View.fireHook('operator.content_start') }}
+        {# Extra div needed to fix Safari position sticky issue (#2393) #}
+        <div>
+            {{ View.fireHook('operator.content_start') }}
 
-        {% if Config.get('settings.maintenance_mode') %}
-            <div class="sp-alert sp-alert-warning sp-mb-0 sp-rounded-none">
-                {{ Lang.get('messages.maintenance_mode') }}
-            </div>
-        {% endif %}
+            {% if Config.get('settings.maintenance_mode') %}
+                <div class="sp-alert sp-alert-warning sp-mb-0 sp-rounded-none">
+                    {{ Lang.get('messages.maintenance_mode') }}
+                </div>
+            {% endif %}
 
-        {% block precontent %}{% endblock %}
+            {% block precontent %}{% endblock %}
 
-        <div class="sp-content-inner sp-relative sp-p-6 print:sp-p-0 print:sp-pt-6">
-            {{ View.fireHook('operator.content_inner_start') }}
+            <div class="sp-content-inner sp-relative sp-p-6 print:sp-p-0 print:sp-pt-6">
+                {{ View.fireHook('operator.content_inner_start') }}
 
-            {% block pageTitle %}
-                {% if title is not empty %}
-                    {% if docsLink is not empty %}
-                        <div class="sp-flex sp-mb-6">
-                            <div class="sp-flex-grow">
-                    {% endif %}
+                {% block pageTitle %}
+                    {% if title is not empty %}
+                        {% if docsLink is not empty %}
+                            <div class="sp-flex sp-mb-6">
+                                <div class="sp-flex-grow">
+                        {% endif %}
 
-                    <h1 id="pageTitle" {% if docsLink is not empty %}class="sp-mb-0"{% endif %}>{{ title|raw }}</h1>
+                        <h1 id="pageTitle" {% if docsLink is not empty %}class="sp-mb-0"{% endif %}>{{ title|raw }}</h1>
 
-                    {% if docsLink is not empty %}
+                        {% if docsLink is not empty %}
+                                </div>
+                                <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
+                                    <a href="{{ docsLink }}" target="_blank"
+                                       class="sp-block sp-mt-1/2 sp-ml-3 sp-text-xl sp-text-gray-400 hover:sp-text-gray-600 sm:sp-mt-2">
+                                        <i class="fas fa-question-circle"></i>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
-                                <a href="{{ docsLink }}" target="_blank"
-                                   class="sp-block sp-mt-1/2 sp-ml-3 sp-text-xl sp-text-gray-400 hover:sp-text-gray-600 sm:sp-mt-2">
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </div>
-                        </div>
+                        {% endif %}
                     {% endif %}
+                {% endblock %}
+
+                {% if block('breadcrumb') is not empty %}
+                    <div class="breadcrumb">{% block breadcrumb %}{% endblock %}</div>
                 {% endif %}
-            {% endblock %}
 
-            {% if block('breadcrumb') is not empty %}
-                <div class="breadcrumb">{% block breadcrumb %}{% endblock %}</div>
-            {% endif %}
+                {% if block('description') is defined %}
+                    <div class="sp-title-description">{{ block('description')|trim|raw }}</div>
+                {% endif %}
 
-            {% if block('description') is defined %}
-                <div class="sp-title-description">{{ block('description')|trim|raw }}</div>
-            {% endif %}
+                <!-- Box to display success/error messages generated by JavaScript -->
+                <div class="sp-alert sp-hidden" id="js-message-box"></div>
 
-            <!-- Box to display success/error messages generated by JavaScript -->
-            <div class="sp-alert sp-hidden" id="js-message-box"></div>
+                {% if Session.has('success') %}
+                    <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
+                {% elseif (Session.has('error') or Session.has('email_error')) %}
+                    <div class="sp-alert sp-alert-error">
+                        {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
+                    </div>
+                {% endif %}
 
-            {% if Session.has('success') %}
-                <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
-            {% elseif (Session.has('error') or Session.has('email_error')) %}
-                <div class="sp-alert sp-alert-error">
-                    {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
-                </div>
-            {% endif %}
+                {% if errors|default is not empty and errors.count() %}
+                    <div class="sp-alert sp-alert-error">
+                        <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+                        {% for error in errors.unique() %}
+                            {{ Purifier.clean(error) }}<br />
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-            {% if errors|default is not empty and errors.count() %}
-                <div class="sp-alert sp-alert-error">
-                    <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
-                    {% for error in errors.unique() %}
-                        {{ Purifier.clean(error) }}<br />
-                    {% endfor %}
-                </div>
-            {% endif %}
+                {% block content %}{% endblock %}
 
-            {% block content %}{% endblock %}
+                {{ View.fireHook('operator.content_inner_end') }}
+            </div>
 
-            {{ View.fireHook('operator.content_inner_end') }}
+            {% block postcontent %}{% endblock %}
+
+            {{ View.fireHook('operator.content_end') }}
         </div>
-
-        {% block postcontent %}{% endblock %}
-
-        {{ View.fireHook('operator.content_end') }}
     </div>
 
     {{ View.fireHook('operator.wrapper_end') }}

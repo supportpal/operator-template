@@ -304,8 +304,7 @@
                 var name = $(this).attr('class');
                 var date = null;
                 if ($(this).parents('.sp-purge').find('.datepicker').length) {
-                    date = $(this).parents('.sp-purge').find('.datepicker')[0]
-                        ._flatpickr.selectedDates[0].getUnixTime();
+                    date = $(this).parents('.sp-purge').find('.datepicker').val();
                 }
 
                 // Make AJAX call

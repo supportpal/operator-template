@@ -8,28 +8,27 @@
     {{ Lang.get('user.social_login') }}
 {% endblock %}
 
+{% block description %}
+    {{ Lang.get('user.social_login_desc') }}
+{% endblock %}
+
 {% block content %}
 
-    <div class="sp-flex sp-flex-wrap sp--mx-3">
-        {% for key, provider in providers %}
-            <div class="sp-w-full sp-px-3 sp-pb-6 md:sp-w-1/2 xl:sp-w-1/4">
-                <div class="sp-border sp-border-tertiary sp-rounded">
-                    <div class="sp-px-6 sp-py-4 sp-bg-white sp-border-b sp-border-secondary sp-rounded-t">
-                        <img src="{{ provider.image }}" alt="{{ provider.name }}" class="sp-max-w-4xl" />
-                    </div>
-                    <div class="sp-p-6">
-                        <p class="sp-mt-0">{{ Lang.get('user.social_login_provider_desc', {'provider': provider.name }) }}</p>
-                        <a class="sp-button {% if activeProviders.contains('name', key) %}sp-button-submit{% endif %}" href="{{ route('user.operator.sociallogin.edit', key) }}">
-                            {% if activeProviders.contains('name', key) %}
-                                {{ Lang.get('general.manage') }}
-                            {% else %}
-                                {{ Lang.get('general.activate') }}
-                            {% endif %}
-                        </a>
-                    </div>
-                </div>
+    {% for key, provider in providers %}
+        <div class="sp-flex sp-items-center sp-px-6 sp-py-3 sp-mb-6 sp-border sp-border-secondary sp-rounded">
+            <div class="sp-flex-grow">
+                <strong>{{ provider.name }}</strong>
             </div>
-        {% endfor %}
+            <div class="sp-flex-none">
+                <a class="sp-button" href="{{ route('user.operator.sociallogin.edit', provider.name|lower) }}">
+                    {{ Lang.get('general.manage') }}
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="sp-alert sp-alert-info">
+        {{ Lang.get('user.manage_social_login_options', {'route': route('core.operator.integration.index')})|raw }}
     </div>
 
 {% endblock %}

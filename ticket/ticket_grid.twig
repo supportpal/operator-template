@@ -525,7 +525,7 @@
                         + '</form>',
                     width: '800',
                     showCancelButton: true,
-                    onOpen: function () {
+                    didOpen: function () {
                         $(Swal.getContent()).find('.mass-reply textarea').redactor({
                             focus: true,
                             // Key down event causes mass reply modal to hide
@@ -715,7 +715,7 @@
                 Swal.fire({
                     title: Lang.get('ticket.run_macro'),
                     html: Lang.get('ticket.run_macro_desc', {'macro': text, 'description': description}),
-                    type: "warning",
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3B91CE",
                     confirmButtonText: Lang.get('general.run'),
@@ -939,43 +939,8 @@
             }
             $('.sp-grid-actions :input').prop('disabled', true);
 
-            // Save the row selection
-            var selection = getSelectedRows();
-            var all_selected = $('input[name="select-all"]').is(':checked');
-
             // Update the grid
             $('.dataTable').dataTable().api().ajax.reload(function() {
-                if (selection !== '') {
-                    // Restore the row selection
-                    var array = selection.split(","); // explode the selected rows
-
-                    // Trigger a row click for each previously selected row, this will trigger the necessary properties
-                    // and events. Keep a track of how many we click.
-                    var number_selected = 0;
-                    $.each(array, function(index, item) {
-                        if (item != '' && $('tr#'+item).length) {
-                            $('tr#'+item).trigger('click');
-                            number_selected++;
-                        }
-                    });
-
-                    // Re-check the select all checkbox (only if all rows were selected still).
-                    if (all_selected && number_selected === array.length) {
-                        $('input[name="select-all"]').prop('checked', true);
-                    }
-                }
-
-                // Re-enable the buttons if at least one row selected.
-                if ($('tr.selected').length) {
-                    $('.sp-grid-actions').removeClass('sp-hidden');
-                    $('.sp-grid-actions :input').prop('disabled', false);
-                    $('.sp-action-group:not(.sp-grid-actions)').addClass('sp-hidden');
-                } else {
-                    $('.sp-grid-actions').addClass('sp-hidden');
-                    $('.sp-grid-actions :input').prop('disabled', true);
-                    $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
-                }
-
                 // Refresh sidebar
                 if (typeof sideBar !== 'undefined') {
                     sideBar.refresh();

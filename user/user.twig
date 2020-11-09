@@ -180,40 +180,18 @@
         }
 
         /*
-         * Refresh the ticket grid automatically every minute
+         * Reload the grid after an action.
          */
         function refreshGrid() {
             // Disable the grid actions
-            $('.sp-grid-actions').addClass('sp-hidden');
-            $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
+            if (! $('tr.selected').length) {
+                $('.sp-grid-actions').addClass('sp-hidden');
+                $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
+            }
             $('.sp-grid-actions :input').prop('disabled', true);
 
-            // Save the row selection
-            var selection = getSelectedRows();
-            var all_selected = $('input[name="select-all"]').is(':checked');
-
             // Update the grid
-            $('.dataTable').dataTable().api().ajax.reload(function() {
-                if (selection !== '') {
-                    // Restore the row selection
-                    var array = selection.split(","); // explode the selected rows
-
-                    // Trigger a row click for each previously selected row, this will trigger the necessary properties
-                    // and events. Keep a track of how many we click.
-                    var number_selected = 0;
-                    $.each(array, function(index, item) {
-                        if (item != '' && $('tr#'+item).length) {
-                            $('tr#'+item).trigger('click');
-                            number_selected++;
-                        }
-                    });
-
-                    // Re-check the select all checkbox (only if all rows were selected still).
-                    if (all_selected && number_selected === array.length) {
-                        $('input[name="select-all"]').prop('checked', true);
-                    }
-                }
-            }, false);
+            $('.dataTable').dataTable().api().ajax.reload(null, false);
         }
     </script>
 

@@ -141,6 +141,7 @@
 
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/linked_account.js') }}"></script>
 
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Toggle the password fields depending on whether we're sending a confirmation email
@@ -442,7 +443,6 @@
                         confirmButtonColor: "#e74c3c",
                         confirmButtonText: Lang.get('messages.delete_confirm', {record: "{{ Lang.choice('general.export', 1) }}"}),
                         width: 550,
-                        customClass: 'delete-modal',
                         showLoaderOnConfirm: true,
                         preConfirm: function () {
                             return $.ajax({ url: url, type: 'DELETE' })

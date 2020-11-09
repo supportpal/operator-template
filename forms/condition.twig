@@ -288,7 +288,7 @@
                 { 'data-item': 41, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
-                {0:  '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + array_column(LanguageFactory.getLanguages(), 'name', 'code'),
+                {0:  '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + languages,
                 condition|default is not empty and condition.item == 42 ? condition.value : null,
                 { 'data-item': 42, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
@@ -486,7 +486,7 @@
                 { 'data-item': 59, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
-                {0:  '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + array_column(LanguageFactory.getLanguages(), 'name', 'code'),
+                {0:  '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + languages,
                 condition|default is not empty and condition.item == 60 ? condition.value : null,
                 { 'data-item': 60, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
@@ -514,12 +514,18 @@
         <div class="sp-description sp-mt-1/2 sp-hidden" data-item="65">{{ Lang.get('conditions.exact_search_quotes') }}</div>
 
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
-                { 0: Lang.get('general.no'), 1: Lang.get('general.yes') },
+                {
+                    0: Lang.get('general.no'),
+                    1: Lang.get('general.yes')
+                },
                 condition|default is not empty and condition.item == 66 ? condition.value : null,
                 { 'data-item': 66, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
-                { 0: Lang.get('general.no'), 1: Lang.get('general.yes') },
+                {
+                    0: Lang.get('general.no'),
+                    1: Lang.get('general.yes')
+                },
                 condition|default is not empty and condition.item == 66 ? condition.value : null,
                 { 'data-item': 67, 'data-operator': 0, 'class': 'sp-hidden' }) }}
 
@@ -532,6 +538,14 @@
                 brands|default is not empty ? brands : assignedBrands.pluck('name', 'id'),
                 condition|default is not empty and condition.item == 69 ? condition.value : null,
                 { 'data-item': 69, 'data-operator': 0, 'class': 'sp-hidden' }) }}
+
+        {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
+                {
+                    0: Lang.get('general.no'),
+                    1: Lang.get('general.yes')
+                },
+                condition|default is not empty and condition.item == 70 ? condition.value : null,
+                { 'data-item': 70, 'data-operator': 0, 'class': 'sp-hidden' }) }}
     </td>
     <td class="sp-text-right" width="12">
         <i class="fas fa-times sp-cursor-pointer remove-button"></i>

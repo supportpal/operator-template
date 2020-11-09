@@ -42,13 +42,6 @@
                         <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
                             {{ message.user.formatted_name }}
                         </span>
-                        <span class="sp-relative sp-float-right print:sp-hidden">
-                                {% if can_update_ticket(auth_user(), ticket) %}
-                                    <button class="as-link edit-button">
-                                        <i class="fas fa-edit hover:sp-text-secondary" aria-hidden="true"></i>
-                                    </button>
-                                {% endif %}
-                            </span>
                         <div class="sp-description">
                             {% if message.type == 2 %}
                                 {{ Lang.get('ticket.forwarded_to') }} <strong>{{ message.getForwardRecipients() }}</strong>
@@ -117,12 +110,6 @@
                 {{ message.purified_text|raw }}
             </div>
 
-            {% if can_update_ticket(auth_user(), ticket) %}
-                <div class="sp-message-text-edit sp-hidden">
-                    <i class='fas fa-spinner fa-spin'></i>
-                </div>
-            {% endif %}
-
             <div class="print:sp-hidden">
                 {% include 'operator.' ~ template ~ '.ticket.message_attachments' %}
             </div>
@@ -164,6 +151,7 @@
 
     <script type="text/javascript">
         new FileUpload();
+
         var ticket = new App.ticket;
 
         $(document).ready(function() {

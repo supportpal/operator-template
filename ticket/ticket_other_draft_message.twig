@@ -1,0 +1,20 @@
+<div class="sp-draft-message sp-alert sp-alert-warning hover:sp-cursor-pointer" data-message-id="{{ draft.id }}">
+    <div class="sp-flex">
+        <div class="sp-flex-grow">
+            <img src='{{ draft.user.avatar_url }}' class='sp-avatar sp-max-w-2xs' />&nbsp;
+            {{ Lang.get('ticket.drafting_message', {'name': draft.user.formatted_name|e, 'type': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8')})|raw }}
+            &nbsp;&middot;&nbsp;
+            <div class="sp-draft-updated-at sp-inline-block">{{ timeago(draft.updated_at) }}</div>
+        </div>
+
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-up" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <div class="sp-draft-message-content sp-hidden">
+        <hr class="sp--mx-5 sp-my-4" />
+
+        <div class="sp-draft-message-content-body"><i class='fas fa-spinner fa-spin'></i></div>
+    </div>
+</div>

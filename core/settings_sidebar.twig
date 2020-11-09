@@ -69,5 +69,11 @@
                 <a href="{{ route('core.operator.spamrule.index') }}">{{ Lang.choice("core.spam_rule", 2) }}</a>
             </li>
         {% endif %}
+
+        {% if auth_user().hasPermission('view.integration') %}
+            <li {% if route starts with 'core.operator.integration' or route starts with 'integration.' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.integration.index') }}">{{ Lang.choice("core.third_party_integrations", 2) }}</a>
+            </li>
+        {% endif %}
     </ul>
 </div>

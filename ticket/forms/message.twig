@@ -10,6 +10,8 @@
     <form class="ticket-reply-form message-form validate {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6 sp-hidden{% endif %}">
         {{ form_hidden('reply_type', 0) }}
 
+        {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 0)} %}
+
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
 
             <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
@@ -105,6 +107,8 @@
     <form class="ticket-reply-form notes-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
         {{ form_hidden('reply_type', 1) }}
 
+        {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 1)} %}
+
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
             <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
@@ -129,6 +133,8 @@
 
     <form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
         {{ form_hidden('reply_type', 2) }}
+
+        {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
             <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">

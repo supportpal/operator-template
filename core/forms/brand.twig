@@ -207,26 +207,34 @@
                 </div>
             </div>
 
-            <!-- todo option to pick global email, and change the default -->
-            <div class="sp-form-row">
-                {{ form_label('email_method', Lang.get('core.email_method')) }}
-                <div class="sp-input-container sp-input-group">
-                    <label>
-                        {{ form_radio('email_method', 'default', true, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
-                        {{ Lang.get('core.inherit_global_setting') }}
-                    </label><br />
-                    <label>
-                        {{ form_radio('email_method', 'mail', null, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
-                        {{ Lang.get('core.php_mail_function') }}
-                    </label><br />
-                    <label>
-                        {{ form_radio('email_method', 'smtp', null, { 'onclick': "document.getElementById('smtp').style.display = 'block';" }) }}
-                        {{ Lang.get('core.smtp') }}
-                    </label>
+            {% if record.exists %}
+                <div class="sp-form-row">
+                    {{ form_label('email_method', Lang.get('core.email_method')) }}
+                    <div class="sp-input-container sp-input-group">
+                        <label>
+                            {{ form_radio('email_method', 'default', true, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
+                            {{ Lang.get('core.inherit_global_setting') }}
+                        </label><br />
+                        <label>
+                            {{ form_radio('email_method', 'mail', null, { 'onclick': "document.getElementById('smtp').style.display = 'none';" }) }}
+                            {{ Lang.get('core.php_mail_function') }}
+                        </label><br />
+                        <label>
+                            {{ form_radio('email_method', 'smtp', null, { 'onclick': "document.getElementById('smtp').style.display = 'block';" }) }}
+                            {{ Lang.get('core.smtp') }}
+                        </label>
+                    </div>
                 </div>
-            </div>
 
-            {% include 'operator.' ~ template ~ '.core.forms.smtp_tab' with {'email_method': record.email_method} %}
+                {% include 'operator.' ~ template ~ '.core.forms.smtp_tab' with {'email_method': record.email_method} %}
+            {% else %}
+                <div class="sp-form-row">
+                    {{ form_label('email_method', Lang.get('core.email_method')) }}
+                    <div class="sp-input-container">
+                        <div class="sp-alert sp-alert-info">{{ Lang.get('core.configure_after_brand_created') }}</div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
         <div id="tabLocale" class="sp-tab-content sp-hidden">
@@ -272,6 +280,7 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
     <script type="text/javascript">
         var sslWarning = new SslWarning({
             route: "{{ mail_route('core.frontend.home', null, record.id) }}"

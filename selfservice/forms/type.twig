@@ -275,9 +275,9 @@
         $(document).ready(function() {
             $('input[name="internal"]').on('change', function() {
                 if ($('input[name="internal"]:checked').val() == '1') {
-                    $('.icon-input, .show_on_dashboard, .protected-input').hide();
+                    $('.icon-input, .show_on_dashboard, .protected-input').addClass('sp-hidden');
                 } else {
-                    $('.icon-input, .show_on_dashboard, .protected-input').show();
+                    $('.icon-input, .show_on_dashboard, .protected-input').removeClass('sp-hidden');
                 }
             });
 
@@ -294,7 +294,7 @@
                     // Hide any empty slugs we've shown
                     $('.slug:visible').each(function () {
                         if ($(this).find(':input').val() === '') {
-                            $(this).hide();
+                            $(this).addClass('sp-hidden')
                         }
                     });
                 }

@@ -49,6 +49,8 @@
                             {{ Lang.get('core.incoming_spam') }}
                         {% elseif record.type == 3 %}
                             {{ Lang.get('core.incoming_throttled') }}
+                        {% elseif record.type == 16 %}
+                            {{ Lang.get('core.incoming_auto_reply') }}
                         {% else %}
                             {{ Lang.get('core.incoming_rejected') }}
                         {% endif %}

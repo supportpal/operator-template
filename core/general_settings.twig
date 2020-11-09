@@ -14,7 +14,7 @@
 
 {% block content %}
 
-{{ form_model(fields, { 'method': 'PUT', 'route': [ 'core.operator.generalsetting.update' ] }) }}
+{{ form_model(fields, {'method': 'PUT', 'route': 'core.operator.generalsetting.update', 'class': 'validate'}) }}
 
 	<ul class="sp-tabs">
         <li id="System" class="sp-active">
@@ -284,7 +284,12 @@
 {% endblock %}
 
 {% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
     <script type="text/javascript">
         var sslWarning = new SslWarning({
             route: "{{ mail_route('core.frontend.home') }}"

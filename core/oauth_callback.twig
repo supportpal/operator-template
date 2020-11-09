@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ Lang.get('core.oauth') }}</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <noscript>JavaScript is required to use this page!</noscript>
+        <p>The window will close automatically...</p>
+        <script type="text/javascript">
+            window.onload = function () {
+                window.opener.spOAuthCallback("{{ data|json_encode|e('js') }}");
+                window.close();
+            }
+        </script>
+    </body>
+</html>

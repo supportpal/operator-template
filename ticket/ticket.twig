@@ -51,6 +51,9 @@
                             <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-reply fa-stack-2x"></i>
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 0).isEmpty() %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
@@ -60,6 +63,9 @@
                             --><button class="sp-action" data-type="1">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-sticky-note fa-stack-2x"></i>
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
@@ -69,6 +75,9 @@
                             --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-share fa-stack-2x"></i>
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp-hidden{% endif %}">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
@@ -310,8 +319,6 @@
     <div id="tabMessages" class="sp-tab-content">
         {% if auth_user().isDescendingReplyOrder() %}
             {% if can_update_ticket(auth_user(), ticket) %}
-                {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' %}
-
                 {% include 'operator.' ~ template ~ '.ticket.forms.message' with {'ticketId': ticket.id} %}
             {% endif %}
 
@@ -358,8 +365,6 @@
             {{ View.fireHook('operator.ticket_messages') }}
 
             {% if can_update_ticket(auth_user(), ticket) %}
-                {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' %}
-
                 {% include 'operator.' ~ template ~ '.ticket.forms.message' with {'ticketId': ticket.id} %}
             {% endif %}
         {% endif %}

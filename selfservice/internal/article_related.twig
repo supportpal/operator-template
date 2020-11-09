@@ -10,15 +10,5 @@
                 <a href='{{ article.url(type) }}'>{{ article.title }}</a>
             </li>
         {% endfor %}
-        {% for article in related %}
-            <li>
-                <ul class="sp-article-details sp-description sp-float-right">
-                    <li>
-                        <i class="fas fa-calendar"></i>&nbsp; {{ timeago(article.published_at) }}
-                    </li>
-                </ul>
-                <a href='{{ article.url(type) }}'>{{ article.title }}</a>
-            </li>
-        {% endfor %}
     </ul>
 {% endif %}

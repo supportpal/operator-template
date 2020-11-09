@@ -11,7 +11,10 @@
                 <span class="sp-attachment sp-description">&nbsp; <i class="fas fa-paperclip"></i></span>
             {% endif %}
             <span class="sp-relative sp-float-right print:sp-hidden">
-                {% if can_update_ticket(auth_user(), ticket) %}
+                {% if canUpdateTicket is not defined %}
+                    {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
+                {% endif %}
+                {% if canUpdateTicket %}
                     <span class="split-ticket sp-hidden">
                         {{ form_check('split', 1, false, {'data-id': message.id}) }} &nbsp;
                     </span>

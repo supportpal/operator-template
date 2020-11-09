@@ -30,9 +30,15 @@
                         <tr class="existing-row">
                             <td class="sp-name">
                                 <img src="{{ user.avatar_url }}" class="sp-avatar sp-max-w-xs" />&nbsp;
-                                {{ user.formattedname }}
+                                <a href="{{ route('user.operator.user.edit', user.id) }}">{{ user.formattedname }}</a>
                                 {% if user.email %}
                                     <span class="sp-description">{{ '<' ~ user.email ~ '>' }}</span>
+                                {% endif %}
+                                {% if user.groups is not empty %}
+                                    {% for group in user.groups %}
+                                        <i class="fas fa-circle sp-mx-1/2 sp-align-middle"
+                                           style="color: {{ group.colour }};" title="{{ group.name }}"></i>
+                                    {% endfor %}
                                 {% endif %}
                                 {% if record.isOwner(user.id) %}
                                     <span class="sp-badge sp-ml-1/2">{{ Lang.get('user.owner') }}</span>

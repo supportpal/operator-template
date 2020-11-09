@@ -6,7 +6,7 @@
 
         {% set routeSplit = route|split('.') %}
 
-        {% include 'operator.' ~ template ~ '.' ~ module.slug|lower ~ '.settings_sidebar' with {'module': routeSplit[0], 'route': route} %}
+        {% include 'operator.' ~ template ~ '.' ~ module.slug|lower ~ '.settings_sidebar' with {'module': currentModule ?? routeSplit[0], 'route': route} %}
 
     {% endif %}
 {% endfor %}

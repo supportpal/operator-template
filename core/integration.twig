@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ Lang.choice("ticket.channel", 2) }}
+    {{ Lang.choice('core.third_party_integrations', 2) }}
 {% endblock %}
 
 {% block precontent %}
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-	{{ table.setId('ticketChannelTable').render()|raw }}
+	{{ table.render()|raw }}
 
 {% endblock %}
 
@@ -56,9 +56,9 @@
              * Initialise the filters
              */
             oTable.yadcf([
-                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500},
-                {column_number : 1, filter_container_id: "filter_status"},
-                {column_number : 2, column_data_type: "text", filter_container_id: "filter_description", filter_type: "text", filter_delay: 500},
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 1, filter_container_id: "filter_status", filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
+                {column_number : 2, column_data_type: "text", filter_container_id: "filter_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: '<i class="fas fa-fw fa-times"></i>'},
             ]);
         });
     </script>

@@ -100,7 +100,7 @@
 
                 Swal.fire({
                     allowOutsideClick: false,
-                    onBeforeOpen: function () {
+                    willOpen: function () {
                         Swal.showLoading();
 
                         // Force a call home to validate the license.
@@ -109,7 +109,7 @@
                                 if (data.status == 'success') {
                                     var success = function () {
                                         return Swal.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: '{{ Lang.get('license.license_valid') }}',
                                             confirmButtonText: '{{ Lang.get('core.go_to_dashboard') }}',
                                             showLoaderOnConfirm: true,

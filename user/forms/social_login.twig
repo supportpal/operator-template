@@ -5,55 +5,37 @@
 {% endblock %}
 
 {% block title %}
-    {{ Lang.get('general.edit_item', {'item': Lang.get('user.social_login')}) }} - {{ providerName }}
+    {{ Lang.get('general.edit_item', {'item': Lang.get('user.social_login')}) }} - {{ integration.name }}
 {% endblock %}
 
 {% block content %}
 
-    {{ form_open({ 'route': [ 'user.operator.sociallogin.update', provider ], 'method': 'PUT', 'class': 'validate' }) }}
+    {{ form_open({'route': ['user.operator.sociallogin.update', provider], 'method': 'PUT', 'class': 'validate'}) }}
 
         {{ form_hidden('provider', provider) }}
 
-        <ul class="sp-tabs {% if brands|length == 1 %}sp-hidden{% endif %}">
-            {% for brand in brands %}
-                <li id="{{ brand.id }}" {% if loop.first %}class="sp-active"{% endif %}>
-                    <a>{{ brand.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-
         {% for brand in brands %}
-            <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('config[' ~ brand.id ~ '][enabled]', brands|length > 1 ? brand.name : Lang.get('general.enabled')) }}
+                <div class="sp-input-container">
+                    {% set configured = Config.get('integration.' ~ provider ~ '.brand-settings.' ~ brand.id ~ '.client_id') is not empty
+                        or Config.get('integration.' ~ provider ~ '.brand-settings.' ~ brand.id ~ '.client_secret') is not empty %}
 
-                <div class="sp-form-row">
-                    {{ form_label('config[' ~ brand.id ~ '][enabled]', Lang.get('general.enabled')) }}
-                    <div class="sp-input-container">
+                    {% if configured %}
                         {{ form_check('config[' ~ brand.id ~ '][enabled]', 1,
                             providers[brand.id] is not empty ? providers[brand.id].enabled : true,
                             {'class': 'sp-toggle', 'id': 'toggle_config[' ~ brand.id ~ '][enabled]'})
                         }}
                         <label for="{{ 'toggle_config[' ~ brand.id ~ '][enabled]' }}"></label>
-                    </div>
-                </div>
-
-                {% for input, name in inputs %}
-                    <div class="sp-form-row">
-                        {{ form_label('config[' ~ brand.id ~ '][' ~ input ~ ']', name) }}
-                        <div class="sp-input-container">
-                            {{ form_text('config[' ~ brand.id ~ '][' ~ input ~ ']', providers[brand.id][input], {'size': 45}) }}
+                        <div class="sp-description">
+                            <a href="{{ route(integration.getAddon().getSettingsRoute(), {'brand': brand.id}) }}">{{ Lang.get('general.manage_credentials') }}</a>
                         </div>
-                    </div>
-                {% endfor %}
-
-                <div class="sp-alert sp-alert-info">
-                    {{ Lang.get('user.social_login_provider_docs', {'link': docsLink, 'provider': providerName})|raw }}
-                    {% if callback_url_needed %}
-                        <br /><br />
-                        {{ Lang.get('user.' ~ provider ~ '_redirect_url')|raw }}
-                        <input type="text" class="callback_url" value="{{ route('user.oauth_callback', provider) }}" style="width: 100%;" />
+                    {% else %}
+                        <div class="sp-alert sp-alert-info sp-m-0">
+                            {{ Lang.get('core.create_credentials', {'route': route(integration.getAddon().getSettingsRoute(), {'brand': brand.id})})|raw }}
+                        </div>
                     {% endif %}
                 </div>
-
             </div>
         {% endfor %}
 

@@ -34,20 +34,6 @@
     {% endif %}
 
     <div class="sp-form-row">
-        {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][address]', Lang.get('general.address')) }}
-        <div class="sp-input-container">
-            {{
-                form_email(
-                    'emails[' ~ (i is defined ? i : '') ~ '][address]',
-                    email|default is not empty ? email.address : '',
-                    {'size': 30}|merge((hide|default is not empty ? { 'disabled': 'disabled' } : []))
-                )
-            }} &nbsp;
-            {{ form_button(Lang.get('general.remove'), { 'class': 'remove-button' }) }}
-        </div>
-    </div>
-
-    <div class="sp-form-row">
         {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][type]', Lang.get('general.type')) }}
         <div class="sp-input-container">
             {{
@@ -63,6 +49,20 @@
                     { 'class': 'email-support' }|merge((hide|default is not empty ? { 'disabled': 'disabled' } : []))
                 )
             }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
+        {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][address]', Lang.get('general.address')) }}
+        <div class="sp-input-container">
+            {{
+                form_email(
+                    'emails[' ~ (i is defined ? i : '') ~ '][address]',
+                    email|default is not empty ? email.address : '',
+                    {'size': 30}|merge((hide|default is not empty ? { 'disabled': 'disabled' } : []))
+                )
+            }} &nbsp;
+            {{ form_button(Lang.get('general.remove'), { 'class': 'remove-button' }) }}
         </div>
     </div>
     
@@ -125,14 +125,79 @@
 
     <div class="email-download {% if i is not defined or (email is defined and email.type == 1) %}sp-hidden{% endif %}">
 
-        <div class="sp-form-row email-protocol">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][protocol]', Lang.get('ticket.protocol')) }}
+        <div class="sp-form-row">
+            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][auth_mech]',  Lang.get('general.authentication')) }}
             <div class="sp-input-container">
                 {{
                     form_select(
-                        'emails[' ~ (i is defined ? i : '') ~ '][protocol]',
-                        ['IMAP', 'POP3'],
-                        email|default is not empty ? email.protocol : '',
+                        'emails[' ~ (i is defined ? i : '') ~ '][auth_mech]',
+                        authMechs,
+                        email|default is not empty ? email.auth_mech : PASSWORD_AUTH,
+                        {'class': 'auth-mech'}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                    )
+                }}
+            </div>
+        </div>
+
+        {% set authMech = form_getValueAttribute('emails[' ~ (i is defined ? i : '') ~ '][auth_mech]') %}
+        <div class="password-form {% if authMech is not empty and authMech != PASSWORD_AUTH %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][password]', Lang.get('general.password')) }}
+                <div class="sp-input-container">
+                    {{
+                        form_password(
+                            'emails[' ~ (i is defined ? i : '') ~ '][password]',
+                            {'size': 30, 'autocomplete': 'new-password'}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                        )
+                    }}
+                    {% if i|default is not empty and email is defined and email.password is not empty %}
+                        <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="oauth-form {% if authMech is empty or authMech == PASSWORD_AUTH %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][provider]', Lang.choice('general.provider', 1)) }}
+                <div class="sp-input-container">
+                    {% if oAuthProviders is not empty %}
+                        <div class="sp-flex sp-flex-wrap">
+                            <div class="sp-flex-none sp-w-full sm:sp-w-auto">
+                                {{ form_select(
+                                    'emails[' ~ (i is defined ? i : '') ~ '][provider]',
+                                    oAuthProviders,
+                                    email is defined and email.oauth is not empty ? email.oauth.provider : '',
+                                    hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
+                                ) }}
+                            </div>
+                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ml-3 sm:sp-mt-0">
+                                {% set hasOAuth = record is defined and email.oauth is not empty %}
+                                {{ form_button(
+                                    Lang.get('core.get_access_token'),
+                                    {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp-hidden' : '')}
+                                ) }}
+                                {{ form_button(
+                                    Lang.get('core.reset_access_token'),
+                                    {'class': 'reset-access-token sp-button-red' ~ (hasOAuth ? '' : ' sp-hidden')}
+                                ) }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="{% if oAuthProviders is not empty %}sp-description{% else %}sp-alert sp-alert-error sp-m-0{% endif %}">
+                        {{ Lang.get('ticket.manage_oauth_options', {'route': route('core.operator.integration.index')})|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-row sp-hidden">
+            <label></label>
+            <div class="sp-input-container">
+                {{
+                    form_hidden(
+                        'emails[' ~ (i is defined ? i : '') ~ '][oauth_data]',
+                        '',
                         hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
                     )
                 }}
@@ -140,104 +205,110 @@
         </div>
 
         <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][server]', Lang.get('ticket.server')) }}
-            <div class="sp-input-container">
-                {{
-                    form_text(
-                        'emails[' ~ (i is defined ? i : '') ~ '][server]',
-                        email|default is not empty ? email.server : '',
-                        {'size': 30}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
-                    )
-                }}
-            </div>
-        </div>
-
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][username]', Lang.get('ticket.username')) }}
-            <div class="sp-input-container">
-                {{
-                    form_text(
-                        'emails[' ~ (i is defined ? i : '') ~ '][username]',
-                        email|default is not empty ? email.username : '',
-                        {'size': 30}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
-                    )
-                }}
-            </div>
-        </div>
-
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][password]',  Lang.get('ticket.password')) }}
-            <div class="sp-input-container">
-                {{
-                    form_password(
-                        'emails[' ~ (i is defined ? i : '') ~ '][password]',
-                        {'size': 30, 'autocomplete': 'new-password'}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
-                    )
-                }}
-                {% if i|default is not empty %}
-                    <div class="sp-description">{{ Lang.get('ticket.department_password') }}</div>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="sp-form-row">
             <label></label>
             <div class="sp-input-container">
-                {{ form_button(Lang.get('general.validate_auth'), { 'class': 'validate-email' }) }} &nbsp;
-                <span class="validate text-progress sp-text-orange-600 sp-hidden">
+                {{ form_button(Lang.get('general.validate_auth'), {'class': 'validate-email'}) }} &nbsp;&nbsp;
+                <span class="validate-auth text-progress sp-text-orange-600 sp-hidden">
                     <i class='fas fa-spinner fa-spin'></i>&nbsp; {{ Lang.get('messages.in_progress') }}...
                 </span>
-                <span class="validate text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
-                <span class="validate text-fail sp-text-red-600 sp-hidden">
+                <span class="validate-auth text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
+                <span class="validate-auth text-fail sp-text-red-600 sp-hidden">
                     {{ Lang.get('messages.error') }}!
                     <span class="error-message"></span>
                 </span>
+                {% if email is not defined %}
+                    <div class="sp-configure-email-button sp-mt-6">
+                        {{ form_button(Lang.get('ticket.email_setup_manually')) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][port]', Lang.get('ticket.port')) }}
-            <div class="sp-input-container">
-                {{
-                    form_number(
-                        'emails[' ~ (i is defined ? i : '') ~ '][port]',
-                        email|default is not empty ? email.port : '',
-                        {'class': 'sp-w-32', 'min': 0}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
-                    )
-                }}
-                <div class="sp-description">{{ Lang.get('ticket.department_port') }}</div>
-            </div>
-        </div>
-
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][encryption]', Lang.get('ticket.encryption')) }}
-            <div class="sp-input-container">
-                {# BC prior to 2.3.1 and 2.6.0 #}
-                {% if email.encryption == '-1' or email.encryption == '2' %}
-                    {# Using no encryption before version 2.3.1 was set as -1, so we need to keep that value for backwards compatibility #}
+        <div class="sp-configure-email {% if email is not defined %}sp-hidden{% endif %}">
+            <div class="sp-form-row email-protocol">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][protocol]', Lang.get('ticket.protocol')) }}
+                <div class="sp-input-container">
                     {{
                         form_select(
-                            'emails[' ~ (i is defined ? i : '') ~ '][encryption]',
-                            {(email|default is not empty and email.encryption == '-1' ? '-1' : 0): Lang.get('general.none'), '1': 'SSL / TLS', '2': 'STARTTLS (TLS 1.0)'},
-                            email|default is not empty ? email.encryption : '',
+                            'emails[' ~ (i is defined ? i : '') ~ '][protocol]',
+                            ['IMAP', 'POP3'],
+                            email|default is not empty ? email.protocol : '',
                             hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
                         )
                     }}
-                {% else %}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][server]', Lang.get('ticket.server')) }}
+                <div class="sp-input-container">
                     {{
-                        form_check(
-                            'emails[' ~ (i is defined ? i : '') ~ '][encryption]',
-                            1,
-                            email|default is not empty and email.encryption == "1" ? true : null,
-                            {
-                                'class': 'sp-toggle',
-                                'id': 'toggle_emails[' ~ (i is defined ? i : '') ~ '][encryption]'
-                            }|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                        form_text(
+                            'emails[' ~ (i is defined ? i : '') ~ '][server]',
+                            email|default is not empty ? email.server : '',
+                            {'size': 30}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
                         )
                     }}
-                    <label for="toggle_emails{{ '[' ~ (i is defined ? i : '') ~ '][encryption]' }}"></label>
-                {% endif %}
-                <div class="sp-description">{{ Lang.get('ticket.department_encryption') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][username]', Lang.get('general.username')) }}
+                <div class="sp-input-container">
+                    {{
+                        form_text(
+                            'emails[' ~ (i is defined ? i : '') ~ '][username]',
+                            email|default is not empty ? email.username : '',
+                            {'size': 30}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                        )
+                    }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][port]', Lang.get('ticket.port')) }}
+                <div class="sp-input-container">
+                    {{
+                        form_number(
+                            'emails[' ~ (i is defined ? i : '') ~ '][port]',
+                            email|default is not empty ? email.port : '',
+                            {'class': 'sp-w-32', 'min': 0}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                        )
+                    }}
+                    <div class="sp-description">{{ Lang.get('ticket.department_port') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][encryption]', Lang.get('ticket.encryption')) }}
+                <div class="sp-input-container">
+                    {# BC prior to 2.3.1 and 2.6.0 #}
+                    {% if email.encryption == '-1' or email.encryption == '2' %}
+                        {# Using no encryption before version 2.3.1 was set as -1, so we need to keep that value for backwards compatibility #}
+                        {{
+                            form_select(
+                                'emails[' ~ (i is defined ? i : '') ~ '][encryption]',
+                                {(email|default is not empty and email.encryption == '-1' ? '-1' : 0): Lang.get('general.none'), '1': 'SSL / TLS', '2': 'STARTTLS (TLS 1.0)'},
+                                email|default is not empty ? email.encryption : '',
+                                hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
+                            )
+                        }}
+                    {% else %}
+                        {{
+                            form_check(
+                                'emails[' ~ (i is defined ? i : '') ~ '][encryption]',
+                                1,
+                                email|default is not empty and email.encryption == "1" ? true : null,
+                                {
+                                    'class': 'sp-toggle',
+                                    'id': 'toggle_emails[' ~ (i is defined ? i : '') ~ '][encryption]'
+                                }|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                            )
+                        }}
+                        <label for="toggle_emails{{ '[' ~ (i is defined ? i : '') ~ '][encryption]' }}"></label>
+                    {% endif %}
+                    <div class="sp-description">{{ Lang.get('ticket.department_encryption') }}</div>
+                </div>
             </div>
         </div>
 

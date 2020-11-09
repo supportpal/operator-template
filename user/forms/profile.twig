@@ -194,8 +194,17 @@
     <div class="sp-form-row">
         {{ form_label('avatar', Lang.get('user.avatar')) }}
         <div class="sp-input-container">
-            <img class="sp-avatar sp-max-w-2xl sp-mb-3" src="{{ record.avatar_url }}" />
-            {{ form_file('avatar') }}
+            <img class="sp-avatar" src="{{ record.avatar_url }}" />
+            <div class="sp-mt-3 lg:sp-inline-block lg:sp-mt-0 lg:sp-ml-3">
+                {{ form_file('avatar') }}
+            </div>
+            {% if record.getOriginal('avatar') is not null %}
+                <div class="sp-mt-3">
+                    <button class="remove-avatar" type="button" data-url="{{ route('user.operator.avatar.delete', {id: record.id}) }}">
+                        {{ Lang.get('user.remove_avatar') }}
+                    </button>
+                </div>
+            {% endif %}
         </div>
     </div>
 

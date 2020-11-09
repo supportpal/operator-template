@@ -1,20 +1,5 @@
-<div class="sp-draft-message {% if otherDraft is empty %}sp-hidden{% endif %}">
-	{% if otherDraft is not empty %}
-		<div class='sp-alert sp-alert-warning {% if auth_user().isAscendingReplyOrder() %}sp-alert-bottom{% endif %}'>
-            <strong>
-                <img src='{{ otherDraft.user.avatar_url }}' class='sp-avatar sp-max-w-2xs' />&nbsp;
-                {{ Lang.get('ticket.drafting_reply', {
-                    'name': otherDraft.user.formatted_name|e,
-                    'time': timeago(otherDraft.created_at),
-                    'type': otherDraft.type == 0 ? mb_strtolower(Lang.get('general.reply'), 'UTF-8') :
-                        otherDraft.type == 1 ? mb_strtolower(Lang.choice('general.note', 1), 'UTF-8') :
-                            mb_strtolower(Lang.get('ticket.forward'), 'UTF-8')
-                })|raw }}
-            </strong>
-
-            <hr class="sp--mx-5 sp-my-4" />
-
-            {{ otherDraft.purified_text|raw }}
-        </div>
-	{% endif %}
+<div class="sp-drafts">
+    {% for draft in otherDrafts %}
+        {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft_message' %}
+    {% endfor %}
 </div>

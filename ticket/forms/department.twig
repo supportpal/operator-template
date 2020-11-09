@@ -168,7 +168,7 @@
 
         <div class="sp-subtitle-description">{{ Lang.get('ticket.email_accounts_desc') }}</div>
 
-        {% if not extension_loaded('imap') %}
+        {% if Config.get('email.imap_driver') == 'php-imap' and not extension_loaded('imap') %}
             <div class="sp-alert sp-alert-warning">
                 <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
                 <span>{{ Lang.get('messages.php_imap_missing') }}</span>
@@ -406,9 +406,11 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
-    
+
     <!-- Translatable.js dependencies: selectize -->
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/department.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
 {% endblock %}

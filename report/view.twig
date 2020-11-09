@@ -28,11 +28,11 @@
                         <span class="timeframeOptions sp-block sp-mt-2 {% if report.startDate == 0 %}sp-hidden{% endif %}">
                             <span class="sp-block sp-mb-2 sp-mr-2 sm:sp-inline-block sm:sp-mb-0">
                                 {{ Lang.get('general.start') }}:&nbsp;
-                                {{ form_text('startDate', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}
+                                {{ form_text('startDate', report.startDate|date(Config.get('settings.date_format')), {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}
                             </span>
                             <span class="sp-block sp-mr-2 sm:sp-inline-block">
                                 {{ Lang.get('general.end') }}:&nbsp;
-                                {{ form_text('endDate', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}
+                                {{ form_text('endDate', report.endDate|date(Config.get('settings.date_format')), {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}
                             </span>
                         </span>
                     {% else %}
@@ -118,33 +118,38 @@
             });
 
             // Date pickers
-            var startPicker = $('input[name="startDate"]').datepicker({
-                defaultDate: new Date('{{ report.startDate }}' * 1000)
-            });
-            var endPicker = $('input[name="endDate"]').datepicker({
-                defaultDate: new Date('{{ report.endDate }}' * 1000)
-            });
+            $('input[name="startDate"], input[name="endDate"]').datepicker();
 
             var timeframe = '{{ report.timeframe }}';
 
             $(document.body).on('click', '.updateReport', function() {
-                var startDate = null, endDate = null;
+                var startDate = null,
+                    endDate = null;
+
                 // Depending on timeframe
                 if (timeframe == 'yearly' || timeframe == 'monthly') {
                     if (timeframe == 'monthly') {
                         // Monthly - Get new start and end date
-                        startDate = (new Date($('select[name="year"]').val(), parseInt($('select[name="month"]').val() - 1), 1, 0, 0, 0, 0)).getUnixTime();
-                        endDate = (new Date($('select[name="year"]').val(), $('select[name="month"]').val(), 0, 23, 59, 59, 0)).getUnixTime();
+                        startDate = $('<input>').datepicker({
+                            defaultDate: new Date($('select[name="year"]').val(), parseInt($('select[name="month"]').val() - 1), 1, 0, 0, 0, 0)
+                        }).val();
+                        endDate = $('<input>').datepicker({
+                            defaultDate: new Date($('select[name="year"]').val(), $('select[name="month"]').val(), 0, 0, 0, 0, 0)
+                        }).val();
                     } else {
                         // Yearly - Get new start and end date
-                        startDate = (new Date($('select[name="year"]').val(), 0, 1, 0, 0, 0, 0)).getUnixTime();
-                        endDate = (new Date($('select[name="year"]').val(), 11, 31, 23, 59, 59, 0)).getUnixTime();
+                        startDate = $('<input>').datepicker({
+                            defaultDate: new Date($('select[name="year"]').val(), 0, 1, 0, 0, 0, 0)
+                        }).val();
+                        endDate = $('<input>').datepicker({
+                            defaultDate: new Date($('select[name="year"]').val(), 11, 31, 0, 0, 0, 0)
+                        }).val();
                     }
                 } else {
                     // Specific range
                     if ($('input[name="timeframe"]:checked').val() == 1) {
-                        startDate = startPicker[0]._flatpickr.selectedDates[0].getUnixTime();
-                        endDate = endPicker[0]._flatpickr.selectedDates[0].getUnixTime() + 86399; // end of the day
+                        startDate = $('input[name="startDate"]').val();
+                        endDate = $('input[name="endDate"]').val();
                     }
                 }
 
@@ -242,6 +247,7 @@
                 "data": data,
                 "order": [],
                 "dom": '<"sp-mb-6 sp-ml-6"B>lfrtip',
+                "pageLength": {{ Config.get('settings.operator' ~ auth_user().id ~ '.datatable_rows', 10) }},
                 "buttons": [
                     {
                         extend: 'print',
