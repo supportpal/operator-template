@@ -22,16 +22,10 @@
 
     {{ emailTable.render()|raw }}
 
-    <h2>{{ Lang.get('core.query_logs') }}</h2>
-    <div class="sp-subtitle-description sp-mb-3">{{ Lang.get('core.query_logs_desc') }}</div>
-
-    {{ queryTable.render()|raw }}
-
 {% endblock %}
 
 {% block scripts_footer %}
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ appTable.script()|raw }}
     {{ emailTable.script()|raw }}
-    {{ queryTable.script()|raw }}
 {% endblock %}

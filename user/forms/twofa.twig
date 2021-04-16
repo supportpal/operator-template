@@ -2,22 +2,7 @@
     {{ form_label('twofa_qrcode', Lang.get('user.qr_code')) }}
     <div class="sp-input-container">
         <img src="{{ qrCode }}" class="sp-border sp-border-tertiary sp-rounded" />
-    </div>
-</div>
 
-<div class="sp-form-row">
-    {{ form_label('twofa_secret', Lang.get('user.two_fa_secret')) }}
-    <div class="sp-input-container">
-        {{ twofa_secret }}
-        <div class="sp-description">{{ Lang.get('user.two_fa_secret_desc') }}</div>
-    </div>
-</div>
-
-<div class="sp-form-row">
-    {{ form_label('twofa_code', Lang.get('user.verify_code')) }}
-    <div class="sp-input-container">
-        {{ form_text('twofa_code') }}<br />
-        {{ form_submit(Lang.get('user.verify_and_enable'), {'class': 'twofa-verify sp-my-3'}) }}
         <div class="sp-description">
             {{ Lang.get('user.two_fa_verify_desc') }}
 
@@ -37,4 +22,30 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('twofa_secret', Lang.get('user.two_fa_secret')) }}
+    <div class="sp-input-container">
+        {{ twofa_secret }}
+        <div class="sp-description">{{ Lang.get('user.two_fa_secret_desc') }}</div>
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('twofa_code', Lang.get('user.verify_code')) }}
+    <div class="sp-input-container">
+        {{ form_text('twofa_code') }}
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('password', Lang.get('general.password')) }}
+    <div class="sp-input-container">
+        {{ form_password('password') }}
+    </div>
+</div>
+
+<div class="sp-form-button">
+    {{ form_submit(Lang.get('user.verify_and_enable'), {'class': 'twofa-verify'}) }}
 </div>

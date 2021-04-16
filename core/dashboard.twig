@@ -44,6 +44,7 @@
                 jhqxr.done(function(widgets) {
 
                     if (!(widgets instanceof Array)) {
+                        console.error('Unexpected widget response, expected array.');
                         return;
                     }
 
@@ -58,7 +59,7 @@
 
                         // Check the object contains a name and content
                         if (!widget.hasOwnProperty('name') || !widget.hasOwnProperty('content')) {
-                            console.log("Widget index " + i + " missing name/content property -- skipping.");
+                            console.error("Widget index " + i + " missing name/content property -- skipping.");
                             continue;
                         }
 

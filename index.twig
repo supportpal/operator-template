@@ -515,12 +515,12 @@
                 {% block sidebar %}{% endblock %}
 
                 {{ View.fireHook('operator.sidebar_end') }}
+            </div>
 
-                <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp-px-3/2 sp-py-2 sp-ml-6 sm:sp-ml-8 sp-mb-4 sp-rounded-full
+            <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp-px-3/2 sp-py-2 sp-ml-6 sm:sp-ml-8 sp-mb-4 sp-rounded-full
                             sp-shadow-md sp-text-secondary sp-leading-none sp-cursor-pointer sp-z-10001 hover:sp-text-primary
                             {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? '' : 'lg:sp-ml-72' }}" style="left: -1rem;">
-                    <i class="fas fa-fw sp-chevron"></i>
-                </div>
+                <i class="fas fa-fw sp-chevron"></i>
             </div>
         </div>
     {% endif %}

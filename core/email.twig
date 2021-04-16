@@ -9,14 +9,14 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} xs:sp-m-6 sp-bg-secondary sp-text-primary" data-disable-pace>
+<body class="{{ get_template_mode() }} xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
     <div class="sp-container sp-m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded">
+        <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-p-0 print:sp-shadow-none">
             {{ View.fireHook('operator.content_start') }}
 
             <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>

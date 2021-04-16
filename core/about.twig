@@ -14,8 +14,12 @@
             <label>{{ Lang.get('core.license_code') }}</label>
             <div class="sp-input-container">
                 <span id="spanLicenseText">
-                    {{ license_key }} &nbsp;&nbsp;&nbsp;
-                    <button id="spanLicenseUpdate">{{ Lang.get('core.change_license') }}</button>
+                    {{ license_key }}
+                    <div class="sp-mt-3">
+                        <button id="spanLicenseUpdate">
+                            <i class="fas fa-edit"></i>&nbsp; {{ Lang.get('license.update') }}
+                        </button>
+                    </div>
                 </span>
             </div>
         </div>
@@ -32,6 +36,10 @@
     <h2>{{ Lang.get('core.license_info') }}</h2>
 
     <div class="sp-form-container">
+
+        <button class="sp-my-3" id="spanLicenseRefresh">
+            <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
+        </button>
 
         <div class="sp-form-row">
             <label>{{ Lang.get('core.license_type') }}</label>
@@ -184,7 +192,6 @@
     <script type="text/javascript">
         $(function () {
             $('#spanLicenseUpdate').on('click', function () {
-
                 Swal.fire({
                     title: Lang.get('core.change_license'),
                     input: 'text',
@@ -217,6 +224,42 @@
                         setTimeout(function () {
                             window.location.reload();
                         }, 1000);
+                    }
+                });
+            });
+
+            $('#spanLicenseRefresh').on('click', function () {
+                var $this = $(this);
+
+                // Disable the button.
+                $this.prop('disabled', 'disabled');
+
+                Swal.fire({
+                    allowOutsideClick: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+
+                        $.post('{{ route('core.operator.about.refresh') }}')
+                            .done(function (data) {
+                                if (data.status == 'success') {
+                                    window.location.reload();
+                                } else {
+                                    Swal.fire('{{ Lang.get('license.license_invalid') }}', data.message, 'error');
+                                }
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                var json = JSON.parse(jqXHR.responseText);
+
+                                Swal.fire(
+                                    '{{ Lang.get('messages.error') }}',
+                                    typeof json.message !== 'undefined' ? json.message : errorThrown,
+                                    'error'
+                                );
+                            })
+                            .always(function () {
+                                // Enable the button.
+                                $this.prop('disabled', false);
+                            });
                     }
                 });
             });

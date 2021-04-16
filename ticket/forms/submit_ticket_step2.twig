@@ -229,9 +229,6 @@
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
 
     <script type="text/javascript">
-        // Routes
-        var embedImageRoute = laroute.route('core.embed.image');
-
         // Tag permissions (for newticket.js).
         var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
 

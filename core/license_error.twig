@@ -100,7 +100,7 @@
 
                 Swal.fire({
                     allowOutsideClick: false,
-                    willOpen: function () {
+                    didOpen: function () {
                         Swal.showLoading();
 
                         // Force a call home to validate the license.
@@ -136,7 +136,7 @@
                             })
                             .always(function () {
                                 // Enable the retry button.
-                                $this.removeAttr('disabled');
+                                $this.prop('disabled', false);
                                 $this.html(originalText);
                             });
                     }

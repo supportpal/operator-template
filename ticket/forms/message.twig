@@ -131,7 +131,7 @@
         {% include 'operator.' ~ template ~ '.ticket.forms.message_submit' with {'submit_name': Lang.get('ticket.post_note')} %}
     </form>
 
-    <form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+    <form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}" data-cumulative-max-file-size="{{ cumulative_attachment_limit }}">
         {{ form_hidden('reply_type', 2) }}
 
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}

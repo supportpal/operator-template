@@ -10,51 +10,54 @@
 
 {% block content %}
 
-    <div class="sp-form-container">
+    <hr />
 
+    <div class="sp-form-row">
+        {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
+        <div class="sp-input-container">
+            <strong class="twofa-enabled sp-text-green-600 {% if not auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                {{ Lang.get('general.yes') }}
+            </strong>
+            <strong class="twofa-enabled sp-text-red-600 {% if auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                {{ Lang.get('general.no') }}
+            </strong>
+            {% if not Config.get('settings.force_2fa_operators') %}
+                <div class="sp-description">
+                    {% if auth_user().twofa_enabled %}
+                        {{ Lang.get('user.two_fa_disable') }}
+                    {% else %}
+                        {{ Lang.get('user.two_fa_enable') }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {{ form_open({'method': 'POST', 'route': 'user.operator.twofa', 'class': 'validate'}) }}
+    {{ form_hidden('enable', 1 - auth_user().twofa_enabled) }}
+    {{ form_hidden('twofa_secret', twofa_secret) }}
+
+    {% if auth_user().twofa_enabled and not Config.get('settings.force_2fa_operators') %}
         <div class="sp-form-row">
-            {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
+            {{ form_label('twofa_code', Lang.get('user.verify_code')) }}
             <div class="sp-input-container">
-                <strong class="twofa-enabled sp-text-green-600 {% if not auth_user().twofa_enabled %}sp-hidden{% endif %}">
-                    {{ Lang.get('general.yes') }}
-                </strong>
-                <strong class="twofa-enabled sp-text-red-600 {% if auth_user().twofa_enabled %}sp-hidden{% endif %}">
-                    {{ Lang.get('general.no') }}
-                </strong>
-                {% if not Config.get('settings.force_2fa_operators') %}
-                    <div class="sp-description">
-                        {% if auth_user().twofa_enabled %}
-                            {{ Lang.get('user.two_fa_disable') }}
-                        {% else %}
-                            {{ Lang.get('user.two_fa_enable') }}
-                        {% endif %}
-                    </div>
-                {% endif %}
+                {{ form_text('twofa_code') }}
+                <div class="sp-description">{{ Lang.get('user.verify_code_desc') }}</div>
             </div>
         </div>
 
-        {{ form_open({'method': 'POST', 'route': 'user.operator.twofa'}) }}
+        <div class="sp-form-button">
+            {{ form_submit(Lang.get('user.verify_and_disable'), {'class': 'twofa-verify'}) }}
+        </div>
+    {% elseif not auth_user().twofa_enabled %}
+        {% include 'operator.' ~ template ~ '.user.forms.twofa' %}
+    {% endif %}
+    {{ form_close() }}
 
-            {{ form_hidden('enable', 1 - auth_user().twofa_enabled) }}
-            {{ form_hidden('twofa_secret', twofa_secret) }}
+{% endblock %}
 
-            {% if auth_user().twofa_enabled and not Config.get('settings.force_2fa_operators') %}
-
-                <div class="sp-form-row">
-                    {{ form_label('twofa_code', Lang.get('user.verify_code')) }}
-                    <div class="sp-input-container">
-                        {{ form_text('twofa_code') }}<br />
-                        {{ form_submit(Lang.get('user.verify_and_disable'), {'class': 'twofa-verify sp-mt-3'}) }}
-                        <div class="sp-description">{{ Lang.get('user.verify_code_desc') }}</div>
-                    </div>
-                </div>
-
-            {% elseif not auth_user().twofa_enabled %}
-
-                {% include 'operator.' ~ template ~ '.user.forms.twofa' %}
-
-            {% endif %}
-        </form>
-
-    </div>
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
 {% endblock %}

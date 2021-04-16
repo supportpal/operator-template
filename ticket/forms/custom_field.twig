@@ -65,13 +65,16 @@
             </div>
 
             <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp-hidden{% endif %}">
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('customfield.options') }}</label>
 
-                <div id="sortable">
-                    {% include 'operator.' ~ template ~ '.forms.custom_field_option' with {'hide': true} %}
+                    <div id="sortable">
+                        {% include 'operator.' ~ template ~ '.forms.custom_field_option' with {'hide': true} %}
 
-                    {% for key, option in form_getValueAttribute('options') %}
-                        {% include 'operator.' ~ template ~ '.forms.custom_field_option' %}
-                    {% endfor %}
+                        {% for key, option in form_getValueAttribute('options') %}
+                            {% include 'operator.' ~ template ~ '.forms.custom_field_option' %}
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <div class="sp-form-row">

@@ -51,7 +51,7 @@
                             <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-reply fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 0).isEmpty() %}sp-hidden{% endif %}">
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
@@ -63,7 +63,7 @@
                             --><button class="sp-action" data-type="1">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-sticky-note fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp-hidden{% endif %}">
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
@@ -75,7 +75,7 @@
                             --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
                                 <span class="fa-stack sp-text-2xs">
                                     <i class="fas fa-share fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp-hidden{% endif %}">
+                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
                                         <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                     </span>
                                     <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
@@ -268,7 +268,7 @@
 {% block content %}
     {% if download %}
         <div class="sp-alert">
-            <i class="fas fa-times sp-float-right"></i>
+            <i class="fas fa-times sp-alert-close sp-float-right"></i>
             <strong>{{ Lang.get('ticket.downloading') }}</strong><br />
             {{ Lang.get('ticket.downloading_desc', {'href': download.direct_operator_url|e})|raw }}
         </div>
@@ -404,22 +404,6 @@
 
     <!-- File upload -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
-    <script type="text/javascript">
-        new FileUpload({
-            $element: $('.message-form .sp-file-upload'),
-            $container: $('.message-form'),
-            blueimp: {
-                dropZone: $('.message-form').find('.sp-attachment-dragover')
-            }
-        });
-        new FileUpload({
-            $element: $('.notes-form .sp-file-upload'),
-            $container: $('.notes-form'),
-            blueimp: {
-                dropZone: $('.notes-form').find('.sp-attachment-dragover')
-            }
-        });
-    </script>
 
     <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
@@ -458,41 +442,6 @@
             {% if signature is not empty %}
             signature: '<p></p>\n<p></p>' + "{{ Purifier.clean(signature)|e('js') }}",
             {% endif %}
-        });
-
-        $(document).ready(function() {
-            // Wait for DOM load to set this.
-            ticket.setParameter('forwardFileUpload', new FileUpload({
-                $element: $('.forward-form .sp-file-upload'),
-                $container: $('.forward-form'),
-                blueimp: {
-                    cumulativeMaxFileSize: {{ cumulative_attachment_limit }},
-                    dropZone: $('.forward-form').find('.sp-attachment-dragover')
-                }
-            }));
-
-            // Register redactor
-            $('#newMessage, #newNote, #newForward').redactor($.extend({}, ticket.defaultRedactorConfig(), {
-                callbacks: {
-                    changed: function (html) {
-                        var id = this.element.getElement().attr('id');
-
-                        // Remove the error box if they've entered content.
-                        if (! this.utils.isEmptyHtml(this.source.getCode())) {
-                            $('#'+id+'-error').remove();
-                        }
-                    }
-                }
-            }));
-
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
-
-            // Date picker
-            $('.datepicker').datepicker();
-
-            // Timepicker
-            $('.timepicker').timepicker();
         });
     </script>
 {% endblock %}

@@ -6,16 +6,10 @@
 
 {% block content %}
 
-    <iframe src="{{ route('core.operator.phpinfo.show') }}" frameborder="0" scrolling="yes" class="sp-w-full"></iframe>
+    <iframe src="{{ route('core.operator.phpinfo.show') }}"
+            frameborder="0"
+            scrolling="yes"
+            onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
+            class="sp-w-full"></iframe>
 
-{% endblock %}
-
-{% block scripts_footer %}
-    <script>
-        $(function() {
-            $('iframe').on('load', function() {
-                $(this).css('height', this.contentWindow.document.body.scrollHeight + 32);
-            })
-        });
-    </script>
 {% endblock %}

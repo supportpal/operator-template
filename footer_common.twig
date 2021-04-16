@@ -30,7 +30,7 @@
         var notifications = new SupportPalNotifications({
             type: "{{ Config.get('settings.operator' ~ auth_user().id ~ '.display_notifications') }}",
             icon: "{{ get_icon('resources/assets/operator/images/favicon/favicon_space.png') }}",
-            timeout: 15000
+            timeout: 60000
         });
         notifications.poll();
     </script>

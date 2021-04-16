@@ -62,7 +62,8 @@
                 <div class="sp-form-row">
                     <label></label>
                     <div class="sp-input-container">
-                        <div class="sp-description">{{ Lang.get('user.ldap_operator_desc') }}</div>
+                        <div class="sp-description sp-mb-2">{{ Lang.get('user.ldap_operator_desc') }}</div>
+
                         <select name="operator" class="ldap_operator">
                             <option></option>
                             {% for operator in operators %}
@@ -72,7 +73,7 @@
                             {% endfor %}
                         </select>
 
-                        <input type="button" class="button" id="btnClear" value="{{ Lang.get('general.clear') }}" />
+                        <input type="button" class="sp-button sp-mt-2" id="btnClear" value="{{ Lang.get('general.clear') }}" />
                     </div>
                 </div>
             {% endif %}

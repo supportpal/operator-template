@@ -9,8 +9,11 @@
     {{ form_open({'route': 'operator.login.twofa.setup', 'method': 'POST', 'class': 'validate'}) }}
 
         {{ form_hidden('email', email) }}
+        {{ form_hidden('enable', 1) }}
         {{ form_hidden('twofa_token', twofa_token) }}
         {{ form_hidden('twofa_secret', twofa_secret) }}
+        {{ form_hidden('intended', intended_url) }}
+        {{ form_hidden('remember_me', remember_me) }}
 
         {% include 'operator.' ~ template ~ '.user.forms.twofa' %}
 
