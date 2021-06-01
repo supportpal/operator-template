@@ -219,6 +219,9 @@
         var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}";
     </script>
 
+    <!-- Filtering.js dependencies: Phone numbers -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+
     <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/slaplan.js') }}"></script>

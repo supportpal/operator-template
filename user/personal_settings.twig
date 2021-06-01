@@ -8,6 +8,12 @@
     {{ Lang.get('user.personal_settings_desc') }}
 {% endblock %}
 
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+{% endblock %}
+
 {% block content %}
 
     {{ form_model(record, { 'method': 'PUT', 'route': [ 'user.operator.personalsetting.update' ], 'files': true, 'class': 'validate' }) }}
@@ -83,7 +89,14 @@
         {{ jsValidator|raw }}
     {% endif %}
 
+    <!-- Phone numbers -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             // Enable hide/show password toggle

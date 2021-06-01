@@ -153,6 +153,19 @@
     {% endif %}
 
     <div class="sp-form-row">
+        {{ form_label('phone', Lang.choice('user.phone_number', 2)) }}
+        <div class="sp-input-container">
+            {% include 'operator.' ~ template ~ '.user.forms.phone_number' with {'hide': true} %}
+
+            {% for number in record.phonenumbers %}
+                {% include 'operator.' ~ template ~ '.user.forms.phone_number' %}
+            {% endfor %}
+
+            {{ form_button(Lang.get('general.add'), {'class': 'sp-add-number'}) }}
+        </div>
+    </div>
+
+    <div class="sp-form-row">
         {{ form_label('country', Lang.get('user.country')) }}
         <div class="sp-input-container">
             {{ form_select('country', {0: '-- ' ~ mb_ucfirst(Lang.get('general.not_set')) ~ ' --'} + countries(),
@@ -195,16 +208,16 @@
         {{ form_label('avatar', Lang.get('user.avatar')) }}
         <div class="sp-input-container">
             <img class="sp-avatar" src="{{ record.avatar_url }}" />
-            <div class="sp-mt-3 lg:sp-inline-block lg:sp-mt-0 lg:sp-ml-3">
-                {{ form_file('avatar') }}
+            <div class="{% if record.getOriginal('avatar') is not null %}sp-button-group{% endif %} sp-mt-3">
+                <label class="sp-button">
+                    <input type="file" name="avatar" class="sp-hidden" data-url="{{ route('user.operator.avatar.upload', {id: record.id}) }}" />
+                    {{ Lang.get('general.update') }}
+                </label>
+                <button class="remove-avatar {% if record.getOriginal('avatar') is null %}sp-hidden{% endif %}" type="button"
+                        data-url="{{ route('user.operator.avatar.delete', {id: record.id}) }}">
+                    {{ Lang.get('general.remove') }}
+                </button>
             </div>
-            {% if record.getOriginal('avatar') is not null %}
-                <div class="sp-mt-3">
-                    <button class="remove-avatar" type="button" data-url="{{ route('user.operator.avatar.delete', {id: record.id}) }}">
-                        {{ Lang.get('user.remove_avatar') }}
-                    </button>
-                </div>
-            {% endif %}
         </div>
     </div>
 

@@ -83,6 +83,10 @@
     <!-- Passwords -->
     <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
 
+    <!-- Phone numbers -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+
     <!-- Redactor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
@@ -102,7 +106,10 @@
         $('textarea[name="ticket_signature"]').redactor(opts);
     </script>
 
+    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             // Enable hide/show password toggle

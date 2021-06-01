@@ -13,7 +13,12 @@
         <ul>
             <li class="sp-action-group sp-inline-block">
                 <button class="sp-action sp-filter-results">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fas fa-filter"></i>
+                    <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
+                </button>
+                <button class="sp-action sp-filter-datepicker" data-active="0">
+                    <i class="fas fa-calendar"></i>&nbsp;
+                    <span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
                 </button>
             </li>
         </ul>
@@ -30,20 +35,6 @@
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
         <div class="sp-table">
-            <div class="sp-table-row">
-                <label>{{ Lang.get('general.date') }}:</label>
-                <div>
-                    <span class="sp-block sm:sp-inline-block">
-                        {{ form_text('sSearch_0_start', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.start_date')}) }}<!--
-                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                    </span>
-                    <span class="sp-hidden sm:sp-inline-block">&nbsp;{{ Lang.get('general.to') }}&nbsp;</span>
-                    <span class="sp-block sp-mt-2 sm:sp-inline-block sm:sp-mt-0">
-                        {{ form_text('sSearch_0_end', null, {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073; &nbsp;' ~ Lang.get('general.end_date')}) }}<!--
-                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                    </span>
-                </div>
-            </div>
             <div class="sp-table-row">
                 <label>{{ Lang.choice('general.recipients', 2) }}:</label>
                 <div>
@@ -95,6 +86,8 @@
 
 {% block scripts_footer %}
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/daterangepicker/js/daterangepicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
     {{ table.script()|raw }}
 
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>

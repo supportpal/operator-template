@@ -139,9 +139,16 @@
 
     <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
 
+    <!-- Phone numbers -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/linked_account.js') }}"></script>
 
+    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             // Toggle the password fields depending on whether we're sending a confirmation email
@@ -263,16 +270,16 @@
                     { },
                     function(response) {
                         if (response.status == 'success') {
-                            $('.action.success').show(500).delay(5000).hide(500);
+                            $('.action.sp-alert-success').show(500).delay(5000).hide(500);
                         } else {
-                            $('.action.fail').show(500).delay(5000).hide(500);
+                            $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                         }
 
                         $this.prop('disabled', false);
                     },
                     "json"
                 ).fail(function() {
-                    $('.action.fail').show(500).delay(5000).hide(500);
+                    $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                     $this.prop('disabled', false);
                 });
             });
@@ -293,14 +300,14 @@
                             // Refresh the page.
                             window.location.reload();
                         } else {
-                            $('.action.fail').show(500).delay(5000).hide(500);
+                            $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                         }
 
                         $this.prop('disabled', false);
                     },
                     "json"
                 ).fail(function() {
-                    $('.action.fail').show(500).delay(5000).hide(500);
+                    $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                     $this.prop('disabled', false);
                 });
             });
@@ -318,16 +325,16 @@
                     { },
                     function(response) {
                         if (response.status == 'success') {
-                            $('.action.success').show(500).delay(5000).hide(500);
+                            $('.action.sp-alert-success').show(500).delay(5000).hide(500);
                         } else {
-                            $('.action.fail').show(500).delay(5000).hide(500);
+                            $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                         }
 
                         $this.prop('disabled', false);
                     },
                     "json"
                 ).fail(function() {
-                    $('.action.fail').show(500).delay(5000).hide(500);
+                    $('.action.sp-alert-error').show(500).delay(5000).hide(500);
                     $this.prop('disabled', false);
                 });
             });

@@ -14,7 +14,7 @@
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
 
-            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
@@ -91,7 +91,8 @@
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
                     'redactorClasses': 'sp-redactor-rounded-none',
-                    'redactorText': draft|default is not empty ? draft.text : (signature is not empty ? '<p></p>\n<p></p>' ~ signature : null),
+                    'route': draft|default is not empty ? route('ticket.operator.message.showJson', {id: draft.id}) : '',
+                    'redactorText': draft|default is not empty ? null : (signature is not empty ? '<p></p>\n<p></p>' ~ signature : null),
                     'textareaId': 'newMessage'
                 } %}
 
@@ -110,13 +111,14 @@
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 1)} %}
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
-            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
                     'redactorClasses': 'sp-redactor-rounded-b-none sp-redactor-bg-orange',
-                    'redactorText': draft_note|default is not empty ? draft_note.text : null,
+                    'route': draft_note|default is not empty ? route('ticket.operator.message.showJson', {id: draft_note.id}) : null,
+                    'redactorText': null,
                     'textareaId': 'newNote',
                     'allow_attachments': true,
                     'draft': draft_note
@@ -137,7 +139,7 @@
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
-            <div class="reply-form sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
@@ -206,7 +208,8 @@
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
                     'redactorClasses': 'sp-redactor-rounded-none sp-redactor-bg-purple',
-                    'redactorText': draft_forward is not empty ? draft_forward.text : null,
+                    'route': draft_forward|default is not empty ? route('ticket.operator.message.showJson', {id: draft_forward.id}) : null,
+                    'redactorText': null,
                     'textareaId': 'newForward',
                     'allow_attachments': cumulative_attachment_limit != 0,
                     'draft': draft_forward

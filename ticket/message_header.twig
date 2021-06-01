@@ -4,7 +4,7 @@
     </div>
     <div class="sp-flex-grow">
         <div class="sp-message-header">
-            <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}" data-email="{{ message.user.email }}">
+            <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}" {% if message.by == 1 %}data-email="{{ message.user.email }}"{% endif %}>
                 {{ message.user.formatted_name }}
             </span>
             {% if not message.attachments.isEmpty() %}

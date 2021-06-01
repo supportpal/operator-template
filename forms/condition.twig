@@ -546,6 +546,10 @@
                 },
                 condition|default is not empty and condition.item == 70 ? condition.value : null,
                 { 'data-item': 70, 'data-operator': 0, 'class': 'sp-hidden' }) }}
+
+        {{ form_text('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
+                condition|default is not empty and condition.item == 71 ? condition.value : null,
+                { 'data-item': 71, 'data-operator': 6, 'class': 'sp-hidden sp-phone-number' }) }}
     </td>
     <td class="sp-text-right" width="12">
         <i class="fas fa-times sp-cursor-pointer remove-button"></i>

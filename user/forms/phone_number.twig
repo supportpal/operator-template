@@ -1,0 +1,9 @@
+<div class="sp-phone-number {% if hide|default is not empty %}sp-hidden{% endif %}">
+    {{ form_hidden('phone[' ~ (number|default is not empty ? number.id : '') ~ '][id]', number|default is not empty ? number.id : null) }}
+
+    {{ form_tel('phone[' ~ (number|default is not empty ? number.id : '') ~ '][number]', number|default is not empty ? number.number : null) }}
+
+    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+        {{ form_button(Lang.get('general.remove'), {'class': 'sp-remove-number'}) }}
+    </div>
+</div>
