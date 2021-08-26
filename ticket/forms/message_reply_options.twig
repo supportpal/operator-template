@@ -29,11 +29,16 @@
         {% endif %}
 
         {% if not forward %}
+            {% if note %}
+                {% set emailTemplate, defaultValue = ticket.department.getOperatorEmailTemplate('ticket_note'), true %}
+            {% else %}
+                {% set emailTemplate, defaultValue = ticket.department.getOperatorEmailTemplate('operator_ticket_reply'),
+                    ticket.internal and ticket.user_id == auth_user().id ? true : ticket.department.notify_operators
+                %}
+            {% endif %}
             <div class="send-operators-email sp-reply-option">
-                <label {% if ticket.department.getOperatorEmailTemplate('operator_ticket_reply') == -1 %}title="{{ Lang.get('ticket.department_template_disabled') }}"{% endif %}>
-                    {{ form_check('send_email_to_operators', 1, ticket.internal and ticket.user_id == auth_user().id ? true :
-                        (ticket.department.notify_operators ? true : false),
-                        ticket.department.getOperatorEmailTemplate('operator_ticket_reply') == -1 ? {'disabled': 'disabled'} : {}) }}
+                <label {% if emailTemplate == -1 %}title="{{ Lang.get('ticket.department_template_disabled') }}"{% endif %}>
+                    {{ form_check('send_email_to_operators', 1, defaultValue, emailTemplate == -1 ? {'disabled': 'disabled'} : {}) }}
                     {{ Lang.get('ticket.send_email_to_operators') }}
                 </label>
             </div>

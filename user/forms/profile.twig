@@ -132,7 +132,7 @@
                     {% if record.id == auth_user().id %}
                         <div class="twofa-enabled sp-text-green-600 sp-font-bold">{{ Lang.get('general.yes') }}</div>
                         {% if not Config.get('settings.force_2fa_operators', 0) %}
-                            <a class="sp-button" href="{{ route('user.operator.twofa') }}">{{ Lang.get('general.manage') }}</a>
+                            <a class="sp-button" href="{{ route('user.operator.security', {'tab': 'twofa'}) }}">{{ Lang.get('general.manage') }}</a>
                         {% endif %}
                     {% else %}
                         {{ form_check('twofa_enabled', 1, 1, {'class': 'sp-toggle', 'id': 'toggle_twofa_enabled'}) }}
@@ -140,11 +140,11 @@
                     {% endif %}
                 {% else %}
                     <div class="twofa-enabled sp-text-red-600 sp-font-bold">{{ Lang.get('general.no') }}</div>
-                    {% if record.id == auth_user().id %}
+                    {% if record.id == auth_user().id and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
                         <div class="sp-mt-3">
-                            <a class="sp-button" href="{{ route('user.operator.twofa') }}">{{ Lang.get('general.manage') }}</a>
+                            <a class="sp-button" href="{{ route('user.operator.security', {'tab': 'twofa'}) }}">{{ Lang.get('general.manage') }}</a>
                         </div>
-                    {% else %}
+                    {% elseif not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap() %}
                         <div class="sp-description">{{ Lang.get('user.two_fa_user_enable') }}</div>
                     {% endif %}
                 {% endif %}

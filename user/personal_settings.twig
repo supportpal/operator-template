@@ -22,11 +22,9 @@
             <li id="Profile" class="sp-active">
                 <a>{{ Lang.get('user.profile') }}</a>
             </li>
-            {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
-                <li id="ChangePassword">
-                    <a>{{ Lang.get('user.change_password') }}</a>
-                </li>
-            {% endif %}
+            <li id="Appearance">
+                <a>{{ Lang.get('general.appearance') }}</a>
+            </li>
             {% if isModuleEnabled('Ticket') %}
                 <li id="Ticket">
                     <a>{{ Lang.get('ticket.settings') }}</a>
@@ -39,7 +37,7 @@
 
         <div id="tabProfile" class="sp-tab-content">
             {% set profileParameters = {'operator': true, 'showPassword': false} %}
-            {% include 'operator.' ~ template ~ '.user.forms.operator_profile' with profileParameters %}
+            {% include 'operator.' ~ template ~ '.user.forms.profile' with profileParameters %}
         </div>
 
         {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
@@ -68,12 +66,49 @@
             </div>
         {% endif %}
 
+        <div id="tabAppearance" class="sp-tab-content sp-hidden">
+            <div class="sp-form-row">
+                {{ form_label('opsettings[template]', Lang.get('core.template')) }}
+                <div class="sp-input-container">
+                    {{ form_select('opsettings[template]', {0: '-- ' ~ Lang.get('general.system_default') ~ ' --'} + templates,
+                        record.opsettings.template|default is not empty ? record.opsettings.template : 0
+                    ) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('opsettings[template_mode]', Lang.get('core.template_mode')) }}
+                <div class="sp-input-container">
+                    {{ form_select(
+                        'opsettings[template_mode]',
+                        {0: '-- ' ~ Lang.get('general.system_default') ~ ' --', 1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}
+                    ) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('opsettings[datatable_rows]', Lang.get('core.results_per_page')) }}
+                <div class="sp-input-container">
+                    {{ form_hidden('opsettings[datatable_rows]') }}
+                    <div class="sp-max-w-6xl">
+                        <div class="sp-flex sp-description">
+                            <div class="sp-flex-grow">{{ Lang.get('general.faster') }}</div>
+                            <div class="sp-flex-initial">{{ Lang.get('general.slower') }}</div>
+                        </div>
+                        <div class="sp-pt-2 sp-pb-10 sp-px-4">
+                            <div class="sp-rows-slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="tabTicket" class="sp-tab-content sp-hidden">
             {% include 'operator.' ~ template ~ '.user.forms.operator_ticket_settings' %}
         </div>
 
         <div id="tabNotifications" class="sp-tab-content sp-hidden">
-            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' %}
+            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' with {preview: true} %}
         </div>
 
         <div class="sp-form-button sp-fixed-bottom">
@@ -93,14 +128,64 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+    <!-- noUiSlider -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/nouislider/js/nouislider.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/nouislider/css/nouislider.min.css') }}" />
+
     <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
             // Enable hide/show password toggle
             $('input[type=password]').hideShowPassword();
+
+            // Handle rows per page slider.
+            var $input = $('input[name="opsettings[datatable_rows]"]'),
+                slider = noUiSlider.create($('.sp-rows-slider')[0], {
+                    start: [$input.val()],
+                    connect: 'lower',
+                    snap: true,
+                    range: {
+                        'min': 10,
+                        '20%': 25,
+                        '50%': 50,
+                        'max': 100
+                    },
+                    pips: {
+                        mode: 'range',
+                        density: 100
+                    },
+                });
+
+            function synchroniseSliderWithInput() {
+                $input.val(parseInt(slider.get()));
+            }
+
+            // Allow click on values to move the slider.
+            $('.noUi-value').on('click', function () {
+                slider.set(Number(this.getAttribute('data-value')));
+                synchroniseSliderWithInput();
+            });
+
+            slider.on('change', synchroniseSliderWithInput);
+
+            // Show example browser notification
+            $('.preview-browser').on('click', function() {
+                App.Notifications.showBrowserNotification(
+                    Lang.get('notification.new_ticket'),
+                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">ABC-1234</a>', 'name': 'Joe Bloggs'})
+                );
+            });
+
+            // Show example desktop notification
+            $('.preview-desktop').on('click', function() {
+                App.Notifications.showDesktopNotification(
+                    Lang.get('notification.new_ticket'),
+                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">ABC-1234</a>', 'name': 'Joe Bloggs'})
+                );
+            });
         });
     </script>
 {% endblock %}

@@ -4,6 +4,10 @@
     {{ Lang.get('ticket.open_new') }}
 {% endblock %}
 
+{% block precontent %}
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden attachment"></div>
+{% endblock %}
+
 {% block content %}
 
     {{ form_open({'route': [ 'ticket.operator.ticket.storeStep2' ], 'class': 'validate'}) }}
@@ -233,9 +237,7 @@
         var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
 
         // Global variables for redactor plugins
-        var operatorId = {{ auth_user().id }},
-            internal = {{ internal }},
-            userLanguage = "{{ user.languageOrDefault() }}",
+        var userLanguage = "{{ user.languageOrDefault() }}",
             allLanguages = {{ languages|sort|json_encode()|raw }};
 
         var ticket = new App.ticket({

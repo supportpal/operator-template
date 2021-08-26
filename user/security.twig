@@ -1,0 +1,197 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('user.security_settings') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.security_settings_desc') }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <ul class="sp-tabs">
+        {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
+            <li id="ChangePassword" {% if tab is empty %}class="sp-active"{% endif %}>
+                <a>{{ Lang.get('user.change_password') }}</a>
+            </li>
+        {% endif %}
+        {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
+            <li id="TwoFA" {% if auth_user().loggedInViaSSO() or tab is same as('twofa') %}class="sp-active"{% endif %}>
+                <a>{{ Lang.get('user.two_fa') }}</a>
+            </li>
+        {% endif %}
+        <li id="ActiveSessions"
+            {% if auth_user().password is empty or (auth_user().loggedInViaSSO() and not auth_user().loggedInViaLdap()) or tab is same as('sessions') %}class="sp-active"{% endif %}>
+            <a>{{ Lang.get('user.active_sessions') }}</a>
+        </li>
+    </ul>
+
+    {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
+        <div id="tabChangePassword" class="sp-tab-content {% if tab is not empty %}sp-hidden{% endif %}">
+            {{ form_model(record, {'method': 'POST', 'route': 'user.operator.password', 'class': 'sp-password-form validate'}) }}
+
+                <div class="sp-form-row">
+                    {{ form_label('current_password', Lang.get('user.current_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('current_password', {'autocomplete': 'off'}) }}
+                        <div class="sp-description">{{ Lang.get('user.personal_confirm_password') }}</div>
+                    </div>
+                </div>
+
+                <div class="sp-form-row password-field">
+                    {{ form_label('password', Lang.get('user.new_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('password', {'autocomplete': 'new-password'}) }}
+                    </div>
+                </div>
+
+                <div class="sp-form-row password-field">
+                    {{ form_label('password_confirmation', Lang.get('user.confirm_password')) }}
+                    <div class="sp-input-container">
+                        {{ form_password('password_confirmation', {'autocomplete': 'new-password'}) }}
+                    </div>
+                </div>
+
+                <div class="sp-form-button">
+                    {{ form_submit(Lang.get('general.save'), { 'id': 'saveGeneralSettings' }) }}
+                </div>
+
+            {{ form_close() }}
+        </div>
+    {% endif %}
+
+    {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
+        <div id="tabTwoFA" class="sp-tab-content {% if not auth_user().loggedInViaSSO() and tab is not same as('twofa') %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
+                <div class="sp-input-container">
+                    <strong class="twofa-enabled sp-text-green-600 {% if not auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                        {{ Lang.get('general.yes') }}
+                    </strong>
+                    <strong class="twofa-enabled sp-text-red-600 {% if auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                        {{ Lang.get('general.no') }}
+                    </strong>
+                    {% if not Config.get('settings.force_2fa_operators') %}
+                        <div class="sp-description">
+                            {% if auth_user().twofa_enabled %}
+                                {{ Lang.get('user.two_fa_disable') }}
+                            {% else %}
+                                {{ Lang.get('user.two_fa_enable') }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {{ form_open({'method': 'POST', 'route': 'user.operator.twofa', 'class': 'sp-twofa-form validate'}) }}
+                {{ form_hidden('enable', 1 - auth_user().twofa_enabled) }}
+                {{ form_hidden('twofa_secret', twofa_secret) }}
+
+                {% if auth_user().twofa_enabled and not Config.get('settings.force_2fa_operators') %}
+                    <div class="sp-form-row">
+                        {{ form_label('twofa_code', Lang.get('user.verify_code')) }}
+                        <div class="sp-input-container">
+                            {{ form_text('twofa_code') }}
+                            <div class="sp-description">{{ Lang.get('user.verify_code_desc') }}</div>
+                        </div>
+                    </div>
+
+                    <div class="sp-form-button">
+                        {{ form_submit(Lang.get('user.verify_and_disable'), {'class': 'twofa-verify'}) }}
+                    </div>
+                {% elseif not auth_user().twofa_enabled %}
+                    {% include 'operator.' ~ template ~ '.user.forms.twofa' with {'password': true} %}
+                {% endif %}
+            {{ form_close() }}
+        </div>
+    {% endif %}
+
+    <div id="tabActiveSessions"
+         class="sp-tab-content {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) and tab is not same as('sessions') %}sp-hidden{% endif %}">
+        <div class="sp-description sp-mb-6">{{ Lang.get('user.active_sessions_desc') }}</div>
+
+        {% for session in sessions %}
+            <div class="sp-active-session">
+                <hr class="sp-mx-0" />
+
+                <div class="sp-flex">
+                    <div class="sp-icon sp-mr-4 sp-mt-1">
+                        <i class="fas fa-fw fa-2x {% if session.ua.isMobile() %}fa-mobile-alt{% else %}fa-desktop{% endif %}"></i>
+                    </div>
+                    <div>
+                        <strong>{{ session.ip }}</strong><br />
+                        {{ session.ua.browser.name }}&nbsp;&sdot;&nbsp;{{ session.ua.os.name }}<br />
+                        <div class="sp-description">
+                            {{ Lang.get('user.logged_in') }}: {{ timeago(session.created_at) }}<br />
+                            {% if session.current_session %}
+                                {{ Lang.get('user.current_session') }}
+                            {% else %}
+                                {{ Lang.get('core.last_activity') }}: {{ timeago(session.updated_at) }}
+                            {% endif %}
+                        </div>
+
+                        {% if not session.current_session %}
+                            <div class="sp-mt-3">
+                                <button class="sp-revoke-session" data-id="{{ session.session_id }}">
+                                    {{ Lang.get('general.revoke') }}
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if passwordValidator|default is not empty %}
+        {{ passwordValidator|raw }}
+    {% endif %}
+
+    {% if twoFaValidator|default is not empty %}
+        {{ twoFaValidator|raw }}
+    {% endif %}
+
+    <script type="text/javascript">
+        $(function () {
+            $('.sp-revoke-session').on('click', function () {
+                var $row = $(this).parents('.sp-active-session'),
+                    sessionId = $(this).data('id');
+
+                Swal.fire({
+                    title: Lang.get('messages.are_you_sure'),
+                    html: "{{ Lang.get('user.revoke_session_desc') }}",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#e74c3c",
+                    confirmButtonText: Lang.get('messages.yes_im_sure'),
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return $.post(laroute.route('user.operator.sessions.revoke', {sessionId: sessionId}))
+                            .then(function (response) {
+                                if (response.status == 'success') {
+                                    $row.remove();
+
+                                    return Swal.fire(Lang.get('messages.success'), '', 'success');
+                                } else {
+                                    Swal.fire(Lang.get('messages.error'), '', 'error');
+                                }
+                            })
+                            .catch(function () {
+                                Swal.fire(Lang.get('messages.error'), '', 'error');
+                            });
+                    },
+                });
+            });
+        });
+    </script>
+{% endblock %}

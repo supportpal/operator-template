@@ -10,20 +10,6 @@
     {% endif %}
 {% endblock %}
 
-{% block title %}
-    {% if title|default is not empty %}
-        {{ title }}
-    {% else %}
-        {{ Lang.choice('ticket.ticket', 2) }}
-    {% endif %}
-{% endblock %}
-
-{% block description %}
-    {% if description|default is not empty %}
-        {{ description }}
-    {% endif %}
-{% endblock %}
-
 {% block precontent %}
 
     <div class="sp-quick-actions">
@@ -289,8 +275,6 @@
                             </div>
                         </div>
                     </li>
-                {% else %}
-                    -->
                 {% endif %}
             {% endif %}
         </ul>
@@ -331,7 +315,7 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <form class="sp-condition-group sp-my-6 sp-hidden"></form>
+    <form class="sp-condition-group sp-mb-8 sp-hidden"></form>
 
 	{{ table.render()|raw }}
 
@@ -365,9 +349,7 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
     <script type="text/javascript">
         // Schedule first grid refresh in 60 seconds.
-        var gridTimeout = setTimeout(function() {
-            refreshGrid();
-        }, 60000);
+        var gridTimeout = setTimeout(refreshGrid, 60000);
 
         $(document).ready(function() {
             // Reference to fileupload.js instance, from mass reply box.
@@ -421,12 +403,12 @@
             var $datatable = $('.dataTable'),
                 $quickActions = $('.sp-quick-actions');
 
+            $($datatable.DataTable().table().container()).addClass('sp--my-6');
+
             // Changing order of grid (delay next refresh of grid by 60 seconds)
             $datatable.on('order.dt', function () {
                 clearTimeout(gridTimeout);
-                gridTimeout = setTimeout(function() {
-                    refreshGrid();
-                }, 60000);
+                gridTimeout = setTimeout(refreshGrid, 60000);
             });
 
             // Load grid filtering for the first time.
@@ -476,9 +458,7 @@
                 }).dataTable().api().ajax.reload();
 
                 // Delay next refresh of grid by 60 seconds.
-                gridTimeout = setTimeout(function() {
-                    refreshGrid();
-                }, 60000);
+                gridTimeout = setTimeout(refreshGrid, 60000);
             });
 
             // Process reply button
@@ -732,18 +712,90 @@
                 });
             });
 
-            $(document).on('change', 'select[name="grid_ordering"], select[name="grid_ordering_direction"]', function() {
-                // Post updated data
-                $.post(
-                    laroute.route('ticket.operator.ticket.saveOrdering'),
-                    {
-                        ordering: $('select[name="grid_ordering"]').val(),
-                        direction: $('select[name="grid_ordering_direction"]').val()
+            $quickActions.on('dt.header.init', function (e, element) {
+                var html = '\
+<div class="sp-dropdown-container sp-hidden md:sp-inline-block">\
+    <button class="sp-action sp-grid-sorting-button" title="{{ Lang.get('general.sort_by') }}">\
+        <i class="fas fa-sort-amount-down-alt"></i>\
+    </button>\
+    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12">\
+        <ul class="sp-grid-sorting">\
+            {% for key, value in sortOptions %}\
+            <li data-column="{{ key }}" data-direction="{{ sortAscending ? 0 : 1 }}">\
+                <a>\
+                    <span class="sp-grid-sort-dir sp-inline-block sp-w-5">\
+                        <i></i>\
+                    </span>\
+                    {{ value }}\
+                </a>\
+            </li>\
+            {% endfor %}\
+        </ul>\
+    </div>\
+</div>';
+
+                $(element).append(html);
+
+                // Register event listeners.
+                $(element)
+                    .on('sp.dropdown.show', '.sp-dropdown', function () {
+                        $(this).find('ul').scrollTop(0);
+                    })
+                    .on('click', '.sp-grid-sorting li', function () {
+                        var direction = $(this).data('direction'),
+                            data = {ordering: $(this).data('column'), direction: direction};
+
+                        $.post(laroute.route('ticket.operator.ticket.saveOrdering'), data)
+                            .always(refreshGrid);
+
+                        setSelected($(this));
+                    });
+
+                function select($item) {
+                    var $sortDir = $item.find('.sp-grid-sort-dir'),
+                        title = "{{ Lang.get('general.ascending') }}",
+                        icon  = "fa-arrow-up";
+                    if ($item.data('direction') === 0) {
+                        title = "{{ Lang.get('general.descending') }}";
+                        icon  = "fa-arrow-down";
                     }
-                ).always(function() {
-                    // Reload table
-                    refreshGrid();
-                });
+
+                    $item.addClass('sp-selected');
+
+                    if ($sortDir.length) {
+                        // Set icon.
+                        $sortDir.show().find('i').attr('class', 'fa ' + icon);
+
+                        // Set title.
+                        if (typeof $sortDir[0]._tippy !== 'undefined') {
+                            $sortDir[0]._tippy.setContent(title);
+                        } else {
+                            $sortDir.prop('title', title);
+                        }
+                    }
+                }
+
+                function setSelected($item) {
+                    var $list = $item.parent();
+
+                    // Change direction for the next click.
+                    $item.data('direction', $item.data('direction') === 0 ? 1 : 0);
+
+                    // Remove current selected item.
+                    $list.find('li')
+                        .removeClass('sp-selected')
+                        .find('.sp-grid-sort-dir')
+                        .prop('title', '')
+                        .html('<i>');
+
+                    // Show item as selected.
+                    select($item);
+
+                    // Move to the top of the list.
+                    $item.detach().prependTo($list);
+                }
+
+                setSelected($(element).find('li[data-column="{{ gridOrderingColumn }}"]'));
             });
         });
 
@@ -764,10 +816,7 @@
                 }
             }, "json").fail(function() {
                 $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(function() {
-                // Reload table
-                refreshGrid();
-            });
+            }).always(refreshGrid);
         }
 
         function ticketAction(data, route) {
@@ -792,10 +841,7 @@
                 }
             }, "json").fail(function() {
                 $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(function() {
-                // Reload table
-                refreshGrid();
-            });
+            }).always(refreshGrid);
         }
 
         function mergeTickets(data) {
@@ -846,10 +892,7 @@
                 }
             }, "json").fail(function() {
                 $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(function() {
-                // Reload table
-                refreshGrid();
-            });
+            }).always(refreshGrid);
         }
 
         function restoreTicket(data) {
@@ -870,10 +913,7 @@
                 }
             }).fail(function() {
                 $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(function() {
-                // Reload table
-                refreshGrid();
-            });
+            }).always(refreshGrid);
         }
 
         function deleteTicket(data, block, force) {
@@ -923,9 +963,7 @@
                     .catch(function() {
                         $(messageDiv + '.sp-alert-error').show(500).delay(5000).hide(500);
                     })
-                    .always(function() {
-                        refreshGrid();
-                    });
+                    .always(refreshGrid);
             }
         }
 
@@ -951,9 +989,7 @@
             }, false);
 
             // Schedule next grid update in 60 seconds.
-            gridTimeout = setTimeout(function() {
-                refreshGrid();
-            }, 60000);
+            gridTimeout = setTimeout(refreshGrid, 60000);
         }
 
         // Read a page's GET URL variables and return them as an associative array.

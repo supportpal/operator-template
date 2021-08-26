@@ -137,7 +137,7 @@
                     {% if licenseInformation.supportStatus == 'Active' %}
                         <strong class="sp-text-green-600">{{ licenseInformation.supportStatus }}</strong>
                         {% if not monthlyProduct %}
-                            &nbsp; ({{ Lang.get('core.renew_support')|raw }})
+                            &nbsp; (<a href="https://www.supportpal.com/manage/cart.php?gid=addons" target="_blank">{{ Lang.get('core.renew') }}</a>)
                         {% endif %}
                     {% elseif licenseInformation.supportStatus == 'Expired' %}
                         <strong class="sp-text-red-600">{{ licenseInformation.supportStatus }}</strong> - {{ Lang.get('core.support_status_desc')|raw }}

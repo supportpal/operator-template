@@ -12,13 +12,15 @@
     <div class="sp-quick-actions">
         <ul>
             <li class="sp-action-group sp-inline-block">
-                <button class="sp-action sp-filter-results">
+                <button class="sp-action sp-filter-grid">
                     <i class="fas fa-filter"></i>
                     <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
                 </button>
                 <button class="sp-action sp-filter-datepicker" data-active="0">
-                    <i class="fas fa-calendar"></i>&nbsp;
-                    <span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
+                    <i class="fas fa-calendar"></i>
+                    <span class="sp-hidden xs:sp-inline">
+                        &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
+                    </span>
                 </button>
             </li>
         </ul>

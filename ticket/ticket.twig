@@ -213,6 +213,7 @@
     <div class="sp-message-update sp-alert sp-alert-error sp-alert-sticky sp-hidden">
         {{ Lang.get('messages.error_editing_message') }}
     </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden attachment"></div>
 {% endblock %}
 
 {% block pageTitle %}
@@ -420,7 +421,6 @@
 
     <script type="text/javascript">
         var operatorId = "{{ auth_user().id }}",
-            internal = {{ ticket.internal }},
             closedStatusId = {{ Config.get('settings.default_resolved_status') }},
             organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
             departmentTemplates = {{ ticket.department.email_templates|json_encode()|raw }},
@@ -428,8 +428,7 @@
             allLanguages = {{ languages|sort|json_encode()|raw }},
             deleteRelations = {{ deleteRelations|json_encode|raw }};
 
-        var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %},
-            cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
+        var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
 
         var ticket = new App.ticket({
             ticketId: "{{ ticket.id }}",

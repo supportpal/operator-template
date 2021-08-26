@@ -101,7 +101,7 @@
 
             {% elseif customfield.type == 9 %}
                 {{ form_redactor('customfield[' ~ customfield.id ~ ']', customfield.value,
-                    customfield.value is not empty and customfield.locked ? {'disabled': 'disabled', 'rows': 5} : {'rows': 5}) }}
+                    customfield.value is not empty and customfield.locked ? {'disabled': 'disabled', 'rows': 1} : {'rows': 1}) }}
 
             {% elseif customfield.type == 10 %}
                 <div class="sp-table">

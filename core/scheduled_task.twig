@@ -12,7 +12,7 @@
     <div class="sp-quick-actions">
         <ul>
             <li class="sp-action-group sp-inline-block">
-                <button class="sp-action sp-filter-results">
+                <button class="sp-action sp-filter-grid">
                     <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
@@ -68,14 +68,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-		    $(document.body).on('click', '.sp-run-task', function() {
-		        // Make icon spin
-                $(this).find('.fas').addClass('fa-spin');
-
-                // Run task
-		        runTask($(this).data('route'), this);
-		    });
-
 		    /**
              * Initialise the filters
              */
@@ -84,32 +76,5 @@
                 {column_number : 1, filter_container_id: "filter_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''}
             ]);
         });
-
-        function runTask(route, icon) {
-		    // Post email data
-		    $.post(route)
-                .done(function(response) {
-                    if (response.status == 'success') {
-                        $('.sp-task-run.sp-alert-success').show(500).delay(5000).hide(500);
-                    } else {
-                        $('.sp-task-run.sp-alert-error').show(500).delay(5000).hide(500);
-                        if (response.message) {
-                            $('.sp-task-run.sp-alert-error .sp-error-message').show().html('<br />' + response.message);
-                        } else {
-                            $('.sp-task-run.sp-alert-error .sp-error-message').hide();
-                        }
-                    }
-                })
-                .fail(function() {
-		            $('.sp-task-run.sp-alert-error').show(500).delay(5000).hide(500);
-		        })
-                .always(function() {
-                    // Stop spinning icon
-                    $(icon).find('.fas').removeClass('fa-spin');
-
-                    // Reload table
-                    $('.dataTable').dataTable()._fnAjaxUpdate();
-                });
-		}
     </script>
 {% endblock %}

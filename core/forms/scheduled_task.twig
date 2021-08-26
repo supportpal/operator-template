@@ -28,6 +28,13 @@
                 </div>
             </div>
 
+            <div class="sp-form-row sp-form-full">
+                {{ form_label('class', Lang.get('core.class_name')) }}
+                <div class="sp-input-container">
+                    {{ form_text('class', record.class, {'readonly': 'readonly'}) }}
+                </div>
+            </div>
+
             <div class="sp-form-row">
                 {{ form_label('interval', Lang.get('general.interval')) }}
                 <div class="sp-input-container">

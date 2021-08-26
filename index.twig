@@ -344,6 +344,13 @@
                                                     </a>
                                                 </li>
                                             {% endif %}
+                                            {% if auth_user().hasPermission('view.systemupdate') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.systemupdate') }}">
+                                                        {{ Lang.get('core.system_update') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
                                         </ul>
                                     </li>
                                 {% endif %}
@@ -368,17 +375,15 @@
                             {{ Lang.get('user.personal_settings') }}
                         </a>
                     </li>
+                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                        <a class="sp-nav-item" href="{{ route('user.operator.security') }}">
+                            {{ Lang.get('user.security_settings') }}
+                        </a>
+                    </li>
                     {% if isModuleEnabled('Ticket') %}
                         <li class="sp-block lg:sp-hidden" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('user.operator.signature') }}">
                                 {{ Lang.choice('user.signature', 2) }}
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% if not auth_user().twofa_enabled or not Config.get('settings.force_2fa_operators') %}
-                        <li class="sp-block lg:sp-hidden" aria-haspopup="false">
-                            <a class="sp-nav-item" href="{{ route('user.operator.twofa') }}">
-                                {{ Lang.get('user.two_fa') }}
                             </a>
                         </li>
                     {% endif %}
@@ -396,9 +401,28 @@
                 </form>
             </div>
 
+            {% if updateExists and auth_user().hasPermission('view.systemupdate') %}
+                <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
+                    <div class="sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3">
+                        <a href="{{ route('core.operator.systemupdate') }}" title="{{ Lang.get('core.update_available') }}"
+                           class="sp-inline-flex sp-p-1/2 sp-mr-4 sp-text-white hover:sp-text-white">
+                            <div class="sp-flex-auto">
+                                <span class="fa-stack sp-text-2xs">
+                                    <i class="fas fa-download fa-stack-2x"></i>
+                                    <span class="sp-text-primary-300">
+                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                    </span>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
                 <div class="sp-private-messages sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3" id="privateMessages">
-                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-mr-2 sp-text-white">
+                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-mr-2 sp-text-white"
+                       title="{{ Lang.get('core.private_messages') }}">
                         <div class="sp-flex-auto">
                             <i class="fas fa-comments sp-text-lg"></i>
                         </div>
@@ -467,14 +491,12 @@
                                     <li aria-haspopup="false">
                                         <a href="{{ route('user.operator.personalsetting') }}">{{ Lang.get('user.personal_settings') }}</a>
                                     </li>
+                                    <li aria-haspopup="false">
+                                        <a href="{{ route('user.operator.security') }}">{{ Lang.get('user.security_settings') }}</a>
+                                    </li>
                                     {% if isModuleEnabled('Ticket') %}
                                         <li aria-haspopup="false">
                                             <a href="{{ route('user.operator.signature') }}">{{ Lang.choice('user.signature', 2) }}</a>
-                                        </li>
-                                    {% endif %}
-                                    {% if not auth_user().twofa_enabled or not Config.get('settings.force_2fa_operators') %}
-                                        <li aria-haspopup="false">
-                                            <a href="{{ route('user.operator.twofa') }}">{{ Lang.get('user.two_fa') }}</a>
                                         </li>
                                     {% endif %}
                                     <li aria-haspopup="false">
@@ -538,6 +560,31 @@
 
             {% block precontent %}{% endblock %}
 
+            <!-- Box to display success/error messages generated by JavaScript -->
+            <div class="sp-alert sp-alert-sticky sp-hidden" id="js-message-box"></div>
+
+            {% if Session.has('success') %}
+                <div class="sp-alert sp-alert-sticky sp-alert-success">
+                    <i class="fas fa-times sp-alert-close"></i>
+                    {{ Session.get('success') }}
+                </div>
+            {% elseif (Session.has('error') or Session.has('email_error')) %}
+                <div class="sp-alert sp-alert-sticky sp-alert-error">
+                    <i class="fas fa-times sp-alert-close"></i>
+                    {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
+                </div>
+            {% endif %}
+
+            {% if errors|default is not empty and errors.count() %}
+                <div class="sp-alert sp-alert-sticky sp-alert-error">
+                    <i class="fas fa-times sp-alert-close"></i>
+                    <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
+                    {% for error in errors.unique() %}
+                        {{ Purifier.clean(error) }}<br />
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <div class="sp-content-inner sp-relative sp-p-6 print:sp-p-0 print:sp-pt-6">
                 {{ View.fireHook('operator.content_inner_start') }}
 
@@ -569,26 +616,6 @@
 
                 {% if block('description') is defined %}
                     <div class="sp-title-description">{{ block('description')|trim|raw }}</div>
-                {% endif %}
-
-                <!-- Box to display success/error messages generated by JavaScript -->
-                <div class="sp-alert sp-hidden" id="js-message-box"></div>
-
-                {% if Session.has('success') %}
-                    <div class="sp-alert sp-alert-success">{{ Session.get('success') }}</div>
-                {% elseif (Session.has('error') or Session.has('email_error')) %}
-                    <div class="sp-alert sp-alert-error">
-                        {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
-                    </div>
-                {% endif %}
-
-                {% if errors|default is not empty and errors.count() %}
-                    <div class="sp-alert sp-alert-error">
-                        <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
-                        {% for error in errors.unique() %}
-                            {{ Purifier.clean(error) }}<br />
-                        {% endfor %}
-                    </div>
                 {% endif %}
 
                 {% block content %}{% endblock %}

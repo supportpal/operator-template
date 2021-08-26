@@ -1,0 +1,206 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.system_update') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('core.system_update_desc') }}
+{% endblock %}
+
+{% block precontent %}
+    {% if not tasksRunRecently %}
+        <div class="sp-alert sp-alert-error sp-alert-sticky">
+            {{ Lang.get('core.cron_must_run_for_update') }} {{ Lang.get('core.cron_makesure')|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-text-center">
+        <div class="sp-text-3xl">
+            {% if updateAvailable %}
+                {{ Lang.get('core.update_available') }}
+            {% else %}
+                {{ Lang.get('core.up_to_date') }}
+            {% endif %}
+        </div>
+
+        <div class="sp-flex sp-justify-center sp-my-6">
+            <div class="sp-p-6 sp-bg-secondary sp-rounded-l sp-text-right">
+                <div class="sp-description sp-mb-3">{{ Lang.get('core.installed_version') }}</div>
+                <div class="sp-text-4xl sp-leading-none sp-installed-version sp-mb-3">{{ Config.get('release.version') }}</div>
+            </div>
+
+            <div class="sp-p-6 sp-bg-tertiary sp-rounded-r sp-text-left">
+                <div class="sp-description sp-mb-3">{{ Lang.get('core.available_version') }}</div>
+                <div class="sp-text-4xl sp-leading-none sp-available-version sp-mb-3">{{ availableVersion.getVersionValue() }}</div>
+                <div class="sp-description">
+                    <a href="{{ availableVersion.getReleaseNotes() }}" target="_blank">{{ Lang.get('core.release_notes') }}</a>
+                </div>
+            </div>
+        </div>
+
+        {% if updateAvailable %}
+            <div class="sp-mt-6">
+                <button class="sp-button-submit sp-start-update" type="button">
+                    <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
+                </button>
+            </div>
+        {% endif %}
+
+        {% if licenseInformation.supportStatus == 'Expired' %}
+            <div class="sp-alert sp-alert-error sp-mt-6 sp-mx-auto lg:sp-w-1/2">
+                {{ Lang.get('core.support_expired') }}
+                {% if updateAvailable and availableVersion.getVersionValue() != latestVersion %}
+                    {{ Lang.get('core.update_permitted_version', {'version': availableVersion.getVersionValue()}) }}
+                    {{ Lang.get('core.update_renew_support') }}
+                {% elseif updateExists %}
+                    {{ Lang.get('core.update_renew_support') }}
+                {% endif %}
+                <div class="sp-mt-2">
+                    <button class="sp-renew-support" type="button">{{ Lang.get('core.renew') }}</button>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="sp-mt-6">
+            <button class="sp-update-configure" type="button">
+                <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
+            </button>
+            &nbsp;
+            <button class="sp-refresh-version" type="button">
+                <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
+            </button>
+        </div>
+    </div>
+
+    <div class="sp-configure-modal-content sp-hidden">
+        <div class="sp-text-left">
+            <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
+            <div class="sp-description sp-mt-3 sp-mb-6">
+                {{ Lang.get('core.binary_paths_desc') }}
+            </div>
+        </div>
+
+        <form>
+            {{ csrf_field() }}
+
+            <div class="sp-form-row">
+                {{ form_label('mysqldump_path', 'mysqldump') }}
+                {{ form_text('mysqldump_path', settings.getMysqldumpPath(), {size: '100%'}) }}
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('tar_path', 'tar') }}
+                {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            App.Notifications.connector()
+                .private('App.Installer')
+                .listen('.App\\Events\\Installer\\UpdateMessage', function (data) {
+                    var $textarea = $('.sp-update-messages');
+                    $textarea.append("\n" + data.message)
+                        .scrollTop($textarea[0].scrollHeight - $textarea.height());
+                })
+                .listen('.App\\Events\\Installer\\UpdateComplete', function () {
+                    Swal.hideLoading();
+                });
+
+            $('.sp-start-update').on('click', function () {
+                var $this = $(this);
+
+                $this.prop('disabled', true);
+
+                Swal.fire({
+                    title: "{{ Lang.get('core.system_update') }}",
+                    html: "{{ Lang.get('core.about_to_update_to', {'version': availableVersion.getVersionValue()})|raw }}",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#e74c3c",
+                    confirmButtonText: "{{ Lang.get('general.continue') }}",
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        $.post('{{ route('core.operator.systemupdate.update') }}')
+                            .done(function (data) {
+                                if (data.status === 'success') {
+                                    Swal.fire({
+                                        title: '{{ Lang.get('core.system_update') }}',
+                                        html: '<textarea class="sp-update-messages" readonly="readonly" rows="10">' +
+                                            '{{ Lang.get('core.waiting_for_update_start') }}</textarea>',
+                                        confirmButtonText: "{{ Lang.get('general.continue') }}",
+                                        showConfirmButton: true,
+                                        showCancelButton: false,
+                                        allowOutsideClick: false,
+                                        width: '64rem',
+                                        preConfirm: function () {
+                                            window.location.reload();
+                                        }
+                                    });
+                                    Swal.showLoading();
+                                } else {
+                                    Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
+                                }
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                Swal.fire('{{ Lang.get('messages.error') }}', jqXHR.responseText, 'error');
+                            });
+                    },
+                    willClose: function () {
+                        $this.prop('disabled', false);
+                    },
+                });
+            });
+
+            $('.sp-update-configure').on('click', function () {
+                Swal.fire({
+                    title: '{{ Lang.choice('general.setting', 2) }}',
+                    html: $('.sp-configure-modal-content').html(),
+                    width: '48rem',
+                    confirmButtonText: Lang.get('general.save'),
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        var data = $(Swal.getContent()).find('input').serializeArray();
+                        $.post('{{ route('core.operator.systemupdate.settings') }}', data);
+
+                        // Refresh the page so the modal values are updated.
+                        window.location.reload();
+                    },
+                    allowOutsideClick: function () {
+                        return ! Swal.isLoading();
+                    }
+                });
+            });
+
+            $('.sp-renew-support').on('click', function () {
+                window.location.href = 'https://www.supportpal.com/manage/cart.php?gid=addons';
+            });
+
+            $('.sp-refresh-version').on('click', function () {
+                $(this).prop('disabled', true);
+
+                $.post('{{ route('core.operator.systemupdate.refresh') }}')
+                    .done(function (data) {
+                        if (data.status === 'success') {
+                            window.location.reload();
+                        } else {
+                            Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire('{{ Lang.get('messages.error') }}', jqXHR.responseText, 'error');
+                    });
+            });
+        });
+    </script>
+{% endblock %}

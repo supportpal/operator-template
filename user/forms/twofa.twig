@@ -39,12 +39,14 @@
     </div>
 </div>
 
-<div class="sp-form-row">
-    {{ form_label('password', Lang.get('general.password')) }}
-    <div class="sp-input-container">
-        {{ form_password('password') }}
+{% if password %}
+    <div class="sp-form-row">
+        {{ form_label('password', Lang.get('general.password')) }}
+        <div class="sp-input-container">
+            {{ form_password('password') }}
+        </div>
     </div>
-</div>
+{% endif %}
 
 <div class="sp-form-button">
     {{ form_submit(Lang.get('user.verify_and_enable'), {'class': 'twofa-verify'}) }}

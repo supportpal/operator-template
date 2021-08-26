@@ -17,7 +17,7 @@
     &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {{ brand.name }}
     &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
-    <a href="{{ route('selfservice.operator.type.index', { 'brand': record.brand_id }) }}">{{ Lang.choice('selfservice.type', 2) }}</a>
+    <a href="{{ route('selfservice.operator.type.index', {'brand': record.brand_id, 'grid': record.internal ? 'internal' : null}) }}">{{ Lang.choice('selfservice.type', 2) }}</a>
     &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <strong>
         {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.type', 1)}) }}

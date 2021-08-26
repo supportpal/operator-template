@@ -19,6 +19,17 @@
         <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-p-0 print:sp-shadow-none">
             {{ View.fireHook('operator.content_start') }}
 
+            {% if record.raw is not empty %}
+                <div class="sp-mb-6 md:sp-mb-0 md:sp-float-right">
+                    <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
+                        {{ Lang.get('core.view_original') }}
+                    </a> &nbsp;&nbsp;
+                    <a href="{{ route('core.operator.email.log.download_raw', [ record.id ]) }}" target="_blank" class="sp-button">
+                        {{ Lang.get('core.download_original') }}
+                    </a>
+                </div>
+            {% endif %}
+
             <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
 
             <div class="sp-mb-6 md:sp-p-6 md:sp-pb-0 md:sp-border md:sp-border-secondary md:sp-rounded">
@@ -132,17 +143,6 @@
                             </li>
                         {% endfor %}
                     </ul>
-                </div>
-            {% endif %}
-
-            {% if record.raw is not empty %}
-                <div class="sp-mt-6">
-                    <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
-                        {{ Lang.get('core.view_original') }}
-                    </a> &nbsp;&nbsp;
-                    <a href="{{ route('core.operator.email.log.download_raw', [ record.id ]) }}" target="_blank" class="sp-button">
-                        {{ Lang.get('core.download_original') }}
-                    </a>
                 </div>
             {% endif %}
 

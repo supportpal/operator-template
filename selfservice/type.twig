@@ -16,10 +16,11 @@
     <div class="sp-quick-actions">
         <ul>
             <li class="sp-action-group sp-inline-block">
-                <a class="sp-add-type sp-action sp-button">
+                <a href="{{ route('selfservice.operator.type.create', {'brand': brand.id, 'internal': grid is same as('internal') ? 1 : null}) }}"
+                   class="sp-action sp-button">
                     <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a><!--
-                --><button class="sp-action sp-filter-results">
+                --><button class="sp-action sp-filter-grid">
                     <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
@@ -37,67 +38,42 @@
 {% block content %}
 
     <ul class="sp-tabs">
-        <li id="Public" class="sp-active">
-            <a>{{ Lang.get('general.public') }}</a>
+        <li {% if grid is same as('public') %}class="sp-active"{% endif %}>
+            <a href="{{ grid is same as('public') ? '#' : route('selfservice.operator.type.index', {'brand': brand.id}) }}">
+                {{ Lang.get('general.public') }}
+            </a>
         </li>
-        <li id="Internal">
-            <a>{{ Lang.get('selfservice.internal') }}</a>
+        <li {% if grid is same as('internal') %}class="sp-active"{% endif %}>
+            <a href="{{ grid is same as('internal') ? '#' : route('selfservice.operator.type.index', {'brand': brand.id, 'grid': 'internal'}) }}">
+                {{ Lang.get('selfservice.internal') }}
+            </a>
         </li>
     </ul>
 
-    <div id="tabPublic" class="sp-tab-content">
-        <div class="sp-filter-results sp-hidden">
-            <h3>{{ Lang.get('general.filter_results') }}</h3>
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-            <div class="sp-table">
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.name') }}:</label>
-                    <div id="filter_public_name"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.enabled') }}:</label>
-                    <div id="filter_public_enabled"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.content') }}:</label>
-                    <div id="filter_public_content"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.choice('general.view', 1) }}:</label>
-                    <div id="filter_public_view"></div>
-                </div>
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.name') }}:</label>
+                <div id="filter_name"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.enabled') }}:</label>
+                <div id="filter_enabled"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.content') }}:</label>
+                <div id="filter_content"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.view', 1) }}:</label>
+                <div id="filter_view"></div>
             </div>
         </div>
-
-        {{ publicTable.render()|raw }}
     </div>
 
-    <div id="tabInternal" class="sp-tab-content sp-hidden">
-        <div class="sp-filter-results sp-hidden">
-            <h3>{{ Lang.get('general.filter_results') }}</h3>
-
-            <div class="sp-table">
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.name') }}:</label>
-                    <div id="filter_internal_name"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.enabled') }}:</label>
-                    <div id="filter_internal_enabled"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.get('general.content') }}:</label>
-                    <div id="filter_internal_content"></div>
-                </div>
-                <div class="sp-table-row">
-                    <label>{{ Lang.choice('general.view', 1) }}:</label>
-                    <div id="filter_internal_view"></div>
-                </div>
-            </div>
-        </div>
-
-        {{ internalTable.render()|raw }}
-    </div>
+    {{ table.render()|raw }}
 
     <div class="sp-alert sp-alert-info sp-alert-bottom" id="dndOrderNote">
         <strong>{{ Lang.choice('general.note', 1) }}:</strong> {{ Lang.get('selfservice.type_order') }}
@@ -107,48 +83,16 @@
 
 {% block scripts_footer %}
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
-    {{ publicTable.script()|raw }}
+    {{ table.script()|raw }}
+
     <script type="text/javascript">
         $(document).ready(function() {
             oTable.yadcf([
-                {column_number : 0, column_data_type: "text", filter_container_id: "filter_public_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
-                {column_number : 1, filter_container_id: "filter_public_enabled", filter_reset_button_text: ''},
-                {column_number : 2, filter_container_id: "filter_public_content", filter_reset_button_text: ''},
-                {column_number : 3, filter_container_id: "filter_public_view", filter_reset_button_text: ''}
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number : 1, filter_container_id: "filter_enabled", filter_reset_button_text: ''},
+                {column_number : 2, filter_container_id: "filter_content", filter_reset_button_text: ''},
+                {column_number : 3, filter_container_id: "filter_view", filter_reset_button_text: ''}
             ]);
-        });
-    </script>
-
-    {{ internalTable.script()|raw }}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            oTable.yadcf([
-                {column_number : 0, column_data_type: "text", filter_container_id: "filter_internal_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
-                {column_number : 1, filter_container_id: "filter_internal_enabled", filter_reset_button_text: ''},
-                {column_number : 2, filter_container_id: "filter_internal_content", filter_reset_button_text: ''},
-                {column_number : 3, filter_container_id: "filter_internal_view", filter_reset_button_text: ''}
-            ]);
-        });
-    </script>
-
-    <!-- Delay loading some tables -->
-    <script src="{{ asset_rev('resources/assets/operator/js/datatable/deferloading.js') }}"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Handle add type link.
-            $('.sp-add-type').on('click', function (e) {
-                location.href = $(this).data('wpurl');
-                if ($('.sp-tabs li.sp-active').is('#Public')) {
-                    location.href = "{{ route('selfservice.operator.type.create', {'brand': brand.id}) }}";
-                } else {
-                    location.href = "{{ route('selfservice.operator.type.create', {'brand': brand.id, 'internal': 1}) }}";
-                }
-            });
-
-            /**
-             * Defer loading internal datatable
-             */
-            defferedDatatables({'Internal': false});
         });
     </script>
 {% endblock %}
