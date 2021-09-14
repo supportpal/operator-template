@@ -44,9 +44,16 @@
 
         {% if updateAvailable %}
             <div class="sp-mt-6">
-                <button class="sp-button-submit sp-start-update" type="button">
-                    <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
-                </button>
+                {% if not isRunningInDocker %}
+                    <button class="sp-button-submit sp-start-update" type="button">
+                        <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
+                    </button>
+                {% else %}
+                    <a href="https://docs.supportpal.com/current/Upgrade+Guide#docker" target="_blank"
+                       class="sp-button sp-button-submit">
+                        <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -66,10 +73,12 @@
         {% endif %}
 
         <div class="sp-mt-6">
-            <button class="sp-update-configure" type="button">
-                <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
-            </button>
-            &nbsp;
+            {% if not isRunningInDocker %}
+                <button class="sp-update-configure" type="button">
+                    <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
+                </button>
+                &nbsp;
+            {% endif %}
             <button class="sp-refresh-version" type="button">
                 <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
             </button>

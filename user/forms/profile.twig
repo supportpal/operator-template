@@ -124,14 +124,14 @@
         </div>
     {% endif %}
 
-    {% if record.exists and record.password is not empty %}
+    {% if record.exists %}
         <div class="sp-form-row">
             {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
             <div class="sp-input-container">
                 {% if record.twofa_enabled %}
                     {% if record.id == auth_user().id %}
                         <div class="twofa-enabled sp-text-green-600 sp-font-bold">{{ Lang.get('general.yes') }}</div>
-                        {% if not Config.get('settings.force_2fa_operators', 0) %}
+                        {% if not Config.get('settings.force_2fa_operators', 0) and ((not auth_user().loggedInViaSSO() and auth_user().password is not empty) or auth_user().loggedInViaLdap()) %}
                             <a class="sp-button" href="{{ route('user.operator.security', {'tab': 'twofa'}) }}">{{ Lang.get('general.manage') }}</a>
                         {% endif %}
                     {% else %}
@@ -140,11 +140,11 @@
                     {% endif %}
                 {% else %}
                     <div class="twofa-enabled sp-text-red-600 sp-font-bold">{{ Lang.get('general.no') }}</div>
-                    {% if record.id == auth_user().id and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
+                    {% if record.id == auth_user().id and ((not auth_user().loggedInViaSSO() and auth_user().password is not empty) or auth_user().loggedInViaLdap()) %}
                         <div class="sp-mt-3">
                             <a class="sp-button" href="{{ route('user.operator.security', {'tab': 'twofa'}) }}">{{ Lang.get('general.manage') }}</a>
                         </div>
-                    {% elseif not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap() %}
+                    {% elseif record.password is not empty %}
                         <div class="sp-description">{{ Lang.get('user.two_fa_user_enable') }}</div>
                     {% endif %}
                 {% endif %}

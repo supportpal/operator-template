@@ -22,13 +22,13 @@
                 <a>{{ Lang.get('user.change_password') }}</a>
             </li>
         {% endif %}
-        {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
-            <li id="TwoFA" {% if auth_user().loggedInViaSSO() or tab is same as('twofa') %}class="sp-active"{% endif %}>
+        {% if (not auth_user().loggedInViaSSO() and auth_user().password is not empty) or auth_user().loggedInViaLdap() %}
+            <li id="TwoFA" {% if auth_user().loggedInViaLdap() or tab is same as('twofa') %}class="sp-active"{% endif %}>
                 <a>{{ Lang.get('user.two_fa') }}</a>
             </li>
         {% endif %}
         <li id="ActiveSessions"
-            {% if auth_user().password is empty or (auth_user().loggedInViaSSO() and not auth_user().loggedInViaLdap()) or tab is same as('sessions') %}class="sp-active"{% endif %}>
+            {% if ((auth_user().password is empty or auth_user().loggedInViaSSO()) and not auth_user().loggedInViaLdap()) or tab is same as('sessions') %}class="sp-active"{% endif %}>
             <a>{{ Lang.get('user.active_sessions') }}</a>
         </li>
     </ul>
@@ -67,8 +67,8 @@
         </div>
     {% endif %}
 
-    {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) %}
-        <div id="tabTwoFA" class="sp-tab-content {% if not auth_user().loggedInViaSSO() and tab is not same as('twofa') %}sp-hidden{% endif %}">
+    {% if (not auth_user().loggedInViaSSO() and auth_user().password is not empty) or auth_user().loggedInViaLdap() %}
+        <div id="tabTwoFA" class="sp-tab-content {% if not auth_user().loggedInViaLdap() and tab is not same as('twofa') %}sp-hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
                 <div class="sp-input-container">
@@ -114,7 +114,7 @@
     {% endif %}
 
     <div id="tabActiveSessions"
-         class="sp-tab-content {% if auth_user().password is not empty and (not auth_user().loggedInViaSSO() or auth_user().loggedInViaLdap()) and tab is not same as('sessions') %}sp-hidden{% endif %}">
+         class="sp-tab-content {% if ((auth_user().password is not empty and not auth_user().loggedInViaSSO()) or auth_user().loggedInViaLdap()) and tab is not same as('sessions') %}sp-hidden{% endif %}">
         <div class="sp-description sp-mb-6">{{ Lang.get('user.active_sessions_desc') }}</div>
 
         {% for session in sessions %}
