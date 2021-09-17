@@ -117,8 +117,8 @@
                 .private('App.Installer')
                 .listen('.App\\Events\\Installer\\UpdateMessage', function (data) {
                     var $textarea = $('.sp-update-messages');
-                    $textarea.append("\n" + data.message)
-                        .scrollTop($textarea[0].scrollHeight - $textarea.height());
+                    $textarea.val($textarea.val() + "\n" + data.message);
+                    $textarea.scrollTop($textarea[0].scrollHeight - $textarea.height());
                 })
                 .listen('.App\\Events\\Installer\\UpdateComplete', function () {
                     Swal.hideLoading();
