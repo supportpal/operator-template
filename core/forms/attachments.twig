@@ -1,13 +1,20 @@
 {% if input_name|default is empty %}
     {% set input_name = 'attachment' %}
 {% endif %}
+
+{% if old_attachments is not defined %}
+    {% if Request.old() is not empty and Request.old()[input_name] is not empty %}
+        {% set old_attachments = Request.old()[input_name] %}
+    {% else %}
+        {% set old_attachments = [] %}
+    {% endif %}
+{% endif %}
+
 <div class="sp-attachment-details">
     <input type="hidden" name="{{ input_name }}[]" disabled="disabled" class="mdd-ignore" />
-    {% if Request.old() is not empty and Request.old()[input_name] is not empty %}
-        {% for hash, file in Request.old()[input_name] %}
-            <input type="hidden" name="{{ input_name }}[{{ hash }}]" id="{{ input_name }}[{{ hash }}]" value="{{ file }}" />
-        {% endfor %}
-    {% endif %}
+    {% for hash, file in old_attachments %}
+        <input type="hidden" name="{{ input_name }}[{{ hash }}]" id="{{ input_name }}[{{ hash }}]" value="{{ file }}" />
+    {% endfor %}
 </div>
 
 <ul class="sp-attached-files">
@@ -49,14 +56,14 @@
                 </div>
             </li>
         {% endfor %}
-    {% elseif Request.old() is not empty and Request.old()[input_name] is not empty %}
-        {% for hash, file in Request.old()[input_name] %}
+    {% elseif old_attachments is not empty %}
+        {% for hash, file in old_attachments %}
             <li class="sp-flex">
                 <div class="sp-mr-2 sp-truncate">
                     <i class="fas fa-file"></i>&nbsp;
 
                     <span class="sp-file-information">
-                        <span class="sp-filename sp-ellipsis">{{ file }}</span>
+                        <span class="sp-filename">{{ file }}</span>
                         <span class="sp-description sp-filesize"></span>
                     </span>
                 </div>

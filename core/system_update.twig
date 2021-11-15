@@ -122,6 +122,15 @@
                 })
                 .listen('.App\\Events\\Installer\\UpdateComplete', function () {
                     Swal.hideLoading();
+                    Swal.update({icon: 'success'});
+                })
+                .listen('.App\\Events\\Installer\\UpdateFailed', function () {
+                    Swal.update({
+                        icon: 'error',
+                        showConfirmButton: false,
+                        allowOutsideClick: true,
+                        footer: '<a href="https://docs.supportpal.com/current/System+Update#Troubleshooting" target="_blank">{{ Lang.get('installer.troubleshooting_tips') }}</a>'
+                    });
                 });
 
             $('.sp-start-update').on('click', function () {
@@ -150,11 +159,13 @@
                                         showCancelButton: false,
                                         allowOutsideClick: false,
                                         width: '64rem',
+                                        didOpen: function () {
+                                            Swal.showLoading();
+                                        },
                                         preConfirm: function () {
                                             window.location.reload();
                                         }
                                     });
-                                    Swal.showLoading();
                                 } else {
                                     Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
                                 }

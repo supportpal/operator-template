@@ -1,8 +1,21 @@
 {% if not message.attachments.isEmpty() %}
     <div class="print:sp-hidden">
         <ul class="sp-attachments">
+            <hr class="sp-mx-0 sp-my-3 sp-border-secondary" />
+
+            <div class="sp-flex">
+                <div class="sp-flex-grow">
+                    <h4 class="sp-m-0">{{ Lang.choice('general.attachment', 2) }}</h4>
+                </div>
+                <div class="sp-flex-initial">
+                    <button class="sp-download-all as-link" style="display: none;" title="{{ Lang.get('general.download_all') }}">
+                        <i class="fas fa-download sp-text-secondary hover:sp-text-primary"></i>
+                    </button>
+                </div>
+            </div>
+
             {% for attachment in message.attachments %}
-                <li class="sp-relative">
+                <li class="sp-relative" data-download-url="{{ attachment.direct_operator_url }}" data-filename="{{ attachment.original_name }}">
                     {% if can_update_ticket(auth_user(), ticket) %}
                         <div class="sp-delete-attachment sp-absolute sp-right-0 sp-px-2 sp-py-1/2 sp-bg-red-600 sp-rounded-tr
                                     sp-text-white sp-cursor-pointer sp-z-10 hover:sp-bg-red-800"

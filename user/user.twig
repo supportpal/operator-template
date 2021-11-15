@@ -26,7 +26,7 @@
                 {% else %}
                     <!--
                 {% endif %}
-                --><button class="sp-action toggle-filtering">
+                --><button class="sp-action sp-filter-grid">
                     <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
@@ -80,7 +80,9 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
+    <div class="sp-my-6 sp-hidden">
+        {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
+    </div>
 
 	{{ table.render('operator.' ~ template ~ '.datatables')|raw }}
 
@@ -103,7 +105,7 @@
             $('.update-filtering').on('click', function() {
                 $('.dataTable').on('preXhr.dt', function ( e, settings, data ) {
                     // Add conditions to parameters
-                    var conditions = $(".sp-condition-group").serializeArray();
+                    var conditions = $(".sp-condition-group :input").serializeArray();
                     $.each(conditions, function(index, value) {
                         data[value.name] = value.value;
                     });

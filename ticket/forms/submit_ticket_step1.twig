@@ -105,8 +105,9 @@
                                     <div class="sp-form-row">
                                         {{ form_label('user_organisation', Lang.choice('user.organisation', 1)) }}
                                         <div class="sp-input-container">
-                                            {{ form_text('user_organisation') }} &nbsp;
-                                            <span class="sp-description">({{ Lang.get('general.optional') }})</span>
+                                            <input type="hidden" name="user_organisation_id" />
+                                            {{ form_select('user_organisation') }}
+                                            <div class="sp-description">({{ Lang.get('general.optional') }})</div>
                                         </div>
                                     </div>
                                 {% endif %}

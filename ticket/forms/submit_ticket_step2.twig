@@ -99,7 +99,7 @@
             <div class="sp-form-row sp-form-full">
                 {{ form_label('subject', Lang.get('ticket.subject')) }}
                 <div class="sp-input-container">
-                    {{ form_text('subject') }}
+                    {{ form_text('subject', subject) }}
                 </div>
             </div>
 
@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="sp-redactor-rounded-t-none">
-                        {{ form_redactor('text', signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
+                        {{ form_redactor('text', text is not empty ? text : signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
                     </div>
 
                     {% include 'operator.' ~ template ~ '.core.forms.attachments' with {

@@ -1,12 +1,12 @@
 {% extends parent_template %}
 
 {% block title %}
-    {{ Lang.get('core.php_info') }}
+    {{ Lang.get('core.background_jobs') }}
 {% endblock %}
 
 {% block content %}
 
-    <iframe src="{{ route('core.operator.phpinfo.show') }}"
+    <iframe src="{{ route('horizon.index') }}"
             onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
             class="sp-w-full sp-border-0"></iframe>
 

@@ -19,6 +19,10 @@
         <!-- Success / failure message box -->
         <div class="sp-alert sp-hidden"></div>
 
+        <div class="sp-all-attachments sp-alert sp-alert-info sp-hidden">
+            {{ Lang.get('ticket.downloading') }}
+        </div>
+
         {% if not Request.has('print') %}
             <button class="print-button sp-button-submit sp-ml-3 sp-float-right print:sp-hidden">
                 <i class="fas fa-print"></i>&nbsp; {{ Lang.get('general.print') }}
@@ -168,12 +172,16 @@
                 $('.edit-button').trigger('click');
             {% endif %}
 
-            // Update message
-            $(document.body).on('submit', '.message-form', function(e) {
+            $(document.body)
+              .on('click', '.sp-download-all', function () {
+                  (new ZipFile).create($(this).parents('.sp-message').find('.sp-attachments li'), $('title').text());
+              })
+              // Update message
+              .on('submit', '.message-form', function(e) {
                 e.preventDefault();
 
                 ticket.updateMessage($(this), $(this).find('textarea:not(.CodeMirror textarea):eq(0)'));
-            });
+              });
 
             function showSuccess() {
                 $('.sp-alert')
@@ -199,6 +207,12 @@
 
             // Load attachment previews
             App.attachments.loadPreviews($('.sp-message'));
+
+            if (ZipFile.isSupported()) {
+                if ($('.sp-message').find('ul.sp-attachments li').length > 1) {
+                    $('.sp-message').find('.sp-download-all').show();
+                }
+            }
         });
     </script>
 

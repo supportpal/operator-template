@@ -314,7 +314,7 @@
                         </div>
                     </div>
 
-                    <div id="disableRepliesTemplate" class="sp-form-row {% if not record.registered_only %}sp-hidden{% endif %}">
+                    <div id="disableRepliesTemplate" class="sp-form-row {% if not record.disable_user_email_replies %}sp-hidden{% endif %}">
                         {{ form_label('user_ticket_disablereplies', Lang.get('ticket.email_replies_disabled')) }}
                         <div class="sp-input-container">
                             {{ form_select('user_ticket_disablereplies', emailTemplates['user_ticket_disablereplies'], record.email_templates['user_ticket_disablereplies']) }}

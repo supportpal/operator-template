@@ -24,7 +24,7 @@
                     <!--
                 {% endif %}
                 {% if not Request.input('filter') %}
-                    --><button class="sp-action sp-hidden md:sp-inline-block toggle-filtering" id="filter-columns">
+                    --><button class="sp-action sp-hidden md:sp-inline-block sp-filter-results">
                         <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                     </button>
                 {% else %}
@@ -315,7 +315,7 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <form class="sp-condition-group sp-mb-8 sp-hidden"></form>
+    <div class="sp-grid-filtering sp-mb-8 sp-hidden"></div>
 
 	{{ table.render()|raw }}
 
@@ -412,38 +412,36 @@
             });
 
             // Load grid filtering for the first time.
-            $('.toggle-filtering').on('click', function () {
-                // The #FollowUp node will be empty if we haven't loaded it before.
-                if ($('form.sp-condition-group').is(':empty')) {
-                    // Show loading icon
-                    $('form.sp-condition-group').html('<div class="sp-p-3"><i class="fas fa-spinner fa-pulse fa-fw"></i></div>');
-
-                    // Fetch view
-                    $.get(
-                        '{{ route("ticket.operator.ticket.filtering") }}', getUrlVars(),
-                        function(response) {
-                            if (response.status == 'success') {
-                                // Update form
-                                $('form.sp-condition-group').html(response.data);
-
-                                // Initialise date picker.
-                                $('.datepicker').datepicker();
-
-                                // If we have default conditions
-                                Filtering.initialise();
-                            } else {
-                                // Show message sp-condition-group refresh
-                                $('form.sp-condition-group').html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
-                            }
-                        }, "json").fail(function() {
-                        // Show message to refresh
-                        $('form.sp-condition-group').html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
-                    });
+            $('button.sp-filter-results').on('click', function () {
+                var $container = $('.sp-grid-filtering').toggle();
+                if ($container.hasClass('loaded')) {
+                    return;
                 }
+
+                // Show loading icon
+                $container
+                    .addClass('sp-condition-group')
+                    .html('<div class="sp-p-3"><i class="fas fa-spinner fa-pulse fa-fw"></i></div>');
+
+                $.get('{{ route("ticket.operator.ticket.filtering") }}', getUrlVars())
+                    .then(function(response) {
+                        if (response.status !== 'success') {
+                            throw new Error;
+                        }
+
+                        $container.toggleClass('sp-condition-group loaded').html(response.data);
+                        $container.find('.datepicker').datepicker();
+                        Filtering.initialise();
+                    })
+                    .catch(function() {
+                        $container
+                            .removeClass('sp-condition-group')
+                            .html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
+                    });
             });
 
             // Filtering
-            $('.sp-condition-group').on('click', '.update-filtering', function() {
+            $('.sp-grid-filtering').on('click', '.update-filtering', function() {
                 clearTimeout(gridTimeout);
 
                 $datatable.on('preXhr.dt', function ( e, settings, data ) {
@@ -451,7 +449,7 @@
                     settings.sAjaxSource = '{{ sAjaxSource }}';
 
                     // Add conditions to parameters
-                    var conditions = $(".sp-condition-group").serializeArray();
+                    var conditions = $(".sp-grid-filtering :input").serializeArray();
                     $.each(conditions, function(index, value) {
                         data[value.name] = value.value;
                     });

@@ -214,6 +214,9 @@
         {{ Lang.get('messages.error_editing_message') }}
     </div>
     <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden attachment"></div>
+    <div class="sp-all-attachments sp-alert sp-alert-info sp-alert-sticky sp-hidden">
+        {{ Lang.get('ticket.downloading') }}
+    </div>
 {% endblock %}
 
 {% block pageTitle %}
@@ -403,10 +406,8 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <!-- File upload -->
+    <!-- File upload/download/previews. -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
-
-    <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
 
     <!-- Custom fields -->

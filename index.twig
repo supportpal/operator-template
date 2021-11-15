@@ -175,7 +175,7 @@
                                                 {% endfor %}
                                             </ul>
                                         </li>
-                                    {% else %}
+                                    {% elseif assignedBrands.count == 1 %}
                                         <li aria-haspopup="false">
                                             <a href="{{ route('selfservice.operator.type.index', assignedBrands.first().id) }}">
                                                 {{ Lang.choice('selfservice.type', 2) }}
@@ -330,6 +330,13 @@
                                             <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
                                         </a>
                                         <ul class="sp-nav-dropdown lg:sp-rounded-tr">
+                                            {% if auth_user().hasPermission('view.background_jobs') and Config.get('queue.default') is same as('redis') %}
+                                                <li aria-haspopup="false">
+                                                    <a href="{{ route('core.operator.background_jobs') }}">
+                                                        {{ Lang.get('core.background_jobs') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
                                             {% if auth_user().hasPermission('view.phpinfo') and function_exists('phpinfo') %}
                                                 <li aria-haspopup="false">
                                                     <a href="{{ route('core.operator.phpinfo') }}" class="lg:sp-rounded-tr">
