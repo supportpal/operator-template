@@ -44,9 +44,7 @@
                 </li>
             {% else %}
                 {% if can_update_ticket(auth_user(), ticket) %}
-                    {% if ticket.channel.enabled
-                        and (not ChannelFactory.getChannel(ticket.channel.name).requiresAccount or (ticket.account and ticket.account.active))
-                    %}
+                    {% if ChannelFactory.getChannel(ticket.channel.name).canReplyToTicket(ticket, auth_user()) %}
                         <li class="sp-action-group sp-reply-type sp-inline-block">
                             <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
                                 <span class="fa-stack sp-text-2xs">
@@ -221,7 +219,7 @@
 
 {% block pageTitle %}
     <div class="sp-flex">
-        <div class="sp-flex-grow">
+        <div class="sp-grow">
             <h1 id="pageTitle" class="sp-ticket-subject {% if can_update_ticket(auth_user(), ticket) %}sp-can-edit-subject{% endif %}">
                 {% if ticket.subject|trim is not empty %}
                     {{ ticket.subject }}
@@ -259,10 +257,20 @@
             <span class="sp-tag sp-bg-green-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.merged') }}</span>
         {% endif %}
 
-        {{ Lang.get('general.submitted_by') }}
-        <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-        {% if ticket.user.organisation_id is not empty %}
-            (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+        {% if ticket.isOpenedOnBehalfOf() %}
+            {{ Lang.get('ticket.on_behalf_of') }}
+            <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+            {% if ticket.user.organisation_id is not empty %}
+                (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+            {% endif %}
+            {{ Lang.get('general.by') }}
+            {{ ticket.openedBy().formatted_name }}
+        {% else %}
+            {{ Lang.get('general.submitted_by') }}
+            <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+            {% if ticket.user.organisation_id is not empty %}
+                (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+            {% endif %}
         {% endif %}
         {{ timeago(ticket.created_at) }}
         <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
@@ -402,7 +410,7 @@
     <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -413,7 +421,6 @@
     <!-- Custom fields -->
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
 
-    <!-- Reply options & Redactor plugins -->
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>

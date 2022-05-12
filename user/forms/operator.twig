@@ -47,7 +47,7 @@
                 {{ form_label('ticket_signature', Lang.get('ticket.ticket_signature')) }}
                 <div class="sp-input-container">
                     <div style="margin-bottom: 10px;">
-                        {{ form_redactor_mf('ticket_signature', signature, [], [], false) }}
+                        {{ form_editor_mf('ticket_signature', signature, [], [], false) }}
                     </div>
                     <div class="sp-description">
                         {{ Lang.get('user.ticket_signature_desc') }}
@@ -87,7 +87,7 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -98,12 +98,12 @@
                 tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
                 organisations: '{{ Config.get('settings.organisations_enabled') }}'
             },
-            groups: $R.options.groups.concat(['sp-image']),
-            plugins: $R.options.plugins.concat(['sp-mergefields'])
+            plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
+            toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
         };
 
-        // Do not initialise redactor on the dummy DOM element.
-        $('textarea[name="ticket_signature"]').redactor(opts);
+        // Do not initialise editor on the dummy DOM element.
+        $('textarea[name="ticket_signature"]').editor(opts);
     </script>
 
     <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />

@@ -1,7 +1,11 @@
 {% extends parent_template %}
 
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.core.addons_sidebar' %}
+{% endblock %}
+
 {% block title %}
-    {{ Lang.get('core.installed_plugins') }}
+    {{ Lang.choice('core.plugins', 2) }}
 {% endblock %}
 
 {% block precontent %}
@@ -17,8 +21,6 @@
 {% endblock %}
 
 {% block content %}
-
-    {% include 'operator.' ~ template ~ '.core.plugin_tabs' with {'isWidgets': false} %}
 
     <div class="sp-filter-results sp-hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
@@ -58,6 +60,13 @@
                 {column_number : 1, filter_container_id: "filter_status", filter_reset_button_text: ''},
                 {column_number : 2, column_data_type: "text", filter_container_id: "filter_description", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
             ]);
+
+            // Search by name if in request.
+            {% if Request.has('name') %}
+                yadcf.exFilterColumn(oTable, [
+                    [0, "{{ Request.get('name') }}"],
+                ]);
+            {% endif %}
         });
     </script>
 {% endblock %}

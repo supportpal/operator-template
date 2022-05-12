@@ -1,0 +1,126 @@
+<div class="sp-flex">
+    <div class="sp-flex-grow">
+        <div class="sp-flex sp-mb-6">
+            <div class="sp-flex-none sp-mr-4">
+                <img src="{{ addon.logoUri }}" alt="{{ addon.name }}" class="sp-h-12 sp-w-12 sp-rounded-full" />
+            </div>
+            <div class="sp-grow">
+                <strong>{{ addon.name }}</strong><br />
+                <div class="sp-description">{{ addon.author.name }}</div>
+            </div>
+        </div>
+
+        <p>{{ addon.tagline }}</p>
+
+        <p>
+            <a href="https://marketplace.supportpal.com/{{ addon.category.slug }}/{{ addon.slug }}" target="_blank">
+                {{ Lang.get('general.more_information') }} <i class="fa-fw fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+        </p>
+
+        <hr />
+
+        {% if addon.isInstalled() and addon.getInstalledVersion() is not null %}
+            <p><strong>{{ Lang.get('core.installed_version') }}</strong>: {{ addon.getInstalledVersion() }}</p>
+        {% endif %}
+
+        {% if addon.isUpdateAvailable() %}
+            <p><strong>{{ Lang.get('core.available_version') }}</strong>: {{ addon.getVersion().getValue() }}</p>
+        {% endif %}
+
+        <p class="sp-mb-0">
+            <span class="sp-manage-addon {% if not addon.isInstalled() %}sp-hidden{% endif %}">
+                <a class="sp-button" href="{{ addonManageRoute }}">
+                    {{ Lang.get('general.manage') }}
+                </a> &nbsp;
+            </span>
+
+            {% if (addon.getBilling() is not empty and addon.getBilling().billingcycle is not same as('free') and not addonWhmcsId) or (not addon.isInstalled() and (addon.getBilling().billingcycle is same as('free') or addonWhmcsId)) %}
+                {% if authenticated %}
+                    {% if addon.getBilling().billingcycle is same as('free') or addonWhmcsId %}
+                        <button class="sp-addon-install sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                            {{ Lang.get('general.install') }}
+                        </button>
+                    {% else %}
+                        <button class="sp-addon-purchase sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                            {{ Lang.get('general.purchase') }}
+                        </button>
+                    {% endif %}
+                {% else %}
+                    {{ Lang.get('core.login_to_install', {'link': route('core.operator.marketplace.login')})|raw }}
+                {% endif %}
+            {% elseif addon.isUpdateAvailable() %}
+                <button class="sp-addon-update sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                    {{ Lang.get('general.update') }}
+                </button>
+            {% endif %}
+
+            {% if addonWhmcsId and addon.getBilling() is not empty and addon.getBilling().billingcycle is same as('recurring') %}
+                <button class="sp-addon-cancel" data-id="{{ addon.id }}" data-whmcs-id="{{ addonWhmcsId }}">
+                    {{ Lang.get('general.cancel') }}
+                </button>
+            {% endif %}
+        </p>
+
+        <p class="sp-addon-message-installed sp-mb-0 sp-text-green-600 sp-hidden">
+            <i class="fas fa-check-circle" aria-hidden="true"></i>&nbsp; {{ Lang.get('core.addon_install_success') }}
+        </p>
+        <p class="sp-addon-message-updated sp-mb-0 sp-text-green-600 sp-hidden">
+            <i class="fas fa-check-circle" aria-hidden="true"></i>&nbsp; {{ Lang.get('core.addon_update_success') }}
+        </p>
+
+        {% if not addonWhmcsId and addon.getBilling() is not empty and addon.getBilling().billingcycle is not same as('free') %}
+            <p class="sp-addon-purchase-description sp-description sp-mb-0">
+                {{ Lang.get('core.addon_purchase_info', {'link': 'https://www.supportpal.com/company/terms'})|raw }}
+            </p>
+        {% endif %}
+
+        {% if addonWhmcsId and addon.getBilling() is not empty and addon.getBilling().billingcycle is same as('recurring') %}
+            <p class="sp-addon-cancel-description sp-description sp-mb-0">
+                {{ Lang.get('core.addon_cancel_info') }}
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="sp-flex-none sp-w-64 sp-p-6 sp-ml-6 sp-bg-secondary sp-rounded">
+        <h3 class="sp-mt-0 sp-mb-4">{{ Lang.get('general.details') }}</h3>
+
+        {% if addon.getBilling() is not empty %}
+            <h5 class="sp-mb-1 sp-font-semibold sp-text-secondary">{{ Lang.get('core.price') }}</h5>
+            <p class="sp-mt-0 sp-mb-3">
+                {% if addon.getBilling().billingcycle is same as('free') %}
+                    {{ Lang.get('general.free') }}
+                {% else %}
+                    {% if addon.getBilling().billingcycle is same as('onetime') %}
+                        {{ currencyCode == 'USD' ? '$' : '£' }}{{ addon.getBilling().pricing[currencyCode].onetime.recurring }}
+                        {{ Lang.get('core.one_time') }}
+                    {% elseif addon.getBilling().pricing[currencyCode] is not empty %}
+                        {% for cycle, pricing in addon.getBilling().pricing[currencyCode] %}
+                            <span class="sp-block">
+                            {{ currencyCode == 'USD' ? '$' : '£' }}{{ pricing.recurring }} {{ Lang.get('core.' ~ cycle) }}
+                        </span>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </p>
+        {% endif %}
+
+        <h5 class="sp-mb-1 sp-font-semibold sp-text-secondary">{{ Lang.choice('general.category', 1) }}</h5>
+        <p class="sp-mt-0 {% if addon.tags.isNotEmpty() %}sp-mb-3{% else %}sp-mb-0{% endif %}">{{ addon.category.name }}</p>
+
+        {% if addon.tags.isNotEmpty() %}
+            <h5 class="sp-mb-1 sp-font-semibold sp-text-secondary">{{ Lang.choice('core.tag', 2) }}</h5>
+            <p class="sp-m-0">
+                {% for tag in addon.tags %}
+                    <span class="sp-badge">{{ tag.name }}</span>
+                {% endfor %}
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% if not supportsSpVersion %}
+    <p class="sp-description sp-mb-0 sp-text-red-600">
+        <i class="fa-solid fa-circle-xmark"></i>&nbsp; {{ Lang.get('core.addon_version_not_supported') }}
+    </p>
+{% endif %}

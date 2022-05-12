@@ -1,17 +1,17 @@
-<div class="{{ redactorClasses }}">
-    {{ form_redactor('text', redactorText, {"class": "textarea", "data-route": route, "size": "50x3", "id": textareaId}) }}
+<div class="{{ editorClass }}">
+    {{ form_editor('text', editorContent, {"class": "textarea", "data-route": route, "size": "50x3", "id": textareaId}) }}
 </div>
 
 <div class="sp-px-1 sp-bg-secondary sp-border sp-border-t-0 sp-border-tertiary sp-rounded-b">
     {# Don't want to show the add attachment button if it's forwarding form and not allowed attachments #}
     {% if (ticket.department_email_id is not empty and submit_name != Lang.get('ticket.forward')) or allow_attachments %}
-        <label class="sp-file-input sp-inline-block sp-p-3/2 sp-text-sm sp-cursor-pointer hover:sp-text-secondary">
+        <label class="sp-file-input sp-inline-block sp-px-2 sp-py-3/2 sp-text-sm sp-cursor-pointer hover:sp-text-secondary">
             <i class="fas fa-paperclip"></i>
             <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.add_attachment') }}</span>
             <input class="sp-file-upload" type="file" name="files[]"
                    data-url="{{ route('ticket.operator.attachment.upload') }}" multiple="multiple">
         </label><!--
-        --><div class="redactor-button-separator"></div>
+        --><div class="tox-button-separator"></div>
     {% endif %}
     <span class="save-draft sp-inline-block sp-px-3/2 sp-py-1 sp-cursor-pointer hover:sp-text-secondary"
           title="{{ Lang.get('ticket.save_draft') }}">

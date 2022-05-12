@@ -2,7 +2,7 @@
 
     {{ form_hidden('ticket_id', message.ticket_id) }}
 
-    {{ form_redactor('text', message.purified_text, {'id': 'message-' ~ message.id}) }}
+    {{ form_editor('text', message.purified_text, {'id': 'message-' ~ message.id}) }}
 
     <div class="sp-mt-4">
         {{ form_submit(Lang.get('general.save')) }}

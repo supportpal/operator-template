@@ -152,6 +152,8 @@
         {{ View.fireHook('operator.wrapper_end') }}
     </div>
 
+    {{ View.fireHook('operator.footer') }}
+
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
     <script type="text/javascript">

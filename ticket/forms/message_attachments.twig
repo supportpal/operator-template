@@ -40,7 +40,7 @@
                 <div class="sp-delete-attachment sp-bg-red-600"
                      data-url="{{ route('ticket.operator.attachment.destroy') }}"
                      data-attachment-id="{{ attachment.id }}"
-                     data-size="{{ attachment.upload.getOriginal('size') }}"
+                     data-size="{{ attachment.upload.getRawOriginal('size') }}"
                      data-hash="{{ attachment.upload_hash }}"
                      data-silent="false">
                     <i class="fas fa-times sp-text-white"></i>

@@ -54,7 +54,7 @@
         <div class="sp-form-row sp-form-full">
             {{ form_label('text', Lang.get('general.text')) }}
             <div class="sp-input-container">
-                {{ form_redactor('text', '<p>@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ '&nbsp;</p>') }}
+                {{ form_textarea('text', '@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ ' ', {'class': 'sp-h-24'}) }}
             </div>
         </div>
 
@@ -74,16 +74,4 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
-
-    <!-- Redactor -->
-    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('textarea[name=text]').redactor({
-                focusEnd: true,
-            });
-        });
-    </script>
 {% endblock %}

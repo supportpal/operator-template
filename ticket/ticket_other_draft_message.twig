@@ -1,6 +1,6 @@
 <div class="sp-draft-message sp-alert sp-alert-warning sp-p-0" data-message-id="{{ draft.id }}">
     <div class="sp-draft-message-title sp-flex sp-px-5 sp-py-3 hover:sp-cursor-pointer">
-        <div class="sp-flex-grow">
+        <div class="sp-grow">
             <img src='{{ draft.user.avatar_url }}' class='sp-avatar sp-max-w-2xs' />&nbsp;
             {{ Lang.get('ticket.drafting_message', {'name': draft.user.formatted_name|e, 'type': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8')})|raw }}
             &nbsp;&middot;&nbsp;
@@ -15,6 +15,6 @@
     <div class="sp-draft-message-content sp-hidden">
         <hr class="sp-m-0" />
 
-        <div class="sp-draft-message-content-body sp-px-5 sp-py-3"><i class='fas fa-spinner fa-spin'></i></div>
+        <div class="sp-draft-message-content-body sp-editor-content sp-px-5 sp-py-3"><i class='fas fa-spinner fa-spin'></i></div>
     </div>
 </div>

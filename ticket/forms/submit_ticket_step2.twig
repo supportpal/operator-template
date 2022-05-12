@@ -176,8 +176,8 @@
                         </div>
                     </div>
 
-                    <div class="sp-redactor-rounded-t-none">
-                        {{ form_redactor('text', text is not empty ? text : signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
+                    <div class="tox-rounded-t-none">
+                        {{ form_editor('text', text is not empty ? text : signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
                     </div>
 
                     {% include 'operator.' ~ template ~ '.core.forms.attachments' with {
@@ -236,10 +236,6 @@
         // Tag permissions (for newticket.js).
         var tagPermission = {% if auth_user().hasPermission('create.tickettag') %}1{% else %}0{% endif %};
 
-        // Global variables for redactor plugins
-        var userLanguage = "{{ user.languageOrDefault() }}",
-            allLanguages = {{ languages|sort|json_encode()|raw }};
-
         var ticket = new App.ticket({
             ticketId: null,
             userId: "{{ user.id }}",
@@ -248,7 +244,7 @@
     </script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -261,16 +257,15 @@
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
 
     <script type="text/javascript">
-        // Initialise redactor.
-        var cannedResponsePermission = {% if auth_user().hasPermission('view.cannedresponse') %}1{% else %}0{% endif %};
-
-        var redactor_config = {
-            groups: $R.options.groups.concat(['sp-image']),
-            plugins: ['sp-cannedresponses',{% if isModuleEnabled('Selfservice') %}'sp-selfservice'{% endif %}].concat($R.options.plugins)
-        };
-
         $(document).ready(function() {
-            $('textarea[name="text"]').redactor(redactor_config);
+            $('textarea[name="text"]').editor({
+                plugins: $.fn.editor.defaults.plugins.concat(['cannedresponses', 'selfservice']),
+                toolbar: $.fn.editor.defaults.toolbar + ' | cannedresponses selfservice',
+                // Plugin settings.
+                ticketId: ticket.parameters().ticketId,
+                userId: ticket.parameters().userId,
+                brandId: ticket.parameters().brandId
+            });
         });
     </script>
 

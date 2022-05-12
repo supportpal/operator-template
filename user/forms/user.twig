@@ -130,7 +130,7 @@
         {{ linkedTable.script()|raw }}
     {% endif %}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -403,7 +403,7 @@
                         preConfirm: function () {
                             var params = {
                                 url: "{{ route('core.operator.export.user', record.id) }}",
-                                data: $(Swal.getContent()).find('.export-form').serialize(),
+                                data: $(Swal.getHtmlContainer()).find('.export-form').serialize(),
                                 type: 'POST',
                                 dataType: 'json'
                             };

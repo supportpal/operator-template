@@ -44,7 +44,7 @@
             <div class="sp-form-row sp-form-full">
                 {{ form_label('message', Lang.choice('general.message', 1)) }}
                 <div class="sp-input-container">
-                    {{ form_redactor('message') }}
+                    {{ form_editor('message') }}
                 </div>
             </div>
 
@@ -64,16 +64,16 @@
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ table.script()|raw }}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
-            var instance = $('textarea').redactor();
+            $('textarea').editor();
 
             $(document).on('click', '.sp-tabs li#Compose', function (e) {
-                instance.editor.startFocus();
+                tinymce.activeEditor.focus();
             });
         });
     </script>

@@ -2,7 +2,7 @@
             {% if message.type == 1 %}sp-note{% elseif message.type == 2 %}sp-forward{% endif %}" data-id="{{ message.id }}">
     {% include 'operator.' ~ template ~ '.ticket.message_header' %}
 
-    <div class="sp-message-text sp-clearfix">
+    <div class="sp-message-text sp-flow-root">
         {% include 'operator.' ~ template ~ '.ticket.message_text' %}
     </div>
 

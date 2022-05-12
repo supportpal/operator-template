@@ -31,7 +31,7 @@
         {{ form_label('signature[' ~ brand.id ~ '][' ~ department ~ '][contents]', Lang.choice('user.signature', 1)) }}
         <div class="sp-input-container">
             {{
-                form_redactor_mf(
+                form_editor_mf(
                     'signature[' ~ brand.id ~ '][' ~ department ~ '][contents]',
                     signature.contents,
                     hide|default is not empty ? {'disabled': 'disabled'} : [],

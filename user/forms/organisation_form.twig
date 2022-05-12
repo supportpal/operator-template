@@ -81,7 +81,7 @@
             <div class="sp-form-row sp-form-full sp-form-customfields">
                 {{ form_label('notes', Lang.choice('general.note', 2)) }}
                 <div class="sp-input-container">
-                    {{ form_redactor('notes') }}
+                    {{ form_editor('notes') }}
                 </div>
             </div>
 
@@ -124,7 +124,7 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 

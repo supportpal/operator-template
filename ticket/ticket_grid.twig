@@ -325,7 +325,7 @@
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ table.script()|raw }}
 
-    <!-- Redactor -->
+    <!-- Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -465,7 +465,7 @@
                     title: Lang.get("ticket.mass_reply"),
                     html: '<form class="mass-reply sp-text-left">'
                         + '<div class="sp-alert sp-alert-error sp-hidden attachment"></div>'
-                        + '{{ form_redactor("text") }}'
+                        + '{{ form_editor("text") }}'
                         + '<div class="sp-attachment-details">'
                         + '    <input type="hidden" name="attachment[]" disabled="disabled" />'
                         + '</div>'
@@ -507,19 +507,17 @@
                     width: '800',
                     showCancelButton: true,
                     didOpen: function () {
-                        $(Swal.getContent()).find('.mass-reply textarea').redactor({
-                            focus: true,
-                            // Key down event causes mass reply modal to hide
-                            callbacks: {
-                                keydown: function (e) {
-                                    e.stopPropagation();
-                                }
+                        var $textarea = $(Swal.getHtmlContainer()).find('.mass-reply textarea');
+                        $textarea.editor({
+                            oninit: function () {
+                                var id = $textarea.prop('id');
+                                tinymce.get(id).focus();
                             }
                         });
                     },
                     showLoaderOnConfirm: true,
                     preConfirm: function () {
-                        var data = $(Swal.getContent()).find('form.mass-reply').serializeArray();
+                        var data = $(Swal.getHtmlContainer()).find('form.mass-reply').serializeArray();
                         // Add other data
                         data.push({ name: 'reply_type', value: 0 });
 

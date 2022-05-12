@@ -1,0 +1,35 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.system_health') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('core.system_health_desc') }}
+{% endblock %}
+
+{% block content %}
+    <div>
+        <button class="sp-refresh-cache sp-mb-3 sp-text-base">
+            <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
+        </button>
+    </div>
+
+    {{ table.render()|raw }}
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script>
+        $(function () {
+            $('.sp-refresh-cache').on('click', function () {
+                $.post('{{ route('core.operator.system_health.refresh') }}')
+                    .done(function () {
+                        $('.dataTable').dataTable().api().ajax.reload();
+                    });
+            });
+        });
+    </script>
+{% endblock %}

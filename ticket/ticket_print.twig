@@ -32,10 +32,20 @@
                 <span class="sp-tag sp-bg-red-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.internal') }}</span>
             {% endif %}
 
-            {{ Lang.get('general.submitted_by') }}
-            <a href="{{ route('user.operator.user.edit', {'id': ticket.user.id}) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-            {% if ticket.user.organisation_id is not empty %}
-                (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+            {% if ticket.isOpenedOnBehalfOf() %}
+                {{ Lang.get('ticket.on_behalf_of') }}
+                <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+                {% if ticket.user.organisation_id is not empty %}
+                    (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+                {% endif %}
+                {{ Lang.get('general.by') }}
+                {{ ticket.openedBy().formatted_name }}
+            {% else %}
+                {{ Lang.get('general.submitted_by') }}
+                <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+                {% if ticket.user.organisation_id is not empty %}
+                    (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+                {% endif %}
             {% endif %}
             <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
         </div>
@@ -126,9 +136,11 @@
         {{ View.fireHook('operator.content_end') }}
     </div>
 
+    {{ View.fireHook('operator.footer') }}
+
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 

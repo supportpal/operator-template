@@ -100,7 +100,7 @@
                     customfield.value is not empty and customfield.locked ? {'disabled': 'disabled'} : {}) }}
 
             {% elseif customfield.type == 9 %}
-                {{ form_redactor('customfield[' ~ customfield.id ~ ']', customfield.value,
+                {{ form_editor('customfield[' ~ customfield.id ~ ']', customfield.value,
                     customfield.value is not empty and customfield.locked ? {'disabled': 'disabled', 'rows': 1} : {'rows': 1}) }}
 
             {% elseif customfield.type == 10 %}

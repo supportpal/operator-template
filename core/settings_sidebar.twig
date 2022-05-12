@@ -58,6 +58,12 @@
             </li>
         {% endif %}
 
+        {% if auth_user().hasPermission('view.addon') %}
+            <li {% if route starts with 'core.operator.plugin' or route starts with 'widget.' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.plugin.index') }}">{{ Lang.choice('core.plugins', 2) }}</a>
+            </li>
+        {% endif %}
+
         {% if auth_user().hasPermission('view.scheduledtask') %}
             <li {% if route starts with 'core.operator.scheduledtask' %}class="sp-active"{% endif %} id="scheduledTaskSetting">
                 <a href="{{ route('core.operator.scheduledtask.index') }}">{{ Lang.choice('core.scheduled_task', 2) }}</a>
@@ -73,6 +79,12 @@
         {% if auth_user().hasPermission('view.integration') %}
             <li {% if route starts with 'core.operator.integration' or route starts with 'integration.' %}class="sp-active"{% endif %}>
                 <a href="{{ route('core.operator.integration.index') }}">{{ Lang.choice("core.third_party_integrations", 2) }}</a>
+            </li>
+        {% endif %}
+
+        {% if auth_user().hasPermission('view.addon') %}
+            <li {% if route starts with 'core.operator.widget' or route starts with 'widget.' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.widget.index') }}">{{ Lang.choice('core.widget', 2) }}</a>
             </li>
         {% endif %}
     </ul>

@@ -49,8 +49,8 @@
                             include 'operator.' ~ template ~ '.ticket.forms.canned_response_rows'
                             with {
                                 'elements': {
-                                    'name': { 'name': 'name', 'value': record.getOriginal('name'), 'attributes': { 'autofocus': 'autofocus' } },
-                                    'text': { 'name': 'text', 'value': record.getOriginal('text') }
+                                    'name': { 'name': 'name', 'value': record.getRawOriginal('name'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'text': { 'name': 'text', 'value': record.getRawOriginal('text') }
                                 }
                             }
                         %}
@@ -130,7 +130,7 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -140,15 +140,15 @@
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
 
-        // Redactor options.
+        // WYSIWYG editor options.
         var opts = {
             mergeFields: {
                 tickets: true,
                 organisations: '{{ Config.get('settings.organisations_enabled') }}',
                 canned_responses: false
             },
-            groups: $R.options.groups.concat(['sp-image']),
-            plugins: $R.options.plugins.concat(['sp-mergefields'])
+            plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
+            toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
         };
 
         // Custom attribute mapper for multidimensionaldata.js
@@ -159,7 +159,7 @@
         };
 
         $(document).ready(function() {
-            $('div.section-items textarea').redactor(opts);
+            $('div.section-items textarea').editor(opts);
 
             // Tags
             $('select[name="tag[]"]').selectize({

@@ -41,8 +41,8 @@
                         include 'operator.' ~ template ~ '.selfservice.forms.name_translation_rows'
                         with {
                         'elements': {
-                            'name': { 'name': 'name', 'value': record.getOriginal('name'), 'attributes': {'autofocus': 'autofocus'} },
-                            'slug': { 'name': 'slug', 'value': record.getOriginal('slug') },
+                            'name': { 'name': 'name', 'value': record.getRawOriginal('name'), 'attributes': {'autofocus': 'autofocus'} },
+                            'slug': { 'name': 'slug', 'value': record.getRawOriginal('slug') },
                         }
                     }
                     %}

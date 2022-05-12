@@ -1,0 +1,46 @@
+{% set route = Route.currentRouteName() %}
+
+<div class="sp-sidebox">
+    <div class="sp-collapsible sp-flex">
+        <div class="sp-icon">
+            <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <h3>{{ Lang.choice('core.addon', 2) }}</h3>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+
+    <ul>
+        <li {% if route starts with 'core.operator.marketplace' %}class="sp-active"{% endif %}>
+            <a href="{{ route('core.operator.marketplace.index') }}">{{ Lang.get('core.addons_marketplace') }}</a>
+        </li>
+
+        <h4>{{ Lang.get('general.general') }}</h4>
+
+        {% if auth_user().hasPermission('view.language') %}
+            <li {% if route starts with 'core.operator.language' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.language.index') }}">{{ Lang.choice('general.language', 2) }}</a>
+            </li>
+        {% endif %}
+        <li {% if route starts with 'core.operator.plugin' %}class="sp-active"{% endif %}>
+            <a href="{{ route('core.operator.plugin.index') }}">{{ Lang.choice('core.plugins', 2) }}</a>
+        </li>
+        {% if auth_user().hasPermission('view.integration') %}
+            <li {% if route starts with 'core.operator.integration' or route starts with 'integration.' %}class="sp-active"{% endif %}>
+                <a href="{{ route('core.operator.integration.index') }}">{{ Lang.choice('core.third_party_integrations', 2) }}</a>
+            </li>
+        {% endif %}
+        <li {% if route starts with 'core.operator.widget' %}class="sp-active"{% endif %}>
+            <a href="{{ route('core.operator.widget.index') }}">{{ Lang.choice('core.widget', 2) }}</a>
+        </li>
+
+        {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.channel') %}
+            <h4>{{ Lang.choice('ticket.ticket', 2) }}</h4>
+
+            <li {% if route starts with 'ticket.operator.channel' or route starts with 'ticket.channel' %}class="sp-active"{% endif %} id="channelSettings">
+                <a href="{{ route('ticket.operator.channel.index') }}">{{ Lang.choice('ticket.channel', 2) }}</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

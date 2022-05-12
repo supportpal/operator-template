@@ -2,7 +2,7 @@
     <div class="sp-flex-initial sp-hidden sp-mr-4 md:sp-block">
         <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-md" />
     </div>
-    <div class="sp-flex-grow">
+    <div class="sp-grow">
         <div class="sp-message-header">
             <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}" {% if message.by == 1 %}data-email="{{ message.user.email }}"{% endif %}>
                 {{ message.user.formatted_name }}
@@ -97,25 +97,25 @@
                 &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
                 {% set emaillog = message.emaillog.where('type', '!=', 0).first() %}
                 {% if emaillog is not null %}
-                    <div class="sp-dropdown-container">
+                    <div class="sp-dropdown-container sp-message-header-interactive">
                         <span class="sp-action">
                             ({{ Lang.get('general.show_details') }})
                         </span>
                         <div class="sp-dropdown sp-cursor-auto">
                             <ul>
                                 {% if emaillog.to is not empty %}
-                                    <li class="sp-dropdown-item">
+                                    <li class="sp-dropdown-item sp-dropdown-item-interactive">
                                         <label>{{ Lang.get('ticket.to') }}</label>
                                         <div class="sp-text-primary">{{ emaillog.to|join(', ') }}</div>
                                     </li>
                                 {% endif %}
                                 {% if emaillog.cc is not empty %}
-                                    <li class="sp-dropdown-item">
+                                    <li class="sp-dropdown-item sp-dropdown-item-interactive">
                                         <label>{{ Lang.get('ticket.cc') }}</label>
                                         <div class="sp-text-primary">{{ emaillog.cc|join(', ') }}</div>
                                     </li>
                                 {% endif %}
-                                <li class="sp-dropdown-item">
+                                <li class="sp-dropdown-item sp-dropdown-item-interactive">
                                     <label>{{ Lang.get('ticket.from') }}</label>
                                     <div class="sp-text-primary">
                                         {{ emaillog.from_name ~ ' <' ~ emaillog.from_address ~ '>' }}

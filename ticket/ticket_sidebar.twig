@@ -102,16 +102,32 @@
                         </div>
                     </li>
                 {% endif %}
-                {% if not slaplans.isEmpty() %}
+                {% if slaplans %}
                     <li>
                         <div class="sp-title">{{ Lang.choice('ticket.sla_plan', 1) }}</div>
                         <div class="sp-detail">
-                            {{ form_select(
-                                'slaplan',
-                                {0: Lang.get('general.none')} + slaplans.pluck('name', 'id').all(),
-                                ticket.slaplan|default is not empty ? ticket.slaplan.id : 0,
-                                can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
-                            ) }}
+                            {% if can_update_ticket(auth_user(), ticket) %}
+                                <a class="edit-slaplan sp-detail-link">
+                                    {% if ticket.sla_plan_id is not empty %}
+                                        {{ ticket.slaplan.name }}
+                                    {% else %}
+                                        {{ Lang.get('general.none') }}
+                                    {% endif %}
+                                </a>
+                            {% else %}
+                                {% if ticket.sla_plan_id is not empty %}
+                                    {{ ticket.slaplan.name }}
+                                {% else %}
+                                    {{ Lang.get('general.none') }}
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="update-slaplan sp-hidden">
+                                {{ form_select(
+                                    'slaplan', [], null,
+                                    {'class': 'sp-w-full', 'data-id': ticket.sla_plan_id|default is not empty ? ticket.sla_plan_id : 0}
+                                ) }}
+                            </div>
                         </div>
                     </li>
                 {% endif %}

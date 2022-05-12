@@ -113,18 +113,21 @@
 {% block scripts_footer %}
     <script type="text/javascript">
         $(document).ready(function() {
+            var contents = '{{ Lang.get('core.waiting_for_update_start') }}';
+
             App.Notifications.connector()
                 .private('App.Installer')
                 .listen('.App\\Events\\Installer\\UpdateMessage', function (data) {
-                    var $textarea = $('.sp-update-messages');
-                    $textarea.val($textarea.val() + "\n" + data.message);
-                    $textarea.scrollTop($textarea[0].scrollHeight - $textarea.height());
+                    contents += "\n" + data.message;
+                    Swal.update({});
+                    Swal.showLoading();
                 })
                 .listen('.App\\Events\\Installer\\UpdateComplete', function () {
                     Swal.hideLoading();
-                    Swal.update({icon: 'success'});
+                    Swal.update({icon: 'success', showConfirmButton: true});
                 })
                 .listen('.App\\Events\\Installer\\UpdateFailed', function () {
+                    Swal.hideLoading();
                     Swal.update({
                         icon: 'error',
                         showConfirmButton: false,
@@ -152,15 +155,19 @@
                                 if (data.status === 'success') {
                                     Swal.fire({
                                         title: '{{ Lang.get('core.system_update') }}',
-                                        html: '<textarea class="sp-update-messages" readonly="readonly" rows="10">' +
-                                            '{{ Lang.get('core.waiting_for_update_start') }}</textarea>',
+                                        html: '<textarea class="sp-update-messages" readonly="readonly" rows="10"></textarea>',
                                         confirmButtonText: "{{ Lang.get('general.continue') }}",
-                                        showConfirmButton: true,
+                                        showConfirmButton: false,
                                         showCancelButton: false,
                                         allowOutsideClick: false,
                                         width: '64rem',
                                         didOpen: function () {
                                             Swal.showLoading();
+                                        },
+                                        didRender: function () {
+                                            var $textarea = $('.sp-update-messages');
+                                            $textarea.val(contents);
+                                            $textarea.scrollTop($textarea[0].scrollHeight - $textarea.height());
                                         },
                                         preConfirm: function () {
                                             window.location.reload();
@@ -190,7 +197,7 @@
                     showCancelButton: true,
                     showLoaderOnConfirm: true,
                     preConfirm: function () {
-                        var data = $(Swal.getContent()).find('input').serializeArray();
+                        var data = $(Swal.getHtmlContainer()).find('input').serializeArray();
                         $.post('{{ route('core.operator.systemupdate.settings') }}', data);
 
                         // Refresh the page so the modal values are updated.

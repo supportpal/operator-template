@@ -1,5 +1,5 @@
 <div class="sp-title sp-flex sp-items-center">
-    <div class="sp-flex-grow">
+    <div class="sp-grow">
         {{ Lang.get('ticket.linked_tickets') }}
     </div>
     {% if can_update_ticket(auth_user(), ticket) %}
@@ -16,7 +16,7 @@
         {% for linkedTicket in ticket.linked %}
             <li>
                 <div class="sp-flex sp-items-center">
-                    <div class="sp-flex-grow sp-truncate">
+                    <div class="sp-grow sp-truncate">
                         {{ linkedTicket.status.icon|raw }}&nbsp;
                         <a href="{{ route('ticket.operator.ticket.show', [ linkedTicket.id ]) }}" target="_blank">
                             {{ linkedTicket.subject }}

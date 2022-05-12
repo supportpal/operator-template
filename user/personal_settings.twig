@@ -92,7 +92,7 @@
                     {{ form_hidden('opsettings[datatable_rows]') }}
                     <div class="sp-max-w-6xl">
                         <div class="sp-flex sp-description">
-                            <div class="sp-flex-grow">{{ Lang.get('general.faster') }}</div>
+                            <div class="sp-grow">{{ Lang.get('general.faster') }}</div>
                             <div class="sp-flex-initial">{{ Lang.get('general.slower') }}</div>
                         </div>
                         <div class="sp-pt-2 sp-pb-10 sp-px-4">
@@ -175,7 +175,7 @@
             $('.preview-browser').on('click', function() {
                 App.Notifications.showBrowserNotification(
                     Lang.get('notification.new_ticket'),
-                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">ABC-1234</a>', 'name': 'Joe Bloggs'})
+                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">' + Math.floor(100000 + Math.random() * 900000) + '</a>', 'name': 'Joe Bloggs'})
                 );
             });
 
@@ -183,7 +183,7 @@
             $('.preview-desktop').on('click', function() {
                 App.Notifications.showDesktopNotification(
                     Lang.get('notification.new_ticket'),
-                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">ABC-1234</a>', 'name': 'Joe Bloggs'})
+                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">' + Math.floor(100000 + Math.random() * 900000) + '</a>', 'name': 'Joe Bloggs'})
                 );
             });
         });

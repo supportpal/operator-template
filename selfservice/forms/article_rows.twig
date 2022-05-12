@@ -21,13 +21,6 @@
     </div>
     
     <div class="sp-form-row sp-form-full">
-        {{ form_label(elements.keywords.name, Lang.choice('selfservice.keyword', 2)) }}
-        <div class="sp-input-container">
-            {{ form_text(elements.keywords.name, elements.keywords.value, attributes) }}
-        </div>
-    </div>
-    
-    <div class="sp-form-row sp-form-full">
         {{ form_label(elements.excerpt.name, Lang.get('selfservice.excerpt')) }}
         <div class="sp-input-container">
             {{ form_textarea(elements.excerpt.name, elements.excerpt.value, {'style': 'resize: none;', 'rows': 2, 'cols': 40}|merge(attributes)) }}
@@ -37,7 +30,7 @@
     <div class="sp-form-row sp-form-full">
         {{ form_label(elements.text.name, Lang.choice('selfservice.article', 1)) }}
         <div class="sp-input-container">
-            {{ form_redactor(elements.text.name, elements.text.value, attributes, Config.get('purifier.settings.selfservice')) }}
+            {{ form_editor(elements.text.name, elements.text.value, attributes, Config.get('purifier.settings.selfservice')) }}
     
             {%
                 include 'operator.' ~ template ~ '.core.forms.attachments'

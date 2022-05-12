@@ -16,8 +16,8 @@
 
     {% if report.timeframe|default is not empty and report.timeframe != 'none' %}
         <div class="sp-alert">
-            <div class="timeframe-options sp-flex sp-flex-wrap sp-items-center md:sp-flex-no-wrap">
-                <div class="sp-w-full md:sp-flex-grow md:sp-w-auto">
+            <div class="timeframe-options sp-flex sp-flex-wrap sp-items-center md:sp-flex-nowrap">
+                <div class="sp-w-full md:sp-grow md:sp-w-auto">
                     {% if report.timeframe == 'custom' %}
                         <label class="sp-block sp-mb-2 sp-mr-2 xs:sp-inline-block xs:sp-mb-0">
                             {{ form_radio('timeframe', 0, report.startDate == 0 ? true : false) }} <strong>{{ Lang.get('report.all_time') }}</strong>

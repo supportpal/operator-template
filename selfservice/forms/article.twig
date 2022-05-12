@@ -58,11 +58,10 @@
                             include 'operator.' ~ template ~ '.selfservice.forms.article_rows'
                             with {
                                 'elements': {
-                                    'title': { 'name': 'title', 'value': record.getOriginal('title'), 'attributes': { 'autofocus': 'autofocus' } },
-                                    'slug': { 'name': 'slug', 'value': clone is not empty ? '' : record.getOriginal('slug') },
-                                    'keywords': { 'name': 'keywords', 'value': record.getOriginal('keywords') },
-                                    'excerpt': { 'name': 'excerpt', 'value': record.getOriginal('excerpt') },
-                                    'text': { 'name': 'text', 'value': record.getOriginal('text') },
+                                    'title': { 'name': 'title', 'value': record.getRawOriginal('title'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'slug': { 'name': 'slug', 'value': clone is not empty ? '' : record.getRawOriginal('slug') },
+                                    'excerpt': { 'name': 'excerpt', 'value': record.getRawOriginal('excerpt') },
+                                    'text': { 'name': 'text', 'value': record.getRawOriginal('text') },
                                     'attachments': { 'name': 'attachment', 'value': record.attachments.where('locale', null) },
                                 }
                             }
@@ -236,7 +235,7 @@
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ revisions.script()|raw }}
 
-    <!-- Redactor -->
+    <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
@@ -291,10 +290,8 @@
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
 
-        // Redactor options (used by article.js and multidimensionaldata.js).
-        var opts = {
-            headers: true
-        };
+        // WYSIWYG editor options (used by article.js and multidimensionaldata.js).
+        var opts = {};
 
         // Date picker
         $('.datepicker').datepicker();

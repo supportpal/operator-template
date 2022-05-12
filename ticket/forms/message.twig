@@ -1,10 +1,6 @@
-{% if not ticket.channel.enabled %}
+{% if not ChannelFactory.getChannel(ticket.channel.name).canReplyToTicket(ticket, auth_user()) %}
     <div class="sp-alert sp-alert-error {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-alert-bottom{% endif %}">
-        {{ Lang.get('ticket.channel_deactivated') }}
-    </div>
-{% elseif ChannelFactory.getChannel(ticket.channel.name).requiresAccount and (not ticket.account or not ticket.account.active) %}
-    <div class="sp-alert sp-alert-error {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-alert-bottom{% endif %}">
-        {{ Lang.get('ticket.channel_account_removed') }}
+        {{ Lang.get('ticket.reply_canned_be_posted') }}
     </div>
 {% else %}
     <form class="ticket-reply-form message-form validate {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6 sp-hidden{% endif %}">
@@ -12,9 +8,9 @@
 
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 0)} %}
 
-        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
 
-            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
@@ -41,7 +37,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="sp-flex-grow sp-overflow-hidden">
+                            <div class="sp-grow sp-overflow-hidden">
                                 <div class="sp-simplified-recipients sp-p-2 sp-pl-1 sp-truncate sp-cursor-pointer">
                                     <span class="sp-px-2 sp-text-secondary
                                         {% if not ticket.internal and (organisationEmails is not empty and ticket.cc is not empty) %}sp-hidden{% endif %}">
@@ -90,9 +86,9 @@
                 {% endif %}
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
-                    'redactorClasses': 'sp-redactor-rounded-none',
+                    'editorClass': 'tox-rounded-none',
                     'route': draft|default is not empty ? route('ticket.operator.message.showJson', {id: draft.id}) : '',
-                    'redactorText': draft|default is not empty ? null : (signature is not empty ? '<p></p>\n<p></p>' ~ signature : null),
+                    'editorContent': draft|default is not empty ? null : (signature is not empty ? '<p></p>\n<p></p>' ~ signature : null),
                     'textareaId': 'newMessage'
                 } %}
 
@@ -110,15 +106,15 @@
 
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 1)} %}
 
-        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
-            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
-                    'redactorClasses': 'sp-redactor-rounded-b-none sp-redactor-bg-orange',
+                    'editorClass': 'tox-rounded-b-none tox-bg-orange',
                     'route': draft_note|default is not empty ? route('ticket.operator.message.showJson', {id: draft_note.id}) : null,
-                    'redactorText': null,
+                    'editorContent': null,
                     'textareaId': 'newNote',
                     'allow_attachments': true,
                     'draft': draft_note
@@ -138,8 +134,8 @@
 
         {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}
 
-        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-no-wrap">
-            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-flex-grow lg:sp-w-auto lg:sp-mr-4">
+        <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
@@ -207,9 +203,9 @@
                 </div>
 
                 {% include 'operator.' ~ template ~ '.ticket.forms.message_textarea' with {
-                    'redactorClasses': 'sp-redactor-rounded-none sp-redactor-bg-purple',
+                    'editorClass': 'tox-rounded-none tox-bg-purple',
                     'route': draft_forward|default is not empty ? route('ticket.operator.message.showJson', {id: draft_forward.id}) : null,
-                    'redactorText': null,
+                    'editorContent': null,
                     'textareaId': 'newForward',
                     'allow_attachments': cumulative_attachment_limit != 0,
                     'draft': draft_forward

@@ -31,7 +31,7 @@
                 (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {}
             %}
             <div class="sp-mb-3">
-                {{ form_redactor(inputPrefix ~ '[value_text][text]',
+                {{ form_editor(inputPrefix ~ '[value_text][text]',
                     value_text.text|default is not empty ? value_text.text : null, {'class': 'text'})
                 }}
             </div>
@@ -47,7 +47,7 @@
                 (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {}
             %}
             <div class="sp-mb-3">
-                {{ form_redactor(inputPrefix ~ '[value_text][text]',
+                {{ form_editor(inputPrefix ~ '[value_text][text]',
                     value_text.text|default is not empty ? value_text.text : '<p></p>\n<p></p>{{ operator.signature|raw }}', {'class': 'text'})
                 }}
             </div>
@@ -325,7 +325,7 @@
                     <div class="sp-flex-none sp-mr-3">
                         {{ form_select(inputPrefix ~ '[value_text][method]', methods, value.method, {'class': 'er-wh-method'}) }}
                     </div>
-                    <div class="sp-flex-grow">
+                    <div class="sp-grow">
                         {{ form_text(inputPrefix ~ '[value_text][url]', value.url, {'placeholder': 'http://www.example.com/webhook', 'class': 'sp-w-full'}) }}
                     </div>
                 </div>
@@ -383,7 +383,7 @@
                 </div>
             </div>
             <div>
-                {{ form_redactor(inputPrefix ~ '[value_text][message]', value.message is empty ? "{{ forward_messages|raw }}" : value.message, {'class': 'text'}) }}
+                {{ form_editor(inputPrefix ~ '[value_text][message]', value.message is empty ? "{{ forward_messages|raw }}" : value.message, {'class': 'text'}) }}
             </div>
         </div>
 
