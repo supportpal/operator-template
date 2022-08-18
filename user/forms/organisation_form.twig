@@ -8,14 +8,47 @@
     {% endif %}
 {% endblock %}
 
+{% block precontent %}
+
+    {% if record.exists and (auth_user().hasPermission('update.organisation') or auth_user().hasPermission('delete.organisation')) %}
+        <div class="sp-quick-actions">
+            <ul>
+                <li class="sp-action-group sp-inline-block">
+                    {% if auth_user().hasPermission('update.organisation') %}
+                        <button class="sp-action merge-organisation">
+                            <i class="fas fa-code-merge"></i>&nbsp; {{ Lang.get('general.merge') }}
+                        </button><!--
+                    {% else %}
+                        <!--
+                    {% endif %}
+                    {% if auth_user().hasPermission('delete.organisation') %}
+                        --><button class="sp-action delete-organisation" title="{{ Lang.get('general.delete') }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    {% else %}
+                        -->
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.error_action') }}
+    </div>
+{% endblock %}
+
 {% block content %}
 
     {% if record|default is not empty and record.exists %}
         {% include 'operator.' ~ template ~ '.user.forms.organisation_tabs' %}
 
-        {{ form_model(record, { 'route': [ 'user.operator.organisation.update', record.id ], 'method': 'PUT', 'class': 'validate' }) }}
+        {{ form_model(record, {'route': [ 'user.operator.organisation.update', record.id], 'method': 'PUT', 'class': 'validate'}) }}
     {% else %}
-        {{ form_open({ 'route': 'user.operator.organisation.store', 'class': 'validate' }) }}
+        {{ form_open({'route': 'user.operator.organisation.store', 'class': 'validate'}) }}
     {% endif %}
         <div class="sp-form-container sp-form-container-t-0">
 
@@ -193,6 +226,129 @@
                 },
                 maxItems: null,
             });
+
+            {% if record.exists %}
+                // Delete organisation button
+                $('.delete-organisation').on('click', function() {
+                    var showAlert = function () {
+                        return (new deleteAlert({}))
+                            .fireDefault('{{ Lang.choice('user.organisation', 1) }}', '{{ record.name }}', {});
+                    };
+
+                    showAlert().then(function (result) {
+                        if (result.value) {
+                            // Go to user list
+                            $('body').append($('<form class="delete" action="' + laroute.route('user.operator.organisation.destroy_redirect', { id: {{ record.id }} }) + '" method="POST">'
+                                + '<input name="_method" type="hidden" value="DELETE" />'
+                                + '<input name="_token" type="hidden" value="' + $('meta[name=csrf_token]').prop('content') + '">'
+                                + '</form>'));
+
+                            $('form.delete').trigger('submit');
+
+                            // Reshow with loading state.
+                            showAlert();
+                            Swal.showLoading();
+                        }
+                    });
+                });
+
+                // Merge organisation button
+                $('.merge-organisation').on('click', function() {
+                    Swal.fire({
+                        title: '{{ Lang.get('user.merge_organisations') }}',
+                        html: '<div>'
+                            + '<div class="sp-alert sp-alert-warning sp-text-left">'
+                            + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
+                            + Lang.get('messages.cannot_be_undone')
+                            + '</div>'
+                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-left sp-overflow-y-auto" style="max-height: 15rem;">'
+                            + '<li class="sp-py-1 sp-px-3">'
+                                + '{{ record.name }}<br>'
+                                + '<span class="sp-description">{{ Lang.get('user.owner') }}: {{ record.owner is not empty ? record.owner.email.formatted_name : Lang.get('general.none') }}'
+                                + '{{ record.owner.email is not empty ? ('&lt;' ~ record.owner.email ~ '&gt;')|raw : ''}}</span>'
+                            + '</li>'
+                            + '</ul><br />'
+                            + '<label>{{ Lang.get('user.merge_organisation_into') }}</label>'
+                            + '<select id="swal2-merge-select"><option></option></select>'
+                            + '</div>',
+                        confirmButtonText: '{{ Lang.get('general.merge') }}',
+                        showCancelButton: true,
+                        didOpen: function () {
+                            $(Swal.getHtmlContainer().querySelector('#swal2-merge-select')).selectize({
+                                valueField: 'id',
+                                labelField: 'name',
+                                searchField: ['name'],
+                                create: false,
+                                placeholder: '{{ Lang.get('user.search_for_organisation') }}',
+                                render: {
+                                    item: function (item, escape) {
+                                        return '<div class="item">' +
+                                            escape(item.name) +
+                                            '<br /><span class="sp-description">{{ Lang.get('user.owner') }}: ' +
+                                            (item.owner ?
+                                                escape(item.owner.formatted_name + (item.owner.email ? ' <' + item.owner.email + '>' : '') || '') : '{{ Lang.get('general.none') }}') +
+                                            '</span></div>';
+                                    },
+                                    option: function (item, escape) {
+                                        return '<div>' +
+                                            escape(item.name) +
+                                            '<br /><span class="sp-description">{{ Lang.get('user.owner') }}: ' +
+                                            (item.owner ?
+                                                escape(item.owner.formatted_name + (item.owner.email ? ' <' + item.owner.email + '>' : '') || '') : '{{ Lang.get('general.none') }}') +
+                                            '</span></div>';
+                                    }
+                                },
+                                load: function (query, callback) {
+                                    if (! query.length) {
+                                        return callback();
+                                    }
+
+                                    $.ajax({
+                                        url: "{{ route('user.organisation.search') }}",
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        data: {
+                                            brand_id: {{ record.brand_id }},
+                                            q: query,
+                                        },
+                                        error: function () {
+                                            callback();
+                                        },
+                                        success: function (res) {
+                                            // Remove current organisation from results.
+                                            var data = res.data.filter(function(organisation) {
+                                                return organisation.id !== {{ record.id }};
+                                            });
+
+                                            callback(data);
+                                        }
+                                    });
+                                }
+                            });
+                        },
+                        showLoaderOnConfirm: true,
+                        preConfirm: function () {
+                            if (! $('#swal2-merge-select').val()) {
+                                Swal.showValidationMessage(Lang.get('messages.general_error'));
+                            }
+
+                            return $.ajax({
+                                url: '{{ route('user.operator.organisation.merge') }}',
+                                type: 'POST',
+                                data: {
+                                    'mergedId': $('#swal2-merge-select').val(),
+                                    'mergingId': {{ record.id }}
+                                },
+                                dataType: 'json'
+                            }).then(function (response) {
+                                // Redirect to merged organisation.
+                                window.location.href = response.data;
+                            });
+                        },
+                        allowOutsideClick: false,
+                    });
+                });
+            {% endif %}
         });
     </script>
 {% endblock %}

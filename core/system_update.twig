@@ -93,19 +93,17 @@
             </div>
         </div>
 
-        <form>
-            {{ csrf_field() }}
+        {{ csrf_field() }}
 
-            <div class="sp-form-row">
-                {{ form_label('mysqldump_path', 'mysqldump') }}
-                {{ form_text('mysqldump_path', settings.getMysqldumpPath(), {size: '100%'}) }}
-            </div>
+        <div class="sp-form-row">
+            {{ form_label('mysqldump_path', 'mysqldump') }}
+            {{ form_text('mysqldump_path', settings.getMysqldumpPath(), {size: '100%'}) }}
+        </div>
 
-            <div class="sp-form-row">
-                {{ form_label('tar_path', 'tar') }}
-                {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
-            </div>
-        </form>
+        <div class="sp-form-row">
+            {{ form_label('tar_path', 'tar') }}
+            {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
+        </div>
     </div>
 
 {% endblock %}

@@ -13,6 +13,7 @@
     laroute.set_root_url("{{ url('/') }}");
     laroute.set_routes({{ routeCollection|raw }});
     laroute.set_prefix('{{ Config.get('laroute.prefix', '') }}');
+    laroute.set_asset_params({v: '{{ Config.get('release.version') }}'});
 </script>
 
 <!-- Vendor -->

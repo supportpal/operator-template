@@ -77,10 +77,10 @@
             </div>
 
             <div class="sp-form-row">
-                {{ form_label('opsettings[template_mode]', Lang.get('core.template_mode')) }}
+                {{ form_label('template_mode', Lang.get('core.template_mode')) }}
                 <div class="sp-input-container">
                     {{ form_select(
-                        'opsettings[template_mode]',
+                        'template_mode',
                         {0: '-- ' ~ Lang.get('general.system_default') ~ ' --', 1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}
                     ) }}
                 </div>

@@ -130,8 +130,4 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
-
-    {% if Config.get('settings.captcha_type') != 0 and Config.get('settings.registration_captcha') %}
-        {{ Captcha.getJs() }}
-    {% endif %}
 {% endblock %}

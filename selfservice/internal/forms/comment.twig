@@ -24,15 +24,6 @@
         </div>
     </div>
 
-    {# Captcha is not disabled and 'Show Captcha' is set to 'Always' #}
-    {% if Config.get('settings.captcha_type') != 0 and Config.get('settings.comment_captcha') == 2 %}
-        {% if Captcha.isVisible() %}
-            <div class="sp-font-bold sp-mb-3">{{ Lang.get('core.captcha') }}</div>
-        {% endif %}
-
-        {{ Captcha.getHtml() }}
-    {% endif %}
-
     <div class="sp-form-button">
         {{ form_submit(Lang.choice('general.post', 1)) }}
     </div>

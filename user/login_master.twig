@@ -38,6 +38,19 @@
 
             {{ View.fireHook('operator.wrapper_end') }}
 		</div>
+
+        {% if Config.get('settings.language_operator_toggle') == 1 %}
+            <div class="sp-mb-8 sp-text-center">
+                <i class="fas fa-language" title="{{ Lang.choice('general.language', 1) }}"></i> &nbsp;
+                <select name="language" class="sp-bg-tertiary sp-border-tertiary">
+                    {% for code, language in languages %}
+                        <option value="{{ code }}" {% if code == App.getLocale() %}selected="selected"{% endif %}>
+                            {{ language }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
 	</div>
 
     {{ View.fireHook('operator.footer') }}

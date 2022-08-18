@@ -57,6 +57,18 @@
             </div>
         {% endif %}
 
+        {% if showCaptcha %}
+            {% if Captcha.isVisible() %}
+                <div class="sp-form-row sp-form-full sp-mb-4">
+                    <div class="sp-input-container">
+                        {{ Captcha.getHtml() }}
+                    </div>
+                </div>
+            {% else %}
+                {{ Captcha.getHtml() }}
+            {% endif %}
+        {% endif %}
+
         <div class="sp-form-row sp-form-full sp-m-0">
             {{ form_submit(Lang.get('user.login'), {'class': 'sp-w-full'}) }}
         </div>
@@ -111,6 +123,10 @@
 
     {% if resetValidator|default is not empty %}
         {{ resetValidator|raw }}
+    {% endif %}
+
+    {% if showCaptcha %}
+        {{ Captcha.getJs() }}
     {% endif %}
 
     <script type="text/javascript">

@@ -10,18 +10,27 @@
 
 {% block content %}
 
-    {% if not authenticated %}
-        <div class="sp-login-button">
-            <a class="sp-button" href="{{ route('core.operator.marketplace.login') }}">
-                {{ Lang.get('user.login') }}
-            </a>
+    <div class="sp-flex sp-items-center">
+        <div class="sp-flex-grow">
+            {% if not authenticated %}
+                <div class="sp-login-button">
+                    <a class="sp-button" href="{{ route('core.operator.marketplace.login') }}">
+                        {{ Lang.get('user.login') }}
+                    </a>
+                </div>
+            {% else %}
+                <div class="sp-description">
+                    {{ Lang.get('user.logged_in_as', {'name': account.fullname}) }}
+                    - <a href="{{ route('core.operator.marketplace.logout') }}">{{ Lang.get('user.logout') }}</a>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div class="sp-description">
-            {{ Lang.get('user.logged_in_as', {'name': account.fullname}) }}
-            - <a href="{{ route('core.operator.marketplace.logout') }}">{{ Lang.get('user.logout') }}</a>
+        <div class="sp-flex-initial">
+            <button class="sp-configure" type="button">
+                <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
+            </button>
         </div>
-    {% endif %}
+    </div>
 
     {% if addons.isNotEmpty() %}
         {% for category, categoryAddons in addons %}
@@ -80,6 +89,22 @@
     {% else %}
         <p class="sp-description sp-mb-0">{{ Lang.get('core.no_addons_found') }}</p>
     {% endif %}
+
+    <div class="sp-configure-modal-content sp-hidden">
+        <div class="sp-text-left">
+            <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
+            <div class="sp-description sp-mt-3 sp-mb-6">
+                {{ Lang.get('core.binary_paths_desc') }}
+            </div>
+        </div>
+
+        {{ csrf_field() }}
+
+        <div class="sp-form-row">
+            {{ form_label('tar_path', 'tar') }}
+            {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
+        </div>
+    </div>
 
 {% endblock %}
 
@@ -188,6 +213,28 @@
                     .fail(function (jqXHR, textStatus, errorThrown) {
                         Swal.fire('{{ Lang.get('messages.error') }}', jqXHR.responseJSON.message, 'error');
                     });
+            });
+
+            $('.sp-configure').on('click', function () {
+                Swal.fire({
+                    title: '{{ Lang.choice('general.setting', 2) }}',
+                    html: $('.sp-configure-modal-content').html(),
+                    width: '48rem',
+                    confirmButtonText: Lang.get('general.save'),
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        var data = $(Swal.getHtmlContainer()).find('input').serializeArray();
+                        $.post('{{ route('core.operator.marketplace.settings') }}', data);
+
+                        // Refresh the page so the modal values are updated.
+                        window.location.reload();
+                    },
+                    allowOutsideClick: function () {
+                        return ! Swal.isLoading();
+                    }
+                });
             });
         });
     </script>

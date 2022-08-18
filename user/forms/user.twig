@@ -12,6 +12,36 @@
 {% endblock %}
 
 {% block precontent %}
+
+    {% if record.exists and not operator and (auth_user().hasPermission('create.ticket') or auth_user().hasPermission('update.user') or auth_user().hasPermission('delete.user')) %}
+        <div class="sp-quick-actions">
+            <ul>
+                <li class="sp-action-group sp-inline-block">
+                    {% if (auth_user().hasPermission('create.ticket')) %}
+                        <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
+                           class="sp-action sp-button">
+                            <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('ticket.open_new') }}
+                        </a><!--
+                    {% else %}
+                        <!--
+                    {% endif %}
+                    {% if auth_user().hasPermission('update.user') %}
+                        --><button class="sp-action merge-user" title="{{ Lang.get('user.merge_users') }}">
+                            <i class="fas fa-code-merge"></i>
+                        </button><!--
+                    {% endif %}
+                    {% if auth_user().hasPermission('delete.user') %}
+                        --><button class="sp-action delete-user" title="{{ Lang.get('general.delete') }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    {% else %}
+                        -->
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+
     <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
@@ -25,9 +55,9 @@
     {% if record|default is not empty and record.exists %}
         {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
 
-        {{ form_model(record, { 'route': [ 'user.operator.user.update', record.id ], 'method': 'PUT', 'files': true, 'class': 'edit-user validate' }) }}
+        {{ form_model(record, {'route': ['user.operator.user.update', record.id], 'method': 'PUT', 'files': true, 'class': 'edit-user validate'}) }}
     {% else %}
-        {{ form_open({ 'route': 'user.operator.user.store', 'files': true, 'class': 'validate' }) }}
+        {{ form_open({'route': 'user.operator.user.store', 'files': true, 'class': 'validate'}) }}
     {% endif %}
 
         <h2>{{ Lang.get('user.profile') }}</h2>
@@ -111,9 +141,6 @@
 
         <div class="sp-form-button">
             {{ form_submit(Lang.choice('general.submit', 1)) }}
-            {% if record.exists and not operator and auth_user().hasPermission('delete.user') %}
-                <button class="delete-user" type="button">{{ Lang.get('general.delete', {'item': Lang.choice('user.user', 1)}) }}</button>
-            {% endif %}
         </div>
 
     {{ form_close() }}
@@ -365,6 +392,100 @@
                             showAlert();
                             Swal.showLoading();
                         }
+                    });
+                });
+
+                // Merge user button
+                $('.merge-user').on('click', function() {
+                    Swal.fire({
+                        title: '{{ Lang.get('user.merge_users') }}',
+                        html: '<div>'
+                            + '<div class="sp-alert sp-alert-warning sp-text-left">'
+                                + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
+                                + Lang.get('messages.cannot_be_undone')
+                            + '</div>'
+                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-left sp-overflow-y-auto" style="max-height: 15rem;">'
+                                + '<li class="sp-py-1 sp-px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp-max-w-2xs">&nbsp; {{ record.formatted_name }}'
+                                + '{{ record.email is not empty ? ('<br><span class="sp-description">' ~ record.email ~ '</span>')|raw : ''}}'
+                                + '</li>'
+                            + '</ul><br />'
+                            + '<label>{{ Lang.get('user.merge_user_into') }}</label>'
+                            + '<select id="swal2-merge-select"><option></option></select>'
+                            + '</div>',
+                        confirmButtonText: '{{ Lang.get('general.merge') }}',
+                        showCancelButton: true,
+                        didOpen: function () {
+                            $(Swal.getHtmlContainer().querySelector('#swal2-merge-select')).selectize({
+                                valueField: 'id',
+                                labelField: 'formatted_name',
+                                searchField: ['formatted_name', 'email'],
+                                create: false,
+                                placeholder: Lang.get('user.search_for_user'),
+                                render: {
+                                    item: function (item, escape) {
+                                        return '<div class="item">' +
+                                            '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
+                                            escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
+                                            (item.email ? ' <span class="sp-description">' + escape('<' + item.email + '>' || '') + '</span>' : '') +
+                                            '</div>';
+                                    },
+                                    option: function (item, escape) {
+                                        return '<div>' +
+                                            '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
+                                            escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
+                                            (item.email ? '<br /><span class="sp-description">' + escape(item.email || '') + '</span>' : '') +
+                                            '</div>';
+                                    }
+                                },
+                                load: function (query, callback) {
+                                    if (! query.length) {
+                                        return callback();
+                                    }
+
+                                    $.ajax({
+                                        url: laroute.route('user.operator.search'),
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        data: {
+                                            brand_id: {{ record.brand_id }},
+                                            q: query,
+                                            operators: 0
+                                        },
+                                        error: function () {
+                                            callback();
+                                        },
+                                        success: function (res) {
+                                            // Remove current user from results.
+                                            var data = res.data.filter(function(user) {
+                                                return user.id !== {{ record.id }};
+                                            });
+
+                                            callback(data);
+                                        }
+                                    });
+                                }
+                            });
+                        },
+                        showLoaderOnConfirm: true,
+                        preConfirm: function () {
+                            if (! $('#swal2-merge-select').val()) {
+                                Swal.showValidationMessage(Lang.get('messages.general_error'));
+                            }
+
+                            return $.ajax({
+                                url: '{{ route('user.operator.user.merge') }}',
+                                type: 'POST',
+                                data: {
+                                    'mergedId': $('#swal2-merge-select').val(),
+                                    'mergingId': {{ record.id }}
+                                },
+                                dataType: 'json'
+                            }).then(function (response) {
+                                // Redirect to merged user.
+                                window.location.href = response.data;
+                            });
+                        },
+                        allowOutsideClick: false,
                     });
                 });
 
