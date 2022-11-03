@@ -13,7 +13,9 @@
     {% if record|default is not empty %}
         {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
 
-        {{ form_open({'route': ['user.operator.user.sendemail', record.id], 'class': 'validate'}) }}
+        <div id="tabSendEmail" class="sp-tab-content">
+
+            {{ form_open({'route': ['user.operator.user.sendemail', record.id], 'class': 'validate'}) }}
     {% else %}
         {{ form_open({'route': 'user.operator.massemail.queue', 'class': 'validate'}) }}
     {% endif %}
@@ -98,7 +100,7 @@
                 {{ form_label('contents', Lang.choice('general.message', 1)) }}
                 <div class="sp-input-container">
                     <div>
-                        {{ form_editor_mf('contents', (record|default is not empty ? '<p></p>\n<p></p>' ~ signature : '')) }}
+                        {{ form_editor_mf('contents', (record|default is not empty ? replyTemplate : '')) }}
                         {% if cumulative_attachment_limit != 0 %}
                         <ul class="sp-attached-files">
                             <li class="sp-flex sp-hidden">
@@ -164,6 +166,10 @@
         </div>
 
     {{ form_close() }}
+
+    {% if record|default is not empty %}
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -305,7 +311,7 @@
             // Clear email template
             $('.clear-form').on('click', function() {
                 $('input[name=subject]').val('');
-                tinymce.activeEditor.setContent("{{ record|default is not empty ? ('<p></p>\n<p></p>' ~ Purifier.clean(signature))|e('js') : '' }}");
+                tinymce.activeEditor.setContent("{{ record|default is not empty ? (Purifier.clean(replyTemplate))|e('js') : '' }}");
                 $('select[name="load_template"]').val(0);
             });
 

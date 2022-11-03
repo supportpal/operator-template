@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="tox-rounded-t-none">
-                        {{ form_editor('text', text is not empty ? text : signature is not empty ? '<p></p>\n<p></p>' ~ signature : null) }}
+                        {{ form_editor('text', text is not empty ? text : replyTemplate is not empty ? replyTemplate : null) }}
                     </div>
 
                     {% include 'operator.' ~ template ~ '.core.forms.attachments' with {
@@ -239,7 +239,9 @@
         var ticket = new App.ticket({
             ticketId: null,
             userId: "{{ user.id }}",
-            brandId: "{{ brand.id }}"
+            authUserId: "{{ auth_user().id }}",
+            brandId: "{{ brand.id }}",
+            departmentId: "{{ department.id }}"
         });
     </script>
     <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
@@ -259,12 +261,13 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('textarea[name="text"]').editor({
-                plugins: $.fn.editor.defaults.plugins.concat(['cannedresponses', 'selfservice']),
+                plugins: $.fn.editor.defaults.plugins.concat(['mentions', 'cannedresponses', 'selfservice', 'autosavecursor']),
                 toolbar: $.fn.editor.defaults.toolbar + ' | cannedresponses selfservice',
                 // Plugin settings.
                 ticketId: ticket.parameters().ticketId,
                 userId: ticket.parameters().userId,
-                brandId: ticket.parameters().brandId
+                brandId: ticket.parameters().brandId,
+                departmentId: ticket.parameters().departmentId
             });
         });
     </script>

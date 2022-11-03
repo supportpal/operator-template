@@ -44,48 +44,44 @@
                 </li>
             {% else %}
                 {% if can_update_ticket(auth_user(), ticket) %}
-                    {% if ChannelFactory.getChannel(ticket.channel.name).canReplyToTicket(ticket, auth_user()) %}
-                        <li class="sp-action-group sp-reply-type sp-inline-block">
-                            <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
-                                <span class="fa-stack sp-text-2xs">
-                                    <i class="fas fa-reply fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
-                                    <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
+                    <li class="sp-action-group sp-reply-type sp-inline-block">
+                        <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
+                            <span class="fa-stack sp-text-2xs">
+                                <i class="fas fa-reply fa-stack-2x"></i>
+                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
-                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
-                            </button><!--
-                            --><button class="sp-action" data-type="1">
-                                <span class="fa-stack sp-text-2xs">
-                                    <i class="fas fa-sticky-note fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
-                                    <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
+                                <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
-                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
-                            </button><!--
-                            --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
-                                <span class="fa-stack sp-text-2xs">
-                                    <i class="fas fa-share fa-stack-2x"></i>
-                                    <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
-                                    <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
-                                    </span>
+                            </span>
+                            <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
+                        </button><!--
+                        --><button class="sp-action" data-type="1">
+                            <span class="fa-stack sp-text-2xs">
+                                <i class="fas fa-sticky-note fa-stack-2x"></i>
+                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
-                                <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('ticket.forward') }}</span>
-                            </button>
-                        </li><!--
-                    {% else %}
-                        <!--
-                    {% endif %}
+                                <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                </span>
+                            </span>
+                            <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
+                        </button><!--
+                        --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
+                            <span class="fa-stack sp-text-2xs">
+                                <i class="fas fa-share fa-stack-2x"></i>
+                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                </span>
+                                <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
+                                    <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                                </span>
+                            </span>
+                            <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('ticket.forward') }}</span>
+                        </button>
+                    </li><!--
 
                     {% if not macros.isEmpty() %}
                         --><li class="sp-action-group sp-inline-block xs:sp-relative">
@@ -186,7 +182,7 @@
                                 <li class="collapse-messages sp-hidden">
                                     <a>{{ Lang.get('general.collapse_all') }}</a>
                                 </li>
-                                <li>
+                                <li class="sp-print-ticket">
                                     <a href="{{ route('ticket.operator.ticket.print', ticket.id) }}" target="_blank">
                                         {{ Lang.get('general.print') }}
                                     </a>
@@ -441,13 +437,15 @@
         var ticket = new App.ticket({
             ticketId: "{{ ticket.id }}",
             userId: "{{ ticket.user_id }}",
+            authUserId: "{{ auth_user().id }}",
             brandId: "{{ ticket.brand_id }}",
+            departmentId: "{{ ticket.department_id }}",
             replyOrder: '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}',
             notesPosition: {{ Config.get('settings.ticket_notes_position') }},
             ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams)) }}",
             selfservice: {% if isModuleEnabled('Selfservice') %}true{% else %}false{% endif %},
-            {% if signature is not empty %}
-            signature: '<p></p>\n<p></p>' + "{{ Purifier.clean(signature)|e('js') }}",
+            {% if replyTemplate is not empty %}
+            replyTemplate: "{{ Purifier.clean(replyTemplate)|e('js') }}",
             {% endif %}
         });
     </script>

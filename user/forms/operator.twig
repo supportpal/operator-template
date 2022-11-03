@@ -44,15 +44,15 @@
             </div>
 
             <div class="sp-form-row sp-form-full">
-                {{ form_label('ticket_signature', Lang.get('ticket.ticket_signature')) }}
+                {{ form_label('reply_template', Lang.choice('user.reply_template', 1)) }}
                 <div class="sp-input-container">
                     <div style="margin-bottom: 10px;">
-                        {{ form_editor_mf('ticket_signature', signature, [], [], false) }}
+                        {{ form_editor_mf('reply_template', replyTemplate, [], [], false) }}
                     </div>
                     <div class="sp-description">
-                        {{ Lang.get('user.ticket_signature_desc') }}
-                        {% if auth_user().hasPermission('view.operatorsignature') %}
-                            {{ Lang.get('user.operator_signature_desc', {'route': route('user.operator.operatorsignature')})|raw }}
+                        {{ Lang.get('user.ticket_reply_template_desc') }}
+                        {% if auth_user().hasPermission('view.operatorreplytemplate') %}
+                            {{ Lang.get('user.operator_reply_template_desc', {'route': route('user.operator.operatorreplytemplate')})|raw }}
                         {% endif %}
                     </div>
                 </div>
@@ -91,7 +91,7 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <!-- Signatures -->
+    <!-- Reply templates -->
     <script type="text/javascript">
         var opts = {
             mergeFields: {
@@ -103,7 +103,7 @@
         };
 
         // Do not initialise editor on the dummy DOM element.
-        $('textarea[name="ticket_signature"]').editor(opts);
+        $('textarea[name="reply_template"]').editor(opts);
     </script>
 
     <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />

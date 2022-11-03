@@ -104,6 +104,11 @@
             {{ form_label('tar_path', 'tar') }}
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
+
+        <div class="sp-form-row">
+            {{ form_label('gzip_path', 'gzip') }}
+            {{ form_text('gzip_path', settings.getGzipPath(), {size: '100%'}) }}
+        </div>
     </div>
 
 {% endblock %}
@@ -196,10 +201,11 @@
                     showLoaderOnConfirm: true,
                     preConfirm: function () {
                         var data = $(Swal.getHtmlContainer()).find('input').serializeArray();
-                        $.post('{{ route('core.operator.systemupdate.settings') }}', data);
-
-                        // Refresh the page so the modal values are updated.
-                        window.location.reload();
+                        $.post('{{ route('core.operator.systemupdate.settings') }}', data)
+                            .always(function (response) {
+                                // Refresh the page so the modal values are updated.
+                                window.location.reload();
+                            });
                     },
                     allowOutsideClick: function () {
                         return ! Swal.isLoading();

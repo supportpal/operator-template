@@ -11,11 +11,11 @@
     {% for brand in brands %}
         <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
             {# Add an empty item, we use this for DOM cloning when adding new records #}
-            {% include 'operator.' ~ template ~ '.user.forms.signature_content' with {'hide': true, 'brand': brand} %}
+            {% include 'operator.' ~ template ~ '.user.forms.reply_template_content' with {'hide': true, 'brand': brand} %}
 
             <div class="section-items">
-                {% for department, signature in brand.signatures %}
-                    {% include 'operator.' ~ template ~ '.user.forms.signature_content' with {'brand': brand} %}
+                {% for department, replyTemplate in brand.reply_templates %}
+                    {% include 'operator.' ~ template ~ '.user.forms.reply_template_content' with {'brand': brand} %}
                 {% endfor %}
             </div>
 

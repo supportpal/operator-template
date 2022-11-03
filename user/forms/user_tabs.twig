@@ -7,37 +7,41 @@
 {% set route = Route.currentRouteName() %}
 
 <ul class="sp-tabs">
-    <li {% if route == 'user.operator.user.edit' or route == 'user.operator.user.show' %}class="sp-active"{% endif %}>
-        <a href="{{ route('user.operator.user.edit', [ record.id ]) }}">
+    <li id="Profile" {% if route == 'user.operator.user.edit' or route == 'user.operator.user.show' %}class="sp-active"{% endif %}>
+        <a {% if route != 'user.operator.user.edit' and route != 'user.operator.user.show' %}href="{{ route('user.operator.user.edit', record.id) }}"{% endif %}>
             {{ Lang.get('user.profile') }}
         </a>
     </li>
     {% if auth_user().hasPermission('view.ticket') and isModuleEnabled('Ticket') %}
-        <li {% if route == 'user.operator.user.ticket' %}class="sp-active"{% endif %}>
-            <a href="{{ route('user.operator.user.ticket', [ record.id ]) }}">
+        <li id="Tickets" {% if route == 'user.operator.user.ticket' %}class="sp-active"{% endif %}>
+            <a {% if route != 'user.operator.user.ticket' %}href="{{ route('user.operator.user.ticket', record.id) }}"{% endif %}>
                 {{ Lang.choice('ticket.ticket', 2) }}
             </a>
         </li>
     {% endif %}
     {% if record.email is not empty %}
-        <li {% if route == 'user.operator.user.sendemail' %}class="sp-active"{% endif %}>
-            <a href="{{ route('user.operator.user.sendemail', [ record.id ]) }}">
+        <li id="SendEmail" {% if route == 'user.operator.user.sendemail' %}class="sp-active"{% endif %}>
+            <a {% if route != 'user.operator.user.sendemail' %}href="{{ route('user.operator.user.sendemail', record.id) }}"{% endif %}>
                 {{ Lang.get('user.send_email') }}
             </a>
         </li>
     {% endif %}
     {% if auth_user().hasPermission('view.activitylog') %}
-        <li {% if route == 'user.operator.user.activitylog' %}class="sp-active"{% endif %}>
-            <a href="{{ route('user.operator.user.activitylog', [ record.id ]) }}">
+        <li id="ActivityLog" {% if route == 'user.operator.user.activitylog' %}class="sp-active"{% endif %}>
+            <a {% if route != 'user.operator.user.activitylog' %}href="{{ route('user.operator.user.activitylog', record.id) }}"{% endif %}>
                 {{ Lang.get('user.activity_log') }}
             </a>
         </li>
     {% endif %}
     {% if record.email is not empty and auth_user().hasPermission('view.emaillog') %}
-        <li {% if route == 'user.operator.user.emaillog' %}class="sp-active"{% endif %}>
-            <a href="{{ route('user.operator.user.emaillog', [ record.id ]) }}">
+        <li id="EmailLog" {% if route == 'user.operator.user.emaillog' %}class="sp-active"{% endif %}>
+            <a {% if route != 'user.operator.user.emaillog' %}href="{{ route('user.operator.user.emaillog', record.id) }}"{% endif %}>
                 {{ Lang.get('core.email_log') }}
             </a>
         </li>
     {% endif %}
+
+    {{ View.fireHook('operator.user_tab') }}
 </ul>
+
+{{ View.fireHook('operator.user_tab_content') }}

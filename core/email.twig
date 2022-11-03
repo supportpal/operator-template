@@ -136,10 +136,12 @@
                                     </span>
                                 </div>
 
-                                <div class="sp-delete-attachment sp-bg-red-600"
-                                     data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}">
-                                    <i class="fas fa-times sp-text-white"></i>
-                                </div>
+                                {% if canDeleteAttachments %}
+                                    <div class="sp-delete-attachment sp-bg-red-600"
+                                         data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}">
+                                        <i class="fas fa-times sp-text-white"></i>
+                                    </div>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>

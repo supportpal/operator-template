@@ -55,7 +55,8 @@
     {% if record|default is not empty and record.exists %}
         {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
 
-        {{ form_model(record, {'route': ['user.operator.user.update', record.id], 'method': 'PUT', 'files': true, 'class': 'edit-user validate'}) }}
+        <div id="tabProfile" class="sp-tab-content">
+            {{ form_model(record, {'route': ['user.operator.user.update', record.id], 'method': 'PUT', 'files': true, 'class': 'edit-user validate'}) }}
     {% else %}
         {{ form_open({'route': 'user.operator.user.store', 'files': true, 'class': 'validate'}) }}
     {% endif %}
@@ -144,6 +145,10 @@
         </div>
 
     {{ form_close() }}
+
+    {% if record|default is not empty and record.exists %}
+        </div>
+    {% endif %}
 
 {% endblock %}
 

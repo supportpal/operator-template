@@ -14,7 +14,7 @@
     {{ View.fireHook('operator.body_start') }}
 
 	<div class="sp-login-container sp-flex sp-flex-col sp-justify-center sp-min-h-full">
-        <div class="sp-container sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
+        <div class="sp-container sp-mt-8 sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
             {{ View.fireHook('operator.wrapper_start') }}
 
             <div class="sp-p-6 sp-bg-primary-800 sp-text-center xs:sp-rounded-t">
@@ -40,7 +40,7 @@
 		</div>
 
         {% if Config.get('settings.language_operator_toggle') == 1 %}
-            <div class="sp-mb-8 sp-text-center">
+            <div class="sp-my-8 sp-text-center xs:sp-mt-0">
                 <i class="fas fa-language" title="{{ Lang.choice('general.language', 1) }}"></i> &nbsp;
                 <select name="language" class="sp-bg-tertiary sp-border-tertiary">
                     {% for code, language in languages %}

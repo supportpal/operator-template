@@ -310,6 +310,8 @@
             {% include 'operator.' ~ template ~ '.user.forms.organisation_tabs' %}
         {% elseif record.formatted_name is not null %}
             {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+
+            <div id="tabTickets" class="sp-tab-content">
         {% endif %}
     {% elseif customSearch %}
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
@@ -318,6 +320,10 @@
     <div class="sp-grid-filtering sp-mb-8 sp-hidden"></div>
 
 	{{ table.render()|raw }}
+
+    {% if record|default is not empty and record.formatted_name is not null %}
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -851,6 +857,8 @@
 
                         // Reload table
                         refreshGrid();
+                    } else {
+                        $('.sp-grid-actions :input').prop('disabled', false);
                     }
                 });
         }

@@ -31,6 +31,8 @@
 
 	{% if record|default is not empty %}
         {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+
+        <div id="tabActivityLog" class="sp-tab-content">
     {% endif %}
 
     <div class="sp-filter-results sp-hidden">
@@ -64,6 +66,10 @@
     </div>
 
 	{{ table.render()|raw }}
+
+    {% if record|default is not empty %}
+        </div>
+    {% endif %}
 
 {% endblock %}
 

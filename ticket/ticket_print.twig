@@ -155,9 +155,11 @@
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
     <script type="text/javascript">
-        var ticket = new App.ticket;
+        var ticket = new App.ticket({authUserId: "{{ auth_user().id }}"});
 
         $(document).ready(function() {
+            ticket.highlightUserMentions($('.sp-message'));
+
             // Enable hide/show password toggle
             $('input[type=password]').hideShowPassword();
 

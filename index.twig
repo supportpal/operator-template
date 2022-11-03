@@ -74,7 +74,7 @@
                                 {% endif %}
                                 {% if auth_user().hasPermission('create.ticket') %}
                                     <li aria-haspopup="false">
-                                        <a href="{{ route('ticket.operator.ticket.createStep1') }}">
+                                        <a href="{{ route('ticket.operator.ticket.createStep1') }}" id="open-new-ticket">
                                             {{ Lang.get('ticket.open_new') }}
                                         </a>
                                     </li>
@@ -401,8 +401,8 @@
                     </li>
                     {% if isModuleEnabled('Ticket') %}
                         <li class="sp-block lg:sp-hidden" aria-haspopup="false">
-                            <a class="sp-nav-item" href="{{ route('user.operator.signature') }}">
-                                {{ Lang.choice('user.signature', 2) }}
+                            <a class="sp-nav-item" href="{{ route('user.operator.replytemplate') }}">
+                                {{ Lang.choice('user.reply_template', 2) }}
                             </a>
                         </li>
                     {% endif %}
@@ -511,11 +511,14 @@
                                         <a href="{{ route('user.operator.personalsetting') }}">{{ Lang.get('user.personal_settings') }}</a>
                                     </li>
                                     <li aria-haspopup="false">
+                                        <a href="#" id="keyboard-shortcuts">{{ Lang.get('core.keyboard_shortcuts') }}</a>
+                                    </li>
+                                    <li aria-haspopup="false">
                                         <a href="{{ route('user.operator.security') }}">{{ Lang.get('user.security_settings') }}</a>
                                     </li>
                                     {% if isModuleEnabled('Ticket') %}
                                         <li aria-haspopup="false">
-                                            <a href="{{ route('user.operator.signature') }}">{{ Lang.choice('user.signature', 2) }}</a>
+                                            <a href="{{ route('user.operator.replytemplate') }}">{{ Lang.choice('user.reply_template', 2) }}</a>
                                         </li>
                                     {% endif %}
                                     <li aria-haspopup="false">
@@ -674,6 +677,7 @@
 <!-- Global Javascript Functions -->
 <script src="{{ asset_rev('resources/assets/operator/js/mobile.js') }}" type="text/javascript"></script>
 <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/shortcuts.js') }}" type="text/javascript"></script>
 <script src="{{ asset_rev('resources/assets/operator/js/search.js') }}"></script>
 
 {% block scripts_footer %}{% endblock %}

@@ -48,7 +48,7 @@
             %}
             <div class="sp-mb-3">
                 {{ form_editor(inputPrefix ~ '[value_text][text]',
-                    value_text.text|default is not empty ? value_text.text : '<p></p>\n<p></p>{{ operator.signature|raw }}', {'class': 'text'})
+                    value_text.text|default is not empty ? value_text.text : '{{ operator.reply_template|raw }}', {'class': 'text'})
                 }}
             </div>
             <label class="email-user">

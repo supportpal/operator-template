@@ -226,10 +226,11 @@
                     showLoaderOnConfirm: true,
                     preConfirm: function () {
                         var data = $(Swal.getHtmlContainer()).find('input').serializeArray();
-                        $.post('{{ route('core.operator.marketplace.settings') }}', data);
-
-                        // Refresh the page so the modal values are updated.
-                        window.location.reload();
+                        $.post('{{ route('core.operator.marketplace.settings') }}', data)
+                            .always(function (response) {
+                                // Refresh the page so the modal values are updated.
+                                window.location.reload();
+                            });
                     },
                     allowOutsideClick: function () {
                         return ! Swal.isLoading();
