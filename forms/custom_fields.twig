@@ -59,6 +59,8 @@
                     {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;', 'disabled': customfield.value is not empty and customfield.locked ? 'disabled' : null}) }}
 
             {% elseif customfield.type == 4 %}
+                {# Filler value for when select[multiple] is submitted with no values, do not delete! #}
+                <input type="hidden" name="customfield[{{ customfield.id }}][]" value="0" />
                 {{ form_select('customfield[' ~ customfield.id ~ '][]', customfield.options,
                     customfield.value,
                     {'multiple': 'multiple', 'disabled': (customfield.value is not empty and customfield.locked ? 'disabled' : null)}) }}
