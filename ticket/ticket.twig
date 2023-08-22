@@ -48,7 +48,7 @@
                         <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
                             <span class="fa-stack sp-text-2xs">
                                 <i class="fas fa-reply fa-stack-2x"></i>
-                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 0).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
                                 <span class="sp-draft-icon sp-text-red-600 {% if draft is empty %}sp-hidden{% endif %}">
@@ -60,7 +60,7 @@
                         --><button class="sp-action" data-type="1">
                             <span class="fa-stack sp-text-2xs">
                                 <i class="fas fa-sticky-note fa-stack-2x"></i>
-                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
                                 <span class="sp-draft-icon sp-text-red-600 {% if draft_note is empty %}sp-hidden{% endif %}">
@@ -72,7 +72,7 @@
                         --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
                             <span class="fa-stack sp-text-2xs">
                                 <i class="fas fa-share fa-stack-2x"></i>
-                                <span class="sp-other-draft-icon sp-text-yellow-600 sp-hidden">
+                                <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
                                 </span>
                                 <span class="sp-draft-icon sp-text-red-600 {% if draft_forward is empty %}sp-hidden{% endif %}">
@@ -196,7 +196,10 @@
         </ul>
     </div>
 
-    {% include 'operator.' ~ template ~ '.ticket.ticket_also_viewing' %}
+    <div class="sp-alert sp-alert-info sp-alert-sticky ticket-viewing sp-hidden">
+        {{ Lang.get('ticket.also_viewing') }}
+        <ul class="sp-viewing-operators"></ul>
+    </div>
 
     <div class="sp-ticket-update sp-alert sp-alert-success sp-alert-sticky sp-hidden">
         {{ Lang.get('messages.success_updated', {'item': mb_strtolower(Lang.choice('ticket.ticket', 1), 'UTF-8')}) }}
@@ -235,7 +238,7 @@
     </div>
 
     <div class="sp-title-description">
-        <span class="sp-mr-2 {% if not ticket.locked %}sp-hidden{% endif %}">
+        <span class="sp-locked-icon sp-mr-2 {% if not ticket.locked %}sp-hidden{% endif %}">
             <i class="fas fa-lock" title="{{ Lang.get('general.locked') }}"></i>
         </span>
 
@@ -292,11 +295,9 @@
     </div>
 
     {% if feedback|default is not empty and feedback.rating|default is not empty %}
-        <div class="sp-alert {% if feedback.rating == '1' %}sp-alert-success{% elseif feedback.rating == '2' %}sp-alert-warning{% else %}sp-alert-error{% endif %}">
-            <i class="fas {% if feedback.rating == '1' %}fa-smile{% elseif feedback.rating == '2' %}fa-meh{% else %}fa-frown{% endif %}"></i>&nbsp;
-            {{ Lang.get('ticket.feedback_rating_desc', {'rating': mb_strtolower(
-                feedback.rating == '1' ? Lang.get('general.good') : feedback.rating == '2' ? Lang.get('general.neutral') : Lang.get('general.bad'), 'UTF-8')
-            })|raw }}
+        <div class="sp-alert {% if feedback.rating.value == '1' %}sp-alert-success{% elseif feedback.rating.value == '2' %}sp-alert-warning{% else %}sp-alert-error{% endif %}">
+            <i class="fas {{ feedback.rating.faIcon() }}"></i>&nbsp;
+            {{ Lang.get('ticket.feedback_rating_desc', {'rating': mb_strtolower(feedback.rating.toString(), 'UTF-8')})|raw }}
             {% if feedback.fields_answered %}
                 <a onclick="window.open('{{ route('ticket.operator.feedback.show', { id: feedback.id }) }}','width=800,height=600,scrollbars=yes');">
                     {{ Lang.get('ticket.view_feedback') }}
@@ -423,7 +424,7 @@
     <script src="{{ asset_rev('resources/assets/operator/js/ticket_view.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         var operatorId = "{{ auth_user().id }}",
             closedStatusId = {{ Config.get('settings.default_resolved_status') }},
             organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
@@ -436,6 +437,7 @@
 
         var ticket = new App.ticket({
             ticketId: "{{ ticket.id }}",
+            ticketNumber: "{{ ticket.number }}",
             userId: "{{ ticket.user_id }}",
             authUserId: "{{ auth_user().id }}",
             brandId: "{{ ticket.brand_id }}",

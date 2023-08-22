@@ -1,95 +1,158 @@
 {% extends parent_template %}
 
 {% block sidebar %}
-	{% include 'operator.' ~ template ~ '.report.sidebar' %}
-{% endblock %}
-
-{% block title %}
-    {{ Lang.get('report.reports_dashboard') }}
+    {% include 'operator.' ~ template ~ '.report.sidebar' %}
 {% endblock %}
 
 {% block content %}
 
-	<hr />
+    <div class="md:sp-flex">
+        <div class="sp-flex-grow">
+            <h1 class="sp-mb-0">{{ dashboardName }}</h1>
+        </div>
 
-	<div class="sp-flex sp-flex-wrap sp-text-center">
-		<div class="sp-w-full sm:sp-w-1/3">
-			<div class="sp-text-3xl sp-text-red-600">{{ stats.tickets }}</div>
-			{{ Lang.get('report.tickets_opened') }}
-		</div>
-		<div class="sp-w-full sp-my-4 sm:sp-w-1/3 sm:sp-my-0 sm:sp-border-l sm:sp-border-r sm:sp-border-secondary">
-			<div class="sp-text-3xl sp-text-blue-600">{{ stats.confirmed_users }}</div>
-			{{ Lang.get('report.confirmed_users') }}
-		</div>
-		<div class="sp-w-full sm:sp-w-1/3">
-			<div class="sp-text-3xl sp-text-green-600">{{ stats.total_users }}</div>
-			{{ Lang.get('report.total_users') }}
-		</div>
-	</div>
+        {% if cards is not empty %}
+            <div class="sp-flex-none sp-dashboard-actions sp-my-4 sp-overflow-x-auto sp-whitespace-nowrap md:sp-my-0">
+                {% if timeframe.isEnabled() %}
+                    <div class="sp-report-timeframe sp-action-bar">
 
-	<hr />
+                        <div class="sp-dropdown-container xl:sp-hidden">
+                            <button class="sp-action sp-option selected">
+                                <span class="sp-timeframe-selected">{{ defaultTimeframe.toString() }}</span>
+                                &nbsp;<i class="fas fa-chevron-down sp-text-tertiary sp-text-xs"></i>
+                            </button>
+                            <div class="sp-dropdown">
+                                <ul>
+                                    {%- for time in timeframe.relativeDefaults() -%}
+                                        <li>
+                                            <a data-start-time="{{ time.getStartTimestamp() }}"
+                                               data-end-time="{{ time.getEndTimestamp() }}"
+                                               data-time="{{ time.toString() }}"
+                                               class="sp-option relative {% if time is same as(defaultTimeframe) %}default selected{% endif %}">
+                                                {{ time.toString() }}
+                                            </a>
+                                        </li>
+                                    {%- endfor -%}
+                                </ul>
+                            </div>
+                        </div><!--
+                        -->
+                        {%- for time in timeframe.relativeDefaults() -%}
+                            <button data-start-time="{{ time.getStartTimestamp() }}"
+                                    data-end-time="{{ time.getEndTimestamp() }}"
+                                    data-time="{{ time.toString() }}"
+                                    class="sp-option relative {% if time is same as(defaultTimeframe) %}default{% endif %} sp-hidden xl:sp-inline-block">
+                                {{ time.toString() }}
+                            </button>
+                        {%- endfor -%}
+                        <button class="sp-option custom sp-filter-datepicker">
+                            {{ Lang.get('general.custom') }} &nbsp;<i class="fa-solid fa-calendar-days"></i>
+                            <span class="sp-filter-datepicker-text-wrapper sp-hidden">
+                                &#124;
+                                <span class="sp-filter-datepicker-text"></span>
+                            </span>
+                        </button>
+                    </div>
+                {% endif %}
 
-	<h2 class="sp-text-center">{{ Lang.get('report.daily_stats') }}</h2>
+                <div class="sp-action-bar sp-ml-4">
+                    <button class="sp-option refresh-all">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 
-	<div id="chartView" class="sp-w-full sp-h-96 md:sp-h-128"></div>
+    {% if dashboardDescription is not empty %}
+        <p class="sp-mt-2">{{ dashboardDescription }}</p>
+    {% endif %}
+
+    {% include 'operator.' ~ template ~ '.report.condition_group' %}
+
+    {% if cards is empty %}
+        <div class="sp-p-2 sp-bg-secondary sp-border sp-border-tertiary sp-rounded sp-text-center sp-description">
+            {{ Lang.get('report.no_cards_found') }}
+        </div>
+    {% endif %}
+
+    <div class="grid-stack">
+        {% for card in cards %}
+            <div class="grid-stack-item"
+                 data-component="{{ card.component() }}"
+                 data-id="{{ card.uriKey() }}"
+                 data-name="{{ card.name() }}"
+                 data-route="{{ card.route() }}"
+                 data-print-route="{{ card.printRoute() }}"
+                 {% if card.isExportable() %}
+                     data-download-csv-route="{{ card.downloadCsvRoute() }}"
+                 {% endif %}
+                 {% if card.hasUnderlyingData() %}
+                     data-underlying-view="{{ card.underlyingDataRoute() }}"
+                     data-underlying-export="{{ card.underlyingDataExportRoute() }}"
+                     data-underlying-value-key="{{ card.getUnderlyingDataValueKey() }}"
+                 {% endif %}
+                 gs-w="{{ card.width() }}"
+                 gs-h="{{ card.height() }}">
+
+                <div class="grid-stack-item-content">
+                    <div class="sp-flex sp-flex-col sp-h-full">
+                        <div class="sp-flex sp-flex-row sp-px-3 sp-py-2 sp-mb-2 sp-bg-secondary sp-border-b sp-border-tertiary">
+                            <div class="sp-flex-grow sp-font-bold sp-truncate">
+                                {{ card.name() }}
+                            </div>
+                            <div class="sp-flex-initial sp-ml-3">
+                                <div class="sp-dropdown-container">
+                                    <div class="sp-action sp-px-3/2 sp-cursor-pointer">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </div>
+                                    <div class="sp-dropdown sp-right-0 sp-mr-3/2">
+                                        <ul class="sp-text-right">
+                                            <li>
+                                                <a class="sp-dropdown-item refresh-btn" href="#">
+                                                    {{ Lang.get('general.refresh') }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="sp-dropdown-item print-btn" href="#">
+                                                    {{ Lang.get('general.print') }}
+                                                </a>
+                                            </li>
+                                            {% if card.isExportable() %}
+                                                <li>
+                                                    <a class="sp-dropdown-item export-csv-btn" href="#">
+                                                        {{ Lang.get('report.export_csv') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if card.hasUnderlyingData() %}
+                                                <li>
+                                                    <a class="sp-dropdown-item underlying-btn" href="#">
+                                                        {{ Lang.get('report.view_underlying_data') }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sp-flex-grow">
+                            {{ card.content()|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
 
 {% block scripts_footer %}
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-	<script type="text/javascript">
-	    // Load charts
-		google.charts.load('45', {packages: ['corechart']});
-		google.charts.setOnLoadCallback(drawChart);
-
-	    function drawChart() {
-	        try {
-	            var chartData = google.visualization.arrayToDataTable({{ dailyStats|raw }}),
-					chart = new google.visualization.AreaChart(document.getElementById('chartView')),
-					colour = spCssVarThemes.dark['--color-text-primary'],
-					chartTextStyle = $('body').hasClass('sp-theme-dark') ? {color: colour} : {},
-					options = {
-						legend: { position: 'bottom' },
-						chartArea:{left:"8%",top:"5%",width:"87%",height:"80%"},
-						isStacked: true,
-						backgroundColor: { fill:'transparent' },
-						vAxis: {
-							textStyle: chartTextStyle,
-							titleTextStyle: chartTextStyle,
-							baselineColor: colour,
-							gridlines: {
-								color: colour
-							}
-						},
-						hAxis: {
-							textStyle: chartTextStyle,
-							titleTextStyle: chartTextStyle,
-							baselineColor: colour,
-							gridlines: {
-								color: colour
-							}
-						},
-						legend:{
-							textStyle: chartTextStyle,
-							position: "bottom"
-						}
-					};
-
-	            // Draw chart
-	            chart.draw(chartData, options);
-	        } catch(err) {
-	            // Nothing to do here...
-	        }
-	    }
-
-	    $(document).ready(function() {
-	        // Draw the chart
-	        drawChart();
-
-			$(window).on('resize', function() {
-				drawChart();
-			});
-	    });
-	</script>
+    <script src="{{ asset_rev('resources/assets/dist/main.js') }}"></script>
+    <script>
+        $(function () {
+            new Reports.Dashboard;
+        })
+    </script>
 {% endblock %}

@@ -52,9 +52,9 @@
     {% endif %}
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
     
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             if ($('input[name="colour"]').val() === '') {
                 $('input[name="colour"]').val('#dddddd');

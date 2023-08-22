@@ -118,7 +118,12 @@
             {% if ticket.due_time is not null %}
                 <div class="sp-form-row">
                     <label>{{ Lang.get('ticket.due_time') }}</label>
-                    <div class="sp-input-container">{{ formatDate(ticket.due_time) }}</div>
+                    <div class="sp-input-container">
+                        {% if ticket.reply_due_time is not empty %}
+                            {{ format_due_time(ticket.reply_due_time, false) }}<br />
+                        {% endif %}
+                        {{ format_due_time(ticket.resolve_due_time) }}
+                    </div>
                 </div>
             {% endif %}
 
@@ -154,14 +159,11 @@
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         var ticket = new App.ticket({authUserId: "{{ auth_user().id }}"});
 
         $(document).ready(function() {
             ticket.highlightUserMentions($('.sp-message'));
-
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
 
             // Date picker
             $('.datepicker').datepicker();

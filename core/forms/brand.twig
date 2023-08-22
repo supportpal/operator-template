@@ -106,8 +106,16 @@
             <div class="sp-form-row">
                 {{ form_label('favicon', Lang.get('core.favicon')) }}
                 <div class="sp-input-container">
-                    {{ form_text('favicon', null, { 'size': 65 }) }}
+                    {{ form_text('favicon', null, {'size': 65}) }}
                     <div class="sp-description">{{ Lang.get('core.favicon_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('favicon_dark_mode', Lang.get('core.favicon_dark_mode')) }}
+                <div class="sp-input-container">
+                    {{ form_text('favicon_dark_mode', null, {'size': 65}) }}
+                    <div class="sp-description">{{ Lang.get('core.favicon_dark_mode_desc') }}</div>
                 </div>
             </div>
 
@@ -146,14 +154,6 @@
                 </div>
             </div>
 
-            <div class="sp-form-row">
-                {{ form_label('frontend_template_mode', Lang.get('core.template_mode')) }}
-                <div class="sp-input-container">
-                    {{ form_select('frontend_template_mode', {1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}) }}
-                    <div class="sp-description">{{ Lang.get('core.template_mode_desc') }}</div>
-                </div>
-            </div>
-
             <hr />
 
             <h3>{{ Lang.get('core.operator_panel') }}</h3>
@@ -170,14 +170,6 @@
                 {{ form_label('operator_template', Lang.get('core.template')) }}
                 <div class="sp-input-container">
                     {{ form_select('operator_template', operatorTemplates) }}
-                </div>
-            </div>
-
-            <div class="sp-form-row">
-                {{ form_label('operator_template_mode', Lang.get('core.template_mode')) }}
-                <div class="sp-input-container">
-                    {{ form_select('operator_template_mode', {1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}) }}
-                    <div class="sp-description">{{ Lang.get('core.template_mode_desc') }}</div>
                 </div>
             </div>
         </div>
@@ -277,11 +269,11 @@
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
-    <script type="text/javascript">
+    <script src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
+    <script>
         var sslWarning = new SslWarning({
             route: "{{ mail_route('core.frontend.home', null, record.id) }}"
         });

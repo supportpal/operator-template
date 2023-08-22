@@ -89,11 +89,11 @@
 {% block scripts_footer %}
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/libs/daterangepicker/js/daterangepicker.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
     {{ table.script()|raw }}
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
-    <script type="text/javascript">
+    <script src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
+    <script>
         $(function () {
             $(document).on('click', '.send-button', function () {
                 $.get('{{ route('core.operator.emailqueue.send') }}', { 'id[]': [ $(this).data('id') ] })

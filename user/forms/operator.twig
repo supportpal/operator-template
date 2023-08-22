@@ -8,6 +8,10 @@
     {% endif %}
 {% endblock %}
 
+{% block scripts_header %}
+    <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+{% endblock %}
+
 {% block content %}
 
     {% if record|default is not empty and record.exists %}
@@ -84,36 +88,27 @@
     <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
 
     <!-- Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <!-- Reply templates -->
-    <script type="text/javascript">
-        var opts = {
-            mergeFields: {
-                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
-                organisations: '{{ Config.get('settings.organisations_enabled') }}'
-            },
-            plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
-            toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
-        };
+    <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
 
-        // Do not initialise editor on the dummy DOM element.
-        $('textarea[name="reply_template"]').editor(opts);
-    </script>
-
-    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
-
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
+            // Do not initialise editor on the dummy DOM element.
+            $('textarea[name="reply_template"]').editor({
+                mergeFields: {
+                    tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                    organisations: '{{ Config.get('settings.organisations_enabled') }}'
+                },
+                plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
+                toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
+            });
 
             // Generate a new random password
             $('a#generatePassword').on('click', function() {

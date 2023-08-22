@@ -43,7 +43,11 @@
     <hr />
 
     <!-- Article content -->
-    <div class="sp-article">{{ article.purified_text|raw }}</div>
+    <div class="sp-article"
+         data-article-id="{{ article.id }}"
+         data-type-id="{{ type.id }}">
+        {{ article.purified_text|raw }}
+    </div>
 
     <!-- Attachments -->
     {% include 'operator.' ~ template ~ '.selfservice.internal.article_attachments' %}
@@ -60,7 +64,7 @@
         Config.get('settings.comment_write') == 0 or auth_check()) %}
         <hr {% if article.comments is empty %}class="print:sp-hidden"{% endif %} />
 
-        <a name="_comments"></a>
+        <a id="comments"></a>
 
         <!-- Comments -->
         <h2 {% if article.comments is empty %}class="print:sp-hidden"{% endif %}>{{ Lang.choice('selfservice.comment', 2) }}</h2>
@@ -100,7 +104,7 @@
             </div>
 
             {# Show all the comments #}
-            <div class="sp-comments-block">
+            <div class="sp-comments-block" data-comment-route="{{ route('selfservice.operator.internal.comment') }}">
                 {% include 'operator.' ~ template ~ '.selfservice.internal.comment' with {'comments': article.comments, 'type': type.id} %}
             </div>
 
@@ -115,17 +119,10 @@
 {% endblock %}
 
 {% block scripts_footer %}
-    <script type="text/javascript">
-        // Variables for asset files
-        var articleId = {{ article.id }};
-        var typeId = {{ type.id }};
-        var commentRoute = "{{ route('selfservice.operator.internal.comment') }}";
-    </script>
-
     <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/frontend/js/article.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/frontend/js/article.js') }}"></script>
 
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}

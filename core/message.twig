@@ -35,6 +35,13 @@
         {{ form_open({ 'method': 'POST', 'route': 'core.operator.message.store', 'class': 'validate' }) }}
 
             <div class="sp-form-row sp-form-full">
+                {{ form_label('subject', Lang.get('ticket.subject')) }}
+                <div class="sp-input-container">
+                    {{ form_text('subject') }}
+                </div>
+            </div>
+
+            <div class="sp-form-row sp-form-full">
                 {{ form_label('to_user_id', Lang.get('core.send_to')) }}
                 <div class="sp-input-container">
                     {{ form_select('to_user_id', operators) }}
@@ -68,7 +75,7 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             $('textarea').editor();
 

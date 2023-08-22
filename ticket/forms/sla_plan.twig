@@ -49,17 +49,27 @@
 
         </div>
 
-        <h2>{{ Lang.get('ticket.resolution_time') }}</h2>
+        <h2>{{ Lang.choice('ticket.sla_targets', 2) }}</h2>
 
-        <div class="sp-subtitle-description">{{ Lang.get('ticket.resolution_time_desc') }}</div>
+        <div class="sp-subtitle-description">{{ Lang.get('ticket.sla_targets_desc') }}</div>
 
         <div class="sp--mx-6">
             <table class="resolution-table sp-table-grid">
                 <thead>
                     <tr>
-                        <th>{{ Lang.choice('ticket.priority', 1) }}</th>
-                        <th>{{ Lang.get('ticket.reply_within') }}</th>
-                        <th>{{ Lang.get('ticket.resolve_within') }}</th>
+                        <th style="min-width: 120px">{{ Lang.choice('ticket.priority', 1) }}</th>
+                        <th>
+                            {{ Lang.get('ticket.first_reply_time') }}
+                            <div class="sp-description sp-font-normal">From ticket created time</div>
+                        </th>
+                        <th>
+                            {{ Lang.get('ticket.next_reply_time') }}
+                            <div class="sp-description sp-font-normal">From last operator reply time</div>
+                        </th>
+                        <th>
+                            {{ Lang.get('ticket.resolution_time') }}
+                            <div class="sp-description sp-font-normal">From ticket created time</div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,25 +78,25 @@
                         <td>{{ name }}</td>
                         <td>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][reply_time_days]',
-                                    planPriorities[id]|default is not empty and planPriorities[id]['reply_time_days'] != 0
-                                        ? planPriorities[id]['reply_time_days'] : null,
+                                {{ form_number('priorities[' ~ id ~ '][first_reply_days]',
+                                    planPriorities[id]|default is not empty and planPriorities[id]['first_reply_days'] != 0
+                                        ? planPriorities[id]['first_reply_days'] : null,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                             </div>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][reply_time_hours]',
+                                {{ form_number('priorities[' ~ id ~ '][first_reply_hours]',
                                     planPriorities[id]|default is not empty
-                                        ? (planPriorities[id]['reply_time_days'] == 0 and planPriorities[id]['reply_time_hours'] == 0
-                                            ? null : planPriorities[id]['reply_time_hours']) : 8,
+                                        ? (planPriorities[id]['first_reply_days'] == 0 and planPriorities[id]['first_reply_hours'] == 0
+                                            ? null : planPriorities[id]['first_reply_hours']) : 8,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                             </div>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][reply_time_minutes]',
-                                    planPriorities[id]|default is not empty ? planPriorities[id]['reply_time_minutes'] : 0,
+                                {{ form_number('priorities[' ~ id ~ '][first_reply_minutes]',
+                                    planPriorities[id]|default is not empty ? planPriorities[id]['first_reply_minutes'] : 0,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
@@ -94,26 +104,52 @@
                         </td>
                         <td>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][resolve_time_days]',
-                                    planPriorities[id]|default is not empty and planPriorities[id]['resolve_time_days'] != 0
-                                        ? planPriorities[id]['resolve_time_days'] : null,
+                                {{ form_number('priorities[' ~ id ~ '][next_reply_days]',
+                                    planPriorities[id]|default is not empty and planPriorities[id]['next_reply_days'] != 0
+                                    ? planPriorities[id]['next_reply_days'] : null,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                             </div>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][resolve_time_hours]',
+                                {{ form_number('priorities[' ~ id ~ '][next_reply_hours]',
                                     planPriorities[id]|default is not empty
-                                        ? (planPriorities[id]['resolve_time_days'] == 0 and planPriorities[id]['resolve_time_hours'] == 0
-                                            ? null : planPriorities[id]['resolve_time_hours'])
+                                    ? (planPriorities[id]['next_reply_days'] == 0 and planPriorities[id]['next_reply_hours'] == 0
+                                    ? null : planPriorities[id]['next_reply_hours']) : 8,
+                                {'class': 'sp-w-20', 'min': 0})
+                                }}
+                                <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
+                            </div>
+                            <div class="sp-duration">
+                                {{ form_number('priorities[' ~ id ~ '][next_reply_minutes]',
+                                    planPriorities[id]|default is not empty ? planPriorities[id]['next_reply_minutes'] : 0,
+                                    {'class': 'sp-w-20', 'min': 0})
+                                }}
+                                <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sp-duration">
+                                {{ form_number('priorities[' ~ id ~ '][resolve_days]',
+                                    planPriorities[id]|default is not empty and planPriorities[id]['resolve_days'] != 0
+                                        ? planPriorities[id]['resolve_days'] : null,
+                                    {'class': 'sp-w-20', 'min': 0})
+                                }}
+                                <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
+                            </div>
+                            <div class="sp-duration">
+                                {{ form_number('priorities[' ~ id ~ '][resolve_hours]',
+                                    planPriorities[id]|default is not empty
+                                        ? (planPriorities[id]['resolve_days'] == 0 and planPriorities[id]['resolve_hours'] == 0
+                                            ? null : planPriorities[id]['resolve_hours'])
                                         : 16,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                             </div>
                             <div class="sp-duration">
-                                {{ form_number('priorities[' ~ id ~ '][resolve_time_minutes]',
-                                    planPriorities[id]|default is not empty ? planPriorities[id]['resolve_time_minutes'] : 0,
+                                {{ form_number('priorities[' ~ id ~ '][resolve_minutes]',
+                                    planPriorities[id]|default is not empty ? planPriorities[id]['resolve_minutes'] : 0,
                                     {'class': 'sp-w-20', 'min': 0})
                                 }}
                                 <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
@@ -166,8 +202,9 @@
                     <thead>
                         <tr>
                             <th width="14"></th>
-                            <th>{{ Lang.choice('general.action', 1) }}</th>
+                            <th>{{ Lang.choice('ticket.sla_targets', 1) }}</th>
                             <th>{{ Lang.get('general.when') }}</th>
+                            <th>{{ Lang.choice('general.action', 1) }}</th>
                             <th>{{ Lang.get('general.value') }}</th>
                             <th></th>
                         </tr>
@@ -209,18 +246,19 @@
     {% endif %}
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <script type="text/javascript">
-        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}";
+    <script>
+        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
+            groupIds = "{{ operatorGroups|keys|join(',') }}";
     </script>
 
     <!-- Filtering.js dependencies: Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>

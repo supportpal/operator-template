@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    {% if ticket.sla_plan_id|default is not empty and ticket.due_time is not empty and 'now'|date('U') < ticket.due_time %}
+    {% if ticket.sla_plan_id|default is not empty and ticket.due_time is not empty %}
         <div class="sp-form-row followup-sla {% if followup|default is not empty %}sp-hidden{% endif %}">
             {{ form_label('followup_sla', Lang.get('ticket.pause_duetime')) }}
             <div class="sp-input-container">

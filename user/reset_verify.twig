@@ -25,7 +25,7 @@
 			<div class="sp-alert sp-alert-error">{{ error }}</div>
 		{% endif %}
 
-		{{ form_open({ 'route': [ 'operator.resetconfirm' ], 'method': 'post', 'class': 'validate' }) }}
+		{{ form_open({'route': 'operator.resetverify', 'method': 'post', 'class': 'validate'}) }}
 
             {{ form_hidden('email', Request.input('email')) }}
             {{ form_hidden('token', Request.input('token')) }}
@@ -56,11 +56,4 @@
 	{% if jsValidator|default is not empty %}
 		{{ jsValidator|raw }}
 	{% endif %}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
-        });
-    </script>
 {% endblock %}

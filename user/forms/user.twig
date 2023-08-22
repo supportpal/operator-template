@@ -11,6 +11,10 @@
     {% endif %}
 {% endblock %}
 
+{% block scripts_header %}
+    <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+{% endblock %}
+
 {% block precontent %}
 
     {% if record.exists and not operator and (auth_user().hasPermission('create.ticket') or auth_user().hasPermission('update.user') or auth_user().hasPermission('delete.user')) %}
@@ -70,34 +74,27 @@
                 <div class="sp-form-row">
                     <label>{{ Lang.choice('general.export', 2) }}</label>
                     <div class="sp-input-container">
-                        {% if record.exports is not empty or record.exportqueue is not empty %}
+                        {% if record.exports is not empty %}
                             <ul class="exports-list sp-attached-files sp-mb-3">
-                                {% for export in record.exports %}
+                                {% for userExport in record.exports %}
                                     <li class="sp-flex">
                                         <div class="sp-mr-2 sp-truncate">
                                             <i class="fas fa-file fa-fw"></i>&nbsp;
 
                                             <span class="sp-file-information">
                                                 <span class="sp-filename">
-                                                    <a href="{{ route('core.operator.export.download', export.upload_hash) }}">
-                                                        {{ export.upload.filename }}
+                                                    <a href="{{ route('core.operator.export.download', userExport.export.upload_hash) }}">
+                                                        {{ userExport.export.upload.filename }}
                                                     </a>
                                                 </span>
-                                                <span class="sp-description sp-filesize">({{ export.upload.size }})</span>
+                                                <span class="sp-description sp-filesize">({{ userExport.export.upload.size }})</span>
                                             </span>
                                         </div>
 
                                         <div class="sp-delete-attachment sp-bg-red-600"
-                                             data-url="{{ route('core.operator.export.destroy', export.upload_hash) }}">
+                                             data-url="{{ route('core.operator.export.destroy', userExport.export.upload_hash) }}">
                                             <i class="fas fa-times sp-text-white"></i>
                                         </div>
-                                    </li>
-                                {% endfor %}
-                                {% for export in record.exportqueue %}
-                                    <li>
-                                        <i class="fas fa-spin fa-spinner fa-fw"></i>&nbsp;
-                                        {{ Lang.get('messages.in_progress') }}
-                                        <span class="sp-description sp-filesize">({{ formatDate(export.created_at) }})</span>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -166,22 +163,24 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
+    <!-- Additional email addresses -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/emailaddresses.js') }}"></script>
+
     <!-- Custom fields -->
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/randomPassword.js') }}"></script>
 
     <!-- Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/linked_account.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/linked_account.js') }}"></script>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             // Toggle the password fields depending on whether we're sending a confirmation email
             $('input[name="send_email"]').on('click', function() {
@@ -194,9 +193,6 @@
             if ($('input[name=send_email]').length && $('input[name=send_email]').is(':checked') == false) {
                 $('.password-field').toggle();
             }
-
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
 
             // Generate a new random password
             $('a#generatePassword').on('click', function() {
@@ -289,14 +285,14 @@
                 }
             });
 
-            // Send confirmation email
-            $('.confirmation-email').on('click', function() {
+            // Send verification email
+            $('.sp-verification-email').on('click', function() {
                 var $this = $(this);
                 $this.prop('disabled', true);
 
                 $.post(
                     laroute.route(
-                        'user.operator.user.confirmation_email',
+                        'user.operator.user.verification_email',
                         { id: {{ record|default is not empty and record.exists ? record.id : 'null' }} }
                     ),
                     { },
@@ -316,14 +312,14 @@
                 });
             });
 
-            // Mark as confirmed
-            $('.mark-confirmed').on('click', function() {
+            // Mark email as verified
+            $('.mark-verified').on('click', function() {
                 var $this = $(this);
                 $this.prop('disabled', true);
 
                 $.post(
                     laroute.route(
-                        'user.operator.user.mark_confirmed',
+                        'user.operator.user.mark_verified',
                         { id: {{ record|default is not empty and record.exists ? record.id : 'null' }} }
                     ),
                     { },
@@ -528,7 +524,7 @@
                         showLoaderOnConfirm: true,
                         preConfirm: function () {
                             var params = {
-                                url: "{{ route('core.operator.export.user', record.id) }}",
+                                url: "{{ route('user.operator.user.export', record.id) }}",
                                 data: $(Swal.getHtmlContainer()).find('.export-form').serialize(),
                                 type: 'POST',
                                 dataType: 'json'

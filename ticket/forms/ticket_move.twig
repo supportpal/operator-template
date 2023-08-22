@@ -111,7 +111,7 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <script type="text/javascript">
+    <script>
         $(function () {
             var deptXhr, emailXhr,
                 brandId = false;
@@ -246,7 +246,7 @@
                 // Disable button.
                 $('.sp-step2 .sp-button-submit').prop('disabled', true);
 
-                $('form').trigger('submit');
+                $('form.validate').trigger('submit');
             });
         });
     </script>

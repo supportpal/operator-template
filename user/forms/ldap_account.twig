@@ -109,7 +109,7 @@
             </div>
 
             {% if record|default is empty or not record.exists %}
-                <div class="confirmed-option sp-form-row">
+                <div class="sp-active-option sp-form-row">
                     {{ form_label('active', Lang.get('user.account_active')) }}
                     <div class="sp-input-container">
                         {{ form_check('active', 1, 1, {'class': 'sp-toggle', 'id': 'toggle_active'}) }}
@@ -132,7 +132,7 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             // Search for an existing operator
             var $select = $('select[name="operator"]').selectize({
@@ -160,8 +160,8 @@
                     }
                 },
                 onItemAdd: function(value, $item) {
-                    // Hide and disable the confirmed option
-                    $('.confirmed-option').hide().find('input').prop('disabled', true);
+                    // Hide and disable the active option
+                    $('.sp-active-option').hide().find('input').prop('disabled', true);
 
                     // Load the operator details into the form
                     var operator = $item.data('data');
@@ -218,8 +218,8 @@
                 $selector.clear(true);
                 $selector.enable();
 
-                // Show and enable the confirmed option
-                $('.confirmed-option').show().find('input').prop('disabled', false);
+                // Show and enable the active option
+                $('.sp-active-option').show().find('input').prop('disabled', false);
             });
         });
     </script>

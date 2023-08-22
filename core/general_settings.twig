@@ -288,9 +288,9 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
-    <script type="text/javascript">
+    <script src="{{ asset_rev('resources/assets/operator/js/settings.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/oauth.js') }}"></script>
+    <script>
         var sslWarning = new SslWarning({
             route: "{{ mail_route('core.frontend.home') }}"
         });

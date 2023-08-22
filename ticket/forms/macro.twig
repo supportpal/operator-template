@@ -198,14 +198,15 @@
     {% endif %}
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
-    <script type="text/javascript">
-        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}";
+    <script>
+        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
+            groupIds = "{{ operatorGroups|keys|join(',') }}";
 
         $(document).ready(function() {
             var $inputPublic = $('input[name="public"]');
@@ -263,7 +264,7 @@
     </script>
 
     <!-- Filtering.js dependencies: Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/action.js') }}"></script>

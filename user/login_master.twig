@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="sp-h-full">
+<html class="{{ get_template_mode() }} sp-h-full">
 
 <head>
     <title>{% block title %}{{ Lang.get('core.product_name') }} - {{ Lang.get('core.operator_panel') }}{% endblock %}</title>
@@ -9,7 +9,7 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
@@ -57,7 +57,7 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}"></script>
 
 	{% block scripts_footer %}{% endblock %}
 

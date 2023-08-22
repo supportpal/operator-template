@@ -87,5 +87,11 @@
                 <a href="{{ route('core.operator.widget.index') }}">{{ Lang.choice('core.widget', 2) }}</a>
             </li>
         {% endif %}
+
+        {% if auth_user().hasPermission('view.addon') %}
+            <li {% if route starts with 'report.operator.manage' or route starts with 'report.' %}class="sp-active"{% endif %}>
+                <a href="{{ route('report.operator.manage.index') }}">{{ Lang.choice('report.report', 2) }}</a>
+            </li>
+        {% endif %}
     </ul>
 </div>

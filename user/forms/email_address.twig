@@ -1,0 +1,42 @@
+<div class="sp-email-address sp-mb-3 {% if hide|default is not empty %}sp-hidden{% endif %}">
+    <div class="sp-flex">
+        <div class="sp-flex-initial">
+            {{ form_hidden('additional_email[' ~ (address|default is not empty ? address.id : '') ~ '][id]', address|default is not empty ? address.id : null) }}
+
+            {{ form_text('additional_email[' ~ (address|default is not empty ? address.id : '') ~ '][address]', address|default is not empty ? address.address : null, {'size': 45}) }}
+        </div>
+
+        <div class="sp-flex-none sp-relative sp-ml-2">
+            <div class="sp-dropdown-container">
+                <span class="sp-action sp-button sp-px-3">
+                    <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="sp-dropdown sp-right-0 md:sp-right-auto">
+                    <ul class="sp-text-right md:sp-text-left">
+                        {% if address|default is not empty and not address.is_verified %}
+                            <li>
+                                <a class="sp-verify-email-address" data-route="{{ route('user.operator.user.send_email_verification', record.id) }}" data-id="{{ address.id }}">
+                                    {{ Lang.get('user.send_verification_email') }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="sp-mark-email-address-verified" data-route="{{ route('user.operator.user.mark_email_verified', record.id) }}" data-id="{{ address.id }}">
+                                    {{ Lang.get('user.mark_as_verified') }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a class="sp-remove-email-address">{{ Lang.get('general.remove') }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {% if address|default is not empty and not address.is_verified %}
+            <div class="sp-email-address-not-verified sp-flex-none sp-relative sp-p-2 sp-pr-0 sp-text-orange-600">
+                <i class="fa-fw fa-solid fa-exclamation-circle" title="{{ Lang.get('user.unverified') }}"></i>
+            </div>
+        {% endif %}
+    </div>
+</div>

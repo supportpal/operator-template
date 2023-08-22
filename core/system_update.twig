@@ -96,25 +96,30 @@
         {{ csrf_field() }}
 
         <div class="sp-form-row">
+            {{ form_label('gzip_path', 'gzip') }}
+            {{ form_text('gzip_path', settings.getGzipPath(), {size: '100%'}) }}
+        </div>
+
+        <div class="sp-form-row">
             {{ form_label('mysqldump_path', 'mysqldump') }}
             {{ form_text('mysqldump_path', settings.getMysqldumpPath(), {size: '100%'}) }}
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_label('php_path', 'php') }}
+            {{ form_text('php_path', settings.getPhpPath(), {size: '100%'}) }}
         </div>
 
         <div class="sp-form-row">
             {{ form_label('tar_path', 'tar') }}
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
-
-        <div class="sp-form-row">
-            {{ form_label('gzip_path', 'gzip') }}
-            {{ form_text('gzip_path', settings.getGzipPath(), {size: '100%'}) }}
-        </div>
     </div>
 
 {% endblock %}
 
 {% block scripts_footer %}
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             var contents = '{{ Lang.get('core.waiting_for_update_start') }}';
 

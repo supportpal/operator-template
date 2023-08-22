@@ -42,36 +42,50 @@
     <div class="sp-form-row">
         {{ form_label('email', Lang.get('general.email')) }}
         <div class="sp-input-container">
-            {% set emailAttributes = { size: 45 } %}
+            {% set emailAttributes = {size: 45} %}
             {% if auth_check() and record.id == auth_user().id and auth_user().loggedInViaSSO() %}
-                {% set emailAttributes = emailAttributes|merge({ 'readonly': 'readonly' }) %}
+                {% set emailAttributes = emailAttributes|merge({'readonly': 'readonly'}) %}
             {% endif %}
-            {{ form_email('email', record.email, emailAttributes) }}
+            <div class="sp-mb-3">
+                {{ form_email('email', record.email, emailAttributes) }}
+            </div>
             {% if record.exists and managing|default is not empty and managing and (operator is not defined or not operator) %}
-                {% if record.confirmed %}
-                    <div class="sp-description">{{ Lang.get('user.changing_email_desc') }}</div>
+                {% if record.email_verified %}
+                    <div class="sp-description sp-mb-3">{{ Lang.get('user.changing_email_desc') }}</div>
                 {% elseif record.password is empty %}
-                    <div class="sp-mt-3">
-                        <strong class="sp-text-red-600">{{ Lang.get('user.unconfirmed') }}</strong> - {{ Lang.get('user.unregistered_user_desc') }}
+                    <div class="sp-mb-3">
+                        <strong class="sp-text-red-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unregistered_user_desc') }}
                     </div>
                     {% if managing|default is not empty and managing and (operator is not defined or not operator) %}
-                        <div class="sp-mt-3">
-                            {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+                        <div class="sp-mb-3">
+                            {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="sp-my-3">
-                        <strong class="sp-text-orange-600">{{ Lang.get('user.unconfirmed') }}</strong> - {{ Lang.get('user.unconfirmed_user_desc') }}
+                    <div class="sp-mb-3">
+                        <strong class="sp-text-orange-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unverified_email_desc') }}
                     </div>
 
-                    {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_confirmation_email'), { 'class': 'confirmation-email' }) }} &nbsp;
-                    {{ form_button('<i class="fas fa-check-square"></i>&nbsp; ' ~ Lang.get('user.mark_as_confirmed'), { 'class': 'mark-confirmed' }) }}
+                    <div class="sp-mb-3">
+                        {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_verification_email'), { 'class': 'verification-email' }) }} &nbsp;
+                        {{ form_button('<i class="fas fa-check-square"></i>&nbsp; ' ~ Lang.get('user.mark_as_verified'), { 'class': 'mark-verified' }) }}
+                        </div>
                 {% endif %}
+            {% endif %}
+
+            {% if managing|default is not empty and managing and (operator is not defined or not operator) %}
+                {% include 'operator.' ~ template ~ '.user.forms.email_address' with {'hide': true} %}
+
+                {% for address in record.additionalEmails %}
+                    {% include 'operator.' ~ template ~ '.user.forms.email_address' %}
+                {% endfor %}
+
+                {{ form_button(Lang.get('general.add'), {'class': 'sp-add-email-address'}) }}
             {% endif %}
         </div>
     </div>
 
-    {% if managing|default is not empty and managing and ((operator is defined and operator) or (record.exists and record.confirmed)) %}
+    {% if managing|default is not empty and managing and ((operator is defined and operator) or (record.exists and record.email_verified)) %}
         <div class="sp-form-row">
             {{ form_label('active', Lang.get('user.account_active')) }}
             <div class="sp-input-container">
@@ -81,7 +95,7 @@
 
                 {% if (not record.exists or record.password is empty) and managing|default is not empty and managing and (operator is not defined or not operator) %}
                     <br />
-                    {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+                    {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
                 {% endif %}
             </div>
         </div>
@@ -91,7 +105,7 @@
         <div class="sp-form-row">
             <label></label>
             <div class="sp-input-container">
-                {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_confirmation_email') }}
+                {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
             </div>
         </div>
     {% endif %}
@@ -115,7 +129,7 @@
         </div>
     {% endif %}
 
-    {% if record.exists and record.confirmed and record.password is not empty and managing|default is not empty and managing and (operator is not defined or not operator) %}
+    {% if record.exists and record.email_verified and record.password is not empty and managing|default is not empty and managing and (operator is not defined or not operator) %}
         <div class="sp-form-row">
             <label></label>
             <div class="sp-input-container">

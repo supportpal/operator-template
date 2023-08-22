@@ -93,13 +93,13 @@
     {{ table.script()|raw }}
 
     <!-- Filtering.js dependencies: Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             // Filtering
             $('.update-filtering').on('click', function() {
@@ -201,7 +201,7 @@
     </script>
 
     {% if not auth_user().hasPermission('update.user|delete.user') %}
-        <style type="text/css">
+        <style>
             input[name='select-all'] {
                 display: none;
             }

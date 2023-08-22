@@ -45,6 +45,10 @@
                     <label>{{ Lang.get('general.public') }}:</label>
                     <div id="filter_response_public"></div>
                 </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.choice('user.operator_group', 1) }}:</label>
+                    <div id="filter_response_group"></div>
+                </div>
             </div>
         </div>
 
@@ -59,7 +63,7 @@
     {{ responsesTable.script()|raw }}
 
     <!-- Filter the table -->
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             /**
              * Initialise the filters
@@ -67,7 +71,8 @@
             oTable.yadcf([
                 {column_number : 0, column_data_type: "text", html_data_type: "selector", html_data_selector: "a", filter_container_id: "filter_response_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
                 {column_number : 1, filter_container_id: "filter_response_tag", filter_reset_button_text: ''},
-                {column_number : 2, filter_container_id: "filter_response_public", filter_reset_button_text: ''}
+                {column_number : 2, filter_container_id: "filter_response_public", filter_reset_button_text: ''},
+                {column_number : 3, filter_container_id: "filter_response_group", filter_reset_button_text: ''}
             ]);
         });
     </script>

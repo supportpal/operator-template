@@ -85,7 +85,7 @@
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ table.script()|raw }}
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             oTable.yadcf([
                 {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},

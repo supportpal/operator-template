@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ get_template_mode() }}">
 
 <head>
     <title>{{ record.subject }}</title>
@@ -9,7 +9,7 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
@@ -158,7 +158,7 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             // Open links in a new window/tab. Needs rel="noopener" due to
             // https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/

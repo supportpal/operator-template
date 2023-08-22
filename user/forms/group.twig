@@ -131,7 +131,7 @@
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
     {{ table.script()|raw }}
 
-    <script type="text/javascript">
+    <script>
         deleteAlert.translationKeys.title = 'user.remove_from';
         deleteAlert.translationKeys.warning = 'user.remove_from_warn';
         deleteAlert.translationKeys.confirmButton = '{{ Lang.get('general.yes') }}';
@@ -139,9 +139,9 @@
     </script>
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             if ($('input[name="colour"]').val() === '') {
                 $('input[name="colour"]').val('#ffffff');
@@ -209,7 +209,7 @@
     </script>
 
     {% if record.exists %}
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             // We need to register certain actions once DataTables has completely initialised, otherwise
             // the table footer does not exist...

@@ -9,6 +9,7 @@
 <meta name="allowed_files" content="{{ allowed_files }}" />
 <meta name="environment" content="{{ Config.get('app.env') }}" />
 <meta name="shortcuts_enabled" content="{{ Config.get('settings.operator' ~ auth_user().id ~ '.shortcuts_enabled') }}" />
+<meta name="robots" content="noindex" />
 
 <!-- Icons -->
 <link rel="apple-touch-icon" sizes="180x180" href="{{ get_favicon('resources/assets/operator/images/favicon/apple-touch-icon.png') }}">
@@ -16,7 +17,11 @@
 <link rel="icon" type="image/png" sizes="16x16" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon-16x16.png') }}">
 <link rel="manifest" href="{{ asset('resources/assets/operator/images/favicon/site.webmanifest') }}">
 <link rel="mask-icon" href="{{ asset('resources/assets/operator/images/favicon/safari-pinned-tab.svg') }}" color="#06548c">
-<link rel="shortcut icon" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon.ico') }}">
+<link rel="shortcut icon" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon.ico') }}"
+      media="(prefers-color-scheme: light)">
+<link rel="shortcut icon" href="{{ get_favicon('resources/assets/operator/images/favicon/favicon_white.ico', true) }}"
+      media="(prefers-color-scheme: dark)" />
+
 <meta name="application-name" content="SupportPal"/>
 <meta name="msapplication-TileColor" content="#06548c">
 <meta name="msapplication-config" content="{{ asset('resources/assets/operator/images/favicon/browserconfig.xml') }}">
@@ -24,4 +29,6 @@
 
 <!-- CSS -->
 {{ colourScheme|raw }}
-<link data-include href="{{ asset_rev('resources/assets/operator/css/main.min.css') }}" rel="stylesheet" type="text/css" />
+<script src="{{ asset_rev('/resources/assets/general/js/preload.js') }}"></script>
+<link href="{{ asset_rev('resources/assets/operator/css/main.min.css') }}" rel="stylesheet" />
+<link href="{{ asset_rev('resources/assets/libs/css/common.min.css') }}" rel="stylesheet" />

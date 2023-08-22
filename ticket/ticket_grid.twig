@@ -271,6 +271,14 @@
                                             <a>{{ Lang.get('ticket.block_user') }}</a>
                                         </li>
                                     {% endif %}
+                                    {% if auth_user().hasPermission('update.ticket') %}
+                                        <li class="read-ticket">
+                                            <a>{{ Lang.get('ticket.mark_as_read') }}</a>
+                                        </li>
+                                        <li class="unread-ticket">
+                                            <a>{{ Lang.get('ticket.mark_as_unread') }}</a>
+                                        </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
@@ -339,21 +347,21 @@
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
 
     <!-- Filtering.js dependencies: Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/datatable/selectall.js') }}"></script>
 
     {# Only load the sidebar on the main ticket grid. #}
     {% if not customSearch and record is not defined %}
-        <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/sidebar.js') }}"></script>
+        <script src="{{ asset_rev('resources/assets/operator/js/sidebar.js') }}"></script>
     {% endif %}
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
-    <script type="text/javascript">
+    <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
+    <script>
         // Schedule first grid refresh in 60 seconds.
         var gridTimeout = setTimeout(refreshGrid, 60000);
 
@@ -617,6 +625,14 @@
             // Process block button
             $quickActions.on('click', '.block-ticket', function() {
                 deleteTicket(getSelectedRows(), true, false);
+            });
+            // Process mark as read button
+            $quickActions.on('click', '.read-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.read'));
+            });
+            // Process mark as unread button
+            $quickActions.on('click', '.unread-ticket', function() {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.unread'));
             });
 
             // Process department change

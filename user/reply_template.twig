@@ -41,7 +41,7 @@
     <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         var opts = {
             mergeFields: {
                 tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
@@ -51,7 +51,9 @@
             toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
         };
 
-        // Do not initialise editor on the dummy DOM element.
-        $('div.section-items textarea').editor(opts);
+        $(function () {
+            // Do not initialise editor on the dummy DOM element.
+            $('div.section-items textarea').editor(opts);
+        });
     </script>
 {% endblock %}

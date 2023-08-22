@@ -4,14 +4,17 @@
         <i class="fas fa-bars sp-sortable-handle" aria-hidden="true"></i>
     </td>
 
-    <td class="rule-action drag-visible">
-        {{ form_hidden(inputPrefix ~ '[id]', rule|default is not empty ? rule.id : '') }}
-        {{ form_select(inputPrefix ~ '[action]', actions, rule|default is not empty ? rule.action : null) }}
-        {% if rule|default is not empty %}<a name="_action-{{ rule.id }}"></a>{% endif %}
-    </td>
-
     {% if when|default is not empty %}
-        <td class="rule-when">
+        <td class="drag-visible">
+            {{ form_select(inputPrefix ~ '[target]',
+                {
+                    '0': Lang.get('ticket.resolution_due_time'),
+                    '1': Lang.get('ticket.reply_due_time')
+                }, rule|default is not empty ? rule.target : 0)
+            }}
+        </td>
+
+        <td class="rule-when drag-visible">
             {{ form_number(inputPrefix ~ '[when_time]',
                 rule|default is not empty ? number_format(rule.when_time / 3600, 2) + 0 : 1, {'class': 'sp-hidden sp-w-24', 'min': 0})
             }}
@@ -24,6 +27,12 @@
             }}
         </td>
     {% endif %}
+
+    <td class="rule-action drag-visible">
+        {{ form_hidden(inputPrefix ~ '[id]', rule|default is not empty ? rule.id : '') }}
+        {{ form_select(inputPrefix ~ '[action]', actions, rule|default is not empty ? rule.action : null) }}
+        {% if rule|default is not empty %}<a id="action-{{ rule.id }}"></a>{% endif %}
+    </td>
 
     <td class="rule-value">
         <div class="action" data-action="0">
@@ -405,6 +414,32 @@
                     {'-1': Lang.get('actions.all_watching_operators')} + operators, rule|default is not empty and rule.action == 31 ? rule.value_id : null)
                 }}
             {% endif %}
+        </div>
+
+        <div class="action sp-hidden" data-action="32">
+            {{ Lang.get('general.na') }}
+            {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
+        </div>
+
+        <div class="action sp-hidden" data-action="33">
+            {{ form_number(inputPrefix ~ '[value_text]',
+                rule|default is not empty and rule.action == 33 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+            }}&nbsp; {{ Lang.get('actions.hours_to_be_added') }}
+            <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
+        </div>
+
+        <div class="action sp-hidden" data-action="34">
+            {{ form_number(inputPrefix ~ '[value_text]',
+                rule|default is not empty and rule.action == 34 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+            }}&nbsp; {{ Lang.get('actions.hours_to_be_removed') }}
+            <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
+        </div>
+
+        <div class="action sp-hidden" data-action="35">
+            {{ form_number(inputPrefix ~ '[value_text]',
+                rule|default is not empty and rule.action == 35 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+            }}&nbsp; {{ Lang.get('actions.hours_to_be_set') }}
+            <div class="sp-description">{{ Lang.get('actions.set_due_time_desc') }}</div>
         </div>
     </td>
 

@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        {% if number|default is not empty and not number.is_verified %}
+        {% if number|default is not empty and not number.email_verified %}
             <div class="sp-number-not-verified sp-flex-none sp-relative sp-p-2 sp-pr-0 sp-text-orange-600">
                 <i class="fa-fw fa-solid fa-exclamation-circle" title="{{ Lang.get('general.not_verified') }}"></i>
             </div>

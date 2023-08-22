@@ -190,27 +190,6 @@
 
         </div>
 
-        {% if record.exists and auth_user().hasPermission('view.report') and record.feedback().exists() %}
-        <h2>{{ Lang.get('report.user_feedback') }}</h2>
-
-        <div class="sp-form-container">
-            <div class="sp-form-row">
-                <label>{{ Lang.choice('report.report', 2) }}</label>
-                <div class="sp-input-container">
-                    <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedback', 'article_id': record.id}) }}" class="sp-button">
-                        {{ Lang.get('report.user_feedback') }}
-                    </a><br />
-                    {{ Lang.get('report.user_feedback_desc') }}<br />
-                    <br />
-                    <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedbackratings', 'article_id': record.id}) }}" class="sp-button">
-                        {{ Lang.get('report.user_feedback_ratings') }}
-                    </a><br />
-                    {{ Lang.get('report.user_feedback_ratings_desc') }}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
         {% if record.exists %}
         <h2>{{ Lang.get('selfservice.revision_history') }}</h2>
 
@@ -242,7 +221,7 @@
     <!-- selfserviceslug.js dependencies: Sweetalert2 (above), donetyping -->
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/selfserviceslug.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         $(document).ready(function () {
             // Initialise the slug generator.
             new SupportPalSlugGenerator({
@@ -267,7 +246,7 @@
 
     <!-- Attachments JS -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         $('.article:not(:first)').each(function (index) {
             new FileUpload({
                 $element: $(this).find('.sp-file-upload'),
@@ -280,13 +259,13 @@
         });
     </script>
 
-    <script type="text/javascript">
+    <script>
         var tagPermission = {% if auth_user().hasPermission('create.selfservicetag') %}1{% else %}0{% endif %};
     </script>
     <script src="{{ asset_rev('resources/assets/operator/js/article.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
 

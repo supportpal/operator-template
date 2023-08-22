@@ -30,11 +30,11 @@
                         <div class="sp-title">{{ Lang.choice('core.brand', 1) }}</div>
                         <div class="sp-detail">
                             {% if can_update_ticket(auth_user(), ticket) and assignedBrands.count() > 1 %}
-                                <a class="sp-detail-link" href="{{ route('ticket.operator.ticket.move', ticket.id) }}">
+                                <a class="sp-brand-name sp-detail-link" href="{{ route('ticket.operator.ticket.move', ticket.id) }}">
                                     {{ ticket.brand.name }}
                                 </a>
                             {% else %}
-                                {{ ticket.brand.name }}
+                                <span class="sp-brand-name">{{ ticket.brand.name }}</span>
                             {% endif %}
                         </div>
                     </li>
@@ -134,37 +134,64 @@
                 <li>
                     <div class="sp-title">{{ Lang.get('ticket.due_time') }}</div>
                     <div class="sp-detail">
-                        {% if can_update_ticket(auth_user(), ticket) %}
-                            <a class="edit-duetime sp-detail-link">
-                                {% if ticket.due_time|default is not empty %}
-                                    {{ format_due_time(ticket.due_time) }}
-                                {% else %}
-                                    {{ Lang.get('ticket.set_due_time') }}
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            {% if ticket.due_time|default is not empty %}
-                                {{ format_due_time(ticket.due_time) }}
-                            {% else %}
-                                {{ Lang.get('general.na') }}
+                        <div>
+                            {% if can_update_ticket(auth_user(), ticket) %}
+                            <a class="edit-duetime sp-reply-duetime sp-detail-link">
                             {% endif %}
-                        {% endif %}
+                                {{ format_due_time(ticket.duetimes.reply_due_time, false)|raw }}
+                            {% if can_update_ticket(auth_user(), ticket) %}
+                            </a>
+                            {% endif %}
 
-                        <div class="update-duetime sp-hidden sp-mt-2">
-                            {{ form_text('duetime_date',
-                                ticket.due_time|default is not empty
-                                ? timeWithOffset(ticket.due_time, false)|date(Config.get('settings.date_format')) : null,
-                                {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
-                            ) }}
-                            {{ form_text('duetime_time',
-                                ticket.due_time|default is not empty
-                                ? timeWithOffset(ticket.due_time, false)|date(Config.get('settings.time_format')) : null,
-                                {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
-                            ) }}
-                            &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
-                            <span class="remove-duetime {% if ticket.due_time|default is empty %}sp-hidden{% endif %}">
+                            <div class="update-duetime sp-hidden sp-my-2">
+                                {{ form_hidden('duetime_type', 1) }}
+                                {{ form_text('duetime_date',
+                                    ticket.duetimes.reply_due_time is not empty
+                                    ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
+                                    {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
+                                ) }}
+                                {{ form_text('duetime_time',
+                                    ticket.duetimes.reply_due_time is not empty
+                                    ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
+                                    {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
+                                ) }}
+                                &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
+                                <span class="remove-duetime {% if ticket.duetimes.reply_due_time is empty %}sp-hidden{% endif %}">
                                 &nbsp; <button class="as-link remove"><i class="fas fa-eraser"></i></button>
-                            </span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if can_update_ticket(auth_user(), ticket) %}
+                                <a class="edit-duetime sp-resolve-duetime sp-detail-link">
+                            {% endif %}
+                                {{ format_due_time(ticket.duetimes.resolve_due_time)|raw }}
+                            {% if can_update_ticket(auth_user(), ticket) %}
+                                </a>
+                            {% endif %}
+
+                            <div class="update-duetime sp-hidden sp-mt-2">
+                                {{ form_hidden('duetime_type', 0) }}
+                                {{ form_text('duetime_date',
+                                    ticket.duetimes.resolve_due_time is not empty
+                                    ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
+                                    {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
+                                ) }}
+                                {{ form_text('duetime_time',
+                                    ticket.duetimes.resolve_due_time is not empty
+                                    ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
+                                    {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
+                                ) }}
+                                &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
+                                <span class="remove-duetime {% if ticket.duetimes.resolve_due_time is empty %}sp-hidden{% endif %}">
+                                &nbsp; <button class="as-link remove"><i class="fas fa-eraser"></i></button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="paused-duetime sp-description sp-font-normal {% if ticket.duetimes.paused_time is empty %}sp-hidden{% endif %}">
+                            {{ Lang.get('ticket.paused_ago', {time: timeago(ticket.duetimes.paused_time)})|raw }}
                         </div>
                     </div>
                 </li>

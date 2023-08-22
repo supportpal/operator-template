@@ -101,6 +101,11 @@
         {{ csrf_field() }}
 
         <div class="sp-form-row">
+            {{ form_label('php_path', 'php') }}
+            {{ form_text('php_path', settings.getPhpPath(), {size: '100%'}) }}
+        </div>
+
+        <div class="sp-form-row">
             {{ form_label('tar_path', 'tar') }}
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
@@ -109,7 +114,7 @@
 {% endblock %}
 
 {% block scripts_footer %}
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             $('.sp-addon-card').on('click', function () {
                 Swal.fire({

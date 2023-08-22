@@ -1,0 +1,12 @@
+<div class="sp-flex sp-h-full sp-items-center sp-justify-center loading">
+    <div class="sp-text-4xl sp-font-bold">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+</div>
+<div class="sp-px-3 table-card"
+     style="display: none"
+     data-id="{{ table.id() }}"
+     data-options="{{ table.getOptionsAsJson() }}">
+
+    {{ table.render()|raw }}
+</div>

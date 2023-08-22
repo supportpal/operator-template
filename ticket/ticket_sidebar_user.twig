@@ -62,10 +62,10 @@
         <i class="fas fa-building fa-fw"></i> &nbsp; <a href="{{ ticket.user.organisation.url|raw }}">{{ ticket.user.organisation.name }}</a><br />
     {% endif %}
     <i class="fas fa-envelope fa-fw"></i> &nbsp; {{ ticket.user.email }}
-    {% if not ticket.user.confirmed %}
-        <i class="fas fa-exclamation-circle sp-text-orange-600" aria-hidden="true" title="{{ Lang.get('user.unconfirmed_user_desc') }}"></i>
+    {% if not ticket.user.email_verified %}
+        <i class="fas fa-exclamation-circle sp-text-orange-600" aria-hidden="true" title="{{ Lang.get('user.unverified_email_desc') }}"></i>
     {% endif %}<br />
-    {% if ticket.user.confirmed %}
+    {% if ticket.user.email_verified %}
         <i class="fas fa-calendar fa-fw"></i> &nbsp; {{ Lang.get('user.signed_up') }} {{ timeago(ticket.user.created_at) }}<br />
 
         {% if ticket.user.last_active_at > 0 %}

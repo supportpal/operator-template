@@ -57,7 +57,7 @@
                 {{ Lang.get('ticket.take_ownership') }}
             </label>
         </div>
-        {% if ticket.sla_plan_id is not empty and ticket.due_time is not empty and 'now'|date('U') < ticket.due_time %}
+        {% if ticket.sla_plan_id is not empty and ticket.due_time is not empty %}
             <div class="sp-reply-option">
                 <label>
                     {{ form_check('pause_duetime', 1, note ? null : operator.default_reply_options['pause_duetime']) }}

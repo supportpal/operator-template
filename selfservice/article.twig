@@ -37,6 +37,10 @@
 
 {% block content %}
 
+    {% if customSearch %}
+        {% include 'operator.' ~ template ~ '.core.search_tabs' %}
+    {% endif %}
+
     <div class="sp-filter-results sp-hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
@@ -96,7 +100,7 @@
     {{ table.script()|raw }}
 
     <!-- Filter the table -->
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             /**
              * Initialise the filters

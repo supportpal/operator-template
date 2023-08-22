@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ get_template_mode() }}">
 
 <head>
     <title>{{ ticket.subject }}</title>
@@ -9,7 +9,7 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
@@ -155,7 +155,7 @@
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         var ticket = new App.ticket({authUserId: "{{ auth_user().id }}"});
 
         $(document).ready(function() {

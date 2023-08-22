@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="sp-h-full">
+
+<head>
+    <title>{{ card.name() }}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+
+    <style>
+        .grid-stack-item-content {
+            margin-bottom: 0 !important;
+        }
+
+        .dataTables_wrapper {
+            margin: 0;
+        }
+
+        .table-card {
+            padding: 0;
+        }
+
+        table.dataTable thead td,
+        table.dataTable thead th {
+            position: static !important;
+        }
+
+        @media print {
+            @page {
+                size: landscape;
+            }
+
+            canvas {
+                min-height: 100%;
+                max-width: 100%;
+                height: auto !important;
+                width: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+    <div class="sp-flex sp-flex-col sp-h-full sp-break-words sp-py-6 xs:sp-p-6 print:sp-p-0">
+        {{ View.fireHook('operator.content_start') }}
+
+        <div class="sp-flex-none sp-text-center xs:sp-text-left">
+            <img src="{{ get_logo(false) }}" alt="{{ company }}" class="sp-logo sp-inline" />
+
+            <h2 class="sp-text-primary">{{ card.dashboard().name() }} - {{ card.name() }}</h2>
+
+            <div class="sp-title-description">
+                <span>Date Generated: {{ date }}</span>
+            </div>
+        </div>
+
+        <div class="grid-stack-item sp-flex-grow {% if card.component() is not same as('table') %}sp-h-full{% endif %}"
+             data-component="{{ card.component() }}"
+             data-id="{{ card.uriKey() }}"
+             data-name="{{ card.name() }}"
+             data-route="{{ card.route() }}">
+
+            <div class="grid-stack-item-content {% if card.component() is not same as('table') %}sp-h-full{% endif %}">
+                {{ card.content()|raw }}
+            </div>
+        </div>
+
+        {{ View.fireHook('operator.content_end') }}
+    </div>
+
+    {{ View.fireHook('operator.footer') }}
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    <script src="{{ asset_rev('resources/assets/dist/main.js') }}"></script>
+    <script>
+        $(function() {
+            const manager = new Reports.Manager();
+            manager.initFiltersFromUrl().load().get('{{ card.uriKey() }}').print();
+        });
+    </script>
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

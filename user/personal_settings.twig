@@ -4,6 +4,11 @@
     {{ Lang.get('user.personal_settings') }}
 {% endblock %}
 
+{% block scripts_header %}
+    <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/nouislider/css/nouislider.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+{% endblock %}
+
 {% block description %}
     {{ Lang.get('user.personal_settings_desc') }}
 {% endblock %}
@@ -81,8 +86,11 @@
                 <div class="sp-input-container">
                     {{ form_select(
                         'template_mode',
-                        {0: '-- ' ~ Lang.get('general.system_default') ~ ' --', 1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}
+                        {0: Lang.get('general.system'), 1: Lang.get('core.light_mode'), 2: Lang.get('core.dark_mode')}
                     ) }}
+                    <div class="sp-description">
+                        {{ Lang.get('core.template_mode_system_desc') }}
+                    </div>
                 </div>
             </div>
 
@@ -125,22 +133,17 @@
     {% endif %}
 
     <!-- Phone numbers -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/phonenumbers.js') }}"></script>
 
     <!-- noUiSlider -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/nouislider/js/nouislider.min.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/nouislider/css/nouislider.min.css') }}" />
+    <script src="{{ asset_rev('resources/assets/libs/nouislider/js/nouislider.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
-            // Enable hide/show password toggle
-            $('input[type=password]').hideShowPassword();
-
             // Handle rows per page slider.
             var $input = $('input[name="opsettings[datatable_rows]"]'),
                 slider = noUiSlider.create($('.sp-rows-slider')[0], {

@@ -1,0 +1,89 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ record.name }} - {{ Lang.choice('user.invitations', 2) }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden sp-user-access-update">
+        {{ Lang.get('messages.success_updated', {'item': mb_strtolower(Lang.choice('user.organisation', 1), 'UTF-8')}) }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden sp-user-access-update">
+        {{ Lang.get('messages.error_updated', {'item': mb_strtolower(Lang.choice('user.organisation', 1), 'UTF-8')}) }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'operator.' ~ template ~ '.user.forms.organisation_tabs' %}
+
+    <h2>{{ Lang.choice('user.invitations', 2) }}</h2>
+
+    <div class="sp-subtitle-description">
+        {{ Lang.get('user.organisation_desc')|raw }}
+    </div>
+
+    {{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script>
+    $(document).ready(function() {
+        const id = '{{ record.id }}';
+        const $table = $('.dataTable');
+
+        $table
+            .on('change', '.access-level', function () {
+                var $this = $(this);
+                $this.prop('disabled', true);
+
+                $.post($this.data('route'), {user: $this.data('id'), access_level: $(this).val()})
+                    .done(function (response) {
+                        if (response.status === 'success') {
+                            $('.sp-user-access-update.sp-alert-success').show(500).delay(5000).hide(500);
+                        } else {
+                            $('.sp-user-access-update.sp-alert-error').show(500).delay(5000).hide(500);
+                        }
+                    })
+                    .fail(function () {
+                        $('.sp-user-access-update.sp-alert-error').show(500).delay(5000).hide(500);
+                    })
+                    .always(function () {
+                        $this.prop('disabled', false);
+                    });
+            })
+            .on('click', '.remove-button', function() {
+                const params = {
+                    translationKeys: {
+                        title: 'user.remove_from',
+                        warning: 'user.remove_from_warn',
+                        confirmButton: '{{ Lang.get('general.yes') }}',
+                        cancelButton: '{{ Lang.get('general.no') }}'
+                    },
+                    ajax: {
+                        url: $(this).data('route'),
+                        data: {  user: $(this).data('user') }
+                    }
+                };
+
+                (new deleteAlert(params))
+                    .fireDefault(Lang.choice('user.organisation', 1), $(this).data('name'))
+                    .then(function (result) {
+                        if (result.value) {
+                            Swal.fire(
+                                Lang.get('messages.deleted'),
+                                Lang.get('messages.success_deleted', { 'item': Lang.choice('user.user', 1) }),
+                                'success'
+                            );
+
+                            $table.dataTable().api().ajax.reload(null, false);
+                        }
+                    });
+            });
+    });
+    </script>
+{% endblock %}

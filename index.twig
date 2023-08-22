@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="sp-h-full print:sp-h-auto">
+<html class="{{ get_template_mode() }} sp-h-full print:sp-h-auto">
 
 <head>
     {% block meta %}{% endblock %}
@@ -14,7 +14,7 @@
     {{ View.fireHook('operator.head') }}
 </head>
 
-<body class="{{ get_template_mode() }} sp-h-full sp-bg-primary sp-text-primary print:sp-h-auto">
+<body class="sp-h-full sp-bg-primary sp-text-primary print:sp-h-auto">
 
 {{ View.fireHook('operator.body_start') }}
 
@@ -76,13 +76,6 @@
                                     <li aria-haspopup="false">
                                         <a href="{{ route('ticket.operator.ticket.createStep1') }}" id="open-new-ticket">
                                             {{ Lang.get('ticket.open_new') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
-                                    <li aria-haspopup="false">
-                                        <a href="{{ route('report.operator.view', {'category': 'tickets', 'name': 'feedback'}) }}">
-                                            {{ Lang.get('report.user_feedback') }}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -211,13 +204,6 @@
                                         </a>
                                     </li>
                                 {% endif %}
-                                {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
-                                    <li aria-haspopup="false">
-                                        <a href="{{ route('report.operator.view', {'category': 'selfservice', 'name': 'feedback'}) }}">
-                                            {{ Lang.get('report.user_feedback') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
                                 {% if internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
                                     <li class="sp-internal-selfservice sp-relative lg:sp-hidden" aria-haspopup="true">
                                         <a class="sp-nav-sub-menu">
@@ -246,7 +232,7 @@
                     {% endif %}
                     {% if isModuleEnabled('Report') and auth_user().hasPermission('view.reportdashboard') %}
                         <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
-                            <a class="sp-nav-item" href="{{ route('report.operator.dashboard') }}">{{ Lang.choice('report.report', 2) }}</a>
+                            <a class="sp-nav-item" href="{{ route('report.operator.index') }}">{{ Lang.choice('report.report', 2) }}</a>
                         </li>
                     {% endif %}
                     {% if auth_user().canViewSettings() %}
@@ -379,6 +365,7 @@
 
                     {{ View.fireHook('operator.navigation') }}
 
+                    {% if auth_user().hasPermission('view.private_messaging') %}
                     <li class="sp-block lg:sp-hidden" aria-haspopup="false">
                         <a class="sp-nav-item sp-private-messages" href="{{ route('core.operator.message.index') }}">
                             {{ Lang.choice('general.message', 2) }}
@@ -389,6 +376,8 @@
                             {% endif %}
                         </a>
                     </li>
+                    {% endif %}
+
                     <li class="sp-block lg:sp-hidden" aria-haspopup="false">
                         <a class="sp-nav-item" href="{{ route('user.operator.personalsetting') }}">
                             {{ Lang.get('user.personal_settings') }}
@@ -414,9 +403,15 @@
                 </ul>
             </nav>
 
-            <div class="sp-grow sp-bg-primary-800 sp-z-10 lg:sp-flex-none lg:sp-px-3">
+            <div class="search-container sp-grow sp-py-3/2 sp-bg-primary-800 sp-z-10 lg:sp-flex-none lg:sp-px-3 xl:sp-w-64">
                 <form class="search-form sp-relative" action="{{ route('core.operator.search') }}" method="get" name="search_form" autocomplete="off">
-                    <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." autocomplete="on" class="search" />
+                    <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." autocomplete="on" class="search" readonly="readonly" />
+                    {% if Config.get('settings.operator' ~ auth_user().id ~ '.shortcuts_enabled') %}
+                        <kbd class="sp-search-shortcut sp-absolute sp-top-3/2 sp-right-3/2 sp-px-2 sp-py-1 sp-bg-primary-700 sp-rounded sp-text-primary-100 sp-font-bold sp-z-10001 lg:sp-hidden xl:sp-inline-block">/</kbd>
+                    {% endif %}
+                    <div class="sp-search-clear sp-absolute sp-hidden sp-top-3/2 sp-right-3/2 sp-px-2 sp-py-1 sp-bg-primary-700 sp-rounded sp-text-primary-100 sp-font-bold sp-z-10001 sp-cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
                 </form>
             </div>
 
@@ -438,6 +433,7 @@
                 </div>
             {% endif %}
 
+            {% if auth_user().hasPermission('view.private_messaging') %}
             <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
                 <div class="sp-private-messages sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3" id="privateMessages">
                     <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-mr-2 sp-text-white"
@@ -453,6 +449,7 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
 
             <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
                 {% if isModuleEnabled('Selfservice') and internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
@@ -664,7 +661,7 @@
 {{ View.fireHook('operator.footer') }}
 
 <!-- Vendor -->
-<script type="text/javascript">
+<script>
     paceOptions = {
         "ajax": {
             "ignoreURLs": [ "notification", "pollReplies" ],
@@ -675,9 +672,9 @@
 {% include 'operator.' ~ template ~ '.footer_common' %}
 
 <!-- Global Javascript Functions -->
-<script src="{{ asset_rev('resources/assets/operator/js/mobile.js') }}" type="text/javascript"></script>
-<script src="{{ asset_rev('resources/assets/operator/js/main.js') }}" type="text/javascript"></script>
-<script src="{{ asset_rev('resources/assets/operator/js/shortcuts.js') }}" type="text/javascript"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/mobile.js') }}"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/main.js') }}"></script>
+<script src="{{ asset_rev('resources/assets/operator/js/shortcuts.js') }}"></script>
 <script src="{{ asset_rev('resources/assets/operator/js/search.js') }}"></script>
 
 {% block scripts_footer %}{% endblock %}
@@ -688,7 +685,7 @@
 {% set enabled = Config.get('settings.product_tour_enabled', null) %}
 {% if enabled == '1' or enabled is null %}
     <script src="{{ asset_rev('resources/assets/libs/shepherd/js/shepherd.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/operator/js/producttour.js') }}" type="text/javascript"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/producttour.js') }}"></script>
 {% endif %}
 
 {{ View.fireHook('operator.body_end') }}

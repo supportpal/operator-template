@@ -107,9 +107,9 @@
     {% endif %}
 
     <!-- Translatable.js dependencies: Selectize -->
-    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(function() {
             for (var i = 1; i <= 7; i++) {
                 var $input = $('input[name="business_hours[' + i + '][type]"]:checked');
