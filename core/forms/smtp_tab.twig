@@ -19,9 +19,8 @@
         {{ form_label('smtp_encryption', Lang.get('core.smtp_encryption')) }}
         <div class="sp-input-container">
             {{ form_select('smtp_encryption', {
-                0     : Lang.get('general.none'),
+                '0'   : Lang.get('core.starttls_or_none'),
                 'ssl' : Lang.get('core.ssl'),
-                'tls' : Lang.get('core.tls')
             }) }}
         </div>
     </div>
