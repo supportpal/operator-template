@@ -230,7 +230,7 @@
                             </ul>
                         </li>
                     {% endif %}
-                    {% if isModuleEnabled('Report') and auth_user().hasPermission('view.reportdashboard') %}
+                    {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
                         <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('report.operator.index') }}">{{ Lang.choice('report.report', 2) }}</a>
                         </li>

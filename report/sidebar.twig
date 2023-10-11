@@ -5,11 +5,13 @@
                 {{ Lang.get('report.reports_home') }}
             </a>
         </li>
-        <li {% if Route.currentRouteName() is same as('report.operator.manage.index') %}class="sp-font-bold"{% endif %}>
-            <a href="{{ route('report.operator.manage.index') }}">
-                {{ Lang.get('report.manage_reports') }}
-            </a>
-        </li>
+        {% if auth_user().hasPermission('view.manage_report') %}
+            <li {% if Route.currentRouteName() is same as('report.operator.manage.index') %}class="sp-font-bold"{% endif %}>
+                <a href="{{ route('report.operator.manage.index') }}">
+                    {{ Lang.get('report.manage_reports') }}
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </div>
 

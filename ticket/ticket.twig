@@ -444,11 +444,12 @@
             departmentId: "{{ ticket.department_id }}",
             replyOrder: '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}',
             notesPosition: {{ Config.get('settings.ticket_notes_position') }},
-            ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams)) }}",
+            ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams))|e('js') }}",
             selfservice: {% if isModuleEnabled('Selfservice') %}true{% else %}false{% endif %},
             {% if replyTemplate is not empty %}
             replyTemplate: "{{ Purifier.clean(replyTemplate)|e('js') }}",
             {% endif %}
+            excludeInternalArticles: {% if ticket.internal %}false{% else %}true{% endif %}
         });
     </script>
 {% endblock %}

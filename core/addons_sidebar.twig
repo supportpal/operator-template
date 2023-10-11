@@ -31,7 +31,7 @@
                 <a href="{{ route('core.operator.integration.index') }}">{{ Lang.choice('core.third_party_integrations', 2) }}</a>
             </li>
         {% endif %}
-        {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
+        {% if isModuleEnabled('Report') and auth_user().hasPermission('view.manage_report') %}
             <li {% if route starts with 'report.operator.manage' %}class="sp-active"{% endif %}>
                 <a href="{{ route('report.operator.manage.index') }}">{{ Lang.choice('report.report', 2) }}</a>
             </li>

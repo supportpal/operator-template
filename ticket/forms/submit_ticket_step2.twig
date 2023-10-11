@@ -243,6 +243,12 @@
             brandId: "{{ brand.id }}",
             departmentId: "{{ department.id }}"
         });
+
+        $(function () {
+            $('textarea[name="text"]').editor($.extend({}, ticket.defaultEditorConfig(), {
+                excludeInternalArticles: {% if internal %}false{% else %}true{% endif %}
+            }));
+        })
     </script>
     <script src="{{ asset_rev('resources/assets/operator/js/newticket.js') }}"></script>
 
@@ -257,20 +263,6 @@
     </script>
 
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('textarea[name="text"]').editor({
-                plugins: $.fn.editor.defaults.plugins.concat(['mentions', 'cannedresponses', 'selfservice', 'autosavecursor']),
-                toolbar: $.fn.editor.defaults.toolbar + ' | cannedresponses selfservice',
-                // Plugin settings.
-                ticketId: ticket.parameters().ticketId,
-                userId: ticket.parameters().userId,
-                brandId: ticket.parameters().brandId,
-                departmentId: ticket.parameters().departmentId
-            });
-        });
-    </script>
 
     <!-- Custom fields -->
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>

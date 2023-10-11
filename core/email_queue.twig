@@ -96,6 +96,12 @@
     <script>
         $(function () {
             $(document).on('click', '.send-button', function () {
+                const $this = $(this);
+
+                $this.prop('disabled', 'disabled');
+                $this.find('i').hide();
+                $this.append('<i class="fa-solid fa-spin fa-spinner">');
+
                 $.get('{{ route('core.operator.emailqueue.send') }}', { 'id[]': [ $(this).data('id') ] })
                     .done(function () {
                         $('.sp-sent-email.sp-alert').show(500).delay(5000).hide(500);
@@ -117,6 +123,11 @@
                             html: message,
                             icon: 'error'
                         });
+                    })
+                    .always(function () {
+                        $this.find('i.fa-spinner').remove();
+                        $this.find('i').show();
+                        $this.prop('disabled', false);
                     });
             });
         });
