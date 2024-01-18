@@ -321,7 +321,7 @@
                                             <i class="fas sp-chevron sp-py-1/2 sp-float-right sp-text-xs" aria-hidden="true"></i>
                                         </a>
                                         <ul class="sp-nav-dropdown lg:sp-rounded-tr">
-                                            {% if auth_user().hasPermission('view.background_jobs') and Config.get('queue.default') is same as('redis') %}
+                                            {% if auth_user().hasPermission('view.background_jobs') %}
                                                 <li aria-haspopup="false">
                                                     <a href="{{ route('core.operator.background_jobs') }}">
                                                         {{ Lang.get('core.background_jobs') }}
@@ -660,15 +660,6 @@
 
 {{ View.fireHook('operator.footer') }}
 
-<!-- Vendor -->
-<script>
-    paceOptions = {
-        "ajax": {
-            "ignoreURLs": [ "notification", "pollReplies" ],
-            "trackWebSockets": false,
-        }
-    }
-</script>
 {% include 'operator.' ~ template ~ '.footer_common' %}
 
 <!-- Global Javascript Functions -->

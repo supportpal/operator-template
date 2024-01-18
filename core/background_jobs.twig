@@ -4,10 +4,75 @@
     {{ Lang.get('core.background_jobs') }}
 {% endblock %}
 
+{% block description %}
+    {{ Lang.get('core.background_jobs_desc') }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-datepicker" data-active="0">
+                    <i class="fas fa-calendar"></i>
+                    <span class="sp-hidden xs:sp-inline">
+                        &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
+                    </span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-retry-success sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+{% endblock %}
+
 {% block content %}
 
-    <iframe src="{{ route('horizon.index') }}"
-            onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
-            class="sp-w-full sp-border-0"></iframe>
+    {% if useHorizon %}
+        <ul class="sp-tabs">
+            <li class="sp-active"><a>{{ Lang.get('core.failed_jobs') }}</a></li>
+            <li><a href="{{ route('core.operator.background_jobs.horizon') }}">{{ Lang.get('core.horizon_dashboard') }}</a></li>
+        </ul>
+    {% endif %}
 
+    {{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/daterangepicker/js/daterangepicker.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script>
+        $(function () {
+            $(document).on('click', '.sp-retry-button', function () {
+                const $this = $(this);
+
+                $this.prop('disabled', 'disabled');
+                $this.find('i').hide();
+                $this.append('<i class="fa-solid fa-spin fa-spinner">');
+
+                $.post('{{ route('core.operator.background_jobs.retry') }}', {'id': $(this).data('id')})
+                    .done(function () {
+                        $('.sp-retry-success.sp-alert').show(500).delay(5000).hide(500);
+                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            title: '{{ Lang.get('messages.error')  }}',
+                            html: message,
+                            icon: 'error'
+                        });
+                    })
+                    .always(function () {
+                        $this.find('i.fa-spinner').remove();
+                        $this.find('i').show();
+                        $this.prop('disabled', false);
+                    });
+            });
+        });
+    </script>
 {% endblock %}

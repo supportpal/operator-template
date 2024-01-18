@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html class="{{ get_template_mode() }}">
+
+<head>
+    <title>{{ record.job_name }}</title>
+
+    {% include 'operator.' ~ template ~ '.head_common' %}
+
+    {{ View.fireHook('operator.head') }}
+</head>
+
+<body class="xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+
+    {{ View.fireHook('operator.body_start') }}
+
+    <div class="sp-container sp-m-auto">
+        {{ View.fireHook('operator.wrapper_start') }}
+
+        <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-p-0 print:sp-shadow-none">
+            {{ View.fireHook('operator.content_start') }}
+
+            <h2 class="sp-mt-0">{{ record.job_name }}</h2>
+
+            <div class="md:sp-p-6 md:sp-border md:sp-border-secondary md:sp-rounded">
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('general.id') }}</label>
+                    <div>{{ record.uuid }}</div>
+                </div>
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('core.queue') }}</label>
+                    <div>{{ record.queue }}</div>
+                </div>
+
+                {% if record.pushed_at %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('general.created_date') }}</label>
+                        <div>{{ formatDate(record.pushed_at) }}</div>
+                    </div>
+                {% endif %}
+
+                <div class="sp-form-row sp-mb-0">
+                    <label>{{ Lang.get('core.failed_at') }}</label>
+                    <div>{{ formatDate(record.failed_at_timestamp) }}</div>
+                </div>
+
+            </div>
+
+            <h2>{{ Lang.get('core.exception') }}</h2>
+
+            <div class="md:sp-border md:sp-border-b-0 md:sp-border-secondary md:sp-rounded">
+                <table class="sp-table-grid">
+                    {% for line in record.exception|split('\n') %}
+                    <tr>
+                        <td><code>{{ line }}</code></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <h2>{{ Lang.get('core.data') }}</h2>
+
+            <div class="md:sp-p-6 md:sp-border md:sp-border-secondary md:sp-rounded">
+                <code><pre>{{ record.payload_data }}</pre></code>
+            </div>
+
+            {{ View.fireHook('operator.content_end') }}
+        </div>
+
+        {{ View.fireHook('operator.wrapper_end') }}
+    </div>
+
+    {{ View.fireHook('operator.footer') }}
+
+    {% include 'operator.' ~ template ~ '.footer_common' %}
+
+    {{ View.fireHook('operator.body_end') }}
+
+</body>
+
+</html>

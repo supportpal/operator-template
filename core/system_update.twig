@@ -114,6 +114,17 @@
             {{ form_label('tar_path', 'tar') }}
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
+
+        <div class="sp-text-left">
+            <h3 class="sp-m-0">{{ Lang.get('core.temporary_path') }}</h3>
+            <div class="sp-description sp-mt-3 sp-mb-6">
+                {{ Lang.get('core.temporary_path_desc') }}
+            </div>
+        </div>
+
+        <div class="sp-form-row">
+            {{ form_text('temporary_path', settings.getTemporaryPath(), {size: '100%'}) }}
+        </div>
     </div>
 
 {% endblock %}

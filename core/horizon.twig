@@ -1,0 +1,18 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.horizon_dashboard') }}
+{% endblock %}
+
+{% block content %}
+
+    <ul class="sp-tabs">
+        <li><a href="{{ route('core.operator.background_jobs') }}">{{ Lang.get('core.failed_jobs') }}</a></li>
+        <li class="sp-active"><a>{{ Lang.get('core.horizon_dashboard') }}</a></li>
+    </ul>
+
+    <iframe src="{{ route('horizon.index') }}"
+            onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
+            class="sp-w-full sp-border-0"></iframe>
+
+{% endblock %}
