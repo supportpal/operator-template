@@ -380,15 +380,9 @@
 
     </div>
 
-    <div id="tabLog" class="sp-tab-content sp-hidden">
-        {{ log.render()|raw }}
-    </div>
+    <div id="tabLog" class="sp-tab-content sp-hidden"></div>
 
-    <div id="tabEscalationRules" class="sp-tab-content sp-hidden">
-        <div class="sp-description sp-mb-6">{{ Lang.get('ticket.escalation_rules_desc') }}</div>
-
-        {{ escalationRules.render()|raw }}
-    </div>
+    <div id="tabEscalationRules" class="sp-tab-content sp-hidden"></div>
 
     {% if can_update_ticket(auth_user(), ticket) or ticket.followup is not empty %}
         <div id="tabFollowup" class="sp-tab-content sp-hidden"></div>
@@ -400,8 +394,6 @@
 
 {% block scripts_footer %}
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
-    {{ log.script()|raw }}
-    {{ escalationRules.script()|raw }}
 
     <!-- Actions for FollowUp tab -->
     <script src="{{ asset_rev('resources/assets/operator/js/filtering.js') }}"></script>
@@ -409,7 +401,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- File upload/download/previews. -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>

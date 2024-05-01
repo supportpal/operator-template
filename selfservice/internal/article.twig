@@ -119,12 +119,15 @@
 {% endblock %}
 
 {% block scripts_footer %}
-    <!-- Attachment previews -->
-    <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
-
-    <script src="{{ asset_rev('resources/assets/frontend/js/article.js') }}"></script>
-
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
+
+    <!-- Attachment previews -->
+    <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
+
+    <!-- WYSIWYG Editor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/frontend/js/article.js') }}"></script>
 {% endblock %}

@@ -42,25 +42,16 @@
             {% if record is not defined %}
                 <div class="sp-table-row">
                     <label>{{ Lang.choice('user.role', 1) }}:</label>
-                    <div>
-                        {{ form_select('sSearch_1', { '-1': Lang.get('general.select_value'), 0: Lang.get('general.system'), '1': Lang.choice('general.operator', 1), 2: Lang.choice('user.user', 1), 3: Lang.get('general.api') }) }}<!--
-                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                    </div>
+                    <div id="filter_role"></div>
                 </div>
                 <div class="sp-table-row">
                     <label>{{ Lang.get('general.name') }}:</label>
-                    <div>
-                        {{ form_text('sSearch_2', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
-                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                    </div>
+                    <div id="filter_name"></div>
                 </div>
             {% endif %}
             <div class="sp-table-row">
                 <label>{{ Lang.get('general.ip_address') }}:</label>
-                <div>
-                    {{ form_text('sSearch_3', null, { 'placeholder': Lang.get('general.enter_exact_ip') }) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_ip"></div>
             </div>
         </div>
     </div>
@@ -79,5 +70,13 @@
     <script src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
     {{ table.script()|raw }}
 
-    <script src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
+    <script>
+        $(function() {
+            oTable.yadcf([
+                {column_number: 1, filter_container_id: "filter_role", filter_reset_button_text: ''},
+                {column_number: 2, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 3, column_data_type: "text", filter_container_id: "filter_ip", filter_type: "text", filter_delay: 500, filter_reset_button_text: '', filter_default_label: '{{ Lang.get('general.enter_exact_ip') }}'},
+            ]);
+        });
+    </script>
 {% endblock %}

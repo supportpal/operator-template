@@ -54,7 +54,7 @@
         <div class="sp-form-row sp-form-full">
             {{ form_label('text', Lang.get('general.text')) }}
             <div class="sp-input-container">
-                {{ form_textarea('text', '@' ~ trim(str_replace(' ', '', record.author.formatted_name)) ~ ' ', {'class': 'sp-h-24'}) }}
+                {{ form_editor('text') }}
             </div>
         </div>
 
@@ -74,4 +74,29 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
+
+    <!-- WYSIWYG Editor -->
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('textarea').editor({
+                // Paste settings.
+                valid_elements: 'a[href|target=_blank],br,p',
+
+                // Toolbar settings.
+                toolbar: false,
+
+                // https://www.tiny.cloud/docs/plugins/opensource/autoresize/#min_height
+                min_height: 100,
+
+                // Statusbar settings.
+                statusbar: false,
+
+                // Disable keyboard shortcuts.
+                plugins: $.fn.editor.defaults.plugins.concat(['disable_shortcuts']),
+            });
+        });
+    </script>
 {% endblock %}
+

@@ -180,7 +180,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- Attachments -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
@@ -274,10 +273,8 @@
             {% endif %}
 
             $('textarea').editor({
-                syntaxEmailTemplate: true,
-                mergeFields: {
-                    organisations: '{{ Config.get('settings.organisations_enabled') }}'
-                },
+                mergefields_syntaxEmailTemplate: true,
+                mergefields_organisations: {{ Config.get('settings.organisations_enabled') ? "true" : "false" }},
                 plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
                 toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
             });

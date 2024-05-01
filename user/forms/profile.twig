@@ -46,34 +46,30 @@
             {% if auth_check() and record.id == auth_user().id and auth_user().loggedInViaSSO() %}
                 {% set emailAttributes = emailAttributes|merge({'readonly': 'readonly'}) %}
             {% endif %}
-            <div class="sp-mb-3">
+            <div {% if managing|default is not empty and managing and (operator is not defined or not operator) %}class="sp-mb-3"{% endif %}>
                 {{ form_email('email', record.email, emailAttributes) }}
             </div>
-            {% if record.exists and managing|default is not empty and managing and (operator is not defined or not operator) %}
-                {% if record.email_verified %}
-                    <div class="sp-description sp-mb-3">{{ Lang.get('user.changing_email_desc') }}</div>
-                {% elseif record.password is empty %}
-                    <div class="sp-mb-3">
-                        <strong class="sp-text-red-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unregistered_user_desc') }}
-                    </div>
-                    {% if managing|default is not empty and managing and (operator is not defined or not operator) %}
-                        <div class="sp-mb-3">
-                            {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <div class="sp-mb-3">
-                        <strong class="sp-text-orange-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unverified_email_desc') }}
-                    </div>
-
-                    <div class="sp-mb-3">
-                        {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_verification_email'), { 'class': 'sp-verification-email' }) }} &nbsp;
-                        {{ form_button('<i class="fas fa-check-square"></i>&nbsp; ' ~ Lang.get('user.mark_as_verified'), { 'class': 'mark-verified' }) }}
-                        </div>
-                {% endif %}
-            {% endif %}
 
             {% if managing|default is not empty and managing and (operator is not defined or not operator) %}
+                {% if record.exists %}
+                    {% if record.email_verified %}
+                        <div class="sp-description sp-mb-3">{{ Lang.get('user.changing_email_desc') }}</div>
+                    {% elseif record.password is empty %}
+                        <div class="sp-mb-3">
+                            <strong class="sp-text-red-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unregistered_user_desc') }}
+                        </div>
+                    {% else %}
+                        <div class="sp-mb-3">
+                            <strong class="sp-text-orange-600">{{ Lang.get('user.unverified') }}</strong> - {{ Lang.get('user.unverified_email_desc') }}
+                        </div>
+
+                        <div class="sp-mb-3 sp-button-group">
+                            {{ form_button('<i class="fas fa-paper-plane"></i>&nbsp; ' ~ Lang.get('user.send_verification_email'), { 'class': 'sp-verification-email' }) }}<!--
+                            -->{{ form_button('<i class="fas fa-check-square"></i>&nbsp; ' ~ Lang.get('user.mark_as_verified'), { 'class': 'mark-verified' }) }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
                 {% include 'operator.' ~ template ~ '.user.forms.email_address' with {'hide': true} %}
 
                 {% for address in record.additionalEmails %}
@@ -89,29 +85,30 @@
         <div class="sp-form-row">
             {{ form_label('active', Lang.get('user.account_active')) }}
             <div class="sp-input-container">
-                {{ form_check('active', 1, record.active|default is not empty ? record.active : 1, {'class': 'sp-toggle', 'id': 'toggle_active'}) }}
+                {{ form_check('active', 1, record.exists ? record.active : 1, {'class': 'sp-toggle', 'id': 'toggle_active'}) }}
                 <label for="toggle_active"></label>
                 <div class="sp-description">{{ Lang.get('user.account_active_desc') }}</div>
+            </div>
+        </div>
+    {% endif %}
 
-                {% if (not record.exists or record.password is empty) and managing|default is not empty and managing and (operator is not defined or not operator) %}
-                    <br />
-                    {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
+    {% if (not record.exists or record.password is empty) and managing|default is not empty and managing %}
+        <div class="sp-form-row sp-send-email-field">
+            <label></label>
+            <div class="sp-input-container">
+                {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
+
+                {% if operator is defined and operator %}
+                    <div class="sp-description">
+                        {{ Lang.get('user.new_operator_account_desc') }}
+                    </div>
                 {% endif %}
             </div>
         </div>
     {% endif %}
 
-    {% if not record.exists and managing|default is not empty and managing and (operator is not defined or not operator) %}
-        <div class="sp-form-row">
-            <label></label>
-            <div class="sp-input-container">
-                {{ form_checkbox('send_email', 1, not record.exists) }} {{ Lang.get('user.send_verification_email') }}
-            </div>
-        </div>
-    {% endif %}
-
     {% if showPassword is not defined or showPassword %}
-        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) and (operator is not defined or not operator) %}style="display: none"{% endif %}>
+        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) %}style="display: none"{% endif %}>
             {{ form_label('password', Lang.get('general.password')) }}
             <div class="sp-input-container">
                 {{ form_password('password', { 'autocomplete': 'new-password' }) }}
@@ -121,7 +118,7 @@
             </div>
         </div>
 
-        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) and (operator is not defined or not operator) %}style="display: none"{% endif %}>
+        <div class="sp-form-row password-field" {% if (not record.exists or record.password is empty) %}style="display: none"{% endif %}>
             {{ form_label('password_confirmation', Lang.get('user.confirm_password')) }}
             <div class="sp-input-container">
                 {{ form_password('password_confirmation', { 'autocomplete': 'new-password' }) }}
@@ -129,7 +126,7 @@
         </div>
     {% endif %}
 
-    {% if record.exists and record.email_verified and record.password is not empty and managing|default is not empty and managing and (operator is not defined or not operator) %}
+    {% if record.exists and ((operator is defined and operator) or record.email_verified) and record.password is not empty and managing|default is not empty and managing %}
         <div class="sp-form-row">
             <label></label>
             <div class="sp-input-container">

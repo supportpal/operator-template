@@ -161,7 +161,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- Additional email addresses -->
     <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/emailaddresses.js') }}"></script>
@@ -346,10 +345,7 @@
                 $this.prop('disabled', true);
 
                 $.post(
-                    laroute.route(
-                        'user.operator.user.resetpassword',
-                        { id: {{ record|default is not empty and record.exists ? record.id : 'null' }} }
-                    ),
+                    "{{ route('user.operator.user.resetpassword', [record|default is not empty and record.exists ? record.id : 'null']) }}",
                     { },
                     function(response) {
                         if (response.status == 'success') {

@@ -1,7 +1,7 @@
 {% if article.comments is not empty %}
-    {{ form_open({'route': [ 'selfservice.operator.internal.comment' ], 'method': 'post', 'class': 'add-comment validate with-comments'}) }}
+    {{ form_open({'route': 'selfservice.operator.internal.comment', 'method': 'post', 'class': 'add-comment validate with-comments'}) }}
 {% else %}
-    {{ form_open({'route': [ 'selfservice.operator.internal.comment' ], 'method': 'post', 'class': 'add-comment validate'}) }}
+    {{ form_open({'route': 'selfservice.operator.internal.comment', 'method': 'post', 'class': 'add-comment validate'}) }}
 {% endif %}
 
     {{ form_hidden('article_id', article['id']) }}
@@ -15,7 +15,7 @@
     </p>
 
     <div class="sp-form-row sp-form-full">
-        {{ form_textarea('text', null, {'placeholder': Lang.choice('selfservice.comment', 1), 'class': 'sp-h-24'}) }}
+        {{ form_editor('text', null, {'placeholder': Lang.choice('selfservice.comment', 1)}) }}
     </div>
 
     <div class="sp-form-row">

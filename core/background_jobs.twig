@@ -58,7 +58,7 @@
                 $.post('{{ route('core.operator.background_jobs.retry') }}', {'id': $(this).data('id')})
                     .done(function () {
                         $('.sp-retry-success.sp-alert').show(500).delay(5000).hide(500);
-                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                        $('.dataTable').dataTable().api().ajax.reload();
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
                         Swal.fire({

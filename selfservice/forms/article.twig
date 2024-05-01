@@ -216,7 +216,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- selfserviceslug.js dependencies: Sweetalert2 (above), donetyping -->
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
@@ -269,7 +268,8 @@
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
 
-        // WYSIWYG editor options (used by article.js and multidimensionaldata.js).
+        // WYSIWYG editor options (used by article.js and multidimensionaldata.js). Leave blank here and set after DOM
+        // ready.
         var opts = {};
 
         // Date picker

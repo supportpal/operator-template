@@ -12,6 +12,15 @@
     <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
 {% endblock %}
 
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.error_action') }}
+    </div>
+{% endblock %}
+
 {% block content %}
 
     {% if record|default is not empty and record.exists %}
@@ -93,7 +102,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
@@ -102,13 +110,37 @@
         $(document).ready(function() {
             // Do not initialise editor on the dummy DOM element.
             $('textarea[name="reply_template"]').editor({
-                mergeFields: {
-                    tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
-                    organisations: '{{ Config.get('settings.organisations_enabled') }}'
-                },
+                mergefields_tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                mergefields_organisations: {{ Config.get('settings.organisations_enabled') ? "true" : "false" }},
                 plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
                 toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
             });
+
+            // Hide the send email checkbox if the operator is disabled.
+            $('input[name="active"]').on('change', function () {
+                if (! $(this).is(':checked')) {
+                    if ($('input[name=send_email]').is(':checked')) {
+                        $('input[name="send_email"]').trigger('click');
+                    }
+
+                    $('.sp-send-email-field').addClass('sp-hidden');
+                } else {
+                    $('.sp-send-email-field').removeClass('sp-hidden')
+                }
+            });
+            $('input[name="active"]').trigger('change');
+
+            // Toggle the password fields depending on whether we're sending a confirmation email
+            $('input[name="send_email"]').on('click', function() {
+                $('.password-field').toggle();
+                $('.password-field button.hideShowPassword-toggle').trigger('click').trigger('click');
+            });
+
+            // Toggle the password fields, depending on how the page loads (when an error occurs, the form resets to
+            // how it was before the error occured
+            if ($('input[name=send_email]').length && $('input[name=send_email]').is(':checked') == false) {
+                $('.password-field').toggle();
+            }
 
             // Generate a new random password
             $('a#generatePassword').on('click', function() {
@@ -121,6 +153,30 @@
                     document.getElementById('password').value=password;
                     document.getElementById('password').type='password';
                 }
+            });
+
+            // Reset password link
+            $('.reset-password').on('click', function() {
+                var $this = $(this);
+                $this.prop('disabled', true);
+
+                $.post(
+                    "{{ route('user.operator.operator.resetpassword', [record|default is not empty and record.exists ? record.id : 'null']) }}",
+                    { },
+                    function(response) {
+                        if (response.status == 'success') {
+                            $('.action.sp-alert-success').show(500).delay(5000).hide(500);
+                        } else {
+                            $('.action.sp-alert-error').show(500).delay(5000).hide(500);
+                        }
+
+                        $this.prop('disabled', false);
+                    },
+                    "json"
+                ).fail(function() {
+                    $('.action.sp-alert-error').show(500).delay(5000).hide(500);
+                    $this.prop('disabled', false);
+                });
             });
 
             // On changing group, fetch newly assigned departments and update department selectizes accordingly

@@ -39,45 +39,27 @@
         <div class="sp-table">
             <div class="sp-table-row">
                 <label>{{ Lang.choice('general.recipients', 2) }}:</label>
-                <div>
-                    {{ form_text('sSearch_1', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_recipients"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.get('ticket.from_name') }}:</label>
-                <div>
-                    {{ form_text('sSearch_2', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_from_name"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.get('ticket.from_address') }}:</label>
-                <div>
-                    {{ form_text('sSearch_3', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_from_address"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.get('ticket.subject') }}:</label>
-                <div>
-                    {{ form_text('sSearch_4', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_subject"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.choice('general.message', 1) }}:</label>
-                <div>
-                    {{ form_text('sSearch_5', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_message"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.choice('general.status', 1) }}:</label>
-                <div>
-                    {{ form_select('sSearch_6', {'-1': Lang.get('general.select_value'), 0: Lang.get('general.pending'), 1: Lang.get('general.blocked')}) }}<!--
-                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
-                </div>
+                <div id="filter_status"></div>
             </div>
         </div>
     </div>
@@ -92,9 +74,17 @@
     <script src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
     {{ table.script()|raw }}
 
-    <script src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
     <script>
         $(function () {
+            oTable.yadcf([
+                {column_number: 1, column_data_type: "text", filter_container_id: "filter_recipients", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 2, column_data_type: "text", filter_container_id: "filter_from_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 3, column_data_type: "text", filter_container_id: "filter_from_address", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 4, column_data_type: "text", filter_container_id: "filter_subject", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 5, column_data_type: "text", filter_container_id: "filter_message", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
+                {column_number: 6, filter_container_id: "filter_status", filter_reset_button_text: ''},
+            ]);
+
             $(document).on('click', '.send-button', function () {
                 const $this = $(this);
 
@@ -105,7 +95,7 @@
                 $.get('{{ route('core.operator.emailqueue.send') }}', { 'id[]': [ $(this).data('id') ] })
                     .done(function () {
                         $('.sp-sent-email.sp-alert').show(500).delay(5000).hide(500);
-                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                        $('.dataTable').dataTable().api().ajax.reload();
                     })
                     .fail(function (jqXHR, textStatus, errorThrown) {
                         var message = '{{ Lang.get('log.email_send_failed') }}';

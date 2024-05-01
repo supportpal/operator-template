@@ -38,20 +38,20 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
     <script>
-        var opts = {
-            mergeFields: {
-                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
-                organisations: '{{ Config.get('settings.organisations_enabled', 1) }}'
-            },
-            plugins: $.fn.editor.defaults.plugins.concat(['mergefields', 'autosavecursor']),
-            toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
-        };
+        // WYSIWYG editor options (used by multidimensionaldata.js). Leave blank here and set after DOM ready.
+        var opts = {};
 
         $(function () {
+            opts = {
+                mergefields_tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+                mergefields_organisations: {{ Config.get('settings.organisations_enabled', 1) ? "true" : "false" }},
+                plugins: $.fn.editor.defaults.plugins.concat(['mergefields', 'autosavecursor']),
+                toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
+            };
+
             // Do not initialise editor on the dummy DOM element.
             $('div.section-items textarea').editor(opts);
         });

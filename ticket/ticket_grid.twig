@@ -341,7 +341,6 @@
 
     <!-- Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <!-- File upload -->
     <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
@@ -522,9 +521,10 @@
                     didOpen: function () {
                         var $textarea = $(Swal.getHtmlContainer()).find('.mass-reply textarea');
                         $textarea.editor({
-                            oninit: function () {
-                                var id = $textarea.prop('id');
-                                tinymce.get(id).focus();
+                            setup: function (editor) {
+                                editor.on('init', function () {
+                                    editor.focus();
+                                });
                             }
                         });
                     },

@@ -132,7 +132,6 @@
 
     <!-- WYSIWYG Editor -->
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/visibility.js') }}"></script>
@@ -140,16 +139,8 @@
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
 
-        // WYSIWYG editor options.
-        var opts = {
-            mergeFields: {
-                tickets: true,
-                organisations: '{{ Config.get('settings.organisations_enabled') }}',
-                canned_responses: false
-            },
-            plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
-            toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
-        };
+        // WYSIWYG editor options (used by multidimensionaldata.js). Leave blank here and set after DOM ready.
+        var opts = {};
 
         // Custom attribute mapper for multidimensionaldata.js
         attributeMapper = function(elem, value, attribute) {
@@ -159,6 +150,15 @@
         };
 
         $(document).ready(function() {
+            // WYSIWYG editor options.
+            opts = {
+                mergefields_tickets: true,
+                mergefields_organisations: {{ Config.get('settings.organisations_enabled') ? "true" : "false" }},
+                mergefields_canned_responses: false,
+                plugins: $.fn.editor.defaults.plugins.concat(['mergefields']),
+                toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
+            };
+
             $('div.section-items textarea').editor(opts);
 
             // Tags

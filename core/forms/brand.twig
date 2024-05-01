@@ -265,8 +265,7 @@
     {% endif %}
 
     <!-- Code Editor -->
-    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/codemirror.min.js') }}"></script>
 
     <!-- Translatable.js dependencies: Selectize -->
     <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
@@ -311,13 +310,6 @@
             // Add CodeMirror editor.
             $('textarea[name=global_email_header]').sourcecode();
             $('textarea[name=global_email_footer]').sourcecode();
-
-            // The editor needs refreshing if it's rendered while out-of-view for some reason..
-            $('.sp-tabs li').on('click', function () {
-                $('.CodeMirror').each(function(i, el){
-                    el.CodeMirror.refresh();
-                });
-            });
         });
     </script>
 {% endblock %}

@@ -13,16 +13,21 @@
                             <span class="sp-name sp-font-semibold">
                                 {{ comment.author.formatted_name }}
                             </span>
+                            {% if comment.parent_id and comment.parent_author %}
+                                &nbsp;<span class="sp-description sp-inline-block">{{ Lang.get('selfservice.in_reply_to') }} <a href="#comment-{{ comment.parent_id }}">{{ comment.parent_author.formatted_name }}</a></span>
+                            {% endif %}
                             &nbsp;<span class="sp-description sp-inline-block">{{ timeago(comment.created_at) }}</span>
                         </div>
 
-                        <div class="sp-comment-text sp-mt-1 sp-mb-3/2">
+                        <div class="sp-comment-text sp-mt-1 sp-mb-3/2 {% if comment.deleted_at %}sp-description{% endif %}">
                             {{ comment.purified_text|raw }}
                         </div>
 
-                        <div class="sp-comment-options sp-text-sm sp-text-secondary print:sp-hidden">
-                            <a class="sp-reply-to-comment sp-description" data-id="{{ comment.id }}">{{ Lang.get('general.reply') }}</a>
-                        </div>
+                        {% if not comment.deleted_at %}
+                            <div class="sp-comment-options sp-text-sm sp-text-secondary print:sp-hidden">
+                                <a class="sp-reply-to-comment sp-description" data-id="{{ comment.id }}">{{ Lang.get('general.reply') }}</a>
+                            </div>
+                        {% endif %}
 
                         {% if comment.children is not empty %}
                             {% if comment.more|default is not empty and comment_ordering == 1 %}

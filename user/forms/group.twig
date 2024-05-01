@@ -280,7 +280,7 @@
                         $('.member-update.sp-alert-error').show(500).delay(5000).hide(500);
                     }).always(function() {
                         // Reload table
-                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                        $('.dataTable').dataTable().api().ajax.reload();
                     });
                 });
             });

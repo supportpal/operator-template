@@ -97,18 +97,15 @@
     <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
     <!-- WYSIWYG Editor -->
-    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/general/js/editor_config.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/codemirror.min.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
     <script>
         var opts = {
             toolbar: true,
-            mergeFields: {
-                syntaxEmailTemplate: true,
-                tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
-                organisations: "{{ Config.get('settings.organisations_enabled', 1) }}"
-            }
+            mergefields_syntaxEmailTemplate: true,
+            mergefields_tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
+            mergefields_organisations: "{{ Config.get('settings.organisations_enabled', 1) ? "true" : "false" }}"
         };
 
         // Do not initialise editor on the dummy DOM element.
