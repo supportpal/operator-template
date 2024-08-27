@@ -139,7 +139,7 @@
     </ul>
 </div>
 
-{% if obj_tags is not empty and not obj_tags.isEmpty() %}
+{% if total_tags > 0 %}
     <div class="sp-sidebox">
         <div class="sp-collapsible sp-flex" id="ticketTagsSidebox">
             <div class="sp-icon">
@@ -152,10 +152,16 @@
         </div>
 
         <div class="tag-list">
-            {% for tag in obj_tags %}
-                <a class="sp-tag" href="{{ route('ticket.operator.ticket') ~ '?tag=' ~ tag['id'] }}"
-                    style="background-color: {{ tag['colour'] }}; color: {{ tag['colour_text'] }};">{{ tag['name'] }}</a>
-            {% endfor %}
+            {% if obj_tags.isNotEmpty() %}
+                {% for tag in obj_tags %}
+                    <a class="sp-tag" href="{{ route('ticket.operator.ticket') ~ '?tag=' ~ tag['id'] }}"
+                        style="background-color: {{ tag['colour'] }}; color: {{ tag['colour_text'] }};">{{ tag['name'] }}</a>
+                {% endfor %}
+            {% else %}
+                <select name="search_tag">
+                    <option value="">{{ Lang.get('general.search') }}...</option>
+                </select>
+            {% endif %}
         </div>
     </div>
 {% endif %}

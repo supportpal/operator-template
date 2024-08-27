@@ -66,23 +66,6 @@
             </div>
         {% endif %}
 
-        {% if not forward %}
-            <div class="sp-reply-option">
-                <label>
-                    {{ form_check('add_canned', 1) }}
-                    {{ Lang.get('ticket.add_to_canned_responses') }}
-                </label>
-                <div class="sp-hidden">
-                    <input type="text" name="canned_name" placeholder="{{ Lang.get('general.name') }}" class="sp-w-full sp-my-2" />
-                    <br />
-                    <label>
-                        {{ form_check('canned_public', 1) }}
-                        {{ Lang.get('ticket.visible_to_all_operators') }}
-                    </label>
-                </div>
-            </div>
-        {% endif %}
-
         <div class="sp-reply-option">
             <label>
                 {{ Lang.get('ticket.set_status') }}:

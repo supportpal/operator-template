@@ -11,6 +11,8 @@
         <li class="sp-active"><a>{{ Lang.get('core.horizon_dashboard') }}</a></li>
     </ul>
 
+    <script>localStorage.setItem('scheme', '{{ scheme }}');</script>
+
     <iframe src="{{ route('horizon.index') }}"
             onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
             class="sp-w-full sp-border-0"></iframe>

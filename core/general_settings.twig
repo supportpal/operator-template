@@ -121,6 +121,12 @@
         <div class="sp-form-row">
             {{ form_label('email_method', Lang.get('core.email_method')) }}
             <div class="sp-input-container">
+                {% if brand_config(default_brand() ~ '.email_method', 'default') is not same as('default') %}
+                    <div class="sp-alert sp-alert-warning sp-mb-3">
+                        {{ Lang.get('core.email_method_overridden', {'link': route('core.operator.brand.edit', default_brand())})|raw }}
+                    </div>
+                {% endif %}
+
                 <label>{{ form_radio('email_method', 'mail', true, {
                         'onclick': "document.getElementById('smtp').style.display = 'none';"
                     })
@@ -216,34 +222,34 @@
             {{ form_label('captcha_type', Lang.get('core.captcha_type')) }}
             <div class="sp-input-container sp-input-group">
                 <label>
-                    {{ form_radio('captcha_type', 0, null,
-                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'none';" })
-                    }}
+                    {{ form_radio('captcha_type', 0, null, { 'onclick': "$('.captcha').hide();" }) }}
                     {{ Lang.get('general.disabled') }}
                 </label><br />
                 <label>
-                    {{ form_radio('captcha_type', 1, null,
-                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'none';" })
-                    }}
+                    {{ form_radio('captcha_type', 1, null, { 'onclick': "$('.captcha').hide();" }) }}
                     {{ Lang.get('core.default_captcha') }}
                 </label><br />
                 <label>
-                    {{ form_radio('captcha_type', 2, null,
-                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'block';" })
-                    }}
+                    {{ form_radio('captcha_type', 2, null, { 'onclick': "$('.captcha').hide(); $('.captcha-recaptcha').show();" }) }}
                     Google reCAPTCHA v2 (No CAPTCHA)
                 </label><br />
                 <label>
-                    {{ form_radio('captcha_type', 3, null,
-                        { 'onclick': "document.querySelector('.recaptcha').style.display = 'block';" })
-                    }}
+                    {{ form_radio('captcha_type', 3, null, { 'onclick': "$('.captcha').hide(); $('.captcha-recaptcha').show();" }) }}
                     Google Invisible reCAPTCHA
+                </label><br />
+                <label>
+                    {{ form_radio('captcha_type', 4, null, { 'onclick': "$('.captcha').hide(); $('.captcha-turnstile').show();" }) }}
+                    Cloudflare Turnstile
+                </label><br />
+                <label>
+                    {{ form_radio('captcha_type', 5, null, { 'onclick': "$('.captcha').hide(); $('.captcha-hcaptcha').show();" }) }}
+                    hCaptcha
                 </label>
                 <div class="sp-description">{{ Lang.get('core.captcha_type_desc') }}</div>
             </div>
         </div>
 
-        <div class="recaptcha {% if fields.captcha_type != 2 and fields.captcha_type != 3 %}hide{% endif %}">
+        <div class="captcha captcha-recaptcha {% if fields.captcha_type != 2 and fields.captcha_type != 3 %}sp-hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('recaptcha_site_key', Lang.get('core.recaptcha_site_key')) }}
                 <div class="sp-input-container sp-input-group">
@@ -256,6 +262,40 @@
                 <div class="sp-input-container sp-input-group">
                     {{ form_text('recaptcha_secret_key', null, {'size': 45}) }}
                     <div class="sp-description">{{ Lang.get('core.recaptcha_desc')|raw }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="captcha captcha-turnstile {% if fields.captcha_type != 4 %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('turnstile_site_key', Lang.get('core.site_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('turnstile_site_key', null, { 'size': 45 }) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('turnstile_secret_key', Lang.get('core.secret_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('turnstile_secret_key', null, {'size': 45}) }}
+                    <div class="sp-description">{{ Lang.get('core.turnstile_desc')|raw }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="captcha captcha-hcaptcha {% if fields.captcha_type != 5 %}sp-hidden{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('hcaptcha_site_key', Lang.get('core.site_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('hcaptcha_site_key', null, { 'size': 45 }) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('hcaptcha_secret_key', Lang.get('core.secret_key')) }}
+                <div class="sp-input-container sp-input-group">
+                    {{ form_text('hcaptcha_secret_key', null, {'size': 45}) }}
+                    <div class="sp-description">{{ Lang.get('core.hcaptcha_desc')|raw }}</div>
                 </div>
             </div>
         </div>
@@ -294,9 +334,9 @@
         var sslWarning = new SslWarning({
             route: "{{ mail_route('core.frontend.home') }}"
         });
-        
+
         $(function () {
-            sslWarning.init(); 
+            sslWarning.init();
         });
     </script>
 {% endblock %}

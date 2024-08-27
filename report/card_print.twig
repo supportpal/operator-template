@@ -13,16 +13,29 @@
             margin-bottom: 0 !important;
         }
 
-        .dt-container {
-            margin: 0;
-        }
-
         .table-card {
             padding: 0;
         }
 
+        div.dt-container {
+            margin: 0;
+        }
+
+        div.dt-container .dt-processing {
+            border-radius: 0.25rem;
+        }
+
+        div.dt-container .dt-paging {
+            padding: 0.75rem 0;
+        }
+
+        div.dt-container .dt-paging button {
+            box-shadow: none;
+        }
+
         table.dataTable thead td,
         table.dataTable thead th {
+            background: none;
             position: static !important;
         }
 
@@ -76,7 +89,7 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <script src="{{ asset_rev('resources/assets/dist/main.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/reports.min.js') }}"></script>
     <script>
         $(function() {
             const manager = new Reports.Manager();

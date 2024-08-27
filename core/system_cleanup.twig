@@ -301,15 +301,15 @@
         $(document).ready(function() {
             $('form.sp-cleanup button').on('click', function() {
                 // Get name and date if needed
-                var name = $(this).attr('class');
-                var date = null;
-                if ($(this).parents('.sp-purge').find('.datepicker').length) {
-                    date = $(this).parents('.sp-purge').find('.datepicker').val();
+                var $this = $(this), name = $this.attr('class'), date = null;
+                if ($this.parents('.sp-purge').find('.datepicker').length) {
+                    date = $this.parents('.sp-purge').find('.datepicker').val();
                 }
 
-                // Make AJAX call
+                $this.attr('disabled', 'disabled').append($('<i>').addClass('fas fa-spin fa-spinner sp-ml-1'));
+
                 $.ajax({
-                    url: $(this).data('route'),
+                    url: $this.data('route'),
                     type: 'POST',
                     data: {
                         name: name,
@@ -328,7 +328,9 @@
                     }
                 }).fail(function() {
                     $('.sp-alert.sp-alert-error').show(500).delay(5000).hide(500);
-                });
+                }).always(function () {
+                    $this.removeAttr('disabled').find('i').remove();
+                })
 
             });
 

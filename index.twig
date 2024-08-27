@@ -2,16 +2,19 @@
 <html class="{{ get_template_mode() }} sp-h-full print:sp-h-auto">
 
 <head>
-    {% block meta %}{% endblock %}
+    {{ View.fireHook('operator.head_start') }}
 
     {% set title = block('title') is defined ? block('title') : '' %}
     <title>{% if title is not empty %}{{ title|raw }} - {% endif %} SupportPal Operator Panel</title>
+
+    {% block meta %}{% endblock %}
 
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {% block scripts_header %}{% endblock %}
 
     {{ View.fireHook('operator.head') }}
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
 <body class="sp-h-full sp-bg-primary sp-text-primary print:sp-h-auto">
@@ -547,13 +550,14 @@
 <div id="wrapper" class="sp-flex sp-overflow-hidden lg:sp-pt-12 print:sp-h-auto print:sp-overflow-auto print:sp-pt-0">
     {{ View.fireHook('operator.wrapper_start') }}
 
-    {% if block('sidebar')|trim is not empty %}
+    {% set sidebarContent = block('sidebar') ?? '' %}
+    {% if sidebarContent|trim is not empty %}
         <div id="sidebar" class="sp-flex-none sp-w-6 sp-bg-secondary sp-border-r sp-border-tertiary sp-z-10001 sm:sp-w-8 print:sp-hidden
                                  {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? 'sp-sidebar-closed' : 'lg:sp-w-72' }}">
             <div class="sp-sidebar-inner sp-h-full">
                 {{ View.fireHook('operator.sidebar_start') }}
 
-                {% block sidebar %}{% endblock %}
+                {{ sidebarContent|raw }}
 
                 {{ View.fireHook('operator.sidebar_end') }}
             </div>
@@ -675,8 +679,7 @@
 
 {% set enabled = Config.get('settings.product_tour_enabled', null) %}
 {% if enabled == '1' or enabled is null %}
-    <script src="{{ asset_rev('resources/assets/libs/shepherd/js/shepherd.min.js') }}"></script>
-    <script src="{{ asset_rev('resources/assets/operator/js/producttour.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/producttour.js') }}"></script>
 {% endif %}
 
 {{ View.fireHook('operator.body_end') }}

@@ -91,9 +91,11 @@
                 {% if addon.getBilling().billingcycle is same as('free') %}
                     {{ Lang.get('general.free') }}
                 {% else %}
-                    {% if addon.getBilling().billingcycle is same as('onetime') %}
+                    {% if addon.getBilling().billingcycle is same as('onetime') or addon.getBilling().billingcycle is same as('One Time') %}
                         {{ currencyCode == 'USD' ? '$' : '£' }}{{ addon.getBilling().pricing[currencyCode].onetime.recurring }}
                         {{ Lang.get('core.one_time') }}
+                    {% elseif addon.getBilling().billingcycle is not same as('recurring') %}
+                        {{ currencyCode == 'USD' ? '$' : '£' }}{{ addon.getBilling().pricing[currencyCode].monthly.recurring }} {{ Lang.get('core.' ~ addon.getBilling().billingcycle|lower) }}
                     {% elseif addon.getBilling().pricing[currencyCode] is not empty %}
                         {% for cycle, pricing in addon.getBilling().pricing[currencyCode] %}
                             <span class="sp-block">

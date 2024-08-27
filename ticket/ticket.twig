@@ -45,8 +45,8 @@
             {% else %}
                 {% if can_update_ticket(auth_user(), ticket) %}
                     <li class="sp-action-group sp-reply-type sp-inline-block">
-                        <button class="sp-action {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
-                            <span class="fa-stack sp-text-2xs">
+                        <button class="sp-action sp-inline-flex sp-items-center {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
+                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
                                 <i class="fas fa-reply fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 0).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -57,8 +57,8 @@
                             </span>
                             <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
                         </button><!--
-                        --><button class="sp-action" data-type="1">
-                            <span class="fa-stack sp-text-2xs">
+                        --><button class="sp-action sp-inline-flex sp-items-center" data-type="1">
+                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
                                 <i class="fas fa-sticky-note fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -69,8 +69,8 @@
                             </span>
                             <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
                         </button><!--
-                        --><button class="sp-action {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
-                            <span class="fa-stack sp-text-2xs">
+                        --><button class="sp-action sp-inline-flex sp-items-center {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
+                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
                                 <i class="fas fa-share fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -87,7 +87,7 @@
                         --><li class="sp-action-group sp-inline-block xs:sp-relative">
                             <div class="sp-dropdown-container">
                                 <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
-                                    <i class="fas fa-magic"></i>
+                                    <i class="fas fa-bolt-lightning"></i>
                                 </button>
                                 <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1">
                                     <ul class="sp-text-right xs:sp-text-left">

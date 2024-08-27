@@ -23,7 +23,7 @@
 
                     {% if configured %}
                         {{ form_check('config[' ~ brand.id ~ '][enabled]', 1,
-                            providers[brand.id] is not empty ? providers[brand.id].enabled : true,
+                            providers[brand.id] is not empty ? providers[brand.id].enabled : false,
                             {'class': 'sp-toggle', 'id': 'toggle_config[' ~ brand.id ~ '][enabled]'})
                         }}
                         <label for="{{ 'toggle_config[' ~ brand.id ~ '][enabled]' }}"></label>

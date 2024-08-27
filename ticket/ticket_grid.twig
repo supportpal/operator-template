@@ -124,11 +124,6 @@
                                     <div>
                                         <select name="assign">
                                             <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
-                                            {% for operator in obj_operators %}
-                                                <option value="{{ operator.id }}" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
-                                                    {{ operator.formatted_name }}
-                                                </option>
-                                            {% endfor %}
                                         </select>
 
                                         <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
@@ -137,16 +132,11 @@
 
                                         <select name="unassign">
                                             <option value="">{{ Lang.get('ticket.unassign_operator') }}...</option>
-                                            {% for operator in obj_operators %}
-                                                <option value="{{ operator.id }}" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
-                                                    {{ operator.formatted_name }}
-                                                </option>
-                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
                             </div><!--
-                            {% if not tags.isEmpty() %}
+                            {% if total_tags > 0 %}
                                 --><div class="sp-dropdown-container sp-relative">
                                     <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
                                         <i class="fas fa-tags"></i>
@@ -155,11 +145,6 @@
                                         <div>
                                             <select name="tag">
                                                 <option value="">{{ Lang.get('ticket.add_tag') }}...</option>
-                                                {% for tag in obj_tags %}
-                                                    <option value="{{ tag.id }}" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
-                                                        {{ tag.name }}
-                                                    </option>
-                                                {% endfor %}
                                             </select>
 
                                             <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
@@ -168,11 +153,6 @@
 
                                             <select name="remove_tag">
                                                 <option value="">{{ Lang.get('ticket.remove_tag') }}...</option>
-                                                {% for tag in obj_tags %}
-                                                    <option value="{{ tag.id }}" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
-                                                        {{ tag.name }}
-                                                    </option>
-                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -182,7 +162,7 @@
                             {% endif %}
                         </li><!--
 
-                        {% if not macros.isEmpty() %}
+                        {% if not obj_macros.isEmpty() %}
                             --><li class="sp-action-group sp-grid-actions sp-inline-block sp-relative sp-hidden">
                                 <div class="sp-dropdown-container">
                                     <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
@@ -670,6 +650,15 @@
                 onChange: $onChange
             });
             $quickActions.find('select[name="tag"], select[name="remove_tag"]').selectize({
+                valueField: 'id',
+                searchField: [ 'name' ],
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+
+                    $.get(laroute.route('ticket.operator.tag.search'), { q: query })
+                        .done(function(res) { callback(res.data); })
+                        .fail(function() { callback(); });
+                },
                 render: {
                     option: function(item, escape) {
                         return '<div>'
@@ -683,6 +672,15 @@
 
             // Process assign/unassign operator
             $quickActions.find('select[name="assign"], select[name="unassign"]').selectize({
+                valueField: 'id',
+                searchField: [ 'formatted_name', 'email' ],
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+
+                    $.get(laroute.route('ticket.operator.ticket.operator_search'), {q: query})
+                        .done(function(res) { callback(res.data); })
+                        .fail(function() { callback(); })
+                },
                 render: {
                     option: function(item, escape) {
                         return '<div>'
