@@ -11,7 +11,7 @@
     <div class="sp-form-row sp-form-full slug {% if hide_slug or elements.slug.value is empty %}not-edited sp-hidden{% endif %}">
         {{ form_label(elements.slug.name, Lang.get('selfservice.slug')) }}
         <div class="sp-input-container sp-input-translatable sp-input-translatable-small">
-            <span class="slug-text">{{ urldecode(elements.slug.value) }}</span> &nbsp;
+            <span class="slug-text">{{ urldecode(elements.slug.value ?? '') }}</span> &nbsp;
             <a class="edit-slug"><i class='fas fa-edit'></i></a>
             {{ form_text(elements.slug.name, elements.slug.value, attributes|merge({'style': 'visibility: hidden; width: 1px;'})) }}
             {% if elements.slug.name == 'slug' %}

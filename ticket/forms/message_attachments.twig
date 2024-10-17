@@ -1,4 +1,4 @@
-{% if ticket.department_email_id is not empty or allow_attachments %}
+{% if allow_attachments %}
     <div class="sp-attachment-details">
         <input type="hidden" name="attachment[]" disabled="disabled" />
         {% for attachment in message.attachments %}

@@ -98,9 +98,11 @@
                     'allow_attachments': channelAddonInstance is null ? false : channelAddonInstance.canAddAttachmentToReply(ticket),
                 } %}
 
-                {% if channelAddonInstance is not null and channelAddonInstance.canAddAttachmentToReply(ticket) %}
-                    {% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {'ticket': ticket, 'message': draft} %}
-                {% endif %}
+                {% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {
+                    'ticket': ticket,
+                    'message': draft,
+                    'allow_attachments': channelAddonInstance is not null and channelAddonInstance.canAddAttachmentToReply(ticket)
+                } %}
             </div>
 
             {% include 'operator.' ~ template ~ '.ticket.forms.message_reply_options' with {'note': false} %}

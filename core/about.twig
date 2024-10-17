@@ -252,7 +252,7 @@
 
                                 Swal.fire(
                                     '{{ Lang.get('messages.error') }}',
-                                    typeof json.message !== 'undefined' ? json.message : errorThrown,
+                                    (typeof json.message !== 'undefined' ? json.message : errorThrown) || '',
                                     'error'
                                 );
                             })
