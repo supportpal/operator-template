@@ -1,7 +1,7 @@
 <div class="sp-flex">
     <div class="sp-flex-grow">
         <div class="sp-flex sp-mb-6">
-            <div class="sp-flex-none sp-mr-4">
+            <div class="sp-flex-none sp-me-4">
                 <img src="{{ addon.logoUri }}" alt="{{ addon.name }}" class="sp-h-12 sp-w-12 sp-rounded-full" />
             </div>
             <div class="sp-grow">
@@ -38,11 +38,11 @@
             {% if (addon.getBilling() is not empty and addon.getBilling().billingcycle is not same as('free') and not addonWhmcsId) or (not addon.isInstalled() and (addon.getBilling().billingcycle is same as('free') or addonWhmcsId)) %}
                 {% if authenticated %}
                     {% if addon.getBilling().billingcycle is same as('free') or addonWhmcsId %}
-                        <button class="sp-addon-install sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                        <button class="sp-addon-install sp-me-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
                             {{ Lang.get('general.install') }}
                         </button>
                     {% else %}
-                        <button class="sp-addon-purchase sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                        <button class="sp-addon-purchase sp-me-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
                             {{ Lang.get('general.purchase') }}
                         </button>
                     {% endif %}
@@ -50,7 +50,7 @@
                     {{ Lang.get('core.login_to_install', {'link': route('core.operator.marketplace.login')})|raw }}
                 {% endif %}
             {% elseif addon.isUpdateAvailable() %}
-                <button class="sp-addon-update sp-mr-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
+                <button class="sp-addon-update sp-me-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
                     {{ Lang.get('general.update') }}
                 </button>
             {% endif %}
@@ -82,7 +82,7 @@
         {% endif %}
     </div>
 
-    <div class="sp-flex-none sp-w-64 sp-p-6 sp-ml-6 sp-bg-secondary sp-rounded">
+    <div class="sp-flex-none sp-w-64 sp-p-6 sp-ms-6 sp-bg-secondary sp-rounded">
         <h3 class="sp-mt-0 sp-mb-4">{{ Lang.get('general.details') }}</h3>
 
         {% if addon.getBilling() is not empty %}

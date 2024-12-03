@@ -46,7 +46,7 @@
                 {% if can_update_ticket(auth_user(), ticket) %}
                     <li class="sp-action-group sp-reply-type sp-inline-block">
                         <button class="sp-action sp-inline-flex sp-items-center {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-active{% endif %}" data-type="0">
-                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
+                            <span class="fa-stack sp-me-1/2 sp-text-2xs">
                                 <i class="fas fa-reply fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 0).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -58,7 +58,7 @@
                             <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.reply') }}</span>
                         </button><!--
                         --><button class="sp-action sp-inline-flex sp-items-center" data-type="1">
-                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
+                            <span class="fa-stack sp-me-1/2 sp-text-2xs">
                                 <i class="fas fa-sticky-note fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -70,7 +70,7 @@
                             <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
                         </button><!--
                         --><button class="sp-action sp-inline-flex sp-items-center {% if draft_forward is empty %}sp-fresh{% endif %}" data-type="2">
-                            <span class="fa-stack sp-mr-1/2 sp-text-2xs">
+                            <span class="fa-stack sp-me-1/2 sp-text-2xs">
                                 <i class="fas fa-share fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp-text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp-hidden{% endif %}">
                                     <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
@@ -89,8 +89,8 @@
                                 <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
                                     <i class="fas fa-bolt-lightning"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1">
-                                    <ul class="sp-text-right xs:sp-text-left">
+                                <div class="sp-dropdown sp-top-0 sp-start-0 sp-mt-12 sp-ms-1">
+                                    <ul class="sp-text-end xs:sp-text-start">
                                         {% for macro in macros %}
                                             <li>
                                                 <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
@@ -109,10 +109,28 @@
                                 title="{{ Lang.get('ticket.take') }}">
                             <i class="fas fa-thumbtack"></i>
                         </button><!--
-                        --><button class="sp-action close-ticket {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}"
+                        --><button class="sp-action close-ticket !sp-pe-6 {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}"
                                    title="{{ Lang.get('general.close') }}">
                             <i class="fas fa-check"></i>
-                        </button><!--
+                        </button>
+                        <div class="close-ticket-options sp-dropdown-container sp-relative {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}">
+                            <button class="sp-action sp-w-5 !sp-px-1 !sp--ms-6">
+                                <i class="fas fa-chevron-down fa-2xs"></i>
+                            </button>
+                            <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sp-me-1">
+                                <ul class="sp-text-end">
+                                    <li class="close-ticket {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('general.close') }}</a>
+                                    </li>
+                                    <li class="close-ticket-without-notification {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.close_without_notify') }}</a>
+                                    </li>
+                                    <li class="lock-ticket {% if ticket.locked %}sp-hidden{% endif %}">
+                                        <a>{{ Lang.get('ticket.close_and_lock') }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div><!--
                         {% if not ticket.trashed() and auth_user().hasPermission('delete.ticket_trash') %}
                             --><button class="sp-action delete-ticket" title="{{ Lang.get('general.move_to_trash') }}">
                                 <i class="fas fa-trash"></i>
@@ -136,10 +154,10 @@
                 --><li class="sp-action-group sp-inline-block sp-relative">
                     <div class="sp-dropdown-container">
                         <button class="sp-action">
-                            <i class="fas fa-ellipsis-h"></i>
+                            <i class="fas fa-ellipsis-v"></i>
                         </button>
-                        <div class="sp-dropdown sp-top-0 {% if can_update_ticket(auth_user(), ticket) %}sp-right-0{% else %}sp-left-0{% endif %} sp-mt-12 sp-mr-1">
-                            <ul {% if can_update_ticket(auth_user(), ticket) %}class="sp-text-right"{% endif %}>
+                        <div class="sp-dropdown sp-top-0 {% if can_update_ticket(auth_user(), ticket) %}sp-end-0{% else %}sp-start-0{% endif %} sp-mt-12 sp-me-1">
+                            <ul {% if can_update_ticket(auth_user(), ticket) %}class="sp-text-end"{% endif %}>
                                 {% if can_update_ticket(auth_user(), ticket) %}
                                     <li class="take-ticket {% if in_array(auth_user().id, ticket.assigned.pluck('id').all()) and ticket.assigned.count() == 1 %}sp-hidden{% endif %} md:sp-hidden">
                                         <a>{{ Lang.get('ticket.take') }}</a>
@@ -147,8 +165,11 @@
                                     <li class="close-ticket {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %} md:sp-hidden">
                                         <a>{{ Lang.get('general.close') }}</a>
                                     </li>
-                                    <li class="lock-ticket {% if ticket.locked %}sp-hidden{% endif %}">
-                                        <a>{{ Lang.get('ticket.close_and_lock') }}</a>
+                                    <li class="close-ticket-without-notification {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp-hidden{% endif %} md:sp-hidden">
+                                        <a>{{ Lang.get('ticket.close_without_notify') }}</a>
+                                    </li>
+                                    <li class="lock-ticket {% if ticket.locked %}sp-hidden{% endif %} {% if ticket.status_id != Config.get('settings.default_resolved_status') %}md:sp-hidden{% endif %}">
+                                        <a>{% if ticket.status_id != Config.get('settings.default_resolved_status') %}{{ Lang.get('ticket.close_and_lock') }}{% else %}{{ Lang.get('ticket.lock') }}{% endif %}</a>
                                     </li>
                                     <li class="unlock-ticket {% if not ticket.locked %}sp-hidden{% endif %}">
                                         <a>{{ Lang.get('ticket.unlock') }}</a>
@@ -196,6 +217,11 @@
         </ul>
     </div>
 
+    <div class="sp-pinned-messages"></div>
+    {% for message in messages.whereNotNull('pinned') %}
+        {% include 'operator.' ~ template ~ '.ticket.pinned_message' %}
+    {% endfor %}
+
     <div class="sp-alert sp-alert-info sp-alert-sticky ticket-viewing sp-hidden">
         {{ Lang.get('ticket.also_viewing') }}
         <ul class="sp-viewing-operators"></ul>
@@ -231,29 +257,29 @@
         </div>
         <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
             <a href="{{ docsLink }}" target="_blank"
-               class="sp-block sp-mt-2 sp-ml-3 sp-text-xl sp-text-gray-400 sp-float-right hover:sp-text-gray-600">
+               class="sp-block sp-mt-2 sp-ms-3 sp-text-xl sp-text-gray-400 sp-float-end hover:sp-text-gray-600">
                 <i class="fas fa-question-circle"></i>
             </a>
         </div>
     </div>
 
     <div class="sp-title-description">
-        <span class="sp-locked-icon sp-mr-2 {% if not ticket.locked %}sp-hidden{% endif %}">
+        <span class="sp-locked-icon sp-me-2 {% if not ticket.locked %}sp-hidden{% endif %}">
             <i class="fas fa-lock" title="{{ Lang.get('general.locked') }}"></i>
         </span>
 
         {% if ticket.trashed() %}
-            <span class="sp-mr-2">
+            <span class="sp-me-2">
                 <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
             </span>
         {% endif %}
 
         {% if ticket.internal %}
-            <span class="sp-tag sp-bg-red-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.internal') }}</span>
+            <span class="sp-tag sp-bg-red-600 sp-text-white sp-me-2">{{ Lang.get('ticket.internal') }}</span>
         {% endif %}
 
         {% if ticket.merged %}
-            <span class="sp-tag sp-bg-green-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.merged') }}</span>
+            <span class="sp-tag sp-bg-green-600 sp-text-white sp-me-2">{{ Lang.get('ticket.merged') }}</span>
         {% endif %}
 
         {% if ticket.isOpenedOnBehalfOf() %}
@@ -279,7 +305,7 @@
 {% block content %}
     {% if download %}
         <div class="sp-alert">
-            <i class="fas fa-times sp-alert-close sp-float-right"></i>
+            <i class="fas fa-times sp-alert-close sp-float-end"></i>
             <strong>{{ Lang.get('ticket.downloading') }}</strong><br />
             {{ Lang.get('ticket.downloading_desc', {'href': download.direct_operator_url|e})|raw }}
         </div>

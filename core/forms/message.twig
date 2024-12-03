@@ -22,14 +22,15 @@
     {% for message in conversation.messages %}
         <div class="sp-message sp-message-{{ message.id }}">
             <div class="sp-flex">
-                <div class="sp-flex-initial sp-hidden sp-mr-4 md:sp-block">
+                <div class="sp-flex-initial sp-hidden sp-me-4 md:sp-block">
                     <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-xs md:sp-max-w-md" />
                 </div>
                 <div class="sp-grow">
                     <div class="sp-message-header">
                         {% if message.user_id == auth_user().id %}
-                            <span class="sp-float-right">
-                                <button class="as-link delete-confirm" data-route="{{ route('core.operator.message.destroy', message.id) }}" data-id="{{ message.id }}">
+                            <span class="sp-float-end">
+                                <button class="sp-action delete-confirm" data-route="{{ route('core.operator.message.destroy', message.id) }}"
+                                        data-id="{{ message.id }}" title="{{ Lang.get('general.delete') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </span>

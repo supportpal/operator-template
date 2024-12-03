@@ -15,7 +15,7 @@
 
         <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
 
-            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
+            <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-me-4">
                 {{ form_hidden('ticket_id', ticketId) }}
                 {{ form_hidden('reply_all', 1) }}
 
@@ -28,7 +28,7 @@
                                         <i class="sp-icon fas fa-fw fa-reply-all" aria-hidden="true"></i>
                                         <i class="fas fa-chevron-down sp-text-tertiary sp-text-xs"></i>
                                     </a>
-                                    <div class="sp-dropdown sp-ml-1">
+                                    <div class="sp-dropdown sp-ms-1">
                                         <ul>
                                             <li class="sp-dropdown-item sp-selected" data-value="1">
                                                 <i class="fas fa-fw fa-reply-all" aria-hidden="true"></i>&nbsp;
@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                             <div class="sp-grow sp-overflow-hidden">
-                                <div class="sp-simplified-recipients sp-p-2 sp-pl-1 sp-truncate sp-cursor-pointer">
+                                <div class="sp-simplified-recipients sp-p-2 sp-ps-1 sp-truncate sp-cursor-pointer">
                                     <span class="sp-px-2 sp-text-secondary
                                         {% if not ticket.internal and (organisationEmails is not empty and ticket.cc is not empty) %}sp-hidden{% endif %}">
                                         {{ Lang.get('ticket.to') }}
@@ -118,7 +118,7 @@
     {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 1)} %}
 
     <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
-        <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
+        <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-me-4">
             {{ form_hidden('ticket_id', ticketId) }}
             {{ form_hidden('reply_all', 1) }}
 
@@ -146,7 +146,7 @@
     {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}
 
     <div class="sp-flex sp-flex-wrap sp-items-start lg:sp-flex-nowrap">
-        <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-mr-4">
+        <div class="reply-form sp-editor-container sp-w-full sp-min-w-0 lg:sp-grow lg:sp-w-auto lg:sp-me-4">
             {{ form_hidden('ticket_id', ticketId) }}
             {{ form_hidden('reply_all', 1) }}
 
@@ -162,12 +162,12 @@
                 <div class="sp-table-row">
                     <div class="sp-table-cell">{{ Lang.get('ticket.to') }}</div>
                     <div class="sp-table-cell sp-relative">
-                        <span class="sp-absolute sp-right-0 sp-px-2 sp--mt-7 sp-z-10 sm:sp-px-4 sm:sp-py-2 sm:sp-mt-0">
+                        <span class="sp-absolute sp-end-0 sp-px-2 sp--mt-7 sp-z-10 sm:sp-px-4 sm:sp-py-2 sm:sp-mt-0">
                             {% if draft_forward is empty or draft_forward.extra.cc_address is empty %}
                                 <a class="add-cc sp-text-secondary">{{ Lang.get('ticket.add_cc') }}</a>
                             {% endif %}
                             {% if draft_forward is empty or draft_forward.extra.bcc_address is empty %}
-                                <a class="add-bcc sp-ml-2 sp-text-secondary">{{ Lang.get('ticket.add_bcc') }}</a>
+                                <a class="add-bcc sp-ms-2 sp-text-secondary">{{ Lang.get('ticket.add_bcc') }}</a>
                             {% endif %}
                         </span>
 

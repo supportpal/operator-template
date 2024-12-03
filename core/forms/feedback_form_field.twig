@@ -6,7 +6,7 @@
         {{ form_hidden('fields[' ~ (field is defined ? field.id : '') ~ '][local_id]',
             (field is defined ? field.id : null), { 'class': 'field-local-id' })
         }}
-        {{ form_select('fields[' ~ (field is defined ? field.id : '') ~ '][type]', 
+        {{ form_select('fields[' ~ (field is defined ? field.id : '') ~ '][type]',
             {
                 '0': Lang.get('customfield.boolean'),
                 '1': Lang.get('customfield.checkbox'),
@@ -50,7 +50,7 @@
             {% endif %}
         </div>
     </td>
-    <td class="sp-text-right" width="12">
+    <td class="sp-text-end sp-w-3" title="{{ Lang.get('general.remove') }}">
         <i class="fas fa-times sp-cursor-pointer remove-button"></i>
     </td>
 </tr>

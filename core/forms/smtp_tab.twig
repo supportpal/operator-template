@@ -76,7 +76,7 @@
                             <div class="sp-flex-none sp-w-full sm:sp-w-auto">
                                 {{ form_select('smtp_provider', oAuthProviders, record.smtp_oauth.provider) }}
                             </div>
-                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ml-3 sm:sp-mt-0">
+                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ms-3 sm:sp-mt-0">
                                 {{ form_button(
                                     Lang.get('core.get_access_token'),
                                     {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp-hidden' : '')}
@@ -101,20 +101,20 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="sp-form-row">
-            <label></label>
-            <div class="sp-input-container">
-                {{ form_button(Lang.get('general.validate_auth'), { 'class': 'validate-smtp' }) }} &nbsp;&nbsp;
-                <span class="validate-auth text-progress sp-text-orange-600 sp-hidden">
+    <div class="sp-form-row">
+        <label></label>
+        <div class="sp-input-container">
+            {{ form_button(Lang.get('general.validate_auth'), { 'class': 'validate-smtp' }) }} &nbsp;&nbsp;
+            <span class="validate-auth text-progress sp-text-orange-600 sp-hidden">
                     <i class='fas fa-spinner fa-spin'></i> {{ Lang.get('messages.in_progress') }}...
                 </span>
-                <span class="validate-auth text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
-                <span class="validate-auth text-fail sp-text-red-600 sp-hidden">
+            <span class="validate-auth text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
+            <span class="validate-auth text-fail sp-text-red-600 sp-hidden">
                     {{ Lang.get('messages.error') }}!
                     <span class="error-message"></span>
                 </span>
-            </div>
         </div>
     </div>
 </div>

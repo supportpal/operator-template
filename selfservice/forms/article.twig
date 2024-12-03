@@ -260,6 +260,18 @@
 
     <script>
         var tagPermission = {% if auth_user().hasPermission('create.selfservicetag') %}1{% else %}0{% endif %};
+
+        // WYSIWYG editor options (used by article.js and multidimensionaldata.js). Leave blank here and set after DOM
+        // ready.
+        var opts = {};
+
+        $(function() {
+            // WYSIWYG editor options.
+            opts = {
+                plugins: $.fn.editor.defaults.plugins.concat(['anchor']),
+                toolbar: $.fn.editor.defaults.toolbar + ' | anchor',
+            };
+        });
     </script>
     <script src="{{ asset_rev('resources/assets/operator/js/article.js') }}"></script>
 
@@ -267,10 +279,6 @@
     <script>
         // List of valid translatable attributes.
         var translatableAttributes = {{ translatableAttributes|json_encode|raw }};
-
-        // WYSIWYG editor options (used by article.js and multidimensionaldata.js). Leave blank here and set after DOM
-        // ready.
-        var opts = {};
 
         // Date picker
         $('.datepicker').datepicker();

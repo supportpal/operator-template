@@ -19,17 +19,17 @@
         <!-- Success / failure message box -->
         <div class="sp-alert sp-hidden"></div>
 
-        <h2 class="sp-ml-4 sp-text-primary xs:sp-mt-0 xs:sp-ml-0">{{ ticket.subject }}</h2>
+        <h2 class="sp-ms-4 sp-text-primary xs:sp-mt-0 xs:sp-ms-0">{{ ticket.subject }}</h2>
 
         <div class="sp-title-description">
             {% if ticket.trashed() %}
-                <span class="sp-mr-2">
+                <span class="sp-me-2">
                     <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
                 </span>
             {% endif %}
 
             {% if ticket.internal %}
-                <span class="sp-tag sp-bg-red-600 sp-text-white sp-mr-2">{{ Lang.get('ticket.internal') }}</span>
+                <span class="sp-tag sp-bg-red-600 sp-text-white sp-me-2">{{ Lang.get('ticket.internal') }}</span>
             {% endif %}
 
             {% if ticket.isOpenedOnBehalfOf() %}

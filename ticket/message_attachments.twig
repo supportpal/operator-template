@@ -17,13 +17,13 @@
             {% for attachment in message.attachments %}
                 <li class="sp-relative" data-download-url="{{ attachment.direct_operator_url }}" data-filename="{{ attachment.original_name }}">
                     {% if can_update_ticket(auth_user(), ticket) %}
-                        <div class="sp-delete-attachment sp-absolute sp-right-0 sp-px-2 sp-py-1/2 sp-bg-red-600 sp-rounded-tr
+                        <div class="sp-delete-attachment sp-absolute sp-end-0 sp-px-2 sp-py-1/2 sp-bg-red-600 sp-rounded-se
                                     sp-text-white sp-cursor-pointer sp-z-10 hover:sp-bg-red-800"
-                             title="{{ Lang.get('general.delete') }}"
                              data-url="{{ route('ticket.operator.attachment.destroy') }}"
                              data-attachment-id="{{ attachment.id }}"
                              data-size="{{ attachment.upload.getRawOriginal('size') }}"
-                             data-hash="{{ attachment.upload_hash }}">
+                             data-hash="{{ attachment.upload_hash }}"
+                             title="{{ Lang.get('general.delete') }}">
                             <i class="fas fa-times"></i>
                         </div>
                     {% endif %}

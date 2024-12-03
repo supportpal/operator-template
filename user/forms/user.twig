@@ -36,7 +36,7 @@
                     {% endif %}
                     {% if auth_user().hasPermission('delete.user') %}
                         --><button class="sp-action delete-user" title="{{ Lang.get('general.delete') }}">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-times"></i>
                         </button>
                     {% else %}
                         -->
@@ -78,7 +78,7 @@
                             <ul class="exports-list sp-attached-files sp-mb-3">
                                 {% for userExport in record.exports %}
                                     <li class="sp-flex">
-                                        <div class="sp-mr-2 sp-truncate">
+                                        <div class="sp-me-2 sp-truncate">
                                             <i class="fas fa-file fa-fw"></i>&nbsp;
 
                                             <span class="sp-file-information">
@@ -92,7 +92,8 @@
                                         </div>
 
                                         <div class="sp-delete-attachment sp-bg-red-600"
-                                             data-url="{{ route('core.operator.export.destroy', userExport.export.upload_hash) }}">
+                                             data-url="{{ route('core.operator.export.destroy', userExport.export.upload_hash) }}"
+                                             title="{{ Lang.get('general.delete') }}">
                                             <i class="fas fa-times sp-text-white"></i>
                                         </div>
                                     </li>
@@ -397,11 +398,11 @@
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_users') }}',
                         html: '<div>'
-                            + '<div class="sp-alert sp-alert-warning sp-text-left">'
+                            + '<div class="sp-alert sp-alert-warning sp-text-start">'
                                 + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
                                 + Lang.get('messages.cannot_be_undone')
                             + '</div>'
-                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-left sp-overflow-y-auto" style="max-height: 15rem;">'
+                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-start sp-overflow-y-auto" style="max-height: 15rem;">'
                                 + '<li class="sp-py-1 sp-px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp-max-w-2xs">&nbsp; {{ record.formatted_name }}'
                                 + '{{ record.email is not empty ? ('<br><span class="sp-description">' ~ record.email ~ '</span>')|raw : ''}}'
                                 + '</li>'

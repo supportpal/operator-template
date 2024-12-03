@@ -6,13 +6,13 @@
             {{ form_tel('phone[' ~ (number|default is not empty ? number.id : '') ~ '][number]', number|default is not empty ? number.number : null, number|default is not empty ? {'readonly': 'readonly'} : {}) }}
         </div>
 
-        <div class="sp-flex-none sp-relative sp-ml-2">
+        <div class="sp-flex-none sp-relative sp-ms-2">
             <div class="sp-dropdown-container">
                 <span class="sp-action sp-button sp-px-3">
                     <i class="fas fa-ellipsis-v"></i>
                 </span>
-                <div class="sp-dropdown sp-right-0 md:sp-right-auto">
-                    <ul class="sp-text-right md:sp-text-left">
+                <div class="sp-dropdown sp-end-0 md:sp-end-auto">
+                    <ul class="sp-text-end md:sp-text-start">
                         {% if number|default is not empty and not number.is_verified %}
                             <li>
                                 <a class="sp-mark-number-verified" data-id="{{ number.id }}" data-route="{{ route('user.operator.user.mark_number_verified', record.id) }}">
@@ -29,7 +29,7 @@
         </div>
 
         {% if number|default is not empty and not number.is_verified %}
-            <div class="sp-number-not-verified sp-flex-none sp-relative sp-p-2 sp-pr-0 sp-text-orange-600">
+            <div class="sp-number-not-verified sp-flex-none sp-relative sp-p-2 sp-pe-0 sp-text-orange-600">
                 <i class="fa-fw fa-solid fa-exclamation-circle" title="{{ Lang.get('general.not_verified') }}"></i>
             </div>
         {% endif %}

@@ -69,7 +69,7 @@
             <div class="sp-form-row">
                 {{ form_label('from_name', Lang.get('general.from')) }}
                 <div class="sp-input-container">
-                    <div class="sp-mb-3 lg:sp-inline-block lg:sp-mb-0 lg:sp-mr-2">
+                    <div class="sp-mb-3 lg:sp-inline-block lg:sp-mb-0 lg:sp-me-2">
                         {{ form_text('from_name', '', {'size': 25}) }}
                     </div>
                     <div class="md:sp-inline-block">
@@ -104,7 +104,7 @@
                         {% if cumulative_attachment_limit != 0 %}
                         <ul class="sp-attached-files">
                             <li class="sp-flex sp-hidden">
-                                <div class="sp-mr-2 sp-truncate">
+                                <div class="sp-me-2 sp-truncate">
                                     <i class="fas fa-file"></i>&nbsp;
 
                                     <span class="sp-file-information">
@@ -113,7 +113,8 @@
                                     </span>
                                 </div>
 
-                                <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+                                <div class="sp-delete-attachment sp-hidden sp-bg-red-600"
+                                     title="{{ Lang.get('general.remove') }}">
                                     <i class="fas fa-times sp-text-white"></i>
                                 </div>
 

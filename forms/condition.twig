@@ -13,6 +13,7 @@
                 conditions,
                 selectedCondition,
                 {
+                    'class': 'sp-w-full',
                     'data-selected': selectedCondition,
                     'data-field': (condition.value is defined and condition.value_extra is not empty ? condition.value : '')
                 }
@@ -569,8 +570,13 @@
                 {0: Lang.get('general.no'), 1: Lang.get('general.yes')},
                 condition|default is not empty and condition.item == 75 ? condition.value : null,
                 {'data-item': 75, 'data-operator': 6, 'class': 'sp-hidden'}) }}
+
+        {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
+                brands|default is not empty and brands is not null ? brands : assignedBrands.pluck('name', 'id'),
+                condition|default is not empty and condition.item == 76 ? condition.value : null,
+                { 'data-item': 76, 'data-operator': 0, 'class': 'sp-hidden' }) }}
     </td>
-    <td class="sp-text-right" width="12">
-        <i class="fas fa-times sp-cursor-pointer remove-button"></i>
+    <td class="sp-text-end sp-w-3">
+        <i class="fas fa-times sp-cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
     </td>
 </tr>

@@ -29,7 +29,7 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <div class="sp-my-6 sp-hidden">
+    <div class="sp-grid-filtering sp-my-6 sp-hidden">
         {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
     </div>
 
@@ -52,8 +52,7 @@
             $('.update-filtering').on('click', function() {
                 $('.dataTable').on('preXhr.dt', function ( e, settings, data ) {
                     // Add conditions to parameters
-                    var conditions = $(".sp-condition-group :input").serializeArray();
-                    $.each(conditions, function(index, value) {
+                    $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
                         data[value.name] = value.value;
                     });
                 }).dataTable().api().ajax.reload();

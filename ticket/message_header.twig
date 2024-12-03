@@ -1,5 +1,5 @@
 <div class="sp-flex">
-    <div class="sp-flex-initial sp-hidden sp-mr-4 md:sp-block">
+    <div class="sp-flex-initial sp-hidden sp-me-4 md:sp-block">
         <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-md" />
     </div>
     <div class="sp-grow">
@@ -10,37 +10,57 @@
             {% if not message.attachments.isEmpty() %}
                 <span class="sp-attachment sp-description">&nbsp; <i class="fas fa-paperclip"></i></span>
             {% endif %}
-            <span class="sp-relative sp-float-right print:sp-hidden">
+            <span class="sp-relative sp-float-end print:sp-hidden">
                 {% if canUpdateTicket is not defined %}
                     {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
                 {% endif %}
                 {% if canUpdateTicket %}
                     <span class="split-ticket sp-hidden">
-                        {{ form_check('split', 1, false, {'data-id': message.id}) }} &nbsp;
+                        {{ form_check('split', 1, false, {'data-id': message.id}) }}
                     </span>
 
                     <div class="sp-hidden md:sp-inline-block">
-                        <button class="as-link quote-message" data-id="{{ message.id }}">
-                            <i class="fas fa-quote-right" aria-hidden="true"></i>
+                        <button class="sp-action quote-message" title="{{ Lang.get('core.quote') }}"
+                                data-id="{{ message.id }}">
+                            <i class="fas fa-quote-right fa-fw" aria-hidden="true"></i>
+                        </button><!--
+                        --><button class="sp-action pin-message {% if message.pinned %}sp-hidden{% endif %}"
+                                   title="{{ Lang.get('ticket.pin') }}" data-id="{{ message.id }}"
+                                   data-href="{{ route('ticket.operator.message.pin', {'id': message.id}) }}">
+                            <i class="fas fa-thumbtack fa-fw" aria-hidden="true"></i>
+                        </button><!--
+                        --><button class="sp-action unpin-message {% if not message.pinned %}sp-hidden{% endif %}"
+                                   title="{{ Lang.get('ticket.unpin') }}" data-id="{{ message.id }}"
+                                   data-href="{{ route('ticket.operator.message.pin', {'id': message.id}) }}">
+                            <i class="fas fa-thumbtack fa-fw sp-text-yellow-600" aria-hidden="true"></i>
+                        </button><!--
+                        --><button class="sp-action edit-button" title="{{ Lang.get('general.edit_item', {'item': Lang.choice('general.message', 1)}) }}"
+                                data-id="{{ message.id }}">
+                            <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
                         </button>
-                        &nbsp;&nbsp;
-                        <button class="as-link edit-button" data-id="{{ message.id }}">
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </button>
-                        &nbsp;&nbsp;
                     </div>
 
                     <div class="sp-message-actions sp-dropdown-container">
-                        <span class="sp-action">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </span>
-                        <div class="sp-dropdown sp-right-0">
-                            <ul class="sp-text-right">
+                        <button class="sp-action">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="sp-dropdown sp-end-0">
+                            <ul class="sp-text-end">
                                 <li class="md:sp-hidden">
                                     <a class="edit-button">{{ Lang.get('general.edit_item', {'item': mb_strtolower(Lang.choice('general.message', 1))}) }}</a>
                                 </li>
                                 <li class="md:sp-hidden">
                                     <a class="quote-message" data-id="{{ message.id }}">{{ Lang.get('core.quote') }}</a>
+                                </li>
+                                <li class="md:sp-hidden">
+                                    <a class="pin-message {% if message.pinned %}sp-hidden{% endif %}"
+                                       data-id="{{ message.id }}" data-href="{{ route('ticket.operator.message.pin', {'id': message.id}) }}">
+                                        {{ Lang.get('ticket.pin') }}
+                                    </a>
+                                    <a class="unpin-message {% if not message.pinned %}sp-hidden{% endif %}"
+                                       data-id="{{ message.id }}" data-href="{{ route('ticket.operator.message.pin', {'id': message.id}) }}">
+                                        {{ Lang.get('ticket.unpin') }}
+                                    </a>
                                 </li>
                                 <li>
                                     <a class="print-message" href="{{ route('ticket.operator.message.show', {'id': message.id, 'print': '1'}) }}"

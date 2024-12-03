@@ -109,11 +109,11 @@
                     <div class="recipients">
                         <div class="sp-simplified-recipients sp-px-3 sp-py-1 sp-cursor-pointer">
                             <div class="sp-truncate">
-                                <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.from') }}</span>
+                                <span class="sp-pe-2 sp-text-secondary">{{ Lang.get('ticket.from') }}</span>
                                 {{ fromEmails|first }}
                             </div>
                             <div class="sp-truncate">
-                                <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.to') }}</span>
+                                <span class="sp-pe-2 sp-text-secondary">{{ Lang.get('ticket.to') }}</span>
                                 <ul class="sp-recipients-list">
                                     <!--
                                     {% for user in toEmails %}
@@ -128,7 +128,7 @@
                             </div>
                             {% if organisationEmails is not empty %}
                                 <div class="sp-truncate">
-                                    <span class="sp-pr-2 sp-text-secondary">{{ Lang.get('ticket.cc') }}</span>
+                                    <span class="sp-pe-2 sp-text-secondary">{{ Lang.get('ticket.cc') }}</span>
                                     {{ organisationEmails.join(', ') }}
                                 </div>
                             {% elseif not internal %}

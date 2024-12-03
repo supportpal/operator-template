@@ -28,12 +28,12 @@
         </div>
 
         <div class="sp-flex sp-justify-center sp-my-6">
-            <div class="sp-p-6 sp-bg-secondary sp-rounded-l sp-text-right">
+            <div class="sp-p-6 sp-bg-secondary sp-rounded-s sp-text-end">
                 <div class="sp-description sp-mb-3">{{ Lang.get('core.installed_version') }}</div>
                 <div class="sp-text-4xl sp-leading-none sp-installed-version sp-mb-3">{{ Config.get('release.version') }}</div>
             </div>
 
-            <div class="sp-p-6 sp-bg-tertiary sp-rounded-r sp-text-left">
+            <div class="sp-p-6 sp-bg-tertiary sp-rounded-e sp-text-start">
                 <div class="sp-description sp-mb-3">{{ Lang.get('core.available_version') }}</div>
                 <div class="sp-text-4xl sp-leading-none sp-available-version sp-mb-3">{{ availableVersion.getVersionValue() }}</div>
                 <div class="sp-description">
@@ -86,7 +86,7 @@
     </div>
 
     <div class="sp-configure-modal-content sp-hidden">
-        <div class="sp-text-left">
+        <div class="sp-text-start">
             <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
             <div class="sp-description sp-mt-3 sp-mb-6">
                 {{ Lang.get('core.binary_paths_desc') }}
@@ -115,7 +115,7 @@
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
 
-        <div class="sp-text-left">
+        <div class="sp-text-start">
             <h3 class="sp-m-0">{{ Lang.get('core.temporary_path') }}</h3>
             <div class="sp-description sp-mt-3 sp-mb-6">
                 {{ Lang.get('core.temporary_path_desc') }}

@@ -4,12 +4,12 @@
     {% endif %}
 
     {% set attributes = { 'data-depends-on': customfield.depends_on_option_id } %}
-    <div class="sp-form-row {% if customfield.type == 9 %}sp-form-full{% endif %} sp-form-customfields
+    <div class="sp-form-row {% if customfield.type == 9 %}sp-form-full tox-border-none{% endif %} sp-form-customfields
                 {% if customfield.depends_on_option_id and not customfield.parent_selected %} sp-hidden{% endif %}"
          data-field="{{ customfield.id }}"
          data-dependent-children="{{ customfield.children is not empty ? customfield.children|json_encode : "[]" }}"
          data-depends-on-option="{{ customfield.depends_on_option_id }}">
-    
+
         {{ form_label('customfield[' ~ customfield.id ~ ']', customfield.name) }}
         <div class="sp-input-container">
             {% if customfield.type == 0 %}
@@ -108,14 +108,14 @@
             {% elseif customfield.type == 10 %}
                 <div class="sp-table">
                     <div class="sp-table-row">
-                        <div class="sp-table-cell sp-pr-2"></div>
+                        <div class="sp-table-cell sp-pe-2"></div>
                         {% for i in 1..5 %}
                             <div class="sp-table-cell sp-px-2 sp-text-center"><strong>{{ i }}</strong></div>
                         {% endfor %}
                     </div>
                     {% for key, option in customfield.options %}
                         <div class="sp-table-row">
-                            <div class="sp-table-cell sp-pr-2">{{ option }}</div>
+                            <div class="sp-table-cell sp-pe-2">{{ option }}</div>
                             {% for i in 1..5 %}
                                 <div class="sp-table-cell sp-px-2 sp-text-center">
                                     {{ form_radio('customfield[' ~ customfield.id ~ '][' ~ key ~ ']', i,
@@ -127,8 +127,8 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {% if customfield.description is not empty %}
-                <div class="sp-description">{{ customfield.description }}</div>
+            {% if customfield.purified_description is not empty %}
+                <div class="sp-description">{{ customfield.purified_description|raw }}</div>
             {% endif %}
         </div>
     </div>

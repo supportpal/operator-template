@@ -7,7 +7,7 @@
     <div class="sp-form-row sp-selectize-inline-block">
         {{ form_label('category[' ~ (i is defined ? i : '') ~ '][type]', Lang.choice('selfservice.type', 1)) }}
         <div class="sp-input-container">
-            <div class="sp-block sm:sp-inline-block sm:sp-mr-2">
+            <div class="sp-block sm:sp-inline-block sm:sp-me-2">
                 <select name="category[{{ i is defined ? i : '' }}][type]"
                         {% if hide|default is not empty %}disabled="disabled"{% endif %} style="display: inline-block;">
                     <option value="">{{ Lang.get('selfservice.select_type') }}</option>

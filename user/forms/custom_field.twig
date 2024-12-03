@@ -47,16 +47,16 @@
 
             <div class="sp-form-row sp-form-full">
                 {{ form_label('description', Lang.get('general.description')) }}
-                <div class="sp-input-container sp-input-translatable">
-                    {{ form_translatable_text(record, 'description') }}
+                <div class="sp-input-container sp-input-translatable tox-border-none">
+                    {{ form_translatable_textarea(record, 'description') }}
                     <div class="sp-description">{{ Lang.get('customfield.description_desc') }}</div>
                 </div>
             </div>
-            
+
         </div>
 
         <h2>{{ Lang.get('general.type') }}</h2>
-    
+
         <div class="sp-form-container">
 
             <div class="sp-form-row">
@@ -110,9 +110,9 @@
         {% include 'operator.' ~ template ~ '.forms.custom_field_depends' with {'route': searchRoute} %}
 
         {% include 'operator.' ~ template ~ '.forms.custom_field_regex' %}
-            
+
         <h2>{{ Lang.get('customfield.options') }}</h2>
-    
+
         <div class="sp-form-container">
 
             <div class="visibility" {% if record.depends_on_option_id is not empty %}style="display: none"{% endif %}>
@@ -188,9 +188,10 @@
     {% if jsValidator|default is not empty %}
         {{ jsValidator|raw }}
     {% endif %}
-    
+
     <!-- Translatable.js dependencies: Selectize -->
     <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
 
+    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/customfield.js') }}"></script>
 {% endblock %}

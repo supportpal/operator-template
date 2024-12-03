@@ -9,7 +9,7 @@
     </div>
     <ul class="sp-attached-files">
         <li class="sp-flex sp-hidden">
-            <div class="sp-mr-2 sp-truncate">
+            <div class="sp-me-2 sp-truncate">
                 <i class="fas fa-file"></i>&nbsp;
 
                 <span class="sp-file-information">
@@ -18,7 +18,7 @@
                 </span>
             </div>
 
-            <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+            <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="{{ Lang.get('general.remove') }}">
                 <i class="fas fa-times sp-text-white"></i>
             </div>
 
@@ -28,7 +28,7 @@
         </li>
         {% for attachment in message.attachments %}
             <li class="sp-flex">
-                <div class="sp-mr-2 sp-truncate">
+                <div class="sp-me-2 sp-truncate">
                     <i class="fas fa-file"></i>&nbsp;
 
                     <span class="sp-file-information">
@@ -42,7 +42,8 @@
                      data-attachment-id="{{ attachment.id }}"
                      data-size="{{ attachment.upload.getRawOriginal('size') }}"
                      data-hash="{{ attachment.upload_hash }}"
-                     data-silent="false">
+                     data-silent="false"
+                     title="{{ Lang.get('general.remove') }}">
                     <i class="fas fa-times sp-text-white"></i>
                 </div>
             </li>

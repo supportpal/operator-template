@@ -14,7 +14,7 @@
             {% for filter in filters %}
                 <li>
                     <a href="{{ route('ticket.operator.ticket') ~ '?filter=' ~ filter.id }}">
-                        <span class="sp-badge sp-mt-1/2 sp-ml-1 sp-float-right sp-hidden" data-id="{{ filter.id }}"></span>
+                        <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ filter.id }}"></span>
                         <div class="sp-truncate {% if Request.input('filter', 0) == filter.id|trim %}sp-font-bold{% endif %}">
                             {{ filter.name }}
                         </div>
@@ -45,7 +45,7 @@
         {% for status in obj_statuses %}
             <li>
                 <a href="{{ route('ticket.operator.ticket') ~ '?status=' ~ status.id }}">
-                    <span class="sp-badge sp-mt-1/2 sp-ml-1 sp-float-right sp-hidden" data-id="{{ status.id }}"></span>
+                    <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ status.id }}"></span>
                     <div class="sp-truncate {% if Request.input('status', 0) == status.id|trim %}sp-font-bold{% endif %}">
                         {{ status.icon_without_tooltip|raw }}&nbsp;
                         {{ status.name }}
@@ -71,7 +71,7 @@
         {% for department in obj_departments %}
             <li>
                 <a href="{{ route('ticket.operator.ticket') ~ '?department=' ~ department.id ~ '&status=' ~ non_resolved_statuses }}">
-                    <span class="sp-badge sp-mt-1/2 sp-ml-1 sp-float-right sp-hidden" data-id="{{ department.id }}"></span>
+                    <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ department.id }}"></span>
                     <div class="sp-truncate {% if Request.input('department', 0) == department.id|trim %}sp-font-bold{% endif %}">
                         {% if department.dashes|default is not empty %}
                             {{ department.dashes|raw }}{{ department.name|replace({ (department.dashes): '' }) }}
@@ -101,7 +101,7 @@
             {% for brand in obj_brands %}
                 <li>
                     <a href="{{ route('ticket.operator.ticket') ~ '?brand=' ~ brand.id }}">
-                        <span class="sp-badge sp-mt-1/2 sp-ml-1 sp-float-right sp-hidden" data-id="{{ brand.id }}"></span>
+                        <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ brand.id }}"></span>
                         <div class="sp-truncate {% if Request.input('brand', 0) == brand.id|trim %}sp-font-bold{% endif %}">
                             {{ brand.name }}
                         </div>

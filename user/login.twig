@@ -49,7 +49,7 @@
                         {{ form_check('remember_me', '1') }} {{ Lang.get('user.remember_me') }}
                     </label>
                 </div>
-                <div class="sp-flex-auto sp-text-right">
+                <div class="sp-flex-auto sp-text-end">
                     <a class="sp-forgot-toggle sp-description sp-cursor-pointer hover:sp-text-primary">
                         {{ Lang.get('user.forgot_password') }}
                     </a>
@@ -98,10 +98,10 @@
             <div class="sp-text-center">
                 <div class="sp-form-row sp-form-full sp-mb-0">
                     <div class="sp-flex sp-w-full">
-                        <div class="sp-flex-auto sp-pr-2">
+                        <div class="sp-flex-auto sp-pe-2">
                             {{ form_submit(Lang.get('user.reset_password'), {'class': 'sp-w-full'}) }}
                         </div>
-                        <div class="sp-flex-auto sp-pl-2">
+                        <div class="sp-flex-auto sp-ps-2">
                             <a class="sp-forgot-toggle sp-button sp-w-full">
                                 {{ Lang.get('general.cancel') }}
                             </a>

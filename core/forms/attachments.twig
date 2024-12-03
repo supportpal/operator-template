@@ -19,7 +19,7 @@
 
 <ul class="sp-attached-files">
     <li class="sp-flex sp-hidden">
-        <div class="sp-mr-2 sp-truncate">
+        <div class="sp-me-2 sp-truncate">
             <i class="fas fa-file"></i>&nbsp;
 
             <span class="sp-file-information">
@@ -28,7 +28,7 @@
             </span>
         </div>
 
-        <div class="sp-delete-attachment sp-hidden sp-bg-red-600">
+        <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="{{ Lang.get('general.remove') }}">
             <i class="fas fa-times sp-text-white"></i>
         </div>
 
@@ -39,7 +39,7 @@
     {% if attachments is not empty and not attachments.isEmpty() %}
         {% for attachment in attachments %}
             <li class="sp-flex">
-                <div class="sp-mr-2 sp-truncate">
+                <div class="sp-me-2 sp-truncate">
                     <i class="fas fa-file"></i>&nbsp;
 
                     <a href='{{ route(downloadRoute, [ attachment.upload_hash ]) }}' class="sp-file-information">
@@ -50,8 +50,8 @@
 
                 <div class="sp-delete-attachment sp-bg-red-600"
                      {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
-                     data-attachment-id="{{ attachment.id }}"
-                     data-hash="{{ attachment.upload_hash }}">
+                     data-attachment-id="{{ attachment.id }}" data-hash="{{ attachment.upload_hash }}"
+                     title="{{ Lang.get('general.remove') }}">
                     <i class="fas fa-times sp-text-white"></i>
                 </div>
             </li>
@@ -59,7 +59,7 @@
     {% elseif old_attachments is not empty %}
         {% for hash, file in old_attachments %}
             <li class="sp-flex">
-                <div class="sp-mr-2 sp-truncate">
+                <div class="sp-me-2 sp-truncate">
                     <i class="fas fa-file"></i>&nbsp;
 
                     <span class="sp-file-information">
@@ -70,7 +70,7 @@
 
                 <div class="sp-delete-attachment sp-bg-red-600"
                      {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
-                     data-hash="{{ hash }}">
+                     data-hash="{{ hash }}" title="{{ Lang.get('general.remove') }}">
                     <i class="fas fa-times sp-text-white"></i>
                 </div>
             </li>

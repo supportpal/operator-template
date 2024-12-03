@@ -23,7 +23,7 @@
                     {% endif %}
                     {% if auth_user().hasPermission('delete.organisation') %}
                         --><button class="sp-action delete-organisation" title="{{ Lang.get('general.delete') }}">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-times"></i>
                         </button>
                     {% else %}
                         -->
@@ -253,11 +253,11 @@
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_organisations') }}',
                         html: '<div>'
-                            + '<div class="sp-alert sp-alert-warning sp-text-left">'
+                            + '<div class="sp-alert sp-alert-warning sp-text-start">'
                             + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
                             + Lang.get('messages.cannot_be_undone')
                             + '</div>'
-                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-left sp-overflow-y-auto" style="max-height: 15rem;">'
+                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-start sp-overflow-y-auto" style="max-height: 15rem;">'
                             + '<li class="sp-py-1 sp-px-3">'
                                 + '{{ record.name }}<br>'
                                 + '<span class="sp-description">{{ Lang.get('user.owner') }}: {{ record.owner is not empty ? record.owner.email.formatted_name : Lang.get('general.none') }}'

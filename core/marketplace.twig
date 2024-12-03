@@ -38,7 +38,7 @@
                 <div class="sp-flex sp-items-center">
                     <h2>{{ category }}</h2>
                     {% if Request.get('category') is empty %}
-                        <div class="sp-ml-4">
+                        <div class="sp-ms-4">
                             <a class="sp-button sp-button-sm"
                                href="{{ route('core.operator.marketplace.index', {'category': categoryAddons.first().getCategory().getSlug()}) }}">
                                 {{ Lang.get('general.view_all') }}
@@ -51,7 +51,7 @@
                     {% for addon in categoryAddons %}
                         <div class="sp-w-full sp-p-3/2 sm:sp-w-1/2 lg:sp-w-1/3">
                             <a class="sp-addon-card sp-flex sp-h-full sp-p-4 sp-border sp-border-tertiary sp-rounded hover:sp-shadow" data-id="{{ addon.id }}">
-                                <div class="sp-flex-none sp-mr-4">
+                                <div class="sp-flex-none sp-me-4">
                                     <img src="{{ addon.logoUri }}" alt="{{ addon.name }}" class="sp-h-12 sp-w-12 sp-rounded-full" />
                                 </div>
                                 <div class="sp-grow">
@@ -60,9 +60,9 @@
                                     <div class="sp-description sp-mt-2">
                                     {% if addon.getBilling() is not empty %}
                                         {% if addon.getBilling().billingcycle is same as('free') %}
-                                            <span class="sp-badge sp-mr-2 sp-bg-green-600 sp-uppercase">{{ Lang.get('general.free') }}</span>
+                                            <span class="sp-badge sp-me-2 sp-bg-green-600 sp-uppercase">{{ Lang.get('general.free') }}</span>
                                         {% else %}
-                                            <span class="sp-badge sp-mr-2 sp-bg-red-600 sp-uppercase">{{ Lang.get('general.commercial') }}</span>
+                                            <span class="sp-badge sp-me-2 sp-bg-red-600 sp-uppercase">{{ Lang.get('general.commercial') }}</span>
                                         {% endif %}
                                     {% endif %}
                                     {% if addon.isInstalled() %}
@@ -91,7 +91,7 @@
     {% endif %}
 
     <div class="sp-configure-modal-content sp-hidden">
-        <div class="sp-text-left">
+        <div class="sp-text-start">
             <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
             <div class="sp-description sp-mt-3 sp-mb-6">
                 {{ Lang.get('core.binary_paths_desc') }}
@@ -118,7 +118,7 @@
         $(document).ready(function() {
             $('.sp-addon-card').on('click', function () {
                 Swal.fire({
-                    html: '<div class="sp-addon-popup sp-text-left"></div>',
+                    html: '<div class="sp-addon-popup sp-text-start"></div>',
                     confirmButtonText: "{{ Lang.get('general.continue') }}",
                     showConfirmButton: false,
                     showCancelButton: false,

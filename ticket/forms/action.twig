@@ -240,8 +240,14 @@
         </div>
 
         <div class="action sp-hidden" data-action="17">
-            {{ Lang.get('general.na') }}
-            {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
+            {% set value = rule.action == 17 ? (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {} %}
+            <label>
+                {{ form_check(inputPrefix ~ '[value_text][notify]', 1, value.notify ?? true) }}&nbsp; {{ Lang.get('actions.notify_user') }}
+            </label>
+            &nbsp;
+            <label>
+                {{ form_check(inputPrefix ~ '[value_text][lock]', 1, value.lock ?? false) }}&nbsp; {{ Lang.get('actions.lock_ticket') }}
+            </label>
         </div>
 
         <div class="action sp-hidden" data-action="18">
@@ -331,7 +337,7 @@
             <div class="sp-mb-3">
                 {% set methods = {'GET': 'GET', 'POST': 'POST', 'PUT': 'PUT', 'PATCH': 'PATCH', 'DELETE': 'DELETE'} %}
                 <div class="sp-flex">
-                    <div class="sp-flex-none sp-mr-3">
+                    <div class="sp-flex-none sp-me-3">
                         {{ form_select(inputPrefix ~ '[value_text][method]', methods, value.method, {'class': 'er-wh-method'}) }}
                     </div>
                     <div class="sp-grow">
@@ -443,7 +449,7 @@
         </div>
     </td>
 
-    <td class="sp-text-right sp-w-3">
-        <i class="fas fa-times sp-cursor-pointer remove-button"></i>
+    <td class="sp-text-end sp-w-3">
+        <i class="fas fa-times sp-cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
     </td>
 </tr>

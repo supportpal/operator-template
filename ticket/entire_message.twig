@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="{{ get_template_mode() }}">
+<html class="{{ get_template_mode() }}" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     <title>{{ ticket.subject }}</title>
@@ -24,12 +24,12 @@
         </div>
 
         {% if not Request.has('print') %}
-            <button class="print-button sp-button-submit sp-ml-3 sp-float-right print:sp-hidden">
+            <button class="print-button sp-button-submit sp-ms-3 sp-float-end print:sp-hidden">
                 <i class="fas fa-print"></i>&nbsp; {{ Lang.get('general.print') }}
             </button>
         {% endif %}
 
-        <h2 class="sp-ml-4 sp-text-primary xs:sp-mt-0 xs:sp-ml-0">{{ ticket.subject }}</h2>
+        <h2 class="sp-ms-4 sp-text-primary xs:sp-mt-0 xs:sp-ms-0">{{ ticket.subject }}</h2>
 
         <hr class="sp-hidden print:sp-block" />
 
@@ -38,7 +38,7 @@
             {{ View.fireHook('operator.content_start') }}
 
             <div class="sp-flex">
-                <div class="sp-flex-initial sp-mr-4">
+                <div class="sp-flex-initial sp-me-4">
                     <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-md" />
                 </div>
                 <div class="sp-grow">

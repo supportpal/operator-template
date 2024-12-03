@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="{{ get_template_mode() }} sp-h-full">
+<html class="{{ get_template_mode() }} sp-h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     <title>{% block title %}{{ Lang.get('core.product_name') }} - {{ Lang.get('core.operator_panel') }}{% endblock %}</title>

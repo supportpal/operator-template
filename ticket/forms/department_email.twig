@@ -65,7 +65,7 @@
             {{ form_button(Lang.get('general.remove'), { 'class': 'remove-button' }) }}
         </div>
     </div>
-    
+
     <div class="remote-piping {% if i is not defined or (email is defined and email.type == 3) %}sp-hidden{% endif %}">
         <div class="sp-form-row">
             {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][consume_all]', Lang.get('ticket.consume_all')) }}
@@ -171,7 +171,7 @@
                                     hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
                                 ) }}
                             </div>
-                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ml-3 sm:sp-mt-0">
+                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ms-3 sm:sp-mt-0">
                                 {% set hasOAuth = record is defined and email.oauth is not empty %}
                                 {{ form_button(
                                     Lang.get('core.get_access_token'),

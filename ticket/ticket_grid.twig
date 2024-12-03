@@ -23,13 +23,9 @@
                 {% else %}
                     <!--
                 {% endif %}
-                {% if not Request.input('filter') %}
-                    --><button class="sp-action sp-hidden md:sp-inline-block sp-filter-results">
-                        <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
-                    </button>
-                {% else %}
-                    -->
-                {% endif %}
+                --><button class="sp-action sp-hidden md:sp-inline-block sp-filter-results">
+                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                </button>
             </li><!--
 
             {% if trashed_only %}
@@ -44,7 +40,7 @@
                         {% endif %}
                         {% if (auth_user().hasPermission('delete.ticket')) %}
                         --><button class="sp-action delete-forever-ticket" disabled="disabled" title="{{ Lang.get('general.delete_forever') }}">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-times"></i>
                         </button>
                         {% else %}
                             -->
@@ -119,8 +115,8 @@
                                 <button class="sp-action" title="{{ Lang.get('ticket.assigned_operator') }}">
                                     <i class="fas fa-user-tie"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-left-0 sp-mt-12 sp-ml-1 xs:sp-left-auto xs:sp-right-0
-                                            xs:sp-ml-0 sm:sp-left-0 sm:sp-ml-0">
+                                <div class="sp-dropdown sp-top-0 sp-start-0 sp-mt-12 sp-ms-1 xs:sp-start-auto xs:sp-end-0
+                                            xs:sp-ms-0 sm:sp-start-0 sm:sp-ms-0">
                                     <div>
                                         <select name="assign">
                                             <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
@@ -141,7 +137,7 @@
                                     <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
                                         <i class="fas fa-tags"></i>
                                     </button>
-                                    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 sm:sp-left-0 sm:sp-ml-1 sm:sp-mr-0">
+                                    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sm:sp-start-0 sm:sp-ms-1 sm:sp-me-0">
                                         <div>
                                             <select name="tag">
                                                 <option value="">{{ Lang.get('ticket.add_tag') }}...</option>
@@ -168,8 +164,8 @@
                                     <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
                                         <i class="fas fa-bolt-lightning"></i>
                                     </button>
-                                    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 sp-mr-1 sm:sp-left-0 sm:sp-ml-1 sm:sp-mr-0">
-                                        <ul class="sp-text-right sm:sp-text-left">
+                                    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sp-me-1 sm:sp-start-0 sm:sp-ms-1 sm:sp-me-0">
+                                        <ul class="sp-text-end sm:sp-text-start">
                                             {% for macro in obj_macros %}
                                                 <li>
                                                     <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
@@ -196,9 +192,28 @@
                             --><button class="sp-action take-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
                                 <i class="fas fa-thumbtack"></i>
                             </button><!--
-                            --><button class="sp-action close-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.close') }}">
-                                <i class="fas fa-check"></i>
-                            </button><!--
+                            --><button class="sp-action close-ticket !sp-pe-6 sp-hidden md:sp-inline-block"
+                                   title="{{ Lang.get('general.close') }}">
+                            <i class="fas fa-check"></i>
+                            </button>
+                            <div class="close-ticket-options sp-dropdown-container sp-relative sp-hidden md:sp-inline-block">
+                                <button class="sp-action sp-w-5 !sp-px-1 !sp--ms-6">
+                                    <i class="fas fa-chevron-down fa-2xs"></i>
+                                </button>
+                                <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sp-me-1">
+                                    <ul class="sp-text-end">
+                                        <li class="close-ticket">
+                                            <a>{{ Lang.get('general.close') }}</a>
+                                        </li>
+                                        <li class="close-ticket-without-notification">
+                                            <a>{{ Lang.get('ticket.close_without_notify') }}</a>
+                                        </li>
+                                        <li class="lock-ticket">
+                                            <a>{{ Lang.get('ticket.close_and_lock') }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!--
                             --><button class="sp-action delete-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
                                 <i class="fas fa-trash"></i>
                             </button><!--
@@ -207,10 +222,10 @@
                         {% endif %}
                         --><div class="sp-dropdown-container">
                             <button class="sp-action">
-                                <i class="fas fa-ellipsis-h"></i>
+                                <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12 md:sp-right-auto">
-                                <ul class="sp-text-right md:sp-text-left">
+                            <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 md:sp-end-auto">
+                                <ul class="sp-text-end md:sp-text-start">
                                     {% if auth_user().hasPermission('update.ticket') %}
                                         <li class="reply-ticket md:sp-hidden">
                                             <a>{{ Lang.get('general.reply') }}</a>
@@ -221,7 +236,10 @@
                                         <li class="close-ticket md:sp-hidden">
                                             <a>{{ Lang.get('general.close') }}</a>
                                         </li>
-                                        <li class="lock-ticket">
+                                        <li class="close-ticket-without-notification md:sp-hidden">
+                                            <a>{{ Lang.get('ticket.close_without_notify') }}</a>
+                                        </li>
+                                        <li class="lock-ticket md:sp-hidden">
                                             <a>{{ Lang.get('ticket.close_and_lock') }}</a>
                                         </li>
                                         <li class="unlock-ticket">
@@ -406,13 +424,14 @@
 
             // Load grid filtering for the first time.
             $('button.sp-filter-results').on('click', function () {
-                var $container = $('.sp-grid-filtering').toggle();
+                var $container = $('.sp-grid-filtering');
                 if ($container.hasClass('loaded')) {
                     return;
                 }
 
                 // Show loading icon
                 $container
+                    .show()
                     .addClass('sp-condition-group')
                     .html('<div class="sp-p-3"><i class="fas fa-spinner fa-pulse fa-fw"></i></div>');
 
@@ -434,20 +453,18 @@
 
             // Filtering
             $('.sp-grid-filtering').on('click', '.update-filtering', function() {
-                clearTimeout(gridTimeout);
-
-                $datatable.on('preXhr.dt', function ( e, settings, data ) {
+                $datatable.on('preXhr.dt', function ( e, settings, data, xhr ) {
                     // DEV-829, remove hardcoded route conditions (?conditions=...)
-                    settings.sAjaxSource = '{{ sAjaxSource }}';
+                    xhr.url = '{{ sAjaxSource }}';
 
                     // Add conditions to parameters
-                    var conditions = $(".sp-grid-filtering :input").serializeArray();
-                    $.each(conditions, function(index, value) {
-                        data[value.name] = value.value;
+                    $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
+                        xhr.data[value.name] = value.value;
                     });
                 }).dataTable().api().ajax.reload();
 
                 // Delay next refresh of grid by 60 seconds.
+                clearTimeout(gridTimeout);
                 gridTimeout = setTimeout(refreshGrid, 60000);
             });
 
@@ -455,7 +472,7 @@
             $quickActions.on('click', '.reply-ticket', function() {
                 Swal.fire({
                     title: Lang.get("ticket.mass_reply"),
-                    html: '<form class="mass-reply sp-text-left">'
+                    html: '<form class="mass-reply sp-text-start">'
                         + '<div class="sp-alert sp-alert-error sp-hidden attachment"></div>'
                         + '{{ form_editor("text") }}'
                         + '<div class="sp-attachment-details">'
@@ -463,14 +480,14 @@
                         + '</div>'
                         + '<ul class="sp-attached-files">'
                         + '    <li class="sp-flex sp-hidden">'
-                        + '        <div class="sp-mr-2 sp-truncate">'
+                        + '        <div class="sp-me-2 sp-truncate">'
                         + '            <i class="fas fa-file"></i> &nbsp;'
                         + '            <span class="sp-file-information">'
                         + '                <span class="sp-filename"></span>'
                         + '                <span class="sp-description sp-filesize"></span>'
                         + '            </span>'
                         + '        </div>'
-                        + '        <div class="sp-delete-attachment sp-hidden sp-bg-red-600">'
+                        + '        <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="' + Lang.get("general.remove") + '">'
                         + '            <i class="fas fa-times sp-text-white"></i>'
                         + '        </div>'
                         + '        <div class="sp-progress-bar">'
@@ -564,6 +581,9 @@
             $quickActions.on('click', '.close-ticket', function() {
                 ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.close'));
             });
+            $quickActions.on('click', '.close-ticket-without-notification', function () {
+                ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.close', {'notify': '0'}))
+            });
             // Process lock button
             $quickActions.on('click', '.lock-ticket', function() {
                 ticketAction({ticket: getSelectedRows()}, laroute.route('ticket.operator.action.lock'));
@@ -649,8 +669,10 @@
                 },
                 onChange: $onChange
             });
-            $quickActions.find('select[name="tag"], select[name="remove_tag"]').selectize({
+
+            var tagSelectizeOpts = {
                 valueField: 'id',
+                labelField: 'name',
                 searchField: [ 'name' ],
                 load: function(query, callback) {
                     if (!query.length) return callback();
@@ -668,7 +690,14 @@
                     }
                 },
                 onChange: $onChange
-            });
+            };
+            $quickActions.find('select[name="tag"]').selectize($.extend({}, tagSelectizeOpts, {
+                create: {% if auth_user().hasPermission('create.tickettag') %}true{% else %}false{% endif %},
+                createFilter: function (input) {
+                    return input.length <= 45;
+                },
+            }));
+            $quickActions.find('select[name="remove_tag"]').selectize(tagSelectizeOpts);
 
             // Process assign/unassign operator
             $quickActions.find('select[name="assign"], select[name="unassign"]').selectize({
@@ -733,7 +762,7 @@
     <button class="sp-action sp-grid-sorting-button" title="{{ Lang.get('general.sort_by') }}">\
         <i class="fas fa-sort-amount-down-alt"></i>\
     </button>\
-    <div class="sp-dropdown sp-top-0 sp-right-0 sp-mt-12">\
+    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12">\
         <ul class="sp-grid-sorting">\
             {% for key, value in sortOptions %}\
             <li data-column="{{ key }}" data-direction="{{ sortAscending ? 0 : 1 }}">\
@@ -988,8 +1017,6 @@
          * Refresh the ticket grid automatically every minute
          */
         function refreshGrid() {
-            clearTimeout(gridTimeout);
-
             // Disable the grid actions
             if (! $('tr.selected').length) {
                 $('.sp-grid-actions').addClass('sp-hidden');
@@ -1006,6 +1033,7 @@
             }, false);
 
             // Schedule next grid update in 60 seconds.
+            clearTimeout(gridTimeout);
             gridTimeout = setTimeout(refreshGrid, 60000);
         }
 

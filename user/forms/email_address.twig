@@ -6,13 +6,13 @@
             {{ form_text('additional_email[' ~ (address|default is not empty ? address.id : '') ~ '][address]', address|default is not empty ? address.address : null, {'size': 45}) }}
         </div>
 
-        <div class="sp-flex-none sp-relative sp-ml-2">
+        <div class="sp-flex-none sp-relative sp-ms-2">
             <div class="sp-dropdown-container">
                 <span class="sp-action sp-button sp-px-3">
                     <i class="fas fa-ellipsis-v"></i>
                 </span>
-                <div class="sp-dropdown sp-right-0 md:sp-right-auto">
-                    <ul class="sp-text-right md:sp-text-left">
+                <div class="sp-dropdown sp-end-0 md:sp-end-auto">
+                    <ul class="sp-text-end md:sp-text-start">
                         {% if address|default is not empty and not address.is_verified %}
                             <li>
                                 <a class="sp-verify-email-address" data-route="{{ route('user.operator.user.send_email_verification', record.id) }}" data-id="{{ address.id }}">
@@ -34,7 +34,7 @@
         </div>
 
         {% if address|default is not empty and not address.is_verified %}
-            <div class="sp-email-address-not-verified sp-flex-none sp-relative sp-p-2 sp-pr-0 sp-text-orange-600">
+            <div class="sp-email-address-not-verified sp-flex-none sp-relative sp-p-2 sp-pe-0 sp-text-orange-600">
                 <i class="fa-fw fa-solid fa-exclamation-circle" title="{{ Lang.get('user.unverified') }}"></i>
             </div>
         {% endif %}

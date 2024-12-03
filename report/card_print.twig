@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="sp-h-full">
+<html class="sp-h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     <title>{{ card.name() }}</title>
@@ -61,7 +61,7 @@
     <div class="sp-flex sp-flex-col sp-h-full sp-break-words sp-py-6 xs:sp-p-6 print:sp-p-0">
         {{ View.fireHook('operator.content_start') }}
 
-        <div class="sp-flex-none sp-text-center xs:sp-text-left">
+        <div class="sp-flex-none sp-text-center xs:sp-text-start">
             <img src="{{ get_logo(false) }}" alt="{{ company }}" class="sp-logo sp-inline" />
 
             <h2 class="sp-text-primary">{{ card.dashboard().name() }} - {{ card.name() }}</h2>

@@ -34,7 +34,7 @@
             <li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
                 {% if (auth_user().hasPermission('delete.user')) %}
                     <button class="sp-action delete-user" disabled="disabled" title="{{ Lang.get('general.delete') }}">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-times"></i>
                     </button>
                 {% endif %}
                 {% if not groups.isEmpty() and auth_user().hasPermission('update.user') %}
@@ -80,7 +80,7 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <div class="sp-my-6 sp-hidden">
+    <div class="sp-grid-filtering sp-my-6 sp-hidden">
         {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
     </div>
 
@@ -105,8 +105,7 @@
             $('.update-filtering').on('click', function() {
                 $('.dataTable').on('preXhr.dt', function ( e, settings, data ) {
                     // Add conditions to parameters
-                    var conditions = $(".sp-condition-group :input").serializeArray();
-                    $.each(conditions, function(index, value) {
+                    $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
                         data[value.name] = value.value;
                     });
                 }).dataTable().api().ajax.reload();

@@ -55,7 +55,7 @@
                     </div>
                 {% endif %}
 
-                <div class="sp-action-bar sp-ml-4">
+                <div class="sp-action-bar sp-ms-4">
                     <button class="sp-option refresh-all">
                         <i class="fa-solid fa-arrows-rotate"></i>
                     </button>
@@ -68,7 +68,7 @@
         <p class="sp-mt-2">{{ dashboardDescription }}</p>
     {% endif %}
 
-    {% include 'operator.' ~ template ~ '.report.condition_group' %}
+    {% include 'operator.' ~ template ~ '.report.filtering' %}
 
     {% if cards is empty %}
         <div class="sp-p-2 sp-bg-secondary sp-border sp-border-tertiary sp-rounded sp-text-center sp-description">
@@ -101,13 +101,13 @@
                             <div class="sp-flex-grow sp-font-bold sp-truncate">
                                 {{ card.name() }}
                             </div>
-                            <div class="sp-flex-initial sp-ml-3">
+                            <div class="sp-flex-initial sp-ms-3">
                                 <div class="sp-dropdown-container">
                                     <div class="sp-action sp-px-3/2 sp-cursor-pointer">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </div>
-                                    <div class="sp-dropdown sp-right-0 sp-mr-3/2">
-                                        <ul class="sp-text-right">
+                                    <div class="sp-dropdown sp-end-0 sp-me-3/2">
+                                        <ul class="sp-text-end">
                                             <li>
                                                 <a class="sp-dropdown-item refresh-btn" href="#">
                                                     {{ Lang.get('general.refresh') }}

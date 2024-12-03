@@ -21,7 +21,7 @@
                 <li>
                     <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">
                         {% if category.count is not empty %}
-                            <span class="sp-badge sp-float-right">{{ category.count }}</span>
+                            <span class="sp-badge sp-float-end">{{ category.count }}</span>
                         {% endif %}
                         <div class="list-item {% if currentCategory is not empty and currentCategory == category.id %}sp-font-bold{% endif %}">
                             {% if category.dashes is not empty %}{{ category.dashes|raw }}&nbsp;{% endif %}

@@ -1,23 +1,16 @@
-<div class="sp-filter-results sp-condition-group">
+{% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
 
-    <h3>{{ Lang.get('general.filter_results') }}</h3>
+{% if currentFilter|default is not empty %}
+    {% for groupId, group in currentFilter.conditiongroups %}
+        {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+    {% endfor %}
+{% endif %}
 
-    <div class="sp-condition-group-inner">
-        <table class="sp-hidden">
-            {# Brand new group with one condition #}
-            {% include 'operator.' ~ template ~ '.forms.condition' with {'hide': true} %}
+<div class="plan-conditiongroup-type sp-my-3">
+    {{ form_select('condition_group_type', {0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group')}, currentFilter.condition_group_type) }}
+</div>
 
-            {% if currentConditions|default is not empty %}
-                {% for condition in currentConditions %}
-                    {% include 'operator.' ~ template ~ '.forms.condition' %}
-                {% endfor %}
-            {% endif %}
-        </table>
-
-        <div class="sp-condition-group-buttons">
-            {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition')}), {'class': 'add-condition sp-mr-2'}) }}
-            {{ form_button(Lang.get('general.update'), {'class': 'update-filtering'}) }}
-        </div>
-    </div>
-
+<div>
+    {{ form_button(Lang.get('general.update'), {'class': 'update-filtering'}) }} &nbsp;
+    {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
 </div>

@@ -77,7 +77,7 @@
 
         <div class="add-comment-form sp-collapsible print:sp-hidden">
             {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.comment', 1)}) }}
-            <span class="sp-ml-auto">
+            <span class="sp-ms-auto">
                 <i class="fas fa-chevron-up"></i>
             </span>
         </div>
@@ -98,7 +98,7 @@
                     <option value="2" {{ (comment_ordering == '2') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.highest_rated') }}</option>
                 </select>
 
-                <span class="sp-loading sp-px-4 sp-py-3 sp-ml-2 sp-bg-secondary sp-rounded sp-align-middle sp-hidden">
+                <span class="sp-loading sp-px-4 sp-py-3 sp-ms-2 sp-bg-secondary sp-rounded sp-align-middle sp-hidden">
                     <i class="fas fa-spinner fa-spin"></i>
                 </span>
             </div>

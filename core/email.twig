@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="{{ get_template_mode() }}">
+<html class="{{ get_template_mode() }}" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     <title>{{ record.subject }}</title>
@@ -20,7 +20,7 @@
             {{ View.fireHook('operator.content_start') }}
 
             {% if record.raw is not empty %}
-                <div class="sp-mb-6 md:sp-mb-0 md:sp-float-right">
+                <div class="sp-mb-6 md:sp-mb-0 md:sp-float-end">
                     <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
                         {{ Lang.get('core.view_original') }}
                     </a> &nbsp;&nbsp;
@@ -127,7 +127,7 @@
                     <ul class="sp-attached-files">
                         {% for attachment in record.attachments %}
                             <li class="sp-email-attachment sp-flex">
-                                <div class="sp-mr-2 sp-truncate">
+                                <div class="sp-me-2 sp-truncate">
                                     <i class="fas fa-file fa-fw"></i>&nbsp;
 
                                     <span class="sp-file-information">
@@ -138,7 +138,8 @@
 
                                 {% if canDeleteAttachments %}
                                     <div class="sp-delete-attachment sp-bg-red-600"
-                                         data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}">
+                                         data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}"
+                                         title="{{ Lang.get('general.remove') }}">
                                         <i class="fas fa-times sp-text-white"></i>
                                     </div>
                                 {% endif %}
@@ -167,7 +168,7 @@
             // Delete attachment.
             $(document).on('click', '.sp-delete-attachment', function (e) {
                 e.preventDefault();
-                
+
                 var $this = $(this);
 
                 $.ajax({

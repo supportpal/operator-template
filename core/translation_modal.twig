@@ -13,10 +13,11 @@
                                 data-display-name="{{ translation.display_name }}">
                             <label for="{{ translation.input_name }}" class="sp-block sp-mb-1 sp-font-bold">
                                 <span>{{ translation.display_name }}</span>
-                                <i class="fas fa-times sp-remove-translation sp-float-right sp-my-1 sp-text-red-600 hover:sp-cursor-pointer" aria-hidden="true"></i>
+                                <i class="fas fa-times sp-remove-translation sp-float-end sp-my-1 sp-text-red-600 hover:sp-cursor-pointer"
+                                   aria-hidden="true" title="{{ Lang.get('general.remove') }}"></i>
                             </label>
-                            <input name="{{ translation.input_name }}" type="text" value="{{ translation.value }}"
-                                 {% if key == 'missing' %}disabled="disabled"{% endif %} autocomplete="off" />
+                            {% set disabledInputOpts = key == 'missing' ? {'disabled': 'disabled'} : {} %}
+                            {{ call_user_func(input_type, translation.input_name, translation.value, {'autocomplete': 'off', 'exactValue': true}|merge(disabledInputOpts))|raw }}
                         </div>
                     {% endfor %}
                 </div>

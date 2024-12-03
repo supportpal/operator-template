@@ -47,7 +47,11 @@
         <div class="sp-table">
             <div class="sp-table-row">
                 <label>{{ Lang.get('selfservice.title') }}:</label>
-                <div id="filter_name"></div>
+                <div id="filter_title"></div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.text') }}:</label>
+                <div id="filter_text"></div>
             </div>
             <div class="sp-table-row">
                 <label>{{ Lang.get('selfservice.author') }}:</label>
@@ -106,20 +110,21 @@
              * Initialise the filters
              */
             oTable.yadcf([
-                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500, filter_reset_button_text: ''},
-                {column_number : 1, filter_container_id: "filter_author", filter_reset_button_text: ''},
-                {column_number : 2, filter_container_id: "filter_category", filter_reset_button_text: ''},
+                {column_number: 0, column_data_type: "text", filter_container_id: "filter_title", filter_type: "text", filter_delay: 500},
+                {column_number: 9, column_data_type: "text", filter_container_id: "filter_text", filter_type: "text", filter_delay: 500},
+                {column_number: 1, filter_container_id: "filter_author"},
+                {column_number: 2, filter_container_id: "filter_category"},
                 {% if type|default is empty %}
                     {% if Config.get('brand')|length == 1 %}
-                        {column_number : 3, filter_container_id: "filter_type", filter_reset_button_text: ''},
+                        {column_number : 3, filter_container_id: "filter_type"},
                     {% else %}
-                        {column_number : 4, filter_container_id: "filter_brand", filter_reset_button_text: ''},
+                        {column_number : 4, filter_container_id: "filter_brand"},
                     {% endif %}
                 {% endif %}
-                {column_number : 5, filter_container_id: "filter_tag", filter_reset_button_text: ''},
-                {column_number : 6, filter_container_id: "filter_published", filter_reset_button_text: ''},
-                {column_number : 7, filter_container_id: "filter_protected", filter_reset_button_text: ''},
-                {column_number : 8, filter_container_id: "filter_pinned", filter_reset_button_text: ''}
+                {column_number: 5, filter_container_id: "filter_tag"},
+                {column_number: 6, filter_container_id: "filter_published"},
+                {column_number: 7, filter_container_id: "filter_protected"},
+                {column_number: 8, filter_container_id: "filter_pinned"}
             ]);
         });
     </script>

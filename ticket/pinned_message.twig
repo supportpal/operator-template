@@ -1,0 +1,15 @@
+<div class="sp-pinned-message sp-sticky sp-alert-sticky sp-flex sp-items-center sp-h-12 sp-shadow-inner sp-cursor-pointer
+            {% if message.type == 1 %}sp-note{% elseif message.type == 2 %}sp-forward{% endif %}"
+     data-id="{{ message.id }}">
+    <div class="sp-flex-none sp-px-3 sp-text-yellow-600">
+        <i class="fa-solid fa-thumbtack"></i>
+    </div>
+
+    <div class="sp-flex-grow sp-truncate">
+        <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-xs sp-mr-1" />
+        <span class="sp-font-semibold sp-mr-1">{{ message.user.formatted_name }}</span>
+        {{ message.excerpt }}
+    </div>
+
+    <div class="sp-flex-none sp-px-3 sp-description">{{ timeago(message.created_at) }}</div>
+</div>

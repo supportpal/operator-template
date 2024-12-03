@@ -3,7 +3,7 @@
         {{ Lang.get('ticket.linked_tickets') }}
     </div>
     {% if can_update_ticket(auth_user(), ticket) %}
-        <div class="sp-flex-none sp-ml-1">
+        <div class="sp-flex-none sp-ms-1">
             <a class="add-link sp-button sp-button-sm">
                 {{ Lang.get('general.add_link') }}
             </a>
@@ -23,7 +23,7 @@
                         </a>
                     </div>
                     {% if can_update_ticket(auth_user(), ticket) %}
-                        <div class="sp-flex-none sp-ml-1">
+                        <div class="sp-flex-none sp-ms-1">
                             <a title="{{ Lang.get('general.unlink') }}" class="unlink sp-button sp-button-sm sp-text-xs"
                                data-route="{{ route('ticket.operator.action.unlink') }}" data-id="{{ linkedTicket.id }}">
                                 <i class="fas fa-unlink"></i>

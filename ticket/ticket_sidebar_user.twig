@@ -10,7 +10,7 @@
     {% endif %}
     {% if ticket.user.groups is not empty %}
         {% for group in ticket.user.groups %}
-            <i class="fas fa-circle sp-ml-1" style="color: {{ group.colour }};" title="{{ group.name }}"></i>
+            <i class="fas fa-circle sp-ms-1" style="color: {{ group.colour }};" title="{{ group.name }}"></i>
         {% endfor %}
     {% endif %}
 
