@@ -22,7 +22,7 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    {% for key, condition in group.conditions %}
+                    {% for condition in group.conditions %}
                         {% include 'operator.' ~ template ~ '.forms.condition' %}
                     {% endfor %}
                 {% endif %}

@@ -692,6 +692,7 @@
                 onChange: $onChange
             };
             $quickActions.find('select[name="tag"]').selectize($.extend({}, tagSelectizeOpts, {
+                valueField: 'name',
                 create: {% if auth_user().hasPermission('create.tickettag') %}true{% else %}false{% endif %},
                 createFilter: function (input) {
                     return input.length <= 45;
