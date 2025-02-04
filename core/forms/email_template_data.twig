@@ -23,6 +23,7 @@
             {{ form_button(Lang.get('general.remove'),
                 { 'class': 'remove-button' ~ (brand.id == 'Default' and email_template.language.name is empty ? ' sp-hidden' : '') }
             ) }}
+
         </div>
     </div>
 
@@ -36,11 +37,6 @@
                     hide|default is not empty ? { 'disabled': 'disabled' } : []
                 )
             }}
-            {% if showSubjectWarning %}
-                <div class="sp-alert sp-alert-warning sp-alert-bottom">
-                    <strong>{{ Lang.get('messages.warning') }}!</strong> - {{ Lang.get('core.ticket_number_missing')|raw }}
-                </div>
-            {% endif %}
         </div>
     </div>
 
@@ -54,6 +50,12 @@
                     hide|default is not empty ? { 'disabled': 'disabled' } : []
                 )
             }}
+
+            {% if email_template.language.name is empty %}
+                <div class="sp-mt-3">
+                    {{ form_button(Lang.get('general.reset'), {'class': 'reset-button', 'data-id': record.id}) }}
+                </div>
+            {% endif %}
         </div>
     </div>
 

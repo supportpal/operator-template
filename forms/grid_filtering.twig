@@ -6,11 +6,17 @@
     {% endfor %}
 {% endif %}
 
-<div class="plan-conditiongroup-type sp-my-3">
-    {{ form_select('condition_group_type', {0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group')}, currentFilter.condition_group_type) }}
+<div class="sp-flex sp-mb-3">
+    <div class="plan-conditiongroup-type sp-mr-3">
+        {{ form_select('condition_group_type', {0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group')}, currentFilter.condition_group_type) }}
+    </div>
+
+    {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
 </div>
 
-<div>
-    {{ form_button(Lang.get('general.update'), {'class': 'update-filtering'}) }} &nbsp;
-    {{ form_button(Lang.get('general.add_item', {'item': Lang.get('ticket.condition_group')}), {'class': 'add-conditiongroup'}) }}
+<div class="sp-flex">
+    {{ form_button(Lang.get('general.update'), {'class': 'sp-button-submit update-filtering'}) }}
+    {% if canCreateTicketFilter %}
+        <div class="sp-ml-3">{{ form_button(Lang.get('ticket.copy_to_new_filter'), {'class': 'save-filtering'}) }}</div>
+    {% endif %}
 </div>

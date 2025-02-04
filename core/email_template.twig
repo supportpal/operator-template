@@ -45,6 +45,11 @@
                 <label>{{ Lang.get('general.name') }}:</label>
                 <div id="filter_name"></div>
             </div>
+
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.enabled') }}:</label>
+                <div id="filter_enabled"></div>
+            </div>
         </div>
     </div>
 
@@ -63,7 +68,8 @@
              * Initialise the filters
              */
             oTable.yadcf([
-                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500}
+                {column_number : 0, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500},
+                {column_number : 1, column_data_type: "text", filter_container_id: "filter_enabled", filter_delay: 500},
             ]);
         });
     </script>

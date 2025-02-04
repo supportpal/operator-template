@@ -67,24 +67,7 @@
     </div>
 
     <div class="remote-piping {% if i is not defined or (email is defined and email.type == 3) %}sp-hidden{% endif %}">
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][consume_all]', Lang.get('ticket.consume_all')) }}
-            <div class="sp-input-container">
-                {{
-                    form_check(
-                        'emails[' ~ (i is defined ? i : '') ~ '][consume_all]',
-                        1,
-                        email|default is not empty and email.consume_all == "1" ? true : null,
-                        {
-                            'class': 'sp-toggle',
-                            'id': 'toggle_remote_piping_emails[' ~ (i is defined ? i : '') ~ '][consume_all]'
-                        }|merge((hide|default is not empty or email is empty ? { 'disabled': 'disabled' } : []))
-                    )
-                }}
-                <label for="toggle_remote_piping_emails{{ '[' ~ (i is defined ? i : '') ~ '][consume_all]' }}"></label>
-                <div class="sp-description">{{ Lang.get('ticket.department_consume_all') }}</div>
-            </div>
-        </div>
+        {% include 'operator.' ~ template ~ '.ticket.forms.department_email_consume_all' %}
 
         <div class="sp-form-row">
             <label></label>
@@ -95,30 +78,13 @@
     </div>
 
     <div class="email-piping {% if i is not defined or (email is defined and email.type == 2) %}sp-hidden{% endif %}">
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][consume_all]', Lang.get('ticket.consume_all')) }}
-            <div class="sp-input-container">
-                {{
-                    form_check(
-                        'emails[' ~ (i is defined ? i : '') ~ '][consume_all]',
-                        1,
-                        email|default is not empty and email.consume_all == "1" ? true : null,
-                        {
-                            'class': 'sp-toggle',
-                            'id': 'toggle_piping_emails[' ~ (i is defined ? i : '') ~ '][consume_all]'
-                        }|merge((hide|default is not empty or email is empty ? { 'disabled': 'disabled' } : []))
-                    )
-                }}
-                <label for="toggle_piping_emails{{ '[' ~ (i is defined ? i : '') ~ '][consume_all]' }}"></label>
-                <div class="sp-description">{{ Lang.get('ticket.department_consume_all') }}</div>
-            </div>
-        </div>
+        {% include 'operator.' ~ template ~ '.ticket.forms.department_email_consume_all' %}
 
         <div class="sp-form-row">
             <label></label>
             <div class="sp-alert sp-alert-info sp-alert-m-0">
                 {{ Lang.get('ticket.email_piping_desc') }}<br />
-                <input type="text" class="pipe_path sp-w-full" value="| php -q {{ base_path('pipe') }}" />
+                <input type="text" class="pipe_path sp-w-full" value="| php -q {{ base_path('pipe') }} --address={{ email|default is not empty ? email.address : '' }}" />
             </div>
         </div>
     </div>
@@ -331,24 +297,7 @@
             </div>
         </div>
 
-        <div class="sp-form-row">
-            {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][consume_all]', Lang.get('ticket.consume_all')) }}
-            <div class="sp-input-container">
-                {{
-                    form_check(
-                        'emails[' ~ (i is defined ? i : '') ~ '][consume_all]',
-                        1,
-                        email|default is not empty and email.consume_all == "1" ? true : null,
-                        {
-                            'class': 'sp-toggle',
-                            'id': 'toggle_download_emails[' ~ (i is defined ? i : '') ~ '][consume_all]'
-                        }|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
-                    )
-                }}
-                <label for="toggle_download_emails{{ '[' ~ (i is defined ? i : '') ~ '][consume_all]' }}"></label>
-                <div class="sp-description">{{ Lang.get('ticket.department_consume_all') }}</div>
-            </div>
-        </div>
+        {% include 'operator.' ~ template ~ '.ticket.forms.department_email_consume_all' %}
 
     </div>
 

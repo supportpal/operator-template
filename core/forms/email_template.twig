@@ -36,6 +36,16 @@
                 </div>
             </div>
 
+            <div class="sp-form-row">
+                {{ form_label('enabled', Lang.get('general.enabled')) }}
+                <div class="sp-input-container">
+                    {{ form_check('enabled', 1, record|default is not empty and record.exists ? record.enabled : 1,
+                        { 'class': 'sp-toggle', 'id': 'toggle_enabled' }) }}
+                    <label for="toggle_enabled"></label>
+                    <div class="sp-description">{{ Lang.get('core.email_template_enabled_desc') }}</div>
+                </div>
+            </div>
+
         </div>
 
         <div id="sectionWrapper">
@@ -110,5 +120,35 @@
 
         // Do not initialise editor on the dummy DOM element.
         $('div.section-items textarea').sourcecode(opts);
+
+        $(function () {
+            $('div.section-items').on('click', '.reset-button', function () {
+                const id = $(this).data('id');
+                const sourceCode = $(this).parents('.sp-input-container').find('textarea[name$="[contents]"]')[0].sourcecode;
+                const codemirror = sourceCode.codemirror();
+
+                Swal.fire({
+                    title: "{{ Lang.get('general.reset') }}",
+                    html: "{{ Lang.get('core.reset_email_template') }}",
+                    showCloseButton: true,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return $.get(laroute.route('core.operator.emailtemplate.reset', {id: id}))
+                            .done(function (json) {
+                                codemirror.dispatch({
+                                    changes: {
+                                        from: 0,
+                                        to: codemirror.viewState.state.doc.length,
+                                        insert: json.data,
+                                    },
+                                });
+                            })
+                            .always(() => Swal.close());
+                    }
+                });
+            });
+        });
     </script>
 {% endblock %}

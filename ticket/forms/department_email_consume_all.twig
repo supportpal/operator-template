@@ -1,0 +1,18 @@
+{% if aliasSupport %}
+    <div class="sp-form-row">
+        {% set id = random() %}
+        {{ form_label(id, Lang.get('ticket.consume_all')) }}
+        <div class="sp-input-container">
+            {{
+                form_check(
+                    'emails[' ~ (i is defined ? i : '') ~ '][consume_all]',
+                    1,
+                    email|default is not empty and email.consume_all == "1" ? true : null,
+                    {'class': 'sp-toggle', 'id': id}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                )
+            }}
+            <label for="{{ id }}"></label>
+            <div class="sp-description">{{ Lang.get('ticket.department_consume_all') }}</div>
+        </div>
+    </div>
+{% endif %}

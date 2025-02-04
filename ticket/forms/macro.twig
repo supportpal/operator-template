@@ -39,7 +39,7 @@
             <div class="sp-form-row">
                 {{ form_label('enabled', Lang.get('general.enabled')) }}
                 <div class="sp-input-container">
-                    {{ form_check('enabled', 1, record.exists ? record.enabled : true, {'class': 'sp-toggle', 'id': 'toggle_enabled'}) }}
+                    {{ form_check('enabled', 1, record.enabled, {'class': 'sp-toggle', 'id': 'toggle_enabled'}) }}
                     <label for="toggle_enabled"></label>
                     <div class="sp-description">{{ Lang.get('ticket.macro_enabled_desc') }}</div>
                 </div>
@@ -56,15 +56,15 @@
                 {{ form_label('type', Lang.get('general.type')) }}
                 <div class="sp-input-container">
                     <label>
-                        <input type="radio" name="type" value="0" {% if Request.old('type') == 0 or (Request.old('type') is null and record.type == 0) %}checked="checked"{% endif %} />
+                        <input type="radio" name="type" value="0" {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}checked="checked"{% endif %} />
                         {{ Lang.get('general.manual') }}
                     </label> &nbsp;
                     <label>
-                        <input type="radio" name="type" value="2" {% if Request.old('type') == 2 or (Request.old('type') is null and record.type == 2) %}checked="checked"{% endif %} />
+                        <input type="radio" name="type" value="2" {% if (Request.old('type') is not null and Request.old('type') == 2) or (Request.old('type') is null and record.type == 2) %}checked="checked"{% endif %} />
                         {{ Lang.get('general.automatic') }}
                     </label> &nbsp;
                     <label>
-                        <input type="radio" name="type" value="1" {% if Request.old('type') == 1 or (Request.old('type') is null and record.type == 1) %}checked="checked"{% endif %} />
+                        <input type="radio" name="type" value="1" {% if (Request.old('type') is not null and Request.old('type') == 1) or (Request.old('type') is null and record.type == 1) %}checked="checked"{% endif %} />
                         {{ Lang.get('general.hook') }}
                     </label>
                 </div>

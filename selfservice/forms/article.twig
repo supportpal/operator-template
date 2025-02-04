@@ -58,10 +58,10 @@
                             include 'operator.' ~ template ~ '.selfservice.forms.article_rows'
                             with {
                                 'elements': {
-                                    'title': { 'name': 'title', 'value': record.getRawOriginal('title'), 'attributes': { 'autofocus': 'autofocus' } },
-                                    'slug': { 'name': 'slug', 'value': clone is not empty ? '' : record.getRawOriginal('slug') },
-                                    'excerpt': { 'name': 'excerpt', 'value': record.getRawOriginal('excerpt') },
-                                    'text': { 'name': 'text', 'value': record.getRawOriginal('text') },
+                                    'title': { 'name': 'title', 'value': record.getDefaultAttribute('title'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'slug': { 'name': 'slug', 'value': clone is not empty ? '' : record.getDefaultAttribute('slug') },
+                                    'excerpt': { 'name': 'excerpt', 'value': record.getDefaultAttribute('excerpt') },
+                                    'text': { 'name': 'text', 'value': record.getDefaultAttribute('text') },
                                     'attachments': { 'name': 'attachment', 'value': record.attachments.where('locale', null) },
                                 }
                             }

@@ -323,7 +323,10 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <div class="sp-grid-filtering sp-mb-8 sp-hidden"></div>
+    <form action="{{ route('ticket.operator.filter.createFromRequest') }}" target="_blank" method="post" class="save-filtering">
+        {{ csrf_field() }}
+        <div class="sp-grid-filtering sp-mb-8 sp-hidden"></div>
+    </form>
 
 	{{ table.render()|raw }}
 
@@ -466,6 +469,10 @@
                 // Delay next refresh of grid by 60 seconds.
                 clearTimeout(gridTimeout);
                 gridTimeout = setTimeout(refreshGrid, 60000);
+            });
+
+            $('.sp-grid-filtering').on('click', '.save-filtering', function () {
+                $(this).parents('form').trigger('submit');
             });
 
             // Process reply button

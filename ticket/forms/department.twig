@@ -261,63 +261,99 @@
                     <div class="sp-form-row">
                         {{ form_label('user_ticket_opened', Lang.get('ticket.new_ticket_opened')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_opened', emailTemplates['user_ticket_opened'], record.email_templates['user_ticket_opened']) }}
+                            {% if emailTemplates['user_ticket_opened']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_opened', emailTemplates['user_ticket_opened'], record.email_templates['user_ticket_opened']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_ticket_reply', Lang.get('ticket.new_operator_reply')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_reply', emailTemplates['user_ticket_reply'], record.email_templates['user_ticket_reply']) }}
+                            {% if emailTemplates['user_ticket_reply']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_reply', emailTemplates['user_ticket_reply'], record.email_templates['user_ticket_reply']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_user_ticket_reply', Lang.get('ticket.new_user_reply')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_user_ticket_reply', emailTemplates['user_user_ticket_reply'], record.email_templates['user_user_ticket_reply']) }}
+                            {% if emailTemplates['user_user_ticket_reply']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_user_ticket_reply', emailTemplates['user_user_ticket_reply'], record.email_templates['user_user_ticket_reply']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_ticket_waitingresponse', Lang.get('ticket.waiting_for_response')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_waitingresponse', emailTemplates['user_ticket_waitingresponse'], record.email_templates['user_ticket_waitingresponse']) }}
+                            {% if emailTemplates['user_ticket_waitingresponse']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_waitingresponse', emailTemplates['user_ticket_waitingresponse'], record.email_templates['user_ticket_waitingresponse']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_ticket_autoclose', Lang.get('ticket.ticket_auto_closed')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_autoclose', emailTemplates['user_ticket_autoclose'], record.email_templates['user_ticket_autoclose']) }}
+                            {% if emailTemplates['user_ticket_autoclose']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_autoclose', emailTemplates['user_ticket_autoclose'], record.email_templates['user_ticket_autoclose']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_ticket_operatorclose', Lang.get('ticket.closed_by_operator')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_operatorclose', emailTemplates['user_ticket_operatorclose'], record.email_templates['user_ticket_operatorclose']) }}
+                            {% if emailTemplates['user_ticket_operatorclose']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_operatorclose', emailTemplates['user_ticket_operatorclose'], record.email_templates['user_ticket_operatorclose']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('user_email_attachmentrejected', Lang.get('ticket.attachment_rejected')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_email_attachmentrejected', emailTemplates['user_email_attachmentrejected'], record.email_templates['user_email_attachmentrejected']) }}
+                            {% if emailTemplates['user_email_attachmentrejected']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_email_attachmentrejected', emailTemplates['user_email_attachmentrejected'], record.email_templates['user_email_attachmentrejected']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div id="disableRepliesTemplate" class="sp-form-row {% if not record.disable_user_email_replies %}sp-hidden{% endif %}">
                         {{ form_label('user_ticket_disablereplies', Lang.get('ticket.email_replies_disabled')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_disablereplies', emailTemplates['user_ticket_disablereplies'], record.email_templates['user_ticket_disablereplies']) }}
+                            {% if emailTemplates['user_ticket_disablereplies']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_disablereplies', emailTemplates['user_ticket_disablereplies'], record.email_templates['user_ticket_disablereplies']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div id="registeredOnlyTemplate" class="sp-form-row {% if not record.registered_only %}sp-hidden{% endif %}">
                         {{ form_label('user_ticket_registeredonly', Lang.get('ticket.registered_users')) }}
                         <div class="sp-input-container">
-                            {{ form_select('user_ticket_registeredonly', emailTemplates['user_ticket_registeredonly'], record.email_templates['user_ticket_registeredonly']) }}
+                            {% if emailTemplates['user_ticket_registeredonly']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('user_ticket_registeredonly', emailTemplates['user_ticket_registeredonly'], record.email_templates['user_ticket_registeredonly']) }}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -328,48 +364,76 @@
                     <div class="sp-form-row">
                         {{ form_label('operator_ticket_opened', Lang.get('ticket.new_ticket_opened')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_ticket_opened', emailTemplates['operator_ticket_opened'], record.email_templates['operator_ticket_opened']) }}
+                            {% if emailTemplates['operator_ticket_opened']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_ticket_opened', emailTemplates['operator_ticket_opened'], record.email_templates['operator_ticket_opened']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('operator_internal_opened', Lang.get('ticket.new_internal_ticket')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_internal_opened', emailTemplates['operator_internal_opened'], record.email_templates['operator_internal_opened']) }}
+                            {% if emailTemplates['operator_internal_opened']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_internal_opened', emailTemplates['operator_internal_opened'], record.email_templates['operator_internal_opened']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('operator_user_ticket_reply', Lang.get('ticket.user_ticket_reply')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_user_ticket_reply', emailTemplates['operator_user_ticket_reply'], record.email_templates['operator_user_ticket_reply']) }}
+                            {% if emailTemplates['operator_user_ticket_reply']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_user_ticket_reply', emailTemplates['operator_user_ticket_reply'], record.email_templates['operator_user_ticket_reply']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('operator_operator_ticket_reply', Lang.get('ticket.operator_ticket_reply')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_operator_ticket_reply', emailTemplates['operator_operator_ticket_reply'], record.email_templates['operator_operator_ticket_reply']) }}
+                            {% if emailTemplates['operator_operator_ticket_reply']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_operator_ticket_reply', emailTemplates['operator_operator_ticket_reply'], record.email_templates['operator_operator_ticket_reply']) }}
+                            {% endif %}
                         </div>
                     </div>
                     <div class="sp-form-row">
                         {{ form_label('operator_ticket_note', Lang.get('ticket.new_ticket_note')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_ticket_note', emailTemplates['operator_ticket_note'], record.email_templates['operator_ticket_note']) }}
+                            {% if emailTemplates['operator_ticket_note']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_ticket_note', emailTemplates['operator_ticket_note'], record.email_templates['operator_ticket_note']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('operator_assigned', Lang.get('ticket.assigned_to_ticket')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_assigned', emailTemplates['operator_assigned'], record.email_templates['operator_assigned']) }}
+                            {% if emailTemplates['operator_assigned']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_assigned', emailTemplates['operator_assigned'], record.email_templates['operator_assigned']) }}
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="sp-form-row">
                         {{ form_label('operator_department_changed', Lang.get('ticket.department_changed')) }}
                         <div class="sp-input-container">
-                            {{ form_select('operator_department_changed', emailTemplates['operator_department_changed'], record.email_templates['operator_department_changed']) }}
+                            {% if emailTemplates['operator_department_changed']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_department_changed', emailTemplates['operator_department_changed'], record.email_templates['operator_department_changed']) }}
+                            {% endif %}
                         </div>
                     </div>
                 </div>

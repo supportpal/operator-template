@@ -49,8 +49,8 @@
                             include 'operator.' ~ template ~ '.ticket.forms.canned_response_rows'
                             with {
                                 'elements': {
-                                    'name': { 'name': 'name', 'value': record.getRawOriginal('name'), 'attributes': { 'autofocus': 'autofocus' } },
-                                    'text': { 'name': 'text', 'value': record.getRawOriginal('text') }
+                                    'name': { 'name': 'name', 'value': record.getDefaultAttribute('name'), 'attributes': { 'autofocus': 'autofocus' } },
+                                    'text': { 'name': 'text', 'value': record.getDefaultAttribute('text') }
                                 }
                             }
                         %}

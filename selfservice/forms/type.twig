@@ -52,9 +52,9 @@
                             with {
                                 'hide_slug': record.content == 1,
                                 'elements': {
-                                    'name': { 'name': 'name', 'value': record.getRawOriginal('name'), 'attributes': {'autofocus': 'autofocus'} },
-                                    'slug': { 'name': 'slug', 'value': record.getRawOriginal('slug') },
-                                    'description': { 'name': 'description', 'value': record.getRawOriginal('description') },
+                                    'name': { 'name': 'name', 'value': record.getDefaultAttribute('name'), 'attributes': {'autofocus': 'autofocus'} },
+                                    'slug': { 'name': 'slug', 'value': record.getDefaultAttribute('slug') },
+                                    'description': { 'name': 'description', 'value': record.getDefaultAttribute('description') },
                                 }
                             }
                         %}
