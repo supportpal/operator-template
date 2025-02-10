@@ -13,8 +13,6 @@
 
     <script>localStorage.setItem('scheme', '{{ scheme }}');</script>
 
-    <iframe src="{{ route('horizon.index') }}"
-            onload="(function(e){e.style.height = e.contentWindow.document.body.scrollHeight + 32 + 'px'})(this)"
-            class="sp-w-full sp-border-0"></iframe>
+    <iframe src="{{ route('horizon.index') }}" height="970" class="sp-w-full sp-border-0"></iframe>
 
 {% endblock %}
