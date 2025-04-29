@@ -47,6 +47,18 @@
                 </div>
             </div>
 
+            <div class="sp-form-row">
+                {{ form_label('run_as', Lang.get('ticket.run_as_operator')) }}
+                <div class="sp-input-container">
+                    {{ form_select('run_as', runAsOperators) }}
+                    <div class="sp-description">
+                        {{ Lang.get('ticket.run_as_operator_desc',
+                            {'actions': Lang.get('actions.add_ticket_note') ~ ', ' ~ Lang.get('actions.add_ticket_reply') ~ ', ' ~ Lang.get('actions.forward_ticket')}
+                        ) }}
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <h2>{{ Lang.choice('ticket.sla_targets', 2) }}</h2>

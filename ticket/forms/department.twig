@@ -75,39 +75,49 @@
         </div>
     </div>
 
-    <div class="sp-form-container sp-collapsed parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+    {% set collapseFormat = record.ticket_number_format is empty %}
+    <div class="sp-form-container {% if collapseFormat %}sp-collapsed{% endif %} parentToggle
+                {% if record.parent_id != 0 %}sp-hidden{% endif %}">
         <div class="sp-form-row">
             {{ form_label('ticket_number_format', Lang.get('ticket.ticket_format')) }}
             <div class="sp-input-container">
-                <div class="sp-hidden">
+                <div class="{% if collapseFormat %}sp-hidden{% endif %}">
                     {{ form_text('ticket_number_format') }}<br />
                 </div>
                 <div class="sp-description">{{ Lang.get('ticket.department_no_format') }}
-                    <span class="sp-hidden"><br />{{ Lang.get('ticket.ticket_format_desc')|raw }}</span>
+                    <span class="{% if collapseFormat %}sp-hidden{% endif %}"><br />{{ Lang.get('ticket.ticket_format_desc')|raw }}</span>
                 </div>
             </div>
+        </div>
+        <div class="sp-chevron">
+            <i class="fas fa-chevron-up" aria-hidden="true"></i>
         </div>
     </div>
 
-    <div class="sp-form-container sp-collapsed">
-        <div class="sp-form-row" id="departmentSettings">
-            {{ form_label('dept_priorities', Lang.get('ticket.department_priority')) }}
-            <div class="sp-input-container sp-input-group">
-                <div class="sp-hidden">
-                    <div class="sp-description">
-                        <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
-                        &nbsp;|&nbsp;
-                        <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+    {% if priorities.count() > 1 %}
+        <div class="sp-form-container sp-collapsed">
+            <div class="sp-form-row" id="departmentSettings">
+                {{ form_label('dept_priorities', Lang.get('ticket.department_priority')) }}
+                <div class="sp-input-container sp-input-group">
+                    <div class="sp-hidden">
+                        <div class="sp-description">
+                            <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                            &nbsp;|&nbsp;
+                            <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                        </div>
+                        {% for priority in priorities %}
+                            {{ form_checkbox('dept_priorities[]', priority.id, in_array(priority.id, recordPriorities, true)) }}
+                            {{ priority.name }}<br />
+                        {% endfor %}
                     </div>
-                    {% for priority in priorities %}
-                        {{ form_checkbox('dept_priorities[]', priority.id, in_array(priority.id, recordPriorities, true)) }}
-                        {{ priority.name }}<br />
-                    {% endfor %}
+                    <div class="sp-description">{{ Lang.get('ticket.department_priority_desc') }}</div>
                 </div>
-                <div class="sp-description">{{ Lang.get('ticket.department_priority_desc') }}</div>
+            </div>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-up" aria-hidden="true"></i>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <h2>{{ Lang.get('ticket.assigned_operator') }}</h2>
 

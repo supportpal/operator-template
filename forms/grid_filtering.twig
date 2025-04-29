@@ -7,7 +7,7 @@
 {% endif %}
 
 <div class="sp-flex sp-mb-3">
-    <div class="plan-conditiongroup-type sp-mr-3">
+    <div class="plan-conditiongroup-type sp-me-3">
         {{ form_select('condition_group_type', {0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group')}, currentFilter.condition_group_type) }}
     </div>
 
@@ -17,6 +17,6 @@
 <div class="sp-flex">
     {{ form_button(Lang.get('general.update'), {'class': 'sp-button-submit update-filtering'}) }}
     {% if canCreateTicketFilter %}
-        <div class="sp-ml-3">{{ form_button(Lang.get('ticket.copy_to_new_filter'), {'class': 'save-filtering'}) }}</div>
+        <div class="sp-ms-3">{{ form_button(Lang.get('ticket.copy_to_new_filter'), {'class': 'save-filtering'}) }}</div>
     {% endif %}
 </div>

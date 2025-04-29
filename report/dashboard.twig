@@ -101,7 +101,11 @@
                             <div class="sp-flex-grow sp-font-bold sp-truncate">
                                 {{ card.name() }}
                             </div>
-                            <div class="sp-flex-initial sp-ms-3">
+                            <div class="sp-flex-initial sp-flex sp-items-center sp-ms-3">
+                                <div class="interacts-with-timeframe sp-description sp-me-3 sp-truncate sp-hidden">
+                                    {{ Lang.get('report.group_by') }}&nbsp;
+                                    <select class="timeframe-units sp-min-h-[auto] sp-py-0 sp-bg-primary sp-border-0"></select>
+                                </div>
                                 <div class="sp-dropdown-container">
                                     <div class="sp-action sp-px-3/2 sp-cursor-pointer">
                                         <i class="fas fa-ellipsis-v"></i>
@@ -149,6 +153,7 @@
 {% endblock %}
 
 {% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/dist/reports.min.js') }}"></script>
     <script>
         $(function () {

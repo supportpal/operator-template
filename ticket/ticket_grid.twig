@@ -23,7 +23,7 @@
                 {% else %}
                     <!--
                 {% endif %}
-                --><button class="sp-action sp-hidden md:sp-inline-block sp-filter-results">
+                --><button class="sp-action sp-inline-block sp-filter-results">
                     <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li><!--
@@ -91,7 +91,7 @@
                                     </div>
                                 </div>
                             </div><!--
-                            --><div class="sp-dropdown-container">
+                            -->{% if obj_priorities.count() > 1 %}<div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
                                     <i class="fas fa-square-full"></i>
                                 </button>
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </li><!--
+                        </li>{% endif %}<!--
 
                         --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
                             <div class="sp-dropdown-container xs:sp-relative">

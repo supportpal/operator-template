@@ -5,7 +5,7 @@
     {{ View.fireHook('operator.head_start') }}
 
     {% set title = block('title') is defined ? block('title') : '' %}
-    <title>{% if title is not empty %}{{ title|raw }} - {% endif %} SupportPal Operator Panel</title>
+    <title>{% if title is not empty %}{{ title|raw }} - {% endif %}{{ Lang.get('core.product_name') }} {{ Lang.get('core.operator_panel') }}</title>
 
     {% block meta %}{% endblock %}
 
@@ -391,7 +391,7 @@
                             {{ Lang.get('user.security_settings') }}
                         </a>
                     </li>
-                    {% if isModuleEnabled('Ticket') %}
+                    {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.replytemplate') %}
                         <li class="sp-block lg:sp-hidden" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('user.operator.replytemplate') }}">
                                 {{ Lang.choice('user.reply_template', 2) }}
@@ -516,7 +516,7 @@
                                     <li aria-haspopup="false">
                                         <a href="{{ route('user.operator.security') }}">{{ Lang.get('user.security_settings') }}</a>
                                     </li>
-                                    {% if isModuleEnabled('Ticket') %}
+                                    {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.replytemplate') %}
                                         <li aria-haspopup="false">
                                             <a href="{{ route('user.operator.replytemplate') }}">{{ Lang.choice('user.reply_template', 2) }}</a>
                                         </li>

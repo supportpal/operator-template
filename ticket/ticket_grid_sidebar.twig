@@ -114,30 +114,32 @@
     </div>
 {% endif %}
 
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex" id="ticketPrioritySidebox">
-        <div class="sp-icon">
-            <i class="fas fa-square-full"></i>
+{% if obj_priorities.count() > 1 %}
+    <div class="sp-sidebox">
+        <div class="sp-collapsible sp-flex" id="ticketPrioritySidebox">
+            <div class="sp-icon">
+                <i class="fas fa-square-full"></i>
+            </div>
+            <h3>{{ Lang.choice('ticket.priority', 2) }}</h3>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </div>
         </div>
-        <h3>{{ Lang.choice('ticket.priority', 2) }}</h3>
-        <div class="sp-chevron">
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
-        </div>
-    </div>
 
-    <ul class="priority-list">
-        {% for priority in obj_priorities %}
-            <li>
-                <a href="{{ route('ticket.operator.ticket') ~ '?priority=' ~ priority.id }}">
-                    <div class="sp-truncate {% if Request.input('priority', 0) == priority.id|trim %}sp-font-bold{% endif %}">
-                        {{ priority.icon_without_tooltip|raw }}&nbsp;
-                        {{ priority.name }}
-                    </div>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-</div>
+        <ul class="priority-list">
+            {% for priority in obj_priorities %}
+                <li>
+                    <a href="{{ route('ticket.operator.ticket') ~ '?priority=' ~ priority.id }}">
+                        <div class="sp-truncate {% if Request.input('priority', 0) == priority.id|trim %}sp-font-bold{% endif %}">
+                            {{ priority.icon_without_tooltip|raw }}&nbsp;
+                            {{ priority.name }}
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
 {% if total_tags > 0 %}
     <div class="sp-sidebox">

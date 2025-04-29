@@ -1,85 +1,46 @@
-<div class="sp-form-row">
-    {{ form_label('opsettings[email_notifications]', Lang.get('user.email_notifications')) }}
-    <div class="sp-input-container sp-input-group">
-        <div class="sp-description">
-            <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
-            &nbsp;|&nbsp;
-            <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
-        </div>
-        {% if isModuleEnabled('Ticket') %}
-        <label>
-            {{ form_check(
-                'opsettings[email_notifications][ticket]',
-                1,
-                record.opsettings['email_notifications']['ticket']|default is not empty
-                    ? record.opsettings['email_notifications']['ticket']
-                    : 1
-            ) }}
-            {{ Lang.choice('ticket.ticket', 2) }}
-        </label><br />
-        {% endif %}
-        {% if auth_user().id != record.id or auth_user().hasPermission('update.operator') %}
-        <label>
-            {{ form_check(
-                'opsettings[email_notifications][login]',
-                1,
-                record.opsettings['email_notifications']['login']|default is not empty
-                    ? record.opsettings['email_notifications']['login']
-                    : 1
-            ) }}
-            {{ Lang.get('notification.failed_logins') }}
-            {% if auth_user().id != record.id %}
-                <span class="sp-description">
-                    &nbsp;({{ Lang.get('user.must_have_permission', {'permission': Lang.get('permission.operator')}) }})
-                </span>
-            {% endif %}
-        </label><br />
-        {% endif %}
-        <label>
-            {{ form_check(
-                'opsettings[email_notifications][comment]',
-                1,
-                record.opsettings['email_notifications']['comment']|default is not empty
-                    ? record.opsettings['email_notifications']['comment']
-                    : 1
-            ) }}
-            {{ Lang.get('notification.new_comments') }}
-        </label><br />
-        <label>
-            {{ form_check(
-                'opsettings[email_notifications][message]',
-                1,
-                record.opsettings['email_notifications']['message']|default is not empty
-                    ? record.opsettings['email_notifications']['message']
-                    : 1
-            ) }}
-            {{ Lang.get('user.operator_message') }}
-        </label>
-        <div class="sp-description">{{ Lang.get('user.email_notifications_desc') }}</div>
-    </div>
-</div>
+{% extends parent_template %}
 
-<div class="sp-form-row">
-    {{ form_label('opsettings[display_notifications]', Lang.get('user.display_notifications')) }}
-    <div class="sp-input-container sp-input-group">
-        <label>
-            {% set displayNotifications = record.opsettings['display_notifications'] %}
-            {{ form_radio(
-                'opsettings[display_notifications]',
-                1,
-                displayNotifications is empty or displayNotifications == 1 ? 1 : 0
-            ) }} {{ Lang.get('user.browser_notifications') }}
-        </label>
-        {% if preview %} <a class="preview-browser">({{ Lang.get('general.preview') }})</a>{% endif %}
-        <br />
-        <label>
-            {{ form_radio('opsettings[display_notifications]', 2) }} {{ Lang.get('user.desktop_notifications') }}
-        </label>
-        {% if preview %} <a class="preview-desktop">({{ Lang.get('general.preview') }})</a>{% endif %}
-        <br />
-        <label>
-            {{ form_radio('opsettings[display_notifications]', 0) }} {{ Lang.get('general.none') }}
-        </label>
-        <div class="sp-description">{{ Lang.get('user.display_notifications_desc') }}</div>
-    </div>
-</div>
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.edit_item', {'item': Lang.get('user.operator_notifications')}) }} - {{ record.formatted_name }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.operator_notifications_desc') }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(record, {'route': ['user.operator.operatornotification.update', record.id], 'method': 'PUT', 'class': 'validate'}) }}
+
+        <div class="sp-form-container">
+            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications_settings' with {preview: record.id is same as(auth_user().id)} %}
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice("general.submit", 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <!-- Department subscriptions -->
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ departmentSubscriptionsTable.script()|raw }}
+    <script src="{{ asset_rev('resources/assets/operator/js/departmentsubscriptions.js') }}"></script>
+
+    <script>
+        $(function () {
+            App.Notifications.registerPreviewHandlers();
+        });
+    </script>
+{% endblock %}

@@ -52,7 +52,7 @@
                 </li>
                 <li>
                     <div class="sp-flex sp--m-1">
-                        <div class="sp-w-1/2 sp-p-1">
+                        <div class="{% if priorities.count() > 1 %}sp-w-1/2{% else %}sp-w-full{% endif %} sp-p-1">
                             <div class="sp-title">{{ Lang.choice('general.status', 1) }}</div>
                             <div class="sp-detail">
                                 {{ form_select(
@@ -63,17 +63,19 @@
                                 ) }}
                             </div>
                         </div>
-                        <div class="sp-w-1/2 sp-p-1">
-                            <div class="sp-title">{{ Lang.choice('ticket.priority', 1) }}</div>
-                            <div class="sp-detail">
-                                {{ form_select(
-                                    'priority',
-                                    priorities.pluck('name', 'id'),
-                                    ticket.priority_id,
-                                    can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
-                                ) }}
+                        {% if priorities.count() > 1 %}
+                            <div class="sp-w-1/2 sp-p-1">
+                                <div class="sp-title">{{ Lang.choice('ticket.priority', 1) }}</div>
+                                <div class="sp-detail">
+                                    {{ form_select(
+                                        'priority',
+                                        priorities.pluck('name', 'id'),
+                                        ticket.priority_id,
+                                        can_update_ticket(auth_user(), ticket) ? {} : {'disabled': 'disabled'}
+                                    ) }}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </li>
                 {% if can_update_ticket(auth_user(), ticket) %}

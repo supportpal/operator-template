@@ -2,152 +2,163 @@
 <html class="{{ get_template_mode() }}" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
+    {{ View.fireHook('operator.head_start') }}
+
     <title>{{ record.subject }}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {{ View.fireHook('operator.head') }}
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
     <div class="sp-container sp-m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-p-6 sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-p-0 print:sp-shadow-none">
+        <div class="sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-shadow-none">
             {{ View.fireHook('operator.content_start') }}
 
-            {% if record.raw is not empty %}
-                <div class="sp-mb-6 md:sp-mb-0 md:sp-float-end">
-                    <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
-                        {{ Lang.get('core.view_original') }}
-                    </a> &nbsp;&nbsp;
-                    <a href="{{ route('core.operator.email.log.download_raw', [ record.id ]) }}" target="_blank" class="sp-button">
-                        {{ Lang.get('core.download_original') }}
-                    </a>
-                </div>
-            {% endif %}
+            <div class="sp-p-6 print:sp-p-0">
+                {{ View.fireHook('operator.content_inner_start') }}
 
-            <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
-
-            <div class="sp-mb-6 md:sp-p-6 md:sp-pb-0 md:sp-border md:sp-border-secondary md:sp-rounded">
-
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.subject') }}</label>
-                    <div class="sp-input-container">
-                        {{ record.subject }}
+                {% if record.raw is not empty %}
+                    <div class="sp-mb-6 md:sp-mb-0 md:sp-float-end">
+                        <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
+                            {{ Lang.get('core.view_original') }}
+                        </a> &nbsp;&nbsp;
+                        <a href="{{ route('core.operator.email.log.download_raw', [ record.id ]) }}" target="_blank" class="sp-button">
+                            {{ Lang.get('core.download_original') }}
+                        </a>
                     </div>
-                </div>
-
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('general.date') }}</label>
-                    <div class="sp-input-container">
-                        {{ formatDate(record.created_at) }}
-                    </div>
-                </div>
-
-                {% if record.type|default is not empty %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('general.type') }}</label>
-                    <div class="sp-input-container">
-                        {% if record.type == 0 %}
-                            {{ Lang.get('core.outgoing') }}
-                        {% elseif record.type == 1 %}
-                            {{ Lang.get('core.incoming') }}
-                        {% elseif record.type == 2 %}
-                            {{ Lang.get('core.incoming_spam') }}
-                        {% elseif record.type == 3 %}
-                            {{ Lang.get('core.incoming_throttled') }}
-                        {% elseif record.type == 16 %}
-                            {{ Lang.get('core.incoming_auto_reply') }}
-                        {% else %}
-                            {{ Lang.get('core.incoming_rejected') }}
-                        {% endif %}
-                    </div>
-                </div>
                 {% endif %}
 
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.from') }}</label>
-                    <div class="sp-input-container">
-                        {{ record.getFromAddress()|raw }}
-                    </div>
-                </div>
+                <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
 
-                {% if record.to is not empty %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.to') }}</label>
-                    <div class="sp-input-container">
-                        {{ implode(", ", record.to) }}
-                    </div>
-                </div>
-                {% endif %}
+                <div class="sp-mb-6 md:sp-p-6 md:sp-pb-0 md:sp-border md:sp-border-secondary md:sp-rounded">
 
-                {% if record.reply_to is not empty %}
                     <div class="sp-form-row">
-                        <label>{{ Lang.get('core.reply_to') }}</label>
+                        <label>{{ Lang.get('ticket.subject') }}</label>
                         <div class="sp-input-container">
-                            {{ record.reply_to }}
+                            {{ record.subject }}
                         </div>
                     </div>
-                {% endif %}
 
-                {% if record.cc is not empty %}
                     <div class="sp-form-row">
-                        <label>{{ Lang.get('ticket.cc') }}</label>
+                        <label>{{ Lang.get('general.date') }}</label>
                         <div class="sp-input-container">
-                            {{ implode(", ", record.cc) }}
+                            {{ formatDate(record.created_at) }}
                         </div>
                     </div>
-                {% endif %}
 
-                {% if record.bcc is not empty %}
+                    {% if record.type|default is not empty %}
                     <div class="sp-form-row">
-                        <label>{{ Lang.get('ticket.bcc') }}</label>
+                        <label>{{ Lang.get('general.type') }}</label>
                         <div class="sp-input-container">
-                            {{ implode(", ", record.bcc) }}
+                            {% if record.type == 0 %}
+                                {{ Lang.get('core.outgoing') }}
+                            {% elseif record.type == 1 %}
+                                {{ Lang.get('core.incoming') }}
+                            {% elseif record.type == 2 %}
+                                {{ Lang.get('core.incoming_spam') }}
+                            {% elseif record.type == 3 %}
+                                {{ Lang.get('core.incoming_throttled') }}
+                            {% elseif record.type == 16 %}
+                                {{ Lang.get('core.incoming_auto_reply') }}
+                            {% else %}
+                                {{ Lang.get('core.incoming_rejected') }}
+                            {% endif %}
                         </div>
                     </div>
-                {% endif %}
+                    {% endif %}
 
-            </div>
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.from') }}</label>
+                        <div class="sp-input-container">
+                            {{ record.getFromAddress()|raw }}
+                        </div>
+                    </div>
 
-            <h2 class="sp-my-6">{{ Lang.get('general.content') }}</h2>
+                    {% if record.to is not empty %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.to') }}</label>
+                        <div class="sp-input-container">
+                            {{ implode(", ", record.to) }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if record.reply_to is not empty %}
+                        <div class="sp-form-row">
+                            <label>{{ Lang.get('core.reply_to') }}</label>
+                            <div class="sp-input-container">
+                                {{ record.reply_to }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if record.cc is not empty %}
+                        <div class="sp-form-row">
+                            <label>{{ Lang.get('ticket.cc') }}</label>
+                            <div class="sp-input-container">
+                                {{ implode(", ", record.cc) }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if record.bcc is not empty %}
+                        <div class="sp-form-row">
+                            <label>{{ Lang.get('ticket.bcc') }}</label>
+                            <div class="sp-input-container">
+                                {{ implode(", ", record.bcc) }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <h2 class="sp-my-6">{{ Lang.get('general.content') }}</h2>
 
             <div class="sp-email-content sp-p-6 sp-border sp-border-secondary sp-rounded sp-overflow-x-auto">
-                {{ Purifier.clean(record.contents) }}
+                <div dir="auto">
+                    {{ Purifier.clean(record.contents) }}
+                </div>
             </div>
 
-            {% if record.attachments.count() > 0 %}
-                <div class="sp-email-attachments">
-                    <h2 class="sp-my-6">{{ Lang.choice('general.attachment', 2) }}</h2>
+                {% if record.attachments.count() > 0 %}
+                    <div class="sp-email-attachments">
+                        <h2 class="sp-my-6">{{ Lang.choice('general.attachment', 2) }}</h2>
 
-                    <ul class="sp-attached-files">
-                        {% for attachment in record.attachments %}
-                            <li class="sp-email-attachment sp-flex">
-                                <div class="sp-me-2 sp-truncate">
-                                    <i class="fas fa-file fa-fw"></i>&nbsp;
+                        <ul class="sp-attached-files">
+                            {% for attachment in record.attachments %}
+                                <li class="sp-email-attachment sp-flex">
+                                    <div class="sp-me-2 sp-truncate">
+                                        <i class="fas fa-file fa-fw"></i>&nbsp;
 
-                                    <span class="sp-file-information">
-                                        <span class="sp-filename">{{ attachment.filename }}</span>
-                                        <span class="sp-description sp-filesize">({{ attachment.size }})</span>
-                                    </span>
-                                </div>
-
-                                {% if canDeleteAttachments %}
-                                    <div class="sp-delete-attachment sp-bg-red-600"
-                                         data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}"
-                                         title="{{ Lang.get('general.remove') }}">
-                                        <i class="fas fa-times sp-text-white"></i>
+                                        <span class="sp-file-information">
+                                            <span class="sp-filename">{{ attachment.filename }}</span>
+                                            <span class="sp-description sp-filesize">({{ attachment.size }})</span>
+                                        </span>
                                     </div>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
+
+                                    {% if canDeleteAttachments %}
+                                        <div class="sp-delete-attachment sp-bg-red-600"
+                                             data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}"
+                                             title="{{ Lang.get('general.remove') }}">
+                                            <i class="fas fa-times sp-text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {{ View.fireHook('operator.content_inner_end') }}
+            </div>
 
             {{ View.fireHook('operator.content_end') }}
         </div>

@@ -1,0 +1,114 @@
+{% if isModuleEnabled('Ticket') %}
+    <div class="sp-form-row">
+        {{ form_label('opsettings[default_department_subscription]', Lang.get('user.default_department_subscription')) }}
+        <div class="sp-input-container">
+            {{ departmentSubscriptionsSelect|raw }}
+            <div class="sp-description">{{ Lang.get('user.default_department_subscription_desc') }}</div>
+        </div>
+    </div>
+
+    {% if not record.exists or record.getAssignedDepartmentIds().isNotEmpty() %}
+        <div class="{% if departmentSubscriptionsCollapse %}sp-form-container sp-collapsed{% endif %}">
+            <div class="sp-form-row">
+                {{ form_label('department_subscriptions', Lang.get('user.department_subscriptions')) }}
+                <div class="sp-input-container">
+                    {% if departmentSubscriptionsTable %}
+                        <div class="sp-description sp-mb-3">{{ Lang.get('user.department_subscriptions_desc') }}</div>
+
+                        <div class="{% if departmentSubscriptionsCollapse %}sp-hidden{% endif %}">
+                            {{ departmentSubscriptionsTable.render()|raw }}
+                        </div>
+                    {% else %}
+                        <div class="sp-alert sp-alert-info sp-mb-0">
+                            {{ Lang.get('user.configure_on_operator_notifications', {
+                                'route': record.exists ? route('user.operator.operatornotification.edit', record.id) : route('user.operator.operatornotification')
+                            })|raw }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if departmentSubscriptionsCollapse %}
+                <div class="sp-chevron">
+                    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endif %}
+
+<div class="sp-form-row">
+    {{ form_label('opsettings[notifications]', Lang.get('user.notifications')) }}
+    <div class="sp-input-container sp-input-group">
+        <div class="sp-description sp-mb-3">{{ Lang.get('user.notifications_desc') }}</div>
+
+        <table class="sp-table-grid sp-table-inline">
+            {% for event in enum('App\\Modules\\User\\Models\\Enums\\NotificationEvent').cases() %}
+                {% if event.isTicketEvent() and not isModuleEnabled('Ticket') %}
+                    {# continue #}
+                {% else %}
+                    <tr class="sp-table-row md:sp-hidden">
+                        <td class="!sp-pb-0 !sp-border-b-0" colspan="2">
+                            {{ event.name() }}
+                            <div class="sp-description">
+                                {{ event.description() }}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sp-hidden md:sp-table-cell">
+                            <div>{{ event.name() }}</div>
+                            <div class="sp-description">
+                                {{ event.description() }}
+                            </div>
+                        </td>
+                        <td class="sp-whitespace-nowrap">
+                            {% if event in enum('App\\Modules\\User\\Models\\Enums\\NotificationChannel').emailEvents() %}
+                                <div class="sp-ps-3 md:sp-ps-0">
+                                    {{ form_check('opsettings[notifications][' ~ event.value ~ '][email]', 1, not record.exists ? true : null,
+                                        {'class': 'sp-toggle', 'id': 'toggle_notification_' ~ event.value ~ '_email'}) }}
+                                    <label for="{{ 'toggle_notification_' ~ event.value ~ '_email' }}"></label>
+                                    &nbsp; {{ Lang.get('user.notification_channel_email') }}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="sp-whitespace-nowrap">
+                            {% if event in enum('App\\Modules\\User\\Models\\Enums\\NotificationChannel').browserEvents() %}
+                                <div class="sp-ps-3 md:sp-ps-0">
+                                    {{ form_check('opsettings[notifications][' ~ event.value ~ '][browser]', 1, not record.exists ? true : null,
+                                        {'class': 'sp-toggle', 'id': 'toggle_notification_' ~ event.value ~ '_browser'}) }}
+                                    <label for="{{ 'toggle_notification_' ~ event.value ~ '_browser' }}"></label>
+                                    &nbsp; {{ Lang.get('user.notification_channel_browser') }}
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="sp-form-row">
+    {{ form_label('opsettings[browser_notifications]', Lang.get('user.browser_notifications')) }}
+    <div class="sp-input-container sp-input-group">
+        <label>
+            {% set browserNotifications = record.opsettings['browser_notifications'] %}
+            {{ form_radio(
+                'opsettings[browser_notifications]',
+                1,
+                browserNotifications is empty or browserNotifications == 1 ? 1 : 0
+            ) }} {{ Lang.get('user.in_app_notifications') }}
+        </label>
+        {% if preview %} <a class="preview-in-app-notification">({{ Lang.get('general.preview') }})</a>{% endif %}
+        <br />
+        <label>
+            {{ form_radio('opsettings[browser_notifications]', 2) }} {{ Lang.get('user.desktop_notifications') }}
+        </label>
+        {% if preview %} <a class="preview-desktop-notification">({{ Lang.get('general.preview') }})</a>{% endif %}
+        <br />
+        <label>
+            {{ form_radio('opsettings[browser_notifications]', 0) }} {{ Lang.get('general.none') }}
+        </label>
+        <div class="sp-description">{{ Lang.get('user.browser_notifications_desc') }}</div>
+    </div>
+</div>

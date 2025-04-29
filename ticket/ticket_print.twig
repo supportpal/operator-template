@@ -2,143 +2,165 @@
 <html>
 
 <head>
+    {{ View.fireHook('operator.head_start') }}
+
     <title>{{ ticket.subject }}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {{ View.fireHook('operator.head') }}
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
 <body class="sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-break-words xs:sp-p-6 print:sp-p-0">
-        {{ View.fireHook('operator.content_start') }}
+    <div class="sp-break-words xs:sp-px-6 print:sp-p-0">
+        {{ View.fireHook('frontend.wrapper_start') }}
 
-        <!-- Success / failure message box -->
-        <div class="sp-alert sp-hidden"></div>
+        <div class="sp-mx-auto sp-mt-6 xs:sp-mb-6">
+            {{ View.fireHook('operator.content_start') }}
+            {{ View.fireHook('operator.content_inner_start') }}
 
-        <h2 class="sp-ms-4 sp-text-primary xs:sp-mt-0 xs:sp-ms-0">{{ ticket.subject }}</h2>
+            <!-- Success / failure message box -->
+            <div class="sp-alert sp-hidden"></div>
 
-        <div class="sp-title-description">
-            {% if ticket.trashed() %}
-                <span class="sp-me-2">
-                    <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
-                </span>
-            {% endif %}
+            <h2 class="sp-ms-4 sp-text-primary xs:sp-ms-0">{{ ticket.subject }}</h2>
 
-            {% if ticket.internal %}
-                <span class="sp-tag sp-bg-red-600 sp-text-white sp-me-2">{{ Lang.get('ticket.internal') }}</span>
-            {% endif %}
-
-            {% if ticket.isOpenedOnBehalfOf() %}
-                {{ Lang.get('ticket.on_behalf_of') }}
-                <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-                {% if ticket.user.organisation_id is not empty %}
-                    (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
-                {% endif %}
-                {{ Lang.get('general.by') }}
-                {{ ticket.openedBy().formatted_name }}
-            {% else %}
-                {{ Lang.get('general.submitted_by') }}
-                <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-                {% if ticket.user.organisation_id is not empty %}
-                    (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
-                {% endif %}
-            {% endif %}
-            <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
-        </div>
-
-        <hr />
-
-        <h3>{{ Lang.get('ticket.ticket_details') }}</h3>
-
-        <div class="sp-p-6 sp-pb-3 sp-bg-primary sp-border sp-border-secondary sp-rounded">
-            <div class="sp-form-row">
-                <label>{{ Lang.get('general.number') }}</label>
-                <div class="sp-input-container">
-                    {{ ticket.number }}
-                </div>
-            </div>
-            <div class="sp-form-row">
-                <label>{{ Lang.get('ticket.submitted') }}</label>
-                <div class="sp-input-container">
-                    {{ formatDate(ticket.created_at) }}
-                </div>
-            </div>
-            {% if brand_count() > 1 %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.choice('core.brand', 1) }}</label>
-                    <div class="sp-input-container">{{ ticket.brand.name }}</div>
-                </div>
-            {% endif %}
-            <div class="sp-form-row">
-                <label>{{ Lang.choice('ticket.department', 1) }}</label>
-                <div class="sp-input-container">{{ ticket.department.name }}</div>
-            </div>
-            <div class="sp-form-row">
-                <label>{{ Lang.choice('general.status', 1) }}</label>
-                <div class="sp-input-container">
-                    <span class="sp-badge" style="background-color: {{ ticket.status.colour }}">
-                        {{ ticket.status.name }}
+            <div class="sp-title-description sp-ms-4 xs:sp-ms-0">
+                {% if ticket.trashed() %}
+                    <span class="sp-me-2">
+                        <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
                     </span>
-                </div>
-            </div>
-            <div class="sp-form-row">
-                <label>{{ Lang.choice('ticket.priority', 1) }}</label>
-                <div class="sp-input-container">
-                    <span class="sp-badge" style="background-color: {{ ticket.priority.colour }}">
-                        {{ ticket.priority.name }}
-                    </span>
-                </div>
-            </div>
-            {% if ticket.tags.isNotEmpty() %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.choice('ticket.tag', 2) }}</label>
-                    <div class="sp-input-container">
-                        {{ ticket.tags.sortby('name').pluck('name').join(', ') }}
-                    </div>
-                </div>
-            {% endif %}
-            {% if ticket.assigned.isNotEmpty() %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.assigned_operator') }}</label>
-                    <div class="sp-input-container">
-                        {{ ticket.assigned.sortby('formatted_name').pluck('formatted_name').join(', ') }}
-                    </div>
-                </div>
-            {% endif %}
-            {% if ticket.sla_plan_id is not null %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.choice('ticket.sla_plan', 1) }}</label>
-                    <div class="sp-input-container">{{ ticket.slaplan.name }}</div>
-                </div>
-            {% endif %}
-            {% if ticket.due_time is not null %}
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.due_time') }}</label>
-                    <div class="sp-input-container">
-                        {% if ticket.reply_due_time is not empty %}
-                            {{ format_due_time(ticket.reply_due_time, false) }}<br />
-                        {% endif %}
-                        {{ format_due_time(ticket.resolve_due_time) }}
-                    </div>
-                </div>
-            {% endif %}
+                {% endif %}
 
-            {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+                {% if ticket.internal %}
+                    <span class="sp-tag sp-bg-red-600 sp-text-white sp-me-2">{{ Lang.get('ticket.internal') }}</span>
+                {% endif %}
+
+                {% if ticket.isOpenedOnBehalfOf() %}
+                    {{ Lang.get('ticket.on_behalf_of') }}
+                    <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+                    {% if ticket.user.organisation_id is not empty %}
+                        (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+                    {% endif %}
+                    {{ Lang.get('general.by') }}
+                    {{ ticket.openedBy().formatted_name }}
+                {% else %}
+                    {{ Lang.get('general.submitted_by') }}
+                    <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
+                    {% if ticket.user.organisation_id is not empty %}
+                        (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
+                    {% endif %}
+                {% endif %}
+                <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
+            </div>
+
+            <hr />
+
+            <h3 class="sp-ms-4 xs:sp-ms-0">{{ Lang.get('ticket.ticket_details') }}</h3>
+
+            <div class="sp-p-6 sp-pb-1 sp-bg-primary xs:sp-rounded">
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('general.number') }}</label>
+                    <div class="sp-input-container">
+                        {{ ticket.number }}
+                    </div>
+                </div>
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.get('ticket.submitted') }}</label>
+                    <div class="sp-input-container">
+                        {{ formatDate(ticket.created_at) }}
+                    </div>
+                </div>
+
+                {% if brand_count() > 1 %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.choice('core.brand', 1) }}</label>
+                        <div class="sp-input-container">{{ ticket.brand.name }}</div>
+                    </div>
+                {% endif %}
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.choice('ticket.department', 1) }}</label>
+                    <div class="sp-input-container">{{ ticket.department.name }}</div>
+                </div>
+
+                <div class="sp-form-row">
+                    <label>{{ Lang.choice('general.status', 1) }}</label>
+                    <div class="sp-input-container">
+                        <span class="sp-badge" style="background-color: {{ ticket.status.colour }}">
+                            {{ ticket.status.name }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if priority_count > 1 %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.choice('ticket.priority', 1) }}</label>
+                        <div class="sp-input-container">
+                            <span class="sp-badge" style="background-color: {{ ticket.priority.colour }}">
+                                {{ ticket.priority.name }}
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ticket.tags.isNotEmpty() %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.choice('ticket.tag', 2) }}</label>
+                        <div class="sp-input-container">
+                            {{ ticket.tags.sortby('name').pluck('name').join(', ') }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ticket.assigned.isNotEmpty() %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.assigned_operator') }}</label>
+                        <div class="sp-input-container">
+                            {{ ticket.assigned.sortby('formatted_name').pluck('formatted_name').join(', ') }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ticket.sla_plan_id is not null %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.choice('ticket.sla_plan', 1) }}</label>
+                        <div class="sp-input-container">{{ ticket.slaplan.name }}</div>
+                    </div>
+                {% endif %}
+
+                {% if ticket.due_time is not null %}
+                    <div class="sp-form-row">
+                        <label>{{ Lang.get('ticket.due_time') }}</label>
+                        <div class="sp-input-container">
+                            {% if ticket.reply_due_time is not empty %}
+                                {{ format_due_time(ticket.reply_due_time, false) }}<br />
+                            {% endif %}
+                            {{ format_due_time(ticket.resolve_due_time) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+            </div>
+
+            <h3 class="sp-ms-4 xs:sp-ms-0">{{ Lang.choice('general.message', 2) }}</h3>
+
+            <div class="sp-messages-container">
+                {% for message in messages %}
+                    {% include 'operator.' ~ template ~ '.ticket.message' with {'message': message, 'unread': true} %}
+                {% endfor %}
+            </div>
+
+            {{ View.fireHook('operator.content_inner_end') }}
+            {{ View.fireHook('operator.content_end') }}
         </div>
 
-        <h3>{{ Lang.choice('general.message', 2) }}</h3>
-
-        <div class="sp-messages-container">
-            {% for message in messages %}
-                {% include 'operator.' ~ template ~ '.ticket.message' with {'message': message, 'unread': true} %}
-            {% endfor %}
-        </div>
-
-        {{ View.fireHook('operator.content_end') }}
+        {{ View.fireHook('operator.wrapper_end') }}
     </div>
 
     {{ View.fireHook('operator.footer') }}
@@ -156,6 +178,13 @@
 
     <!-- Custom fields -->
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/dist/ticket-view.js') }}"></script>
+    <script>
+        var replyOrder = '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}';
+        App.extend('OperatorTicketView', new SpTicket.OperatorTicket);
+        App.extend('TicketView', new SpTicket.TicketView(App.OperatorTicketView, replyOrder));
+    </script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
     <script>
@@ -177,7 +206,7 @@
                 ticket.updateMessage($(this), $(this).find('textarea:not(.CodeMirror textarea):eq(0)'));
             });
 
-            ticket.print();
+            App.OperatorTicketView.print();
         });
     </script>
 

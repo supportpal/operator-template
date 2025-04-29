@@ -1,5 +1,11 @@
 <tr class="condition {% if hide|default is not empty %}sp-hidden{% endif %}">
-    <td width="35%" class="condition-item">
+    <td class="sp-block sp-w-full md:sp-hidden">
+        <div class="sp-flex sp-items-center">
+            <div class="sp-flex-grow sp-me-3 sp-description">{{ Lang.get('ticket.condition') }}</div>
+            <i class="fas fa-times sp-cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
+        </div>
+    </td>
+    <td width="35%" class="condition-item sp-block sp-w-full md:sp-table-cell">
         {{ form_hidden('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][id]',
                 condition|default is not empty ? condition.id : null) }}
 
@@ -20,7 +26,7 @@
             )
         }}
     </td>
-    <td width="20%" class="condition-operator">
+    <td width="20%" class="condition-operator sp-block sp-w-full md:sp-table-cell">
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][operator]',
                 {
                     '0': Lang.get('general.is'),
@@ -77,7 +83,7 @@
                 },
                 condition|default is not empty ? condition.operator : null, { 'class': 'operator7 sp-hidden' }) }}
     </td>
-    <td width="45%" class="condition-value">
+    <td width="45%" class="condition-value sp-block sp-w-full sp-pb-3 sp-border-b sp-border-tertiary md:sp-table-cell md:sp-pb-0 md:sp-border-0">
         {{ form_select('conditions[' ~ (condition is defined ? (key is defined ? key : condition.id) : '') ~ '][value]',
                 condition_operators|default is not empty and condition_operators is not null ? condition_operators : [ ],
                 condition|default is not empty and condition.item == 0 ? condition.value : null,
@@ -576,7 +582,7 @@
                 condition|default is not empty and condition.item == 76 ? condition.value : null,
                 { 'data-item': 76, 'data-operator': 0, 'class': 'sp-hidden' }) }}
     </td>
-    <td class="sp-text-end sp-w-3">
+    <td class="sp-hidden sp-w-3 sp-text-end md:sp-table-cell">
         <i class="fas fa-times sp-cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
     </td>
 </tr>

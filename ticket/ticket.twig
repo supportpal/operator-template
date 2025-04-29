@@ -8,6 +8,13 @@
     <meta name="notes-url-id" content="{{ notesUrlId }}" />
     <meta name="messages-url-id" content="{{ messagesUrlId }}" />
     <meta name="recent_tickets" content="{{ recentTickets.pluck('id').implode(',') }}" />
+
+    <style>
+        @media print {
+            body * { display: none; }
+            .sp-use-print-view { display: block !important; }
+        }
+    </style>
 {% endblock %}
 
 {% block title %}
@@ -303,6 +310,7 @@
 {% endblock %}
 
 {% block content %}
+
     {% if download %}
         <div class="sp-alert">
             <i class="fas fa-times sp-alert-close sp-float-end"></i>
@@ -419,6 +427,10 @@
 {% endblock %}
 
 {% block scripts_footer %}
+    <div class="sp-use-print-view sp-hidden">
+        {{ Lang.get('ticket.use_ticket_print_view') }}
+    </div>
+
     <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
 
     <!-- Actions for FollowUp tab -->
@@ -436,6 +448,15 @@
     <script src="{{ asset_rev('resources/assets/general/js/customfields.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/dist/ticket-view.js') }}"></script>
+    <script>
+        var replyOrder = '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}';
+        var replyTemplate = {% if replyTemplate is not empty %}"{{ Purifier.clean(replyTemplate)|e('js') }}"{% else %}""{% endif %};
+        App.extend('OperatorTicketView', new SpTicket.OperatorTicket);
+        App.extend('TicketView', new SpTicket.TicketView(App.OperatorTicketView, replyOrder));
+        new SpTicket.OperatorDraftMessage(replyTemplate);
+    </script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/ticket_view.js') }}"></script>
@@ -459,13 +480,11 @@
             authUserId: "{{ auth_user().id }}",
             brandId: "{{ ticket.brand_id }}",
             departmentId: "{{ ticket.department_id }}",
-            replyOrder: '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}',
+            replyOrder: replyOrder,
             notesPosition: {{ Config.get('settings.ticket_notes_position') }},
             ticketGridUrl: "{{ Session.get('operator.url.ticketgrid', route('ticket.operator.ticket', manageTicketsParams))|e('js') }}",
             selfservice: {% if isModuleEnabled('Selfservice') %}true{% else %}false{% endif %},
-            {% if replyTemplate is not empty %}
-            replyTemplate: "{{ Purifier.clean(replyTemplate)|e('js') }}",
-            {% endif %}
+            replyTemplate: replyTemplate,
             excludeInternalArticles: {% if ticket.internal %}false{% else %}true{% endif %}
         });
     </script>

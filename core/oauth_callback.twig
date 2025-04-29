@@ -5,13 +5,20 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <noscript>JavaScript is required to use this page!</noscript>
-        <p>The window will close automatically...</p>
-        <script>
-            window.onload = function () {
-                window.opener.spOAuthCallback("{{ data|json_encode|e('js') }}");
-                window.close();
-            }
-        </script>
+        {% if data is not empty %}
+            <noscript>JavaScript is required to use this page!</noscript>
+            <p>The window will close automatically...</p>
+            <script>
+                window.onload = function () {
+                    window.opener.spOAuthCallback("{{ data|json_encode|e('js') }}");
+                    window.close();
+                }
+            </script>
+        {% else %}
+            <h1>{{ Lang.get('messages.error') }} - {{ error }}</h1>
+            {% if error_description is not empty %}
+                <p>{{ error_description }}</p>
+            {% endif %}
+        {% endif %}
     </body>
 </html>

@@ -74,10 +74,19 @@
             {% include 'operator.' ~ template ~ '.user.forms.operator_ticket_settings' %}
         </div>
 
-        <h2>{{ Lang.get('user.notifications') }}</h2>
+        <div class="sp-form-container sp-collapsed">
+            <h2 class="sp-my-3">
+                {{ Lang.get('user.notification_settings') }}
+            </h2>
+            <div class="sp-chevron">
+                <i class="fas fa-chevron-up" aria-hidden="true"></i>
+            </div>
 
-        <div class="sp-form-container">
-            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' with {preview: false} %}
+            <div class="sp-hidden">
+                <hr class="sp-mb-3" />
+
+                {% include 'operator.' ~ template ~ '.user.forms.operator_notifications_settings' with {preview: record.id is same as(auth_user().id)} %}
+            </div>
         </div>
 
         <div class="sp-form-button sp-fixed-bottom">
@@ -105,9 +114,12 @@
 
     <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/operator/js/departmentsubscriptions.js') }}"></script>
 
     <script>
         $(document).ready(function() {
+            App.Notifications.registerPreviewHandlers();
+
             // Do not initialise editor on the dummy DOM element.
             $('textarea[name="reply_template"]').editor({
                 mergefields_tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},

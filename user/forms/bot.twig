@@ -1,0 +1,71 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ record.formatted_name }} - {{ Lang.get('general.edit_item', {'item': Lang.choice('general.operator', 1)}) }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.system_bot_desc') }}
+{% endblock %}
+
+{% block scripts_header %}
+    <link rel="stylesheet" href="{{ asset_rev('resources/assets/libs/cropper/css/cropper.min.css') }}" />
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.success_action') }}
+    </div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+        {{ Lang.get('messages.error_action') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {{ form_model(record, {'route': ['user.operator.bot.update', record.id], 'method': 'PUT', 'files': true, 'class': 'validate'}) }}
+
+        <h2>{{ Lang.get('user.user_details') }}</h2>
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                {{ form_label('firstname', Lang.get('general.name')) }}
+                <div class="sp-input-container">
+                    {{ form_text('firstname', null, {'size': 30}) }}
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('avatar', Lang.get('user.avatar')) }}
+                <div class="sp-input-container">
+                    <img class="sp-avatar" src="{{ record.avatar_url }}" />
+                    <div class="{% if record.getRawOriginal('avatar') is not null %}sp-button-group{% endif %} sp-mt-3">
+                        <label class="sp-button">
+                            <input type="file" name="avatar" class="sp-hidden" data-url="{{ route('user.operator.avatar.upload', {id: record.id}) }}" />
+                            {{ Lang.get('general.update') }}
+                        </label>
+                        <button class="remove-avatar {% if record.getRawOriginal('avatar') is null %}sp-hidden{% endif %}" type="button"
+                                data-url="{{ route('user.operator.avatar.delete', {id: record.id}) }}">
+                            {{ Lang.get('general.remove') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+
+    <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
+{% endblock %}

@@ -56,12 +56,14 @@
                 </div>
             </div>
 
-            <div class="sp-form-row">
-                {{ form_label('priority', Lang.choice('ticket.priority', 1)) }}
-                <div class="sp-input-container">
-                    {{ form_select('priority', priorities) }}
+            {% if priorities.count() > 1 %}
+                <div class="sp-form-row">
+                    {{ form_label('priority', Lang.choice('ticket.priority', 1)) }}
+                    <div class="sp-input-container">
+                        {{ form_select('priority', priorities) }}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
             <div class="sp-form-row sp-form-full">
                 {{ form_label('select', Lang.choice('ticket.tag', 2)) }}

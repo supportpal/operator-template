@@ -1,4 +1,4 @@
-<form class="ticket-reply-form message-form validate {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6 sp-hidden{% endif %}">
+<form class="ticket-reply-form message-form validate {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6 sp-hidden{% endif %}" data-ticket-id="{{ ticket.id }}">
     {% set channelAddonInstance = ChannelFactory.getChannel(ticket.channel.name) %}
     {% if not channelAddonInstance.canReplyToTicket(ticket, auth_user()) %}
         <div class="sp-alert sp-alert-error {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-alert-bottom{% endif %}">
@@ -112,7 +112,7 @@
     {% endif %}
 </form>
 
-<form class="ticket-reply-form notes-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}">
+<form class="ticket-reply-form notes-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}" data-ticket-id="{{ ticket.id }}">
     {{ form_hidden('reply_type', 1) }}
 
     {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 1)} %}
@@ -140,7 +140,7 @@
     {% include 'operator.' ~ template ~ '.ticket.forms.message_submit' with {'submit_name': Lang.get('ticket.post_note')} %}
 </form>
 
-<form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}" data-cumulative-max-file-size="{{ cumulative_attachment_limit }}">
+<form class="ticket-reply-form forward-form validate sp-hidden {% if auth_user().isAscendingReplyOrder() == 'ASC' %}sp-mt-6{% else %}sp-mb-6{% endif %}" data-cumulative-max-file-size="{{ cumulative_attachment_limit }}" data-ticket-id="{{ ticket.id }}">
     {{ form_hidden('reply_type', 2) }}
 
     {% include 'operator.' ~ template ~ '.ticket.ticket_other_draft' with {'otherDrafts': otherDrafts.where('type', '=', 2)} %}

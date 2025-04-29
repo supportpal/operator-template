@@ -2,11 +2,14 @@
 <html class="{{ get_template_mode() }}" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
+    {{ View.fireHook('operator.head_start') }}
+
     <title>{{ Lang.get('ticket.view_feedback') }}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {{ View.fireHook('operator.head') }}
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
 <body class="sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
@@ -16,27 +19,33 @@
     <div class="sp-container sp-m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-p-6 sp-pb-0 sp-mt-6 sp-bg-primary sp-shadow sp-break-words sm:sp-mt-8 sm:sp-rounded print:sp-p-0 print:sp-shadow-none">
+        <div class="sp-bg-primary sp-shadow sp-break-words sm:sp-rounded print:sp-shadow-none">
             {{ View.fireHook('operator.content_start') }}
 
-            {% block feedback_header %}{% endblock %}
+            <div class="sp-p-6 sp-pb-0 sp-mt-6 sm:sp-mt-8 print:sp-p-0">
+                {{ View.fireHook('operator.content_inner_start') }}
 
-            {% if customfields is not empty %}
-                <div class="sp-form-container sp-border-b-0">
-                    <div class="sp-form-row">
-                        <label>{{ Lang.get('ticket.rating') }}</label>
-                        <div class="sp-input-container">
-                            <strong class="{{ record.rating.textColour() }}">{{ record.rating.toString() }}</strong>
+                {% block feedback_header %}{% endblock %}
+
+                {% if customfields is not empty %}
+                    <div class="sp-form-container sp-border-b-0">
+                        <div class="sp-form-row">
+                            <label>{{ Lang.get('ticket.rating') }}</label>
+                            <div class="sp-input-container">
+                                <strong class="{{ record.rating.textColour() }}">{{ record.rating.toString() }}</strong>
+                            </div>
                         </div>
-                    </div>
 
-                    {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
-                </div>
-            {% else %}
-                <div class="sp-alert sp-alert-error sp-alert-bottom">
-                    {{ Lang.get('ticket.feedback_fields_error') }}
-                </div>
-            {% endif %}
+                        {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+                    </div>
+                {% else %}
+                    <div class="sp-alert sp-alert-error sp-alert-bottom">
+                        {{ Lang.get('ticket.feedback_fields_error') }}
+                    </div>
+                {% endif %}
+
+                {{ View.fireHook('operator.content_inner_end') }}
+            </div>
 
             {{ View.fireHook('operator.content_end') }}
         </div>

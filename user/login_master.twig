@@ -2,11 +2,14 @@
 <html class="{{ get_template_mode() }} sp-h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
+    {{ View.fireHook('operator.head_start') }}
+
     <title>{% block title %}{{ Lang.get('core.product_name') }} - {{ Lang.get('core.operator_panel') }}{% endblock %}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {{ View.fireHook('operator.head') }}
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
 <body class="sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
@@ -14,9 +17,9 @@
     {{ View.fireHook('operator.body_start') }}
 
 	<div class="sp-login-container sp-flex sp-flex-col sp-justify-center sp-min-h-full">
-        <div class="sp-container sp-mt-8 sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
-            {{ View.fireHook('operator.wrapper_start') }}
+        {{ View.fireHook('operator.wrapper_start') }}
 
+        <div class="sp-container sp-mt-8 sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
             <div class="sp-p-6 sp-bg-primary-800 sp-text-center xs:sp-rounded-t">
                 {% block logo %}
                     <img src="{{ get_icon('resources/assets/operator/images/favicon/favicon_white.png') }}"
@@ -28,15 +31,19 @@
                 </h1>
             </div>
 
-            <div class="sp-p-6 sp-bg-primary xs:sp-rounded-b">
+            <div class="sp-bg-primary xs:sp-rounded-b">
                 {{ View.fireHook('operator.content_start') }}
 
-			    {% block content %}{% endblock %}
+                <div class="sp-p-6">
+                    {{ View.fireHook('operator.content_inner_start') }}
+
+                    {% block content %}{% endblock %}
+
+                    {{ View.fireHook('operator.content_inner_end') }}
+                </div>
 
                 {{ View.fireHook('operator.content_end') }}
             </div>
-
-            {{ View.fireHook('operator.wrapper_end') }}
 		</div>
 
         {% if Config.get('settings.language_operator_toggle') == 1 %}
@@ -51,6 +58,8 @@
                 </select>
             </div>
         {% endif %}
+
+        {{ View.fireHook('operator.wrapper_end') }}
 	</div>
 
     {{ View.fireHook('operator.footer') }}

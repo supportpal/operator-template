@@ -2,7 +2,7 @@
 <div class='supportpal_quote'>
     <span>{{ Lang.get('ticket.forwarded_message') }}</span><br />
     {% for message in messages %}
-        <strong>{{ Lang.get('ticket.from') }}:</strong> {{ message.user.formatted_name }} &lt;{{ message.user.email }}&gt;<br />
+        <strong>{{ Lang.get('ticket.from') }}:</strong> {{ message.user.formatted_name }} {% if message.user.email %}&lt;{{ message.user.email }}&gt;{% endif %}<br />
         <strong>{{ Lang.get('customfield.date') }}:</strong> {{ formatDate(message.created_at)  }} <br />
         <strong>{{ Lang.get('ticket.subject') }}:</strong> {{ ticket.subject }}<br />
         {% set attachments = message.attachments.where('isInvalid', false) %}

@@ -21,7 +21,7 @@
 
 {% block content %}
 
-    {{ form_model(record, { 'method': 'PUT', 'route': [ 'user.operator.personalsetting.update' ], 'files': true, 'class': 'validate' }) }}
+    {{ form_model(record, {'method': 'PUT', 'route': 'user.operator.personalsetting.update', 'files': true, 'class': 'validate'}) }}
 
         <ul class="sp-tabs">
             <li id="Profile" class="sp-active">
@@ -116,7 +116,7 @@
         </div>
 
         <div id="tabNotifications" class="sp-tab-content sp-hidden">
-            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications' with {preview: true} %}
+            {% include 'operator.' ~ template ~ '.user.forms.operator_notifications_settings' with {preview: true} %}
         </div>
 
         <div class="sp-form-button sp-fixed-bottom">
@@ -139,11 +139,18 @@
     <!-- noUiSlider -->
     <script src="{{ asset_rev('resources/assets/libs/nouislider/js/nouislider.min.js') }}"></script>
 
+    <!-- Department subscriptions -->
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ departmentSubscriptionsTable.script()|raw }}
+    <script src="{{ asset_rev('resources/assets/operator/js/departmentsubscriptions.js') }}"></script>
+
     <script src="{{ asset_rev('resources/assets/libs/cropper/js/cropper.min.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/general/js/user.js') }}"></script>
 
     <script>
         $(document).ready(function() {
+            App.Notifications.registerPreviewHandlers();
+
             // Handle rows per page slider.
             var $input = $('input[name="opsettings[datatable_rows]"]'),
                 slider = noUiSlider.create($('.sp-rows-slider')[0], {
@@ -173,22 +180,6 @@
             });
 
             slider.on('change', synchroniseSliderWithInput);
-
-            // Show example browser notification
-            $('.preview-browser').on('click', function() {
-                App.Notifications.showBrowserNotification(
-                    Lang.get('notification.new_ticket'),
-                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">' + Math.floor(100000 + Math.random() * 900000) + '</a>', 'name': 'Joe Bloggs'})
-                );
-            });
-
-            // Show example desktop notification
-            $('.preview-desktop').on('click', function() {
-                App.Notifications.showDesktopNotification(
-                    Lang.get('notification.new_ticket'),
-                    Lang.get('notification.new_ticket_text', {'item': '<a href="#">' + Math.floor(100000 + Math.random() * 900000) + '</a>', 'name': 'Joe Bloggs'})
-                );
-            });
         });
     </script>
 {% endblock %}

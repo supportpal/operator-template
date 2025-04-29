@@ -182,10 +182,12 @@
 
     <script>
         $(document).ready(function() {
-            // Toggle the password fields depending on whether we're sending a confirmation email
+            // Toggle the password fields depending on whether we're sending a confirmation email.
+            // Also clears the password input if it's set.
             $('input[name="send_email"]').on('click', function() {
-                $('.password-field').toggle();
-                $('.password-field button.hideShowPassword-toggle').trigger('click').trigger('click');
+                $('.password-field').toggle()
+                    .find('input[type=password]')
+                    .val('');
             });
 
             // Toggle the password fields, depending on how the page loads (when an error occurs, the form resets to
@@ -253,7 +255,7 @@
                         $('input[name="organisation_id"]').val(value);
 
                         // Re-enable dropdown
-                        $('select[name="organisation_access_level"]').prop('disabled', false);
+                        $('select[name="organisation_access_level"]').val(1).prop('disabled', false);
                         $('.access-level').show();
                     } else {
                         $('input[name="organisation_id"]').val("");

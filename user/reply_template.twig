@@ -19,6 +19,10 @@
 
 {% block content %}
 
+    <div class="sp-title-description">
+        {{ Lang.get('user.reply_template_cursor_position') }}
+    </div>
+
     {{ form_model(record, {'route': form_route, 'method': 'PUT', 'class': 'validate', 'style': 'min-height: 300px;'}) }}
 
         {% include 'operator.' ~ template ~ '.user.forms.reply_template' %}
@@ -49,7 +53,8 @@
                 mergefields_tickets: {{ isModuleEnabled('Ticket') ? "true" : "false" }},
                 mergefields_organisations: {{ Config.get('settings.organisations_enabled', 1) ? "true" : "false" }},
                 plugins: $.fn.editor.defaults.plugins.concat(['mergefields', 'autosavecursor']),
-                toolbar: $.fn.editor.defaults.toolbar + ' | mergefields',
+                toolbar: $.fn.editor.defaults.toolbar + ' | mergefields autosavecursor',
+                autosavecursor_show_cursor_marker: true,
             };
 
             // Do not initialise editor on the dummy DOM element.

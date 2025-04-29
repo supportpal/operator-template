@@ -3,7 +3,6 @@
 
 <div class="sp-form-container {% if collapseRegex %}sp-collapsed{% endif %} customfield-regex
             {% if hideRegexContainer %}sp-hidden{% endif %}">
-
     <div class="sp-form-row sp-form-full">
         {{ form_label('regex', Lang.get('general.regex')) }}
         <div class="sp-input-container">
@@ -27,4 +26,7 @@
         </div>
     </div>
 
+    <div class="sp-chevron">
+        <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </div>
 </div>

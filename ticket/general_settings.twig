@@ -55,9 +55,19 @@
             </div>
 
             <div class="sp-form-row sp-form-full">
-                {{ form_label('allowed_files', Lang.get('ticket.allowed_files')) }}
+                {{ form_label('allow_all_files', Lang.get('ticket.allowed_files')) }}
                 <div class="sp-input-container">
-                    {{ form_text('allowed_files') }}
+                    {% set allowAllValue = enum('App\\Modules\\Core\\Controllers\\Uploads\\UploadType').allowAll() %}
+                    {% set allow_all_files = fields.allowed_files is same as(allowAllValue) %}
+                    <div>
+                        {{ Lang.get('general.allow_all') }} &nbsp;
+                        {{ form_check('allow_all_files', 1, allow_all_files, {'class': 'sp-toggle', 'id': 'toggle_allow_all_files'}) }}
+                        <label for="toggle_allow_all_files"></label>
+                        {{ form_hidden('allowed_files', allowAllValue) }}
+                    </div>
+                    <div class="sp-mt-3 sp-allowed-files {% if allow_all_files %}sp-hidden{% endif %}">
+                        {{ form_text('allowed_files', allow_all_files ? defaultAllowedFileTypes : null, allow_all_files ? {'disabled': 'disabled'} : {}) }}
+                    </div>
                     <div class="sp-description">{{ Lang.get('ticket.allowed_files_desc') }}</div>
                 </div>
             </div>
@@ -146,4 +156,15 @@
 
     {{ form_close() }}
 
+{% endblock %}
+
+{% block scripts_footer %}
+<script>
+    $(function () {
+        $('input[name="allow_all_files"]').on('change', function () {
+            $('.sp-allowed-files').toggleClass('sp-hidden')
+                .find('input').attr('disabled', $(this).is(':checked'));
+        });
+    })
+</script>
 {% endblock %}

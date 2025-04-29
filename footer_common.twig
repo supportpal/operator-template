@@ -27,7 +27,7 @@
     <script src="{{ asset_rev('resources/assets/operator/js/notification.js') }}"></script>
     <script>
         (function (App, Echo) {
-            App.Notifications.setType("{{ Config.get('settings.operator' ~ auth_user().id ~ '.display_notifications') }}")
+            App.Notifications.setType("{{ Config.get('settings.operator' ~ auth_user().id ~ '.browser_notifications') }}")
             App.Notifications.setDesktopIcon("{{ get_icon('resources/assets/operator/images/favicon/favicon_space.png') }}")
             App.Notifications.configure(new Echo({{ echoConfig|raw }}), "{{ auth_user().id }}")
         })(App, Echo);

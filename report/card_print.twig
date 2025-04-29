@@ -2,6 +2,8 @@
 <html class="sp-h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
+    {{ View.fireHook('operator.head_start') }}
+
     <title>{{ card.name() }}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
@@ -52,34 +54,42 @@
             }
         }
     </style>
+
+    {{ View.fireHook('operator.head_end') }}
 </head>
 
 <body class="sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-flex sp-flex-col sp-h-full sp-break-words sp-py-6 xs:sp-p-6 print:sp-p-0">
+    <div class="sp-flex sp-flex-col sp-h-full">
         {{ View.fireHook('operator.content_start') }}
 
-        <div class="sp-flex-none sp-text-center xs:sp-text-start">
-            <img src="{{ get_logo(false) }}" alt="{{ company }}" class="sp-logo sp-inline" />
+        <div class="sp-py-6 xs:sp-p-6 print:sp-p-0 sp-break-words">
+            {{ View.fireHook('operator.content_inner_start') }}
 
-            <h2 class="sp-text-primary">{{ card.dashboard().name() }} - {{ card.name() }}</h2>
+            <div class="sp-flex-none sp-text-center xs:sp-text-start">
+                <img src="{{ get_logo(false) }}" alt="{{ company }}" class="sp-logo sp-inline" />
 
-            <div class="sp-title-description">
-                <span>Date Generated: {{ date }}</span>
+                <h2 class="sp-text-primary">{{ card.dashboard().name() }} - {{ card.name() }}</h2>
+
+                <div class="sp-title-description">
+                    <span>Date Generated: {{ date }}</span>
+                </div>
             </div>
-        </div>
 
-        <div class="grid-stack-item sp-flex-grow {% if card.component() is not same as('table') %}sp-h-full{% endif %}"
-             data-component="{{ card.component() }}"
-             data-id="{{ card.uriKey() }}"
-             data-name="{{ card.name() }}"
-             data-route="{{ card.route() }}">
+            <div class="grid-stack-item sp-flex-grow {% if card.component() is not same as('table') %}sp-h-full{% endif %}"
+                 data-component="{{ card.component() }}"
+                 data-id="{{ card.uriKey() }}"
+                 data-name="{{ card.name() }}"
+                 data-route="{{ card.route() }}">
 
-            <div class="grid-stack-item-content {% if card.component() is not same as('table') %}sp-h-full{% endif %}">
-                {{ card.content()|raw }}
+                <div class="grid-stack-item-content {% if card.component() is not same as('table') %}sp-h-full{% endif %}">
+                    {{ card.content()|raw }}
+                </div>
             </div>
+
+            {{ View.fireHook('operator.content_inner_end') }}
         </div>
 
         {{ View.fireHook('operator.content_end') }}
@@ -89,6 +99,7 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/dist/reports.min.js') }}"></script>
     <script>
         $(function() {

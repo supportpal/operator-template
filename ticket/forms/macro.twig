@@ -112,6 +112,18 @@
                     <div class="sp-description">{{ Lang.get('ticket.macro_schedules_desc') }}</div>
                 </div>
             </div>
+
+            <div class="sp-form-row macro-run-as {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp-hidden{% endif %}">
+                {{ form_label('run_as', Lang.get('ticket.run_as_operator')) }}
+                <div class="sp-input-container">
+                    {{ form_select('run_as', runAsOperators) }}
+                    <div class="sp-description">
+                        {{ Lang.get('ticket.run_as_operator_desc',
+                            {'actions': Lang.get('actions.add_ticket_note') ~ ', ' ~ Lang.get('actions.add_ticket_reply') ~ ', ' ~ Lang.get('actions.forward_ticket')}
+                        ) }}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <h2>{{ Lang.get('ticket.macro_condition') }}</h2>
@@ -209,26 +221,28 @@
             groupIds = "{{ operatorGroups|keys|join(',') }}";
 
         $(document).ready(function() {
+            $('select[name="run_as"]').selectize();
+
+            const selectizeConfig = {
+                plugins: ['remove_button']
+            };
+
             var $inputPublic = $('input[name="public"]');
 
-            var $selectGroups = $('select[name="groups[]"]').selectize()[0].selectize;
+            var $selectGroups = $('select[name="groups[]"]').selectize(selectizeConfig)[0].selectize;
 
             var $inputLimit = $('input[name="run_at_most"]');
 
-            var $selectEvents = $('select[name="events[]"]').selectize({
-                plugins: ['remove_button']
-            })[0].selectize;
+            var $selectEvents = $('select[name="events[]"]').selectize(selectizeConfig)[0].selectize;
 
-            var $selectSchedules = $('select[name="schedules[]"]').selectize({
-                plugins: ['remove_button']
-            })[0].selectize;
+            var $selectSchedules = $('select[name="schedules[]"]').selectize(selectizeConfig)[0].selectize;
 
             // Toggle type, handle the various options.
             $('input[name="type"]').on('click', function() {
                 if ($(this).is(':checked')) {
                     if ($(this).val() == 0) {
                         $('.macro-visibility').removeClass('sp-hidden');
-                        $('.macro-limit, .macro-events, .macro-schedules').addClass('sp-hidden');
+                        $('.macro-limit, .macro-events, .macro-schedules, .macro-run-as').addClass('sp-hidden');
                         $inputPublic.prop('disabled', false);
                         $selectGroups.enable();
                         $selectEvents.clear();
@@ -238,7 +252,7 @@
                         $selectSchedules.disable();
                     } else if ($(this).val() == 1) {
                         $('.macro-visibility, .macro-limit').addClass('sp-hidden');
-                        $('.macro-events, .macro-schedules').removeClass('sp-hidden');
+                        $('.macro-events, .macro-schedules, .macro-run-as').removeClass('sp-hidden');
                         $inputPublic.prop('disabled', true);
                         $selectGroups.clear();
                         $selectGroups.disable();
@@ -247,7 +261,7 @@
                         $selectSchedules.enable();
                     } else if ($(this).val() == 2) {
                         $('.macro-visibility, .macro-events').addClass('sp-hidden');
-                        $('.macro-limit, .macro-schedules').removeClass('sp-hidden');
+                        $('.macro-limit, .macro-schedules, .macro-run-as').removeClass('sp-hidden');
                         $inputPublic.prop('disabled', true);
                         $selectGroups.clear();
                         $selectGroups.disable();
