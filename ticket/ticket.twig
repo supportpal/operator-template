@@ -455,7 +455,7 @@
         var replyTemplate = {% if replyTemplate is not empty %}"{{ Purifier.clean(replyTemplate)|e('js') }}"{% else %}""{% endif %};
         App.extend('OperatorTicketView', new SpTicket.OperatorTicket);
         App.extend('TicketView', new SpTicket.TicketView(App.OperatorTicketView, replyOrder));
-        new SpTicket.OperatorDraftMessage(replyTemplate);
+        App.extend('OperatorDraftMessage', new SpTicket.OperatorDraftMessage(replyTemplate));
     </script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>

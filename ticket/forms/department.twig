@@ -117,6 +117,8 @@
                 <i class="fas fa-chevron-up" aria-hidden="true"></i>
             </div>
         </div>
+    {% else %}
+        {{ form_hidden('dept_priorities[]', priorities.first().id) }}
     {% endif %}
 
     <h2>{{ Lang.get('ticket.assigned_operator') }}</h2>
