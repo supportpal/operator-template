@@ -265,7 +265,7 @@
     <script src="{{ asset_rev('resources/assets/dist/codemirror.min.js') }}"></script>
 
     <script>
-        var organisationsEnabled = "{{ Config.get('settings.organisations_enabled', 1) }}",
+        var organisationsEnabled = parseInt("{{ Config.get('settings.organisations_enabled', 1) }}") !== 0,
             groupIds = "{{ operatorGroups|keys|join(',') }}";
     </script>
 
