@@ -110,21 +110,21 @@
              * Initialise the filters
              */
             oTable.yadcf([
-                {column_number: 0, column_data_type: "text", filter_container_id: "filter_title", filter_type: "text", filter_delay: 500},
-                {column_number: 9, column_data_type: "text", filter_container_id: "filter_text", filter_type: "text", filter_delay: 500},
-                {column_number: 1, filter_container_id: "filter_author"},
-                {column_number: 2, filter_container_id: "filter_category"},
+                {column_number: 1, column_data_type: "text", filter_container_id: "filter_title", filter_type: "text", filter_delay: 500},
+                {column_number: 13, column_data_type: "text", filter_container_id: "filter_text", filter_type: "text", filter_delay: 500},
+                {column_number: 2, filter_container_id: "filter_author"},
+                {column_number: 3, filter_container_id: "filter_category"},
                 {% if type|default is empty %}
                     {% if Config.get('brand')|length == 1 %}
-                        {column_number : 3, filter_container_id: "filter_type"},
+                        {column_number : 4, filter_container_id: "filter_type"},
                     {% else %}
-                        {column_number : 4, filter_container_id: "filter_brand"},
+                        {column_number : 5, filter_container_id: "filter_brand"},
                     {% endif %}
                 {% endif %}
-                {column_number: 5, filter_container_id: "filter_tag"},
-                {column_number: 6, filter_container_id: "filter_published"},
-                {column_number: 7, filter_container_id: "filter_protected"},
-                {column_number: 8, filter_container_id: "filter_pinned"}
+                {column_number: 6, filter_container_id: "filter_tag"},
+                {column_number: 7, filter_container_id: "filter_published"},
+                {column_number: 8, filter_container_id: "filter_protected"},
+                {column_number: 0, filter_container_id: "filter_pinned"}
             ]);
         });
     </script>

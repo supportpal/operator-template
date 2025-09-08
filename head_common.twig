@@ -11,7 +11,7 @@
 <meta name="shortcuts_enabled" content="{{ Config.get('settings.operator' ~ auth_user().id ~ '.shortcuts_enabled') }}" />
 <meta name="robots" content="noindex" />
 
-{% set brandThemeColour = Config.get('settings.brand_colour', Config.get('template.themes.light.scheme.--color-primary-800')) %}
+{% set brandThemeColour = Config.get('settings.brand_colour') is empty ? Config.get('template.themes.light.scheme.--color-primary-800') : Config.get('settings.brand_colour') %}
 {% set darkThemeColour = Config.get('template.themes.dark.scheme.--color-primary-800') %}
 
 <!-- Icons -->

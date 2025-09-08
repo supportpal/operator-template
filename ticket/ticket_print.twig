@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ get_template_mode() }}" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     {{ View.fireHook('operator.head_start') }}
@@ -198,13 +198,6 @@
 
             // Timepicker
             $('.timepicker').timepicker();
-
-            // Update message
-            $(document.body).on('submit', '.message-form', function(event) {
-                event.preventDefault();
-
-                ticket.updateMessage($(this), $(this).find('textarea:not(.CodeMirror textarea):eq(0)'));
-            });
 
             App.OperatorTicketView.print();
         });
