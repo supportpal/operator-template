@@ -249,8 +249,8 @@
                 plugins: ['remove_button']
             });
 
-            // Save the full list of department options
-            var fullDepartmentOptions = $departments[0].selectize.options;
+            // Save the full list of department options (create a copy).
+            var fullDepartmentOptions = jQuery.extend({}, $departments[0].selectize.options);
 
             // Remove selected group departments from individual departments.
             $.each($groupDepartments[0].selectize.getValue(), function (index, value) {
