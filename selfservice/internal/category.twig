@@ -7,18 +7,18 @@
 {% block breadcrumb %}
     {{ parent() }}
     <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">{{ type.name }}</a>
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% for category in breadcrumb %}
         <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">{{ category.name }}</a>
-        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% endfor %}
     {{ categoryName }}
 {% endblock %}
 
 {% block description %}
     {% if auth_user().hasPermission('create.article') %}
-        <a href="{{ route('selfservice.operator.article.create', {'type': type.id}) }}" class="sp-button print:sp-hidden">
-            <i class="fas fa-plus"></i>&nbsp;
+        <a href="{{ route('selfservice.operator.article.create', {'type': type.id}) }}" class="sp-button sp:print:hidden">
+            <i class="fa-solid fa-plus"></i>&nbsp;
             {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
         </a>
     {% endif %}

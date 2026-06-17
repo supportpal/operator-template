@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
 {% endblock %}
@@ -46,7 +46,7 @@
         </div>
 
         {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
-            <div id="tabChangePassword" class="sp-tab-content sp-hidden">
+            <div id="tabChangePassword" class="sp-tab-content sp:hidden">
                 <div class="sp-form-row">
                     {{ form_label('current_password', Lang.get('user.current_password')) }}
                     <div class="sp-input-container">
@@ -71,7 +71,7 @@
             </div>
         {% endif %}
 
-        <div id="tabAppearance" class="sp-tab-content sp-hidden">
+        <div id="tabAppearance" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('opsettings[template]', Lang.get('core.template')) }}
                 <div class="sp-input-container">
@@ -98,12 +98,12 @@
                 {{ form_label('opsettings[datatable_rows]', Lang.get('core.results_per_page')) }}
                 <div class="sp-input-container">
                     {{ form_hidden('opsettings[datatable_rows]') }}
-                    <div class="sp-max-w-6xl">
-                        <div class="sp-flex sp-description">
-                            <div class="sp-grow">{{ Lang.get('general.faster') }}</div>
-                            <div class="sp-flex-initial">{{ Lang.get('general.slower') }}</div>
+                    <div class="sp:max-w-96">
+                        <div class="sp:flex sp-description">
+                            <div class="sp:grow">{{ Lang.get('general.faster') }}</div>
+                            <div class="sp:flex-initial">{{ Lang.get('general.slower') }}</div>
                         </div>
-                        <div class="sp-pt-2 sp-pb-10 sp-px-4">
+                        <div class="sp:pt-2 sp:pb-10 sp:px-4">
                             <div class="sp-rows-slider"></div>
                         </div>
                     </div>
@@ -111,11 +111,11 @@
             </div>
         </div>
 
-        <div id="tabTicket" class="sp-tab-content sp-hidden">
+        <div id="tabTicket" class="sp-tab-content sp:hidden">
             {% include 'operator.' ~ template ~ '.user.forms.operator_ticket_settings' %}
         </div>
 
-        <div id="tabNotifications" class="sp-tab-content sp-hidden">
+        <div id="tabNotifications" class="sp-tab-content sp:hidden">
             {% include 'operator.' ~ template ~ '.user.forms.operator_notifications_settings' with {preview: true} %}
         </div>
 

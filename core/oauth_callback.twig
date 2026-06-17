@@ -7,10 +7,12 @@
     <body>
         {% if data is not empty %}
             <noscript>JavaScript is required to use this page!</noscript>
-            <p>The window will close automatically...</p>
+            <p>Authentication complete. You may now close this window.</p>
             <script>
                 window.onload = function () {
-                    window.opener.spOAuthCallback("{{ data|json_encode|e('js') }}");
+                    var channel = new BroadcastChannel('sp_oauth_channel');
+                    channel.postMessage({ type: 'spOAuthCallback', data: "{{ data|json_encode|e('js') }}" });
+                    channel.close();
                     window.close();
                 }
             </script>
@@ -19,6 +21,13 @@
             {% if error_description is not empty %}
                 <p>{{ error_description }}</p>
             {% endif %}
+            <script>
+                window.onload = function () {
+                    var channel = new BroadcastChannel('sp_oauth_channel');
+                    channel.postMessage({ type: 'spOAuthError' });
+                    channel.close();
+                }
+            </script>
         {% endif %}
     </body>
 </html>

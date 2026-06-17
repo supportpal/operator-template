@@ -11,14 +11,14 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <button class="sp-action sp-filter-results">
-                    <i class="fas fa-filter"></i>
-                    <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
+                    <i class="fa-solid fa-filter"></i>
+                    <span class="sp:hidden sp:sm:inline">&nbsp;{{ Lang.get('general.filter') }}</span>
                 </button>
                 <button class="sp-action sp-filter-datepicker">
-                    <i class="fas fa-calendar"></i>
-                    <span class="sp-hidden xs:sp-inline">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="sp:hidden sp:xs:inline">
                         &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
                     </span>
                 </button>
@@ -35,23 +35,66 @@
         <div id="tabActivityLog" class="sp-tab-content">
     {% endif %}
 
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
+        <div class="sp:table">
             {% if record is not defined %}
-                <div class="sp-table-row">
+                <div class="sp:table-row">
                     <label>{{ Lang.choice('user.role', 1) }}:</label>
                     <div id="filter_role"></div>
                 </div>
-                <div class="sp-table-row">
+                <div class="sp:table-row">
                     <label>{{ Lang.get('general.name') }}:</label>
                     <div id="filter_name"></div>
                 </div>
             {% endif %}
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.ip_address') }}:</label>
                 <div id="filter_ip"></div>
+            </div>
+            <div class="sp:table-row">
+                <label>{{ Lang.choice('general.event', 1) }}:</label>
+                <div>
+                    <div class="sp:flex sp:items-center">
+                        <select id="filter_event" class="sp:grow sp:rounded-e-none" placeholder="{{ Lang.get('general.select_value') }}">
+                            <option value=""></option>
+                            {% for label, group in enum('App\\Modules\\Core\\Models\\ActivityLog\\ActivityLogEventGroup').all() %}
+                            <optgroup label="{{ label }}">
+                                {% for value, name in group %}
+                                    <option value="{{ value }}">{{ name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="yadcf-filter-reset-button sp:flex-none" title="{{ Lang.get('general.clear') }}"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="sp:table-row">
+                <label>{{ Lang.get('general.record')|capitalize }}:</label>
+                <div>
+                    <div class="sp:flex sp:items-center sp:flex-wrap">
+                        <div class="sp:flex-none sp:min-w-40">
+                            <select id="filter_record" class="sp:rounded-e-none" placeholder="{{ Lang.get('general.select_value') }}">
+                                <option value=""></option>
+                                <option value="ticket.ticket">{{ Lang.choice('ticket.ticket', 1) }}</option>
+                                <option value="user.user">{{ Lang.choice('user.user', 1) }}</option>
+                                <option value="user.organisation">{{ Lang.choice('user.organisation', 1) }}</option>
+                            </select>
+                        </div>
+                        <button type="button" class="yadcf-filter-reset-button sp:flex-none" title="{{ Lang.get('general.clear') }}"></button>
+                        <div class="filter_relid sp:grow sp:w-full sp:sm:w-auto sp:ml-2" style="display: none">
+                            <select id="filter_ticket.ticket" disabled="disabled"></select>
+                        </div>
+                        <div class="filter_relid sp:grow sp:w-full sp:sm:w-auto sp:ml-2" style="display: none">
+                            <select id="filter_user.user" disabled="disabled"></select>
+                        </div>
+                        <div class="filter_relid sp:grow sp:w-full sp:sm:w-auto sp:ml-2" style="display: none">
+                            <select id="filter_user.organisation" disabled="disabled"></select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,6 +120,187 @@
                 {column_number: 2, column_data_type: "text", filter_container_id: "filter_name", filter_type: "text", filter_delay: 500},
                 {column_number: 3, column_data_type: "text", filter_container_id: "filter_ip", filter_type: "text", filter_delay: 500, filter_default_label: '{{ Lang.get('general.enter_exact_ip') }}'},
             ]);
+
+            const $ticketSelect = $('select#filter_ticket\\.ticket'),
+                $userSelect = $('select#filter_user\\.user'),
+                $organisationSelect = $('select#filter_user\\.organisation');
+
+            // Helper function to reload table with new filter data
+            function reloadTableWithData(data) {
+                const api = oTable.api(),
+                    settings = api.settings()[0];
+                // Merge new data with existing data instead of replacing
+                settings.ajax.data = $.extend({}, settings.ajax.data, data || {});
+                api.ajax.reload();
+            }
+
+            // Common onChange handler for selectize instances
+            function createOnChangeHandler() {
+                return function (id) {
+                    reloadTableWithData({
+                        section: $('select#filter_record').val(),
+                        rel_id: id
+                    });
+                };
+            }
+
+            // Helper to clear and disable a selectize instance
+            function clearAndDisableSelectize(selectize) {
+                selectize.clear();
+                selectize.disable();
+            }
+
+            // Common selectize configuration
+            const baseSelectizeConfig = {
+                valueField: 'id',
+                placeholder: Lang.get('core.sSearchPlaceholder'),
+                create: false,
+                onChange: createOnChangeHandler()
+            };
+
+            // Initialize selectize instances
+            const ticketSelectize = $ticketSelect.selectize($.extend({}, baseSelectizeConfig, {
+                labelField: 'number',
+                searchField: ['searchField'],
+                render: {
+                    item: function (item, escape) {
+                        return '<div class="item">#' + escape(item.number) + " - " + escape(item.subject) + "</div>";
+                    },
+                    option: function (item, escape) {
+                        return '<div>'
+                            + '<strong>#' + escape(item.number) + "</strong>&nbsp; " + escape(item.subject)
+                            + '<br />'
+                            + '<span class="sp-description">'
+                            + escape(item.user.formatted_name)
+                            + ' &nbsp;&middot;&nbsp; '
+                            + escape(item.department.name)
+                            + ' &nbsp;&middot;&nbsp; '
+                            + escape(item.brand.name)
+                            + '</span>'
+                            + '</div>';
+                    }
+                },
+                load: function (query, callback) {
+                    this.clearOptions();
+
+                    $.get(laroute.route('ticket.operator.action.search'), {term: query})
+                        .done(function (res) {
+                            callback(res.data.map(function(resource){
+                                resource.searchField = query;
+                                return resource;
+                            }));
+                        })
+                        .fail(function () {
+                            callback();
+                        });
+                },
+            }))[0].selectize;
+
+            const userSelectize = $userSelect.selectize($.extend({}, baseSelectizeConfig, {
+                labelField: 'formatted_name',
+                searchField: ['formatted_name', 'email'],
+                render: {
+                    item: function(item, escape) {
+                        return '<div class="item">'
+                            + '<img class="sp-avatar sp:max-w-5 sp:inline-block sp:align-middle" src="' + escape(item.avatar_url) + '" /> '
+                            + '<span class="sp:align-middle">' + escape(item.formatted_name) + '</span>'
+                            + '</div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div class="sp:flex sp:items-center sp:py-1">'
+                            + '<img class="sp:avatar sp:max-w-5 sp:me-2" src="' + escape(item.avatar_url) + '" />'
+                            + '<div class="sp:grow">'
+                            + '<div class="sp:font-semibold">' + escape(item.formatted_name) + '</div>'
+                            + (item.email ? '<div class="sp:description sp:text-sm">' + escape(item.email) + '</div>' : '')
+                            + '</div>'
+                            + '</div>';
+                    }
+                },
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+
+                    $.ajax({
+                        url: laroute.route('user.operator.search'),
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {q: query},
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.data);
+                        }
+                    });
+                },
+            }))[0].selectize;
+
+            const organisationSelectize = $organisationSelect.selectize($.extend({}, baseSelectizeConfig, {
+                labelField: 'name',
+                searchField: 'name',
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+
+                    $.ajax({
+                        url: laroute.route('user.organisation.search'),
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {q: query},
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.data);
+                        }
+                    });
+                },
+            }))[0].selectize;
+
+            // Map of record types to their selectize instances
+            const selectizeMap = {
+                'ticket.ticket': {element: $ticketSelect, instance: ticketSelectize},
+                'user.user': {element: $userSelect, instance: userSelectize},
+                'user.organisation': {element: $organisationSelect, instance: organisationSelectize}
+            };
+
+            $('select#filter_record').selectize({
+                onChange: function (value) {
+                    $('.filter_relid').hide();
+
+                    const selectizeConfig = selectizeMap[value];
+                    if (!selectizeConfig) return;
+
+                    selectizeConfig.instance.clear();
+                    selectizeConfig.instance.enable();
+                    selectizeConfig.element.parents('.filter_relid').show();
+                }
+            });
+
+            $('select#filter_event').selectize({
+                onChange: function () {
+                    reloadTableWithData({
+                        filter_event: $('select#filter_event').val()
+                    });
+                }
+            });
+
+            // Handle reset button for event filter
+            $('select#filter_event').siblings('.yadcf-filter-reset-button').on('click', function () {
+                $('select#filter_event')[0].selectize.clear();
+                reloadTableWithData({filter_event: null});
+            });
+
+            // Handle reset button for record filter
+            $('select#filter_record').parent().siblings('.yadcf-filter-reset-button').on('click', function () {
+                $('select#filter_record')[0].selectize.clear();
+
+                // Clear all three related selectize instances
+                clearAndDisableSelectize(ticketSelectize);
+                clearAndDisableSelectize(userSelectize);
+                clearAndDisableSelectize(organisationSelectize);
+
+                $('.filter_relid').hide();
+                reloadTableWithData({section: null, rel_id: null});
+            });
         });
     </script>
 {% endblock %}

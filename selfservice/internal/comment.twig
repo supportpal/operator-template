@@ -1,55 +1,53 @@
-{% if comments is not empty %}
-    <div class="sp-comments">
-        {% for comment in comments %}
-            <div class="sp-message sp-comment" data-id="{{ comment.id }}">
-                <a id="comment-{{ comment.id }}"></a>
+{% for comment in comments %}
+    <div class="sp-message sp-comment sp:flex {% if comment.parent_id %}sp:px-0{% endif %}" data-id="{{ comment.id }}">
+        <a id="comment-{{ comment.id }}"></a>
 
-                <div class="sp-flex">
-                    <div class="sp-flex-initial sp-me-4">
-                        <img src="{{ comment.author.avatar_url }}" class="sp-avatar sp-max-w-xs {% if comment.parent_id is empty %}md:sp-max-w-md{% endif %}" />
-                    </div>
-                    <div class="sp-grow">
-                        <div class="sp-message-header">
-                            <span class="sp-name sp-font-semibold">
-                                {{ comment.author.formatted_name }}
-                            </span>
-                            {% if comment.parent_id and comment.parent_author %}
-                                &nbsp;<span class="sp-description sp-inline-block">{{ Lang.get('selfservice.in_reply_to') }} <a href="#comment-{{ comment.parent_id }}">{{ comment.parent_author.formatted_name }}</a></span>
-                            {% endif %}
-                            &nbsp;<span class="sp-description sp-inline-block">{{ timeago(comment.created_at) }}</span>
-                        </div>
+        <div class="sp-message-avatar sp:flex-none sp:hidden sp:w-8 sp:pt-1.5 sp:me-3 sp:z-10 sp:md:block {% if not comment.parent_id %}sp:xl:w-12 sp:xl:pt-2 sp:xl:-ms-2{% endif %}">
+            <img src="{{ comment.author.avatar_url }}" class="sp-avatar sp:max-w-8 {% if not comment.parent_id %}sp:xl:max-w-12{% endif %}" loading="lazy" />
+        </div>
 
-                        <div class="sp-comment-text sp-mt-1 sp-mb-3/2 {% if comment.deleted_at %}sp-description{% endif %}">
-                            {{ comment.purified_text|raw }}
-                        </div>
-
-                        {% if not comment.deleted_at %}
-                            <div class="sp-comment-options sp-text-sm sp-text-secondary print:sp-hidden">
-                                <a class="sp-reply-to-comment sp-description" data-id="{{ comment.id }}">{{ Lang.get('general.reply') }}</a>
-                            </div>
-                        {% endif %}
-
-                        {% if comment.children is not empty %}
-                            {% if comment.more|default is not empty and comment_ordering == 1 %}
-                                <button class="sp-show-children-comments sp-button sp-button-sm sp-mt-3" data-parent="{{ comment.id }}">
-                                    {{ Lang.get('selfservice.view_all_replies') }} &raquo;
-                                </button>
-                            {% endif %}
-
-                            {% include 'operator.' ~ template ~ '.selfservice.internal.comment'
-                                with {'comments': comment_ordering == 1 ? comment.children|reverse(true) : comment.children}
-                            %}
-
-                            {% if comment.more|default is not empty and comment_ordering != 1 %}
-                                <button class="sp-show-children-comments sp-button sp-button-sm sp-mt-3" data-parent="{{ comment.id }}">
-                                    {{ Lang.get('selfservice.view_all_replies') }} &raquo;
-                                </button>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                </div>
+        <div class="sp-message-content sp:grow">
+            <div class="sp-message-header">
+                <span class="sp-name sp:font-semibold">
+                    {{ comment.author.formatted_name }}
+                </span>
+                {% if comment.parent_id and comment.parent_author %}
+                    &nbsp;<span class="sp-description sp:inline-block">{{ Lang.get('selfservice.in_reply_to') }} <a href="#comment-{{ comment.parent_id }}">{{ comment.parent_author.formatted_name }}</a></span>
+                {% endif %}
+                &nbsp;<span class="sp-description sp:inline-block">{{ timeago(comment.created_at) }}</span>
             </div>
-        {% endfor %}
 
+            <div class="sp:px-4 sp:py-3 sp:flow-root">
+                <div class="sp-comment-text sp:mb-3 {% if comment.deleted_at %}sp-description{% endif %}">
+                    {{ comment.purified_text|raw }}
+                </div>
+
+                {% if not comment.deleted_at %}
+                    <div class="sp-comment-options sp:text-sm sp:text-secondary sp:print:hidden">
+                        <a class="sp-reply-to-comment sp-description" data-id="{{ comment.id }}">{{ Lang.get('general.reply') }}</a>
+                    </div>
+                {% endif %}
+
+                {% if comment.children is not empty %}
+                    {% if comment.more|default is not empty and comment_ordering == 1 %}
+                        <button class="sp-show-children-comments sp-button sp-button-sm sp:mt-3" data-parent="{{ comment.id }}">
+                            {{ Lang.get('selfservice.view_all_replies') }} &raquo;
+                        </button>
+                    {% endif %}
+
+                    <div class="sp:mt-3">
+                        {% include 'operator.' ~ template ~ '.selfservice.internal.comment'
+                            with {'comments': comment_ordering == 1 ? comment.children|reverse(true) : comment.children}
+                        %}
+                    </div>
+
+                    {% if comment.more|default is not empty and comment_ordering != 1 %}
+                        <button class="sp-show-children-comments sp-button sp-button-sm sp:mt-3" data-parent="{{ comment.id }}">
+                            {{ Lang.get('selfservice.view_all_replies') }} &raquo;
+                        </button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
     </div>
-{% endif %}
+{% endfor %}

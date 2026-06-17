@@ -1,4 +1,4 @@
-<tr class="field {% if hide|default is not empty %}sp-hidden{% endif %}">
+<tr class="field {% if hide|default is not empty %}sp:hidden{% endif %}">
     <td class="field-type" width="120">
         {{ form_hidden('fields[' ~ (field is defined ? field.id : '') ~ '][id]',
             (field is defined ? field.id : null))
@@ -41,16 +41,16 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="field-add-option {% if field is not defined or (field.type != '2' and field.type != '4' and field.type != '5' and field.type != '7' and field.type != '10') %}sp-hidden{% endif %}">
+        <div class="field-add-option {% if field is not defined or (field.type != '2' and field.type != '4' and field.type != '5' and field.type != '7' and field.type != '10') %}sp:hidden{% endif %}">
             {{ form_button(Lang.get('general.add_item', {'item': Lang.get('general.option')}), {'class': 'add-option'}) }}
             {% if field.exists and field.options is not empty %}
-                <div class="sp-description sp-mt-1">
+                <div class="sp-description sp:mt-1">
                     <strong>{{ Lang.choice('general.note', 1) }}:</strong> {{ Lang.get('customfield.option_warning') }}
                 </div>
             {% endif %}
         </div>
     </td>
-    <td class="sp-text-end sp-w-3" title="{{ Lang.get('general.remove') }}">
-        <i class="fas fa-times sp-cursor-pointer remove-button"></i>
+    <td class="sp:text-end sp:w-3" title="{{ Lang.get('general.remove') }}">
+        <i class="fa-solid fa-times sp:cursor-pointer remove-button"></i>
     </td>
 </tr>

@@ -1,18 +1,18 @@
-<div class="sp-sidebox">
+<div class="sp-sidebar-panel sp-hide-on-collapse">
     <form name="search" action="{{ route('selfservice.operator.internal.search', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}" method="get">
-        <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." class="sp-w-full" />
+        <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." class="sp:w-full" />
     </form>
 </div>
 
 {% if categories is not empty and not categories.isEmpty() %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex">
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header sp-collapsible">
             <div class="sp-icon">
-                <i class="fas fa-folder"></i>
+                <i class="fa-solid fa-folder"></i>
             </div>
             <h3>{{ Lang.choice('selfservice.category', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -21,9 +21,9 @@
                 <li>
                     <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">
                         {% if category.count is not empty %}
-                            <span class="sp-badge sp-float-end">{{ category.count }}</span>
+                            <span class="sp-badge sp:float-end">{{ category.count }}</span>
                         {% endif %}
-                        <div class="list-item {% if currentCategory is not empty and currentCategory == category.id %}sp-font-bold{% endif %}">
+                        <div class="list-item {% if currentCategory is not empty and currentCategory == category.id %}sp:font-bold{% endif %}">
                             {% if category.dashes is not empty %}{{ category.dashes|raw }}&nbsp;{% endif %}
                             {{ category.name }}
                         </div>
@@ -35,14 +35,14 @@
 {% endif %}
 
 {% if tags is not empty and not tags.isEmpty() %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex">
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header sp-collapsible">
             <div class="sp-icon">
-                <i class="fas fa-tags"></i>
+                <i class="fa-solid fa-tags"></i>
             </div>
             <h3>{{ Lang.choice('selfservice.tag', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 

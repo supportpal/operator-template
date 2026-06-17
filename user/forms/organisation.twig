@@ -4,7 +4,7 @@
             {{ form_select('organisation', organisations, userOrganisation|default is not empty ? userOrganisation.id : null) }}
 
             {% if record.exists and userOrganisation|default is not empty %}
-                <div class="sp-mt-3">
+                <div class="sp:mt-3">
                     <a class="view-organisation sp-button" href="{{ route('user.operator.organisation.edit', userOrganisation.id) }}" target="_blank">
                         {{ Lang.get('user.view_organisation') }}
                     </a>
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="sp-form-row organisation-notifications {% if userOrganisation|default is empty or record.organisation_access_level == 1 %}sp-hidden{% endif %}">
+    <div class="sp-form-row organisation-notifications {% if userOrganisation|default is empty or record.organisation_access_level == 1 %}sp:hidden{% endif %}">
         {{ form_label('organisation_notifications', Lang.get('user.notifications')) }}
         <div class="sp-input-container">
             {{ form_check('organisation_notifications', 1, record.organisation_notifications|default is not empty ?

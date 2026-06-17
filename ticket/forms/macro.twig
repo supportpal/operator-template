@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="macro-visibility {% if (Request.old('type') is not null and Request.old('type') != 0) or (Request.old('type') is null and record.type != 0) %}sp-hidden{% endif %}">
+            <div class="macro-visibility {% if (Request.old('type') is not null and Request.old('type') != 0) or (Request.old('type') is null and record.type != 0) %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     {{ form_label('public', Lang.get('general.public')) }}
                     <div class="sp-input-container">
@@ -89,15 +89,15 @@
                 </div>
             </div>
 
-            <div class="sp-form-row macro-limit {% if (Request.old('type') is not null and Request.old('type') != 2) or (Request.old('type') is null and record.type != 2) %}sp-hidden{% endif %}">
+            <div class="sp-form-row macro-limit {% if (Request.old('type') is not null and Request.old('type') != 2) or (Request.old('type') is null and record.type != 2) %}sp:hidden{% endif %}">
                 {{ form_label('run_at_most', Lang.get('ticket.macro_run_at_most')) }}
                 <div class="sp-input-container">
-                    {{ form_number('run_at_most', null, {'class': 'sp-w-24', 'min': 1}) }} &nbsp;{{ Lang.get('ticket.macro_run_times') }}
+                    {{ form_number('run_at_most', null, {'class': 'sp:w-24', 'min': 1}) }} &nbsp;{{ Lang.get('ticket.macro_run_times') }}
                     <div class="sp-description">{{ Lang.get('ticket.macro_run_at_most_desc') }}</div>
                 </div>
             </div>
 
-            <div class="sp-form-row sp-form-full macro-events {% if (Request.old('type') is not null and Request.old('type') != 1) or (Request.old('type') is null and record.type != 1) %}sp-hidden{% endif %}">
+            <div class="sp-form-row sp-form-full macro-events {% if (Request.old('type') is not null and Request.old('type') != 1) or (Request.old('type') is null and record.type != 1) %}sp:hidden{% endif %}">
                 {{ form_label('events', Lang.choice('general.event', 2)) }}
                 <div class="sp-input-container">
                     {{ form_select('events[]', events, record.events.pluck('event_id').all(), {'multiple': 'multiple'}) }}
@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row sp-form-full macro-schedules {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp-hidden{% endif %}">
+            <div class="sp-form-row sp-form-full macro-schedules {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp:hidden{% endif %}">
                 {{ form_label('schedules', Lang.choice('ticket.schedule', 2)) }}
                 <div class="sp-input-container">
                     {{ form_select('schedules[]', schedules, record.schedules.pluck('id').all(), {'multiple': 'multiple'}) }}
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row macro-run-as {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp-hidden{% endif %}">
+            <div class="sp-form-row macro-run-as {% if (Request.old('type') is not null and Request.old('type') == 0) or (Request.old('type') is null and record.type == 0) %}sp:hidden{% endif %}">
                 {{ form_label('run_as', Lang.get('ticket.run_as_operator')) }}
                 <div class="sp-input-container">
                     {{ form_select('run_as', runAsOperators) }}
@@ -137,7 +137,7 @@
             {% if oldGroups|default is not empty and oldGroups is not empty %}
                 {# In case there was an error and we're trying to show what they attempted to save #}
                 {% for groupId, group in oldGroups %}
-                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' with {'oldConditions': group.conditions} %}
                 {% endfor %}
             {% else %}
                 {% for groupId, group in record.conditiongroups %}
@@ -146,7 +146,7 @@
             {% endif %}
 
             <div>
-                <div class="plan-conditiongroup-type sp-mb-3">
+                <div class="plan-conditiongroup-type sp:mb-3">
                     {{ form_select('condition_group_type', { 0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group') },
                         record.condition_group_type|default is not empty ? record.condition_group_type : 0)
                     }}
@@ -163,8 +163,8 @@
 
         <div class="sp-form-container is-sortable">
 
-            <div class="sp--mx-6">
-                <table class="rule-table sp-table-grid sp-mb-3 {% if oldActions is empty and record.actions.isEmpty() %}sp-hidden{% endif %}">
+            <div class="sp:-mx-6">
+                <table class="rule-table sp-table-grid sp:mb-3 {% if oldActions is empty and record.actions.isEmpty() %}sp:hidden{% endif %}">
                     <thead>
                         <tr>
                             <th width="14"></th>
@@ -241,8 +241,8 @@
             $('input[name="type"]').on('click', function() {
                 if ($(this).is(':checked')) {
                     if ($(this).val() == 0) {
-                        $('.macro-visibility').removeClass('sp-hidden');
-                        $('.macro-limit, .macro-events, .macro-schedules, .macro-run-as').addClass('sp-hidden');
+                        $('.macro-visibility').removeClass('sp:hidden');
+                        $('.macro-limit, .macro-events, .macro-schedules, .macro-run-as').addClass('sp:hidden');
                         $inputPublic.prop('disabled', false);
                         $selectGroups.enable();
                         $selectEvents.clear();
@@ -251,8 +251,8 @@
                         $selectSchedules.clear();
                         $selectSchedules.disable();
                     } else if ($(this).val() == 1) {
-                        $('.macro-visibility, .macro-limit').addClass('sp-hidden');
-                        $('.macro-events, .macro-schedules, .macro-run-as').removeClass('sp-hidden');
+                        $('.macro-visibility, .macro-limit').addClass('sp:hidden');
+                        $('.macro-events, .macro-schedules, .macro-run-as').removeClass('sp:hidden');
                         $inputPublic.prop('disabled', true);
                         $selectGroups.clear();
                         $selectGroups.disable();
@@ -260,8 +260,8 @@
                         $selectEvents.enable();
                         $selectSchedules.enable();
                     } else if ($(this).val() == 2) {
-                        $('.macro-visibility, .macro-events').addClass('sp-hidden');
-                        $('.macro-limit, .macro-schedules, .macro-run-as').removeClass('sp-hidden');
+                        $('.macro-visibility, .macro-events').addClass('sp:hidden');
+                        $('.macro-limit, .macro-schedules, .macro-run-as').removeClass('sp:hidden');
                         $inputPublic.prop('disabled', true);
                         $selectGroups.clear();
                         $selectGroups.disable();

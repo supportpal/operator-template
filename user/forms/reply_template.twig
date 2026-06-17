@@ -1,6 +1,6 @@
 <div id="sectionWrapper">
 
-    <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp-hidden{% endif %}">
+    <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp:hidden{% endif %}">
         {% for brand in brands %}
             <li id="{{ brand.id }}" {% if loop.first %}class="sp-active"{% endif %}>
                 <a>{{ brand.name }}</a>
@@ -9,7 +9,7 @@
     </ul>
 
     {% for brand in brands %}
-        <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
+        <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp:hidden{% endif %}">
             {# Add an empty item, we use this for DOM cloning when adding new records #}
             {% include 'operator.' ~ template ~ '.user.forms.reply_template_content' with {'hide': true, 'brand': brand} %}
 
@@ -19,8 +19,8 @@
                 {% endfor %}
             </div>
 
-            <div class="sp-form-container sp-border-t-0">
-                <div class="sp-form-row {% if not brand.departments|length %}sp-hidden{% endif %}">
+            <div class="sp-form-container sp:border-t-0">
+                <div class="sp-form-row {% if not brand.departments|length %}sp:hidden{% endif %}">
                     <label></label>
                     <div class="sp-input-container">
                         <select name="brand[{{ brand.id }}][department]" title="{{ Lang.get('ticket.add_for_department') }}" class="add-item-selectize">

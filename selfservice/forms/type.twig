@@ -14,11 +14,11 @@
 
 {% block breadcrumb %}
     {{ Lang.get('selfservice.selfservice') }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {{ brand.name }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <a href="{{ route('selfservice.operator.type.index', {'brand': record.brand_id, 'grid': record.internal ? 'internal' : null}) }}">{{ Lang.choice('selfservice.type', 2) }}</a>
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <strong>
         {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.type', 1)}) }}
     </strong>
@@ -66,7 +66,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                <div class="sp-form-container sp:border-t-0 {% if not availableLanguages|length %}sp:hidden{% endif %}">
                     <div class="sp-form-row">
                         <label></label>
                         <div class="sp-input-container">
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row protected-input {% if record.internal == 1 %}sp-hidden{% endif %}" id="toggle_protected_container">
+            <div class="sp-form-row protected-input {% if record.internal == 1 %}sp:hidden{% endif %}" id="toggle_protected_container">
                 {{ form_label('protected', Lang.get('selfservice.registered_users')) }}
                 <div class="sp-input-container">
                     {{ form_check('protected', 1, null, {'class': 'sp-toggle', 'id': 'toggle_protected'}) }}
@@ -116,21 +116,27 @@
                 </div>
             </div>
 
-            <div class="sp-form-row icon-input {% if record.internal == 1 %}sp-hidden{% endif %}">
+            <div class="sp-form-row icon-input {% if record.internal == 1 %}sp:hidden{% endif %}">
                 {{ form_label('icon', Lang.get('selfservice.frontend_icon')) }}
                 <div class="sp-input-container">
-                    {% set opts = ['fa-book', 'fa-download', 'fa-newspaper'] %}
+                    {% set opts = {
+                        'fa-book': Lang.get('selfservice.icon_book'),
+                        'fa-download': Lang.get('selfservice.icon_download'),
+                        'fa-newspaper': Lang.get('selfservice.icon_newspaper'),
+                    } %}
+                    {% set iconId = record.icon|default('') %}
+                    {% set iconLabel = record.icon_label|default(iconId) %}
                     <select name="icon">
                         <option></option>
-                        {% for value in opts %}
-                            <option value='{{ value }}' {% if record.icon == value %}selected="selected"{% endif %}></option>
-                        {% endfor %}
-                        {% if not in_array(record.icon, opts) %}
-                            <option value="{{ record.icon }}" selected="selected"></option>
+                        {% if iconId and not in_array(iconId, opts|keys) %}
+                            <option value="{{ iconId }}" data-label="{{ iconLabel }}" selected="selected">{{ iconLabel }}</option>
                         {% endif %}
+                        {% for value, label in opts %}
+                            <option value='{{ value }}' data-label="{{ label }}" {% if iconId == value %}selected="selected"{% endif %}>{{ label }}</option>
+                        {% endfor %}
                     </select>
+                    <input type="hidden" name="icon_label" value="{{ iconLabel }}" />
                     <div class="sp-description">{{ Lang.get('selfservice.frontend_icon_desc')|raw }}</div>
-                    <div class="sp-hidden"><i class="fas fa-fw" id="sp-icon-preview"></i></div>
                 </div>
             </div>
 
@@ -155,17 +161,17 @@
                 </div>
             </div>
 
-            <div class="content-articles {% if record.content == 1 %}sp-hidden{% endif %}">
+            <div class="content-articles {% if record.content == 1 %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     {{ form_label('view', Lang.choice('general.view', 1)) }}
                     <div class="sp-input-container sp-input-group">
-                        <label class="sp-inline-block sp-text-center">
-                            <img src="{{ asset_rev('resources/assets/operator/images/view_hierarchical.png') }}" alt="{{ Lang.get('selfservice.hierarchical') }}" class="sp-mb-2" />
+                        <label class="sp:inline-block sp:text-center">
+                            <img src="{{ asset_rev('resources/assets/operator/images/view_hierarchical.png') }}" alt="{{ Lang.get('selfservice.hierarchical') }}" class="sp:mb-2" />
                             {{ form_radio('view', 0, true) }} {{ Lang.get('selfservice.hierarchical') }}
                         </label>
                         &nbsp;&nbsp;
-                        <label class="sp-inline-block sp-text-center">
-                            <img src="{{ asset_rev('resources/assets/operator/images/view_list.png') }}" alt="{{ Lang.get('selfservice.list') }}" class="sp-mb-2" />
+                        <label class="sp:inline-block sp:text-center">
+                            <img src="{{ asset_rev('resources/assets/operator/images/view_list.png') }}" alt="{{ Lang.get('selfservice.list') }}" class="sp:mb-2" />
                             {{ form_radio('view', 1) }} {{ Lang.get('selfservice.list') }}
                         </label>
                         <div class="sp-description">{{ Lang.get('selfservice.type_view_desc') }}</div>
@@ -185,7 +191,7 @@
                     </div>
                 </div>
 
-                <div class="sp-form-row show_on_dashboard {% if record.internal == 1 %}sp-hidden{% endif %}">
+                <div class="sp-form-row show_on_dashboard {% if record.internal == 1 %}sp:hidden{% endif %}">
                     {{ form_label('show_on_dashboard', Lang.get('selfservice.show_on_dashboard')) }}
                     <div class="sp-input-container">
                         {{ form_check('show_on_dashboard', 1, not record.exists or record.show_on_dashboard ? true : null,
@@ -196,7 +202,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row content-external_link {% if record.content == 0 %}sp-hidden{% endif %}">
+            <div class="sp-form-row content-external_link {% if record.content == 0 %}sp:hidden{% endif %}">
                 {{ form_label('external_link', Lang.get('selfservice.external_link')) }}
                 <div class="sp-input-container">
                     {{ form_url('external_link', null, {'size': 45}) }}
@@ -218,46 +224,15 @@
         {{ jsValidator|raw }}
     {% endif %}
 
-    <!-- If custom icon doesn't exist, it'll show a question mark -->
-    <style>i:before { content: "?"; }</style>
-    <script>
-        $(function () {
-            $('select[name="icon"]').selectize({
-                create: true,
-                render: {
-                    item: function(item, escape) {
-                        return '<div><i class="fas fa-fw ' + escape(item.value) + '"></i>&nbsp; ' + escape(item.value) + '</div>';
-                    },
-                    option: function(item, escape) {
-                        return '<div class="sp-flex sp-items-center"><i class="fas fa-3x fa-fw ' + escape(item.value) + '"></i> &nbsp; ' + escape(item.value) + '</div>';
-                    },
-                    option_create: function(data, escape) {
-                        return '<div class="create"><i class="fas fa-fw ' + escape(data.input) + '"></i>&nbsp; ' + escape(data.input) + '</div>';
-                    }
-                },
-                createFilter: function (input) {
-                    var match = input.match(/^fa-[a-z-]+/i);
-                    if (match) {
-                        $('#sp-icon-preview').addClass(input);
-                        var content = window.getComputedStyle(document.getElementById('sp-icon-preview'), ":before")
-                            .getPropertyValue('content');
-                        $('#sp-icon-preview').removeClass(input);
-
-                        return content !== '"?"';
-                    }
-
-                    return false;
-                }
-            });
-        });
-    </script>
-
     <!-- selfserviceslug.js dependencies: Sweetalert2, donetyping -->
     <script src="{{ asset_rev('resources/assets/general/js/done_typing.js') }}"></script>
     <script src="{{ asset_rev('resources/assets/operator/js/selfserviceslug.js') }}"></script>
 
     <!-- Translatable.js dependencies: Selectize -->
     <script src="{{ asset_rev('resources/assets/operator/js/translatable.js') }}"></script>
+
+    <!-- iconsearch.js dependencies: Selectize -->
+    <script src="{{ asset_rev('resources/assets/operator/js/iconsearch.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/multidimensionaldata.js') }}"></script>
     <script>
@@ -275,26 +250,28 @@
         $(document).ready(function() {
             $('input[name="internal"]').on('change', function() {
                 if ($('input[name="internal"]:checked').val() == '1') {
-                    $('.icon-input, .show_on_dashboard, .protected-input').addClass('sp-hidden');
+                    $('.icon-input, .show_on_dashboard, .protected-input').addClass('sp:hidden');
                 } else {
-                    $('.icon-input, .show_on_dashboard, .protected-input').removeClass('sp-hidden');
+                    $('.icon-input, .show_on_dashboard, .protected-input').removeClass('sp:hidden');
                 }
             });
 
+            initIconSearch('select[name="icon"]', {'size': 'fa-3x'});
+
             $('input[name="content"]').on('change', function() {
                 if ($('input[name="content"]:checked').val() == '1') {
-                    $('.content-articles, .slug').addClass('sp-hidden');
+                    $('.content-articles, .slug').addClass('sp:hidden');
                     $('.slug').addClass('dont-show');
-                    $('.content-external_link').removeClass('sp-hidden');
+                    $('.content-external_link').removeClass('sp:hidden');
                 } else {
-                    $('.content-articles, .slug').removeClass('sp-hidden');
+                    $('.content-articles, .slug').removeClass('sp:hidden');
                     $('.slug').removeClass('dont-show');
-                    $('.content-external_link').addClass('sp-hidden');
+                    $('.content-external_link').addClass('sp:hidden');
 
                     // Hide any empty slugs we've shown
                     $('.slug:visible').each(function () {
                         if ($(this).find(':input').val() === '') {
-                            $(this).addClass('sp-hidden')
+                            $(this).addClass('sp:hidden')
                         }
                     });
                 }

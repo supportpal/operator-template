@@ -7,7 +7,7 @@
                 form_check(
                     'emails[' ~ (i is defined ? i : '') ~ '][consume_all]',
                     1,
-                    email|default is not empty and email.consume_all == "1" ? true : null,
+                    email|default is empty or email.consume_all == "1" ? true : null,
                     {'class': 'sp-toggle', 'id': id}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
                 )
             }}

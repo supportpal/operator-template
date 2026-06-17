@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            <div class="sp-single-day {% if record|default is not empty and record.exists and record.number_of_days > 1 %}sp-hidden{% endif %}">
+            <div class="sp-single-day {% if record|default is not empty and record.exists and record.number_of_days > 1 %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     {{ form_label('month', Lang.choice('general.month', 1)) }}
                     <div class="sp-input-container">
@@ -64,8 +64,8 @@
                     {{ form_label('day', Lang.choice('general.day', 1)) }}
                     <div class="sp-input-container">
                         <div>{{ form_select('day') }}</div>
-                        <div class="sp-mt-3">{{ Lang.get('ticket.holiday_or_on_the') }}</div>
-                        <div class="sp-mt-3">
+                        <div class="sp:mt-3">{{ Lang.get('ticket.holiday_or_on_the') }}</div>
+                        <div class="sp:mt-3">
                             {{ form_select('order',
                                 {
                                     '': '',
@@ -77,17 +77,17 @@
                                 })
                             }}
                         </div>
-                        <div class="sp-mt-3">{{ form_select('weekday', {'': ''} + weekdays()) }}</div>
+                        <div class="sp:mt-3">{{ form_select('weekday', {'': ''} + weekdays()) }}</div>
                     </div>
                 </div>
             </div>
 
-            <div class="sp-date-range {% if record|default is empty or not record.exists or record.number_of_days == 1 %}sp-hidden{% endif %}">
+            <div class="sp-date-range {% if record|default is empty or not record.exists or record.number_of_days == 1 %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     {{ form_label('start_date', Lang.get('general.start_date')) }}
                     <div class="sp-input-container">
                         {{ form_text('start_date', record.start_date|date(Config.get('settings.date_format')),
-                            {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
+                            {'class': 'datepicker sp:w-40', 'placeholder': '&#xf073;'}) }}
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@
                     {{ form_label('end_date', Lang.get('general.end_date')) }}
                     <div class="sp-input-container">
                         {{ form_text('end_date', record.end_date|date(Config.get('settings.date_format')),
-                                {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
+                                {'class': 'datepicker sp:w-40', 'placeholder': '&#xf073;'}) }}
                     </div>
                 </div>
             </div>
@@ -163,11 +163,11 @@
 
             $('input[name="type"]').on('click', function () {
                 if ($(this).val() == 0) {
-                    $('.sp-single-day').removeClass('sp-hidden').find(':input').prop('disabled', false);
-                    $('.sp-date-range').addClass('sp-hidden').find(':input').prop('disabled', true);
+                    $('.sp-single-day').removeClass('sp:hidden').find(':input').prop('disabled', false);
+                    $('.sp-date-range').addClass('sp:hidden').find(':input').prop('disabled', true);
                 } else {
-                    $('.sp-single-day').addClass('sp-hidden').find(':input').prop('disabled', true);
-                    $('.sp-date-range').removeClass('sp-hidden').find(':input').prop('disabled', false);
+                    $('.sp-single-day').addClass('sp:hidden').find(':input').prop('disabled', true);
+                    $('.sp-date-range').removeClass('sp:hidden').find(':input').prop('disabled', false);
                 }
             });
         });

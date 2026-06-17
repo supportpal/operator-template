@@ -2,9 +2,9 @@
     <ul class="sp-category-article-list">
         {% for article in related %}
             <li>
-                <ul class="sp-article-details sp-description sp-float-end">
+                <ul class="sp-article-details sp-description sp:float-end">
                     <li>
-                        <i class="fas fa-calendar"></i>&nbsp; {{ timeago(article.published_at) }}
+                        <i class="fa-solid fa-calendar"></i>&nbsp; {{ timeago(article.published_at) }}
                     </li>
                 </ul>
                 <a href='{{ article.url(type) }}'>{{ article.title }}</a>

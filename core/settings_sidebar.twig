@@ -1,15 +1,15 @@
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex {% if module != 'core' %}sp-closed{% endif %}" id="generalSettingsBox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header sp-collapsible {% if module != 'core' %}sp-closed{% endif %}" id="generalSettingsBox">
         <div class="sp-icon">
-            <i class="fas fa-cog"></i>
+            <i class="fa-solid fa-cog"></i>
         </div>
         <h3>{{ Lang.get('general.general') }}</h3>
         <div class="sp-chevron">
-            <i class="fas {% if module == 'core' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+            <i class="fa-solid {% if module == 'core' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
         </div>
     </div>
 
-    <ul {% if module != 'core' %}class="sp-hidden"{% endif %}>
+    <ul {% if module != 'core' %}class="sp:hidden"{% endif %}>
         {% if auth_user().hasPermission('view.apitoken') %}
             <li {% if route starts with 'core.operator.apitoken' %}class="sp-active"{% endif %}>
                 <a href="{{ route('core.operator.apitoken.index') }}">{{ Lang.choice('core.api_token', 2) }}</a>

@@ -1,4 +1,4 @@
-<div class="section-item sp-form-container sp-border-t-0 {% if hide|default is not empty %}sp-hidden{% endif %}">
+<div class="section-item sp-form-container sp:border-t-0 {% if hide|default is not empty %}sp:hidden{% endif %}">
 
     <div class="sp-form-row">
         {{ form_label('reply_template[' ~ brand.id ~ '][' ~ department ~ '][department]', Lang.choice('ticket.department', 1)) }}
@@ -21,7 +21,7 @@
 
             <!-- Only don't show on default brand, -- Any -- department -->
             {{ form_button(Lang.get('general.remove'),
-                {'class': 'remove-button' ~ (brand.id == 'Default' and replyTemplate.department.name is empty ? ' sp-hidden' : '')}
+                {'class': 'remove-button' ~ (brand.id == 'Default' and replyTemplate.department.name is empty ? ' sp:hidden' : '')}
             ) }}
 
         </div>

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <div class="sp-alert sp-alert-error sp-hidden invalid-user">
+    <div class="sp-alert sp-alert-error sp:hidden invalid-user">
         {{ Lang.get('ticket.invalid_user') }}
     </div>
 
@@ -59,7 +59,7 @@
         <div class="sp-form-container ticket-type {% if brand_count() > 1 and user is empty and selected_brand is empty %}hide{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('internal', Lang.get('ticket.ticket_type')) }}
-                <div class="sp-input-container sp-w-full">
+                <div class="sp-input-container sp:w-full">
                     <label>{{ form_radio('internal', 0, true) }} {{ Lang.get('ticket.user_ticket') }}</label> -
                     <span class="sp-description">
                         {% if auth_user().hasPermission('create.user') %}
@@ -69,7 +69,7 @@
                         {% endif %}
                     </span><br />
 
-                    <div class="user-ticket sp-p-3 sp-mt-2 sp-mb-3 sp-bg-primary sp-border sp-border-tertiary sp-rounded">
+                    <div class="user-ticket sp:p-3 sp:mt-2 sp:mb-3 sp:bg-primary sp:border sp:border-tertiary sp:rounded">
                         {% if auth_user().hasPermission('create.user') %}
                             <label>{{ form_radio('user_type', 0, true) }} {{ Lang.get('ticket.existing_user') }}</label>
                             &nbsp;&nbsp;
@@ -78,14 +78,14 @@
                             {{ form_hidden('user_type', 0) }}
                         {% endif %}
 
-                        <div class="existing-user sp-mt-3" id="existing-user">
+                        <div class="existing-user sp:mt-3" id="existing-user">
                             <select name="user" data-default-opt="{{ user|json_encode(constant('JSON_FORCE_OBJECT')) }}">
                                 <option></option>
                             </select>
                         </div>
 
                         {% if auth_user().hasPermission('create.user') %}
-                            <div class="new-user sp-hidden">
+                            <div class="new-user sp:hidden">
                                 <div class="sp-form-row">
                                     {{ form_label('user_firstname', Lang.get('user.firstname')) }}
                                     <div class="sp-input-container">{{ form_text('user_firstname') }}</div>

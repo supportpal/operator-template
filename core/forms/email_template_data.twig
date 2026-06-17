@@ -1,4 +1,4 @@
-<div class="section-item sp-form-container sp-border-t-0 {% if hide|default is not empty %}sp-hidden{% endif %}">
+<div class="section-item sp-form-container sp:border-t-0 {% if hide|default is not empty %}sp:hidden{% endif %}">
 
     <div class="sp-form-row">
         {{ form_label('template[' ~ brand.id ~ '][' ~ language_code ~ '][language]', Lang.choice('general.language', 1)) }}
@@ -21,7 +21,7 @@
 
             <!-- Only don't show on default brand, -- Any -- department -->
             {{ form_button(Lang.get('general.remove'),
-                { 'class': 'remove-button' ~ (brand.id == 'Default' and email_template.language.name is empty ? ' sp-hidden' : '') }
+                { 'class': 'remove-button' ~ (brand.id == 'Default' and email_template.language.name is empty ? ' sp:hidden' : '') }
             ) }}
 
         </div>
@@ -52,7 +52,7 @@
             }}
 
             {% if email_template.language.name is empty %}
-                <div class="sp-mt-3">
+                <div class="sp:mt-3">
                     {{ form_button(Lang.get('general.reset'), {'class': 'reset-button', 'data-id': record.id}) }}
                 </div>
             {% endif %}

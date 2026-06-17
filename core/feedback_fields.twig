@@ -12,23 +12,23 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:m-6 sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-container sp-m-auto">
+    <div class="sp:container sp:m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-bg-primary sp-shadow sp-break-words sm:sp-rounded print:sp-shadow-none">
+        <div class="sp:bg-primary sp:wrap-break-word sp:sm:rounded">
             {{ View.fireHook('operator.content_start') }}
 
-            <div class="sp-p-6 sp-pb-0 sp-mt-6 sm:sp-mt-8 print:sp-p-0">
+            <div class="sp:p-6 sp:pb-0 sp:mt-6 sp:sm:mt-8 sp:print:p-0">
                 {{ View.fireHook('operator.content_inner_start') }}
 
                 {% block feedback_header %}{% endblock %}
 
                 {% if customfields is not empty %}
-                    <div class="sp-form-container sp-border-b-0">
+                    <div class="sp-form-container sp:border-b-0">
                         <div class="sp-form-row">
                             <label>{{ Lang.get('ticket.rating') }}</label>
                             <div class="sp-input-container">
@@ -72,7 +72,7 @@
             $(':input').prop('disabled', true);
 
             // Set wysiwyg editor to readonly.
-            $('textarea.tox-editor').editor().setMode('readonly');
+            $('textarea.tox-editor').editor().mode.set('readonly');
         });
     </script>
 

@@ -10,15 +10,15 @@
 
 {% block breadcrumb %}
     {{ Lang.get('selfservice.selfservice') }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% if type|default is not empty %}
         <a href="{{ route('selfservice.operator.type.index', { 'brand': type.brand_id }) }}">{{ type.brand.name }}</a>
-        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
         <a href="{{ route('selfservice.operator.article.index', { 'type': type.id }) }}">{{ type.name }}</a>
-        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% else %}
         <a href="{{ route('selfservice.operator.article.index') }}">{{ Lang.choice('selfservice.article', 2) }}</a>
-        &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+        &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% endif %}
     <strong>
         {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
@@ -74,7 +74,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+                <div class="sp-form-container sp:border-t-0 {% if not availableLanguages|length %}sp:hidden{% endif %}">
                     <div class="sp-form-row">
                         <label></label>
                         <div class="sp-input-container">
@@ -150,20 +150,20 @@
                 </div>
             </div>
 
-            <div class="sp-form-row published_at {% if not record.published %}not-published sp-hidden{% endif %}">
+            <div class="sp-form-row published_at {% if not record.published %}not-published sp:hidden{% endif %}">
                 {{ form_label('published_date', Lang.get('selfservice.published_date')) }}
                 <div class="sp-input-container">
                     {% set disabled = not record.published ? { 'disabled': 'disabled' } : {} %}
-                    <div class="sp-block xs:sp-inline-block">
+                    <div class="sp:block sp:xs:inline-block">
                         {{ form_text('published_date',
                             timeWithOffset(record.published_at, false)|date(Config.get('settings.date_format')),
-                            {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}|merge(disabled)
+                            {'class': 'datepicker sp:w-40', 'placeholder': '&#xf073;'}|merge(disabled)
                         ) }}
                     </div>
-                    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+                    <div class="sp:block sp:mt-2 sp:xs:inline-block sp:xs:mt-0">
                         {{ form_text('published_time',
                             timeWithOffset(record.published_at, false)|date(Config.get('settings.time_format')),
-                            {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}|merge(disabled)
+                            {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}|merge(disabled)
                         ) }}
                     </div>
                     <div class="sp-description">{{ Lang.get('selfservice.published_date_desc') }}</div>
@@ -244,10 +244,10 @@
     </script>
 
     <!-- Attachments JS -->
-    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/fileupload.min.js') }}"></script>
     <script>
         $('.article:not(:first)').each(function (index) {
-            new FileUpload({
+            new SpFileUpload.FileUpload({
                 $element: $(this).find('.sp-file-upload'),
                 $container: $(this),
                 inputName: $(this).find('.sp-attachment-details')
@@ -270,6 +270,8 @@
             opts = {
                 plugins: $.fn.editor.defaults.plugins.concat(['anchor']),
                 toolbar: $.fn.editor.defaults.toolbar + ' | anchor',
+                toolbar_sticky: true,
+                ui_mode: 'split',
             };
         });
     </script>

@@ -11,60 +11,60 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <a href="{{ route('ticket.operator.customfield.create') }}" class="sp-action sp-button">
-                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a><!--
                 --><button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden ordering">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden ordering">
         {{ Lang.get('messages.success_ordering') }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ordering">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden ordering">
         {{ Lang.get('messages.error_ordering') }}
     </div>
 {% endblock %}
 
 {% block content %}
 
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
-            <div class="sp-table-row">
+        <div class="sp:table">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.name') }}:</label>
                 <div id="filter_name"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('customfield.depends_on') }}:</label>
                 <div id="filter_depends"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.type') }}:</label>
                 <div id="filter_type"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.required') }}:</label>
                 <div id="filter_required"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('customfield.public') }}:</label>
                 <div id="filter_public"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('customfield.encrypted') }}:</label>
                 <div id="filter_encrypted"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('customfield.purge') }}:</label>
                 <div id="filter_purge"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('customfield.locked') }}:</label>
                 <div id="filter_locked"></div>
             </div>

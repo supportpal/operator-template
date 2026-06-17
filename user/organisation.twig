@@ -11,12 +11,12 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <a href="{{ route('user.operator.organisation.create') }}" class="sp-action sp-button" id="createOrganisation">
-                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a><!--
                 --><button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
@@ -29,7 +29,7 @@
         {% include 'operator.' ~ template ~ '.core.search_tabs' %}
     {% endif %}
 
-    <div class="sp-grid-filtering sp-my-6 sp-hidden">
+    <div class="sp-grid-filtering sp:my-6 sp:hidden">
         {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
     </div>
 

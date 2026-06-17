@@ -7,7 +7,7 @@
 		<div class="sp-alert sp-alert-error">{{ reset_error }}</div>
 
 		<a href="{{ route('operator.login') }}">
-			<button class="sp-block sp-w-full">{{ Lang.get('user.return_to_login') }}</button>
+			<button class="sp:block sp:w-full">{{ Lang.get('user.return_to_login') }}</button>
 		</a>
 
 	{% else %}
@@ -30,20 +30,20 @@
             {{ form_hidden('email', Request.input('email')) }}
             {{ form_hidden('token', Request.input('token')) }}
 
-			<div class="sp-form-row sp-form-full sp-mb-4">
+			<div class="sp-form-row sp-form-full sp:mb-4">
 				<div class="sp-input-container">
 					{{ form_password('password', {'placeholder': Lang.get('general.password'), 'autocomplete': 'new-password'}) }}
 				</div>
 			</div>
 
-			<div class="sp-form-row sp-form-full sp-mb-6">
+			<div class="sp-form-row sp-form-full sp:mb-6">
 				<div class="sp-input-container">
 					{{ form_password('password_confirmation', {'placeholder': Lang.get('user.confirm_password'), 'autocomplete': 'new-password'}) }}
 				</div>
 			</div>
 
-			<div class="sp-form-row sp-form-full sp-m-0">
-				{{ form_submit(Lang.get('general.save'), {'class': 'sp-w-full'}) }}
+			<div class="sp-form-row sp-form-full sp:m-0">
+				{{ form_submit(Lang.get('general.save'), {'class': 'sp:w-full'}) }}
 			</div>
 
 		{{ form_close() }}

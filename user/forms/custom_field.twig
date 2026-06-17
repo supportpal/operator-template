@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp-hidden{% endif %}">
+            <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp:hidden{% endif %}">
 
                 <div id="sortable">
                     {% include 'operator.' ~ template ~ '.forms.custom_field_option' with {'hide': true} %}
@@ -147,7 +147,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row encrypt-field {% if form_getValueAttribute('type') not in [6,8,9] %}sp-hidden{% endif %}">
+            <div class="sp-form-row encrypt-field {% if form_getValueAttribute('type') not in [6,8,9] %}sp:hidden{% endif %}">
                 {{ form_label('encrypted', Lang.get('customfield.encrypted')) }}
                 <div class="sp-input-container">
                     {% if record|default is not empty and record.exists %}

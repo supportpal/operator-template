@@ -15,9 +15,9 @@
             <div class="sp-input-container">
                 <span id="spanLicenseText">
                     {{ license_key }}
-                    <div class="sp-mt-3">
+                    <div class="sp:mt-3">
                         <button id="spanLicenseUpdate">
-                            <i class="fas fa-edit"></i>&nbsp; {{ Lang.get('license.update') }}
+                            <i class="fa-solid fa-edit"></i>&nbsp; {{ Lang.get('license.update') }}
                         </button>
                     </div>
                 </span>
@@ -27,7 +27,7 @@
         <div class="sp-form-row">
             <label>{{ Lang.get('core.license_status') }}</label>
             <div class="sp-input-container">
-                <strong class="sp-text-green-600">{{ Lang.get('general.active') }}</strong>
+                <strong class="sp:text-green-600">{{ Lang.get('general.active') }}</strong>
             </div>
         </div>
 
@@ -37,8 +37,8 @@
 
     <div class="sp-form-container">
 
-        <button class="sp-my-3" id="spanLicenseRefresh">
-            <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
+        <button class="sp:my-3" id="spanLicenseRefresh">
+            <i class="fa-solid fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
         </button>
 
         <div class="sp-form-row">
@@ -135,12 +135,12 @@
                 <label>{{ Lang.get('core.support_status') }}</label>
                 <div class="sp-input-container">
                     {% if licenseInformation.supportStatus == 'Active' %}
-                        <strong class="sp-text-green-600">{{ licenseInformation.supportStatus }}</strong>
+                        <strong class="sp:text-green-600">{{ licenseInformation.supportStatus }}</strong>
                         {% if not monthlyProduct %}
                             &nbsp; (<a href="https://www.supportpal.com/manage/cart.php?gid=addons" target="_blank">{{ Lang.get('core.renew') }}</a>)
                         {% endif %}
                     {% elseif licenseInformation.supportStatus == 'Expired' %}
-                        <strong class="sp-text-red-600">{{ licenseInformation.supportStatus }}</strong> - {{ Lang.get('core.support_status_desc')|raw }}
+                        <strong class="sp:text-red-600">{{ licenseInformation.supportStatus }}</strong> - {{ Lang.get('core.support_status_desc')|raw }}
                     {% else %}
                         {{ licenseInformation.supportStatus }}
                     {% endif %}
@@ -170,9 +170,9 @@
             <div class="sp-input-container">
                 {{ version.using() }}
                 {% if version.isUpgradeAvailable() %}
-                    &nbsp; <strong class="sp-text-red-600">{{ Lang.get('Licensing::license.update') }}</strong>
+                    &nbsp; <strong class="sp:text-red-600">{{ Lang.get('Licensing::license.update') }}</strong>
                 {% elseif version.isPreRelease() %}
-                    &nbsp; <strong class="sp-text-red-600">{{ Lang.get('Licensing::license.pre_release') }}</strong>
+                    &nbsp; <strong class="sp:text-red-600">{{ Lang.get('Licensing::license.pre_release') }}</strong>
                 {% endif %}
             </div>
         </div>

@@ -1,0 +1,51 @@
+<ul class="sp:list-none sp:p-0 sp:m-0 sp:border sp:border-secondary sp:rounded sp:text-start sp:overflow-y-auto" style="max-height: 15rem;">
+    {% for ticket in selectedTickets %}
+        <li class="sp:py-1 sp:px-3{% if not loop.first %} sp:border-t sp:border-secondary{% endif %}">
+            <a href="{{ ticket.operator_url }}" target="_blank">#{{ ticket.number }} - {{ ticket.subject }}</a>
+            <br />
+            <img src="{{ ticket.user.avatar_url }}" class="sp-avatar sp:max-w-5" alt="{{ ticket.user.formatted_name }}" />
+            &nbsp;
+            <span class="sp-description">{{ ticket.user.formatted_name }}</span>
+        </li>
+    {% endfor %}
+</ul>
+
+<br />
+
+<form>
+    <label for="swal2-select">{{ Lang.get('ticket.merge_tickets_into') }}</label>
+    <select name="merge_into_id" id="swal2-select">
+        {% if selectedTickets|length > 1 %}
+            {% for ticket in selectedTickets %}
+                <option value="{{ ticket.id }}"
+                        data-data='{{ ticket|json_encode }}'
+                        {% if oldestTicket and ticket.id == oldestTicket.id %}selected="selected"{% endif %}>
+                    #{{ ticket.number }}
+                </option>
+            {% endfor %}
+        {% else %}
+            <option value=""></option>
+            {% for ticket in recentTickets %}
+                <option value="{{ ticket.id }}" data-data='{{ ticket|json_encode }}'>
+                    #{{ ticket.number }}
+                </option>
+            {% endfor %}
+        {% endif %}
+    </select>
+
+    <br />
+
+    <label for="swal2-status-select">{{ Lang.get('ticket.set_status') }}</label>
+    <select name="status" id="swal2-status-select">
+        <optgroup label="{{ Lang.get('general.default') }}">
+            <option value="" selected="selected">{{ Lang.get('general.unchanged') }}</option>
+        </optgroup>
+        {% if statuses|length > 0 %}
+            <optgroup label="{{ Lang.choice('general.status', 2) }}">
+                {% for status in statuses %}
+                    <option value="{{ status.id }}">{{ status.name }}</option>
+                {% endfor %}
+            </optgroup>
+        {% endif %}
+    </select>
+</form>

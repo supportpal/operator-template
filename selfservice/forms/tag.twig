@@ -10,9 +10,9 @@
 
 {% block breadcrumb %}
     {{ Lang.get('selfservice.selfservice') }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <a href="{{ route('selfservice.operator.tag.index') }}">{{ Lang.choice('selfservice.tag', 2) }}</a>
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <strong>
         {{ Lang.get(record.exists ? 'general.edit_item' : 'general.add_item', {'item': Lang.choice('selfservice.tag', 1)}) }}
     </strong>
@@ -54,7 +54,7 @@
                 {% endfor %}
             </div>
 
-            <div class="sp-form-container sp-border-t-0 {% if not availableLanguages|length %}sp-hidden{% endif %}">
+            <div class="sp-form-container sp:border-t-0 {% if not availableLanguages|length %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     <label></label>
                     <div class="sp-input-container">

@@ -39,15 +39,15 @@
                 {{ form_label('interval', Lang.get('general.interval')) }}
                 <div class="sp-input-container">
                     <div class="sp-duration">
-                        {{ form_number('interval_days', interval|default is not empty and interval['days'] != 0 ? interval['days'] : null, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('interval_days', interval|default is not empty and interval['days'] != 0 ? interval['days'] : null, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('interval_hours', interval|default is not empty and interval['hours'] != 0 ? interval['hours'] : null, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('interval_hours', interval|default is not empty and interval['hours'] != 0 ? interval['hours'] : null, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('interval_minutes', interval|default is not empty and interval['minutes'] != 0 ? interval['minutes'] : null, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('interval_minutes', interval|default is not empty and interval['minutes'] != 0 ? interval['minutes'] : null, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">{{ Lang.get('core.interval_desc') }}</div>

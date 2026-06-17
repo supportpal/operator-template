@@ -6,20 +6,20 @@
 
 {% block content %}
 
-    <div class="md:sp-flex">
-        <div class="sp-flex-grow">
-            <h1 class="sp-mb-0">{{ dashboardName }}</h1>
+    <div class="sp:md:flex">
+        <div class="sp:grow">
+            <h1 class="sp:mb-0">{{ dashboardName }}</h1>
         </div>
 
         {% if cards is not empty %}
-            <div class="sp-flex-none sp-dashboard-actions sp-my-4 sp-overflow-x-auto sp-whitespace-nowrap md:sp-my-0">
+            <div class="sp:flex-none sp-dashboard-actions sp:my-4 sp:overflow-x-auto sp:whitespace-nowrap sp:md:my-0">
                 {% if timeframe.isEnabled() %}
                     <div class="sp-report-timeframe sp-action-bar">
 
-                        <div class="sp-dropdown-container xl:sp-hidden">
+                        <div class="sp-dropdown-container sp:xl:hidden">
                             <button class="sp-action sp-option selected">
                                 <span class="sp-timeframe-selected">{{ defaultTimeframe.toString() }}</span>
-                                &nbsp;<i class="fas fa-chevron-down sp-text-tertiary sp-text-xs"></i>
+                                &nbsp;<i class="fa-solid fa-chevron-down sp:text-tertiary sp:text-xs"></i>
                             </button>
                             <div class="sp-dropdown">
                                 <ul>
@@ -41,13 +41,13 @@
                             <button data-start-time="{{ time.getStartTimestamp() }}"
                                     data-end-time="{{ time.getEndTimestamp() }}"
                                     data-time="{{ time.toString() }}"
-                                    class="sp-option relative {% if time is same as(defaultTimeframe) %}default{% endif %} sp-hidden xl:sp-inline-block">
+                                    class="sp-option relative {% if time is same as(defaultTimeframe) %}default{% endif %} sp:hidden sp:xl:inline-block">
                                 {{ time.toString() }}
                             </button>
                         {%- endfor -%}
                         <button class="sp-option custom sp-filter-datepicker">
                             {{ Lang.get('general.custom') }} &nbsp;<i class="fa-solid fa-calendar-days"></i>
-                            <span class="sp-filter-datepicker-text-wrapper sp-hidden">
+                            <span class="sp-filter-datepicker-text-wrapper sp:hidden">
                                 &#124;
                                 <span class="sp-filter-datepicker-text"></span>
                             </span>
@@ -55,7 +55,7 @@
                     </div>
                 {% endif %}
 
-                <div class="sp-action-bar sp-ms-4">
+                <div class="sp-action-bar sp:ms-4">
                     <button class="sp-option refresh-all">
                         <i class="fa-solid fa-arrows-rotate"></i>
                     </button>
@@ -65,13 +65,13 @@
     </div>
 
     {% if dashboardDescription is not empty %}
-        <p class="sp-mt-2">{{ dashboardDescription }}</p>
+        <p class="sp:mt-2">{{ dashboardDescription }}</p>
     {% endif %}
 
     {% include 'operator.' ~ template ~ '.report.filtering' %}
 
     {% if cards is empty %}
-        <div class="sp-p-2 sp-bg-secondary sp-border sp-border-tertiary sp-rounded sp-text-center sp-description">
+        <div class="sp:p-2 sp:bg-secondary sp:border sp:border-tertiary sp:rounded sp:text-center sp-description">
             {{ Lang.get('report.no_cards_found') }}
         </div>
     {% endif %}
@@ -96,22 +96,22 @@
                  gs-h="{{ card.height() }}">
 
                 <div class="grid-stack-item-content">
-                    <div class="sp-flex sp-flex-col sp-h-full">
-                        <div class="sp-flex sp-flex-row sp-px-3 sp-py-2 sp-mb-2 sp-bg-secondary sp-border-b sp-border-tertiary">
-                            <div class="sp-flex-grow sp-font-bold sp-truncate">
+                    <div class="sp:flex sp:flex-col sp:h-full">
+                        <div class="sp:flex sp:flex-row sp:px-3 sp:py-2 sp:mb-2 sp:bg-secondary sp:border-b sp:border-tertiary">
+                            <div class="sp:grow sp:font-bold sp:truncate">
                                 {{ card.name() }}
                             </div>
-                            <div class="sp-flex-initial sp-flex sp-items-center sp-ms-3">
-                                <div class="interacts-with-timeframe sp-description sp-me-3 sp-truncate sp-hidden">
+                            <div class="sp:flex-initial sp:flex sp:items-center sp:ms-3">
+                                <div class="interacts-with-timeframe sp-description sp:me-3 sp:truncate sp:hidden">
                                     {{ Lang.get('report.group_by') }}&nbsp;
-                                    <select class="timeframe-units sp-min-h-[auto] sp-py-0 sp-bg-primary sp-border-0"></select>
+                                    <select class="timeframe-units sp:min-h-auto sp:py-0 sp:bg-primary sp:border-0"></select>
                                 </div>
                                 <div class="sp-dropdown-container">
-                                    <div class="sp-action sp-px-3/2 sp-cursor-pointer">
-                                        <i class="fas fa-ellipsis-v"></i>
+                                    <div class="sp-action sp:px-1.5 sp:cursor-pointer">
+                                        <i class="fa-solid fa-ellipsis-v"></i>
                                     </div>
-                                    <div class="sp-dropdown sp-end-0 sp-me-3/2">
-                                        <ul class="sp-text-end">
+                                    <div class="sp-dropdown sp:end-0 sp:me-1.5">
+                                        <ul class="sp:text-end">
                                             <li>
                                                 <a class="sp-dropdown-item refresh-btn" href="#">
                                                     {{ Lang.get('general.refresh') }}
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="sp-flex-grow">
+                        <div class="sp:grow">
                             {{ card.content()|raw }}
                         </div>
                     </div>

@@ -12,22 +12,22 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="xs:sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:xs:m-6 sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-container sp-m-auto">
+    <div class="sp:container sp:m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-shadow-none">
+        <div class="sp:bg-primary sp:wrap-break-word sp:xs:rounded">
             {{ View.fireHook('operator.content_start') }}
 
-            <div class="sp-p-6 print:sp-p-0">
+            <div class="sp:p-6 sp:print:p-0">
                 {{ View.fireHook('operator.content_inner_start') }}
 
-                <h2 class="sp-mt-0">{{ record.job_name }}</h2>
+                <h2 class="sp:mt-0">{{ record.job_name }}</h2>
 
-                <div class="md:sp-p-6 md:sp-border md:sp-border-secondary md:sp-rounded">
+                <div class="sp:md:p-6 sp:md:border sp:md:border-secondary sp:md:rounded">
 
                     <div class="sp-form-row">
                         <label>{{ Lang.get('general.id') }}</label>
@@ -46,7 +46,7 @@
                         </div>
                     {% endif %}
 
-                    <div class="sp-form-row sp-mb-0">
+                    <div class="sp-form-row sp:mb-0">
                         <label>{{ Lang.get('core.failed_at') }}</label>
                         <div>{{ formatDate(record.failed_at_timestamp) }}</div>
                     </div>
@@ -55,11 +55,11 @@
 
                 <h2>{{ Lang.get('core.exception') }}</h2>
 
-                <div class="sp-border sp-border-b-0 sp-border-secondary sp-rounded">
+                <div class="sp:border sp:border-b-0 sp:border-secondary sp:rounded">
                     <table class="sp-table-grid">
                         {% for line in record.exception|split('\n') %}
                         <tr>
-                            <td class="!sp-border-secondary {% if loop.last %}sp-rounded-b{% endif %}"><code>{{ line }}</code></td>
+                            <td class="sp:border-secondary! {% if loop.last %}sp:rounded-b-sm{% endif %}"><code>{{ line }}</code></td>
                         </tr>
                         {% endfor %}
                     </table>

@@ -14,33 +14,33 @@
 
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 {% if (auth_user().hasPermission('create.ticket')) %}
                     <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
                        class="sp-action sp-button" id="openNewTicket">
-                        <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                        <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                     </a><!--
                 {% else %}
                     <!--
                 {% endif %}
-                --><button class="sp-action sp-inline-block sp-filter-results">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                --><button class="sp-action sp:inline-block sp-filter-results">
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li><!--
 
             {% if trashed_only %}
                 {% if auth_user().hasPermission('update.ticket|delete.ticket') %}
-                    --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                    --><li class="sp-action-group sp-grid-actions sp:hidden">
                         {% if (auth_user().hasPermission('update.ticket')) %}
                             <button class="sp-action restore-ticket" disabled="disabled" title="{{ Lang.get('general.restore') }}">
-                                <i class="fas fa-undo"></i>
+                                <i class="fa-solid fa-undo"></i>
                             </button><!--
                         {% else %}
                             <!--
                         {% endif %}
                         {% if (auth_user().hasPermission('delete.ticket')) %}
                         --><button class="sp-action delete-forever-ticket" disabled="disabled" title="{{ Lang.get('general.delete_forever') }}">
-                            <i class="fas fa-times"></i>
+                            <i class="fa-solid fa-times"></i>
                         </button>
                         {% else %}
                             -->
@@ -52,12 +52,12 @@
             {% else %}
                 {% if auth_user().hasPermission('update.ticket|delete.ticket_trash') %}
                     {% if auth_user().hasPermission('update.ticket') %}
-                        --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
+                        --><li class="sp-action-group sp-grid-actions sp:hidden">
                             <div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_department') }}">
-                                    <i class="fas fa-folder"></i>
+                                    <i class="fa-solid fa-folder"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                <div class="sp-dropdown sp:top-0 sp:mt-12">
                                     <div>
                                         <select name="department">
                                             <option value="">{{ Lang.get('ticket.change_department') }}...</option>
@@ -76,9 +76,9 @@
                             </div><!--
                             --><div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_status') }}">
-                                    <i class="fas fa-circle"></i>
+                                    <i class="fa-solid fa-circle"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                <div class="sp-dropdown sp:top-0 sp:mt-12">
                                     <div>
                                         <select name="status">
                                             <option value="">{{ Lang.get('ticket.change_status') }}...</option>
@@ -93,9 +93,9 @@
                             </div><!--
                             -->{% if obj_priorities.count() > 1 %}<div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
-                                    <i class="fas fa-square-full"></i>
+                                    <i class="fa-solid fa-square-full"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-mt-12">
+                                <div class="sp-dropdown sp:top-0 sp:mt-12">
                                     <div>
                                         <select name="priority">
                                             <option value="">{{ Lang.get('ticket.change_priority') }}...</option>
@@ -110,20 +110,20 @@
                             </div>
                         </li>{% endif %}<!--
 
-                        --><li class="sp-action-group sp-grid-actions sp-inline-block sp-hidden">
-                            <div class="sp-dropdown-container xs:sp-relative">
+                        --><li class="sp-action-group sp-grid-actions sp:hidden">
+                            <div class="sp-dropdown-container sp:xs:relative">
                                 <button class="sp-action" title="{{ Lang.get('ticket.assigned_operator') }}">
-                                    <i class="fas fa-user-tie"></i>
+                                    <i class="fa-solid fa-user-tie"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-start-0 sp-mt-12 sp-ms-1 xs:sp-start-auto xs:sp-end-0
-                                            xs:sp-ms-0 sm:sp-start-0 sm:sp-ms-0">
+                                <div class="sp-dropdown sp:top-0 sp:start-0 sp:mt-12 sp:ms-1 sp:xs:start-auto sp:xs:end-0
+                                            sp:xs:me-0 sp:sm:start-0 sp:sm:ms-0">
                                     <div>
                                         <select name="assign">
                                             <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
                                         </select>
 
-                                        <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
-                                            <span class="sp-bg-primary sp-px-4">{{ Lang.get('general.or') }}</span>
+                                        <div class="sp-description sp:my-3 sp:border-b sp:border-secondary sp:text-center sp:leading-0">
+                                            <span class="sp:bg-primary sp:px-4">{{ Lang.get('general.or') }}</span>
                                         </div>
 
                                         <select name="unassign">
@@ -133,18 +133,18 @@
                                 </div>
                             </div><!--
                             {% if total_tags > 0 %}
-                                --><div class="sp-dropdown-container sp-relative">
+                                --><div class="sp-dropdown-container sp:relative">
                                     <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
-                                        <i class="fas fa-tags"></i>
+                                        <i class="fa-solid fa-tags"></i>
                                     </button>
-                                    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sm:sp-start-0 sm:sp-ms-1 sm:sp-me-0">
+                                    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
                                         <div>
                                             <select name="tag">
                                                 <option value="">{{ Lang.get('ticket.add_tag') }}...</option>
                                             </select>
 
-                                            <div class="sp-description sp-my-3 sp-border-b sp-border-secondary sp-text-center sp-leading-0">
-                                                <span class="sp-bg-primary sp-px-4">{{ Lang.get('general.or') }}</span>
+                                            <div class="sp-description sp:my-3 sp:border-b sp:border-secondary sp:text-center sp:leading-0">
+                                                <span class="sp:bg-primary sp:px-4">{{ Lang.get('general.or') }}</span>
                                             </div>
 
                                             <select name="remove_tag">
@@ -159,13 +159,13 @@
                         </li><!--
 
                         {% if not obj_macros.isEmpty() %}
-                            --><li class="sp-action-group sp-grid-actions sp-inline-block sp-relative sp-hidden">
+                            --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
                                 <div class="sp-dropdown-container">
                                     <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
-                                        <i class="fas fa-bolt-lightning"></i>
+                                        <i class="fa-solid fa-bolt-lightning"></i>
                                     </button>
-                                    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sp-me-1 sm:sp-start-0 sm:sp-ms-1 sm:sp-me-0">
-                                        <ul class="sp-text-end sm:sp-text-start">
+                                    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
+                                        <ul class="sp:text-end sp:sm:text-start">
                                             {% for macro in obj_macros %}
                                                 <li>
                                                     <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
@@ -184,24 +184,24 @@
                         <!--
                     {% endif %}
 
-                    --><li class="sp-action-group sp-grid-actions sp-inline-block sp-relative sp-hidden">
+                    --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
                         {% if auth_user().hasPermission('update.ticket') %}
-                            <button class="sp-action reply-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.reply') }}">
-                                <i class="fas fa-reply"></i>
+                            <button class="sp-action reply-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('general.reply') }}">
+                                <i class="fa-solid fa-reply"></i>
                             </button><!--
-                            --><button class="sp-action take-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
-                                <i class="fas fa-thumbtack"></i>
+                            --><button class="sp-action take-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
+                                <i class="fa-solid fa-hand"></i>
                             </button><!--
-                            --><button class="sp-action close-ticket !sp-pe-6 sp-hidden md:sp-inline-block"
+                            --><button class="sp-action close-ticket sp:pe-6! sp:hidden sp:md:inline-block"
                                    title="{{ Lang.get('general.close') }}">
-                            <i class="fas fa-check"></i>
+                            <i class="fa-solid fa-check"></i>
                             </button>
-                            <div class="close-ticket-options sp-dropdown-container sp-relative sp-hidden md:sp-inline-block">
-                                <button class="sp-action sp-w-5 !sp-px-1 !sp--ms-6">
-                                    <i class="fas fa-chevron-down fa-2xs"></i>
+                            <div class="close-ticket-options sp-dropdown-container sp:relative sp:hidden sp:md:inline-block">
+                                <button class="sp-action sp:w-5 sp:px-1! sp:-ms-6!">
+                                    <i class="fa-solid fa-chevron-down fa-2xs"></i>
                                 </button>
-                                <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 sp-me-1">
-                                    <ul class="sp-text-end">
+                                <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1">
+                                    <ul class="sp:text-end">
                                         <li class="close-ticket">
                                             <a>{{ Lang.get('general.close') }}</a>
                                         </li>
@@ -214,32 +214,34 @@
                                     </ul>
                                 </div>
                             </div><!--
-                            --><button class="sp-action delete-ticket sp-hidden md:sp-inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
-                                <i class="fas fa-trash"></i>
+                            --><button class="sp-action delete-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
+                                <i class="fa-solid fa-trash"></i>
                             </button><!--
                         {% else %}
                             <!--
                         {% endif %}
-                        --><div class="sp-dropdown-container">
+                    --></li><!--
+                    --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
+                        <div class="sp-dropdown-container">
                             <button class="sp-action">
-                                <i class="fas fa-ellipsis-v"></i>
+                                <i class="fa-solid fa-ellipsis-v"></i>
                             </button>
-                            <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12 md:sp-end-auto">
-                                <ul class="sp-text-end md:sp-text-start">
+                            <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:md:end-auto">
+                                <ul class="sp:text-end sp:md:text-start">
                                     {% if auth_user().hasPermission('update.ticket') %}
-                                        <li class="reply-ticket md:sp-hidden">
+                                        <li class="reply-ticket sp:md:hidden">
                                             <a>{{ Lang.get('general.reply') }}</a>
                                         </li>
-                                        <li class="take-ticket md:sp-hidden">
+                                        <li class="take-ticket sp:md:hidden">
                                             <a>{{ Lang.get('ticket.take') }}</a>
                                         </li>
-                                        <li class="close-ticket md:sp-hidden">
+                                        <li class="close-ticket sp:md:hidden">
                                             <a>{{ Lang.get('general.close') }}</a>
                                         </li>
-                                        <li class="close-ticket-without-notification md:sp-hidden">
+                                        <li class="close-ticket-without-notification sp:md:hidden">
                                             <a>{{ Lang.get('ticket.close_without_notify') }}</a>
                                         </li>
-                                        <li class="lock-ticket md:sp-hidden">
+                                        <li class="lock-ticket sp:md:hidden">
                                             <a>{{ Lang.get('ticket.close_and_lock') }}</a>
                                         </li>
                                         <li class="unlock-ticket">
@@ -262,7 +264,7 @@
                                         </li>
                                     {% endif %}
                                     {% if auth_user().hasPermission('delete.ticket_trash') %}
-                                        <li class="delete-ticket md:sp-hidden">
+                                        <li class="delete-ticket sp:md:hidden">
                                             <a>{{ Lang.get('general.move_to_trash') }}</a>
                                         </li>
                                         <li class="block-ticket">
@@ -286,26 +288,26 @@
         </ul>
     </div>
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-update">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden tickets-update">
         {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-update">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden tickets-update">
         {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-trash">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden tickets-trash">
         {{ Lang.get('messages.success_trashed', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-trash">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden tickets-trash">
         {{ Lang.get('messages.error_trashed', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden tickets-delete">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden tickets-delete">
         {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden tickets-delete">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden tickets-delete">
         {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.get('ticket.tickets'), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ticket-assign"></div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ticket-department"></div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden ticket-assign"></div>
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden ticket-department"></div>
 
 {% endblock %}
 
@@ -325,7 +327,7 @@
 
     <form action="{{ route('ticket.operator.filter.createFromRequest') }}" target="_blank" method="post" class="save-filtering">
         {{ csrf_field() }}
-        <div class="sp-grid-filtering sp-mb-8 sp-hidden"></div>
+        <div class="sp-grid-filtering sp:mb-8 sp:hidden"></div>
     </form>
 
 	{{ table.render()|raw }}
@@ -344,7 +346,7 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
 
     <!-- File upload -->
-    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/fileupload.min.js') }}"></script>
 
     <!-- Filtering.js dependencies: Phone numbers -->
     <script src="{{ asset_rev('resources/assets/libs/intltelinput/js/intl-tel-input.min.js') }}"></script>
@@ -357,7 +359,7 @@
 
     {# Only load the sidebar on the main ticket grid. #}
     {% if not customSearch and record is not defined %}
-        <script src="{{ asset_rev('resources/assets/operator/js/sidebar.js') }}"></script>
+        <script src="{{ asset_rev('resources/assets/operator/js/ticket_grid_sidebar.js') }}"></script>
     {% endif %}
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticketaction.js') }}"></script>
@@ -374,7 +376,7 @@
              */
             $(document)
                 .on('click', '.reply-ticket', function () {
-                    fileUpload = new FileUpload({
+                    fileUpload = new SpFileUpload.FileUpload({
                         registerEvents: false
                     });
                     $(fileUpload)
@@ -417,7 +419,7 @@
             var $datatable = $('.dataTable'),
                 $quickActions = $('.sp-quick-actions');
 
-            $($datatable.DataTable().table().container()).addClass('sp--my-6');
+            $($datatable.DataTable().table().container()).addClass('sp:-my-6');
 
             // Changing order of grid (delay next refresh of grid by 60 seconds)
             $datatable.on('order.dt', function () {
@@ -436,7 +438,7 @@
                 $container
                     .show()
                     .addClass('sp-condition-group')
-                    .html('<div class="sp-p-3"><i class="fas fa-spinner fa-pulse fa-fw"></i></div>');
+                    .html('<div class="sp:p-3"><i class="fa-solid fa-spinner fa-pulse"></i></div>');
 
                 $.get('{{ route("ticket.operator.ticket.filtering") }}', getUrlVars())
                     .then(function(response) {
@@ -450,21 +452,23 @@
                     .catch(function() {
                         $container
                             .removeClass('sp-condition-group')
-                            .html('<div class="sp-p-3">' + Lang.get('messages.please_refresh') + '</div>');
+                            .html('<div class="sp:p-3">' + Lang.get('messages.please_refresh') + '</div>');
                     });
             });
 
             // Filtering
             $('.sp-grid-filtering').on('click', '.update-filtering', function() {
-                $datatable.on('preXhr.dt', function ( e, settings, data, xhr ) {
-                    // DEV-829, remove hardcoded route conditions (?conditions=...)
-                    xhr.url = '{{ sAjaxSource }}';
+                var datatableApi = $datatable.dataTable().api();
+                var settings = datatableApi.settings()[0];
+                settings.ajax.data = [];
 
-                    // Add conditions to parameters
-                    $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
-                        xhr.data[value.name] = value.value;
-                    });
-                }).dataTable().api().ajax.reload();
+                // Add custom filter conditions to parameters
+                $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
+                    settings.ajax.data[value.name] = value.value;
+                });
+
+                // Reload the table
+                datatableApi.ajax.reload();
 
                 // Delay next refresh of grid by 60 seconds.
                 clearTimeout(gridTimeout);
@@ -479,31 +483,36 @@
             $quickActions.on('click', '.reply-ticket', function() {
                 Swal.fire({
                     title: Lang.get("ticket.mass_reply"),
-                    html: '<form class="mass-reply sp-text-start">'
-                        + '<div class="sp-alert sp-alert-error sp-hidden attachment"></div>'
+                    html: '<form class="mass-reply sp:text-start">'
+                        + '<div class="sp-alert sp-alert-error sp:hidden attachment"></div>'
                         + '{{ form_editor("text") }}'
                         + '<div class="sp-attachment-details">'
                         + '    <input type="hidden" name="attachment[]" disabled="disabled" />'
                         + '</div>'
                         + '<ul class="sp-attached-files">'
-                        + '    <li class="sp-flex sp-hidden">'
-                        + '        <div class="sp-me-2 sp-truncate">'
-                        + '            <i class="fas fa-file"></i> &nbsp;'
+                        + '    <li class="sp:flex sp:hidden">'
+                        + '        <div class="sp:me-2 sp:truncate">'
+                        + '            <i class="fa-solid fa-file"></i> &nbsp;'
                         + '            <span class="sp-file-information">'
                         + '                <span class="sp-filename"></span>'
                         + '                <span class="sp-description sp-filesize"></span>'
                         + '            </span>'
                         + '        </div>'
-                        + '        <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="' + Lang.get("general.remove") + '">'
-                        + '            <i class="fas fa-times sp-text-white"></i>'
+                        + '        <div class="sp-delete-attachment sp:hidden" title="' + Lang.get("general.remove") + '">'
+                        + '            <i class="fa-solid fa-times sp:text-white"></i>'
                         + '        </div>'
                         + '        <div class="sp-progress-bar">'
                         + '            <div class="sp-bar"></div>'
                         + '        </div>'
                         + '    </li>'
                         + '</ul>'
-                        + '<div class="sp-my-4"><label class="sp-file-input sp-button">'
-                        + '    <i class="fas fa-paperclip"></i>&nbsp; ' + Lang.get("general.add_attachment")
+                        + '<div class="sp-attachment-dragover sp:hidden">'
+                        + '    <div class="sp:m-auto">'
+                        + '        {{ Lang.get('general.drag_and_drop') }}'
+                        + '    </div>'
+                        + '</div>'
+                        + '<div class="sp:my-4"><label class="sp-file-input sp-button">'
+                        + '    <i class="fa-solid fa-paperclip"></i>&nbsp; ' + Lang.get("general.add_attachment")
                         + '    <input class="sp-file-upload" type="file" name="files[]" data-url="' + laroute.route("ticket.operator.attachment.upload") + '" multiple="multiple">'
                         + '</label></div>'
                         + '<strong>' + Lang.get("ticket.reply_options") + '</strong>:<br />'
@@ -657,13 +666,13 @@
             });
 
             // Update ticket details
-            var $onChange = function (value) {
+            var $onChange = function (instance, route, value) {
                 if (value) {
-                    var data = $(this.$input[0]).serializeArray();
+                    var data = $(instance.input).serializeArray();
                     data.push({name: 'ticket', value: getSelectedRows()});
-                    updateTicket(data);
+                    ticketAction(data, route);
 
-                    this.clear(true);
+                    instance.clear(true);
                 }
             };
             $quickActions.find('select[name="priority"], select[name="status"]').selectize({
@@ -674,7 +683,9 @@
                             + '</div>';
                     }
                 },
-                onChange: $onChange
+                onChange: function (value) {
+                    $onChange(this, '{{ route('ticket.operator.action.update') }}', value)
+                },
             });
 
             var tagSelectizeOpts = {
@@ -691,12 +702,14 @@
                 render: {
                     option: function(item, escape) {
                         return '<div>'
-                            + '<i class="fas fa-circle" style="color: ' + escape(item.colour) +'"></i>'
+                            + '<i class="fa-solid fa-circle" style="color: ' + escape(item.colour) +'"></i>'
                             + '&nbsp; ' + escape(item.name)
                             + '</div>';
                     }
                 },
-                onChange: $onChange
+                onChange: function (value) {
+                    $onChange(this, '{{ route('ticket.operator.action.updateTags') }}', value);
+                },
             };
             $quickActions.find('select[name="tag"]').selectize($.extend({}, tagSelectizeOpts, {
                 valueField: 'name',
@@ -721,14 +734,14 @@
                 render: {
                     option: function(item, escape) {
                         return '<div>'
-                            + '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; '
+                            + '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" />&nbsp; '
                             + escape(item.formatted_name)
                             + '</div>';
                     }
                 },
                 onChange: function (value) {
                     if (value) {
-                        assignOperator(getSelectedRows(), value, $(this.$input[0]).attr('name') == 'unassign');
+                        assignOperator(getSelectedRows(), value, $(this.input).attr('name') === 'unassign');
 
                         this.clear(true);
                     }
@@ -766,16 +779,16 @@
 
             $quickActions.on('dt.header.init', function (e, element) {
                 var html = '\
-<div class="sp-dropdown-container sp-hidden md:sp-inline-block">\
+<div class="sp-dropdown-container sp:hidden sp:md:inline-block">\
     <button class="sp-action sp-grid-sorting-button" title="{{ Lang.get('general.sort_by') }}">\
-        <i class="fas fa-sort-amount-down-alt"></i>\
+        <i class="fa-solid fa-sort-amount-down-alt"></i>\
     </button>\
-    <div class="sp-dropdown sp-top-0 sp-end-0 sp-mt-12">\
+    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12">\
         <ul class="sp-grid-sorting">\
             {% for key, value in sortOptions %}\
             <li data-column="{{ key }}" data-direction="{{ sortAscending ? 0 : 1 }}">\
                 <a>\
-                    <span class="sp-grid-sort-dir sp-inline-block sp-w-5">\
+                    <span class="sp-grid-sort-dir sp:inline-block sp:w-5">\
                         <i></i>\
                     </span>\
                     {{ value }}\
@@ -851,49 +864,29 @@
             });
         });
 
-        function updateTicket(data) {
-            // Disable the grid actions and hide any visible dropdowns
-            $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
-            $('.sp-grid-actions :input').prop('disabled', true);
-
-            // Post updated data
-            $.post(
-                laroute.route('ticket.operator.action.update'),
-                data,
-            function(response) {
-                if (response.status == 'success') {
-                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
-                } else {
-                    $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-                }
-            }, "json").fail(function() {
-                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(refreshGrid);
-        }
-
         function ticketAction(data, route) {
             // Disable the grid actions and hide any visible dropdowns
             $('.sp-grid-actions .sp-dropdown-container .sp-dropdown:visible').hide();
             $('.sp-grid-actions :input').prop('disabled', true);
 
             // Post updated data
-            $.post(
-                route,
-                data,
-            function(response) {
-                if (response.status == 'success') {
-                    $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
-                } else {
-                    // Only show specific error for update department
-                    if (typeof response.message != 'undefined' && route == laroute.route('ticket.operator.action.department')) {
-                        $('.ticket-department.sp-alert-error').text(response.message).show(500).delay(5000).hide(500).text();
+            $.post(route, data)
+                .done(function(response) {
+                    if (response.status === 'success') {
+                        $('.tickets-update.sp-alert-success').show(500).delay(5000).hide(500);
                     } else {
-                        $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                        // Only show specific error for update department
+                        if (typeof response.message != 'undefined' && route == laroute.route('ticket.operator.action.department')) {
+                            $('.ticket-department.sp-alert-error').text(response.message).show(500).delay(5000).hide(500).text();
+                        } else {
+                            $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                        }
                     }
-                }
-            }, "json").fail(function() {
-                $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
-            }).always(refreshGrid);
+                })
+                .fail(function() {
+                    $('.tickets-update.sp-alert-error').show(500).delay(5000).hide(500);
+                })
+                .always(refreshGrid);
         }
 
         function mergeTickets(data) {
@@ -1027,16 +1020,16 @@
         function refreshGrid() {
             // Disable the grid actions
             if (! $('tr.selected').length) {
-                $('.sp-grid-actions').addClass('sp-hidden');
-                $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp-hidden');
+                $('.sp-grid-actions').addClass('sp:hidden');
+                $('.sp-action-group:not(.sp-grid-actions)').removeClass('sp:hidden');
             }
             $('.sp-grid-actions :input').prop('disabled', true);
 
             // Update the grid
             $('.dataTable').dataTable().api().ajax.reload(function() {
                 // Refresh sidebar
-                if (typeof sideBar !== 'undefined') {
-                    sideBar.refresh();
+                if (typeof ticketGridSidebar !== 'undefined') {
+                    ticketGridSidebar.refresh();
                 }
             }, false);
 

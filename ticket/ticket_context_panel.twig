@@ -1,25 +1,35 @@
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex" id="ticketDetailsSidebox">
-        <div class="sp-icon">
-            <i class="fas fa-info-circle"></i>
+<div class="sp-sidebar-panel" data-context-id="ticket-details" data-context-open>
+    <div class="sp-sidebar-panel-header">
+        <div class="sp-icon" title="{{ Lang.choice('general.detail', 2) }}">
+            <i class="fa-solid fa-info-circle"></i>
         </div>
         <h3>{{ Lang.choice('general.detail', 2) }}</h3>
-        <div class="sp-chevron">
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
-        </div>
     </div>
 
     <div>
-        <ul class="sp-tabs sp-flex sp-text-center">
-            <li id="Ticket" class="sp-active sp-w-1/2">
-                <a><i class="fas fa-ticket-alt"></i></a>
+        <ul class="sp-tabs">
+            <li id="Ticket" title="{{ Lang.get('ticket.ticket_details') }}" class="sp-active">
+                <a><i class="fa-solid fa-ticket-alt"></i></a>
             </li>
-            <li id="User" class="sp-w-1/2">
-                <a><i class="fas fa-user"></i></a>
+            <li id="User" title="{{ Lang.get('user.user_details') }}">
+                <a><i class="fa-solid fa-user"></i></a>
             </li>
         </ul>
 
         <div id="tabTicket" class="sp-tab-content">
+            {% if feedback|default is not empty and feedback.rating|default is not empty %}
+                <div class="sp-alert sp:flex sp:items-center sp:gap-x-3 sp:mb-4 {% if feedback.fields_answered %}sp:cursor-pointer{% endif %}
+                            {% if feedback.rating.value == '1' %}sp-alert-success{% elseif feedback.rating.value == '2' %}sp-alert-warning{% else %}sp-alert-error{% endif %}"
+                     {% if feedback.fields_answered %}onclick="window.open('{{ route('ticket.operator.feedback.show', { id: feedback.id }) }}','width=800,height=600,scrollbars=yes');"{% endif %}>
+                    <strong class="sp:grow">
+                        {{ Lang.get('ticket.feedback') }}: <i class="fa-solid {{ feedback.rating.faIcon() }}" aria-hidden="true"></i> {{ feedback.rating.toString() }}
+                    </strong>
+                    {% if feedback.fields_answered %}
+                        <i class="fa-solid fa-external-link sp:text-sm" title="{{ Lang.get('ticket.view_feedback') }}"></i>
+                    {% endif %}
+                </div>
+            {% endif %}
+
             <ul class="sp-ticket-details">
                 <li>
                     <div class="sp-title">{{ Lang.get('general.number') }}</div>
@@ -51,8 +61,8 @@
                     </div>
                 </li>
                 <li>
-                    <div class="sp-flex sp--m-1">
-                        <div class="{% if priorities.count() > 1 %}sp-w-1/2{% else %}sp-w-full{% endif %} sp-p-1">
+                    <div class="sp:flex sp:-m-1">
+                        <div class="{% if priorities.count() > 1 %}sp:w-1/2{% else %}sp:w-full{% endif %} sp:p-1">
                             <div class="sp-title">{{ Lang.choice('general.status', 1) }}</div>
                             <div class="sp-detail">
                                 {{ form_select(
@@ -64,7 +74,7 @@
                             </div>
                         </div>
                         {% if priorities.count() > 1 %}
-                            <div class="sp-w-1/2 sp-p-1">
+                            <div class="sp:w-1/2 sp:p-1">
                                 <div class="sp-title">{{ Lang.choice('ticket.priority', 1) }}</div>
                                 <div class="sp-detail">
                                     {{ form_select(
@@ -124,10 +134,10 @@
                                 {% endif %}
                             {% endif %}
 
-                            <div class="update-slaplan sp-hidden">
+                            <div class="update-slaplan sp:hidden">
                                 {{ form_select(
                                     'slaplan', [], null,
-                                    {'class': 'sp-w-full', 'data-id': ticket.sla_plan_id|default is not empty ? ticket.sla_plan_id : 0}
+                                    {'class': 'sp:w-full', 'data-id': ticket.sla_plan_id|default is not empty ? ticket.sla_plan_id : 0}
                                 ) }}
                             </div>
                         </div>
@@ -145,21 +155,21 @@
                             </a>
                             {% endif %}
 
-                            <div class="update-duetime sp-hidden sp-my-2">
+                            <div class="update-duetime sp:hidden sp:my-2">
                                 {{ form_hidden('duetime_type', 1) }}
                                 {{ form_text('duetime_date',
                                     ticket.duetimes.reply_due_time is not empty
                                     ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
-                                    {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
+                                    {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
                                 ) }}
                                 {{ form_text('duetime_time',
                                     ticket.duetimes.reply_due_time is not empty
                                     ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
-                                    {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
+                                    {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
                                 ) }}
-                                &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
-                                <span class="remove-duetime {% if ticket.duetimes.reply_due_time is empty %}sp-hidden{% endif %}">
-                                &nbsp; <button class="as-link remove"><i class="fas fa-eraser"></i></button>
+                                &nbsp; <button class="as-link update"><i class="fa-solid fa-check"></i></button>
+                                <span class="remove-duetime {% if ticket.duetimes.reply_due_time is empty %}sp:hidden{% endif %}">
+                                &nbsp; <button class="as-link remove"><i class="fa-solid fa-eraser"></i></button>
                                 </span>
                             </div>
                         </div>
@@ -173,65 +183,63 @@
                                 </a>
                             {% endif %}
 
-                            <div class="update-duetime sp-hidden sp-mt-2">
+                            <div class="update-duetime sp:hidden sp:mt-2">
                                 {{ form_hidden('duetime_type', 0) }}
                                 {{ form_text('duetime_date',
                                     ticket.duetimes.resolve_due_time is not empty
                                     ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
-                                    {'class': 'datepicker sp-w-full sp-mb-2', 'placeholder': '&#xf073;'}
+                                    {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
                                 ) }}
                                 {{ form_text('duetime_time',
                                     ticket.duetimes.resolve_due_time is not empty
                                     ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
-                                    {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}
+                                    {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
                                 ) }}
-                                &nbsp; <button class="as-link update"><i class="fas fa-check"></i></button>
-                                <span class="remove-duetime {% if ticket.duetimes.resolve_due_time is empty %}sp-hidden{% endif %}">
-                                &nbsp; <button class="as-link remove"><i class="fas fa-eraser"></i></button>
+                                &nbsp; <button class="as-link update"><i class="fa-solid fa-check"></i></button>
+                                <span class="remove-duetime {% if ticket.duetimes.resolve_due_time is empty %}sp:hidden{% endif %}">
+                                &nbsp; <button class="as-link remove"><i class="fa-solid fa-eraser"></i></button>
                                 </span>
                             </div>
                         </div>
 
-                        <div class="paused-duetime sp-description sp-font-normal {% if ticket.duetimes.paused_time is empty %}sp-hidden{% endif %}">
+                        <div class="paused-duetime sp-description sp:font-normal {% if ticket.duetimes.paused_time is empty %}sp:hidden{% endif %}">
                             {{ Lang.get('ticket.paused_ago', {time: timeago(ticket.duetimes.paused_time)})|raw }}
                         </div>
                     </div>
                 </li>
                 {% if can_update_ticket(auth_user(), ticket) or ticket.linked.count() > 0 %}
-                    <li class="linked-tickets-list sp-pb-0 sp-mb-0">
+                    <li class="linked-tickets-list sp:pb-0 sp:mb-0">
                         {% include 'operator.' ~ template ~ '.ticket.ticket_linked' %}
                     </li>
                 {% endif %}
             </ul>
-        </div>
 
-        <div id="tabUser" class="sp-tab-content sp-hidden">
-            {% include 'operator.' ~ template ~ '.ticket.ticket_sidebar_user' %}
-        </div>
-    </div>
-</div>
+            <div class="sp-customfields-container {% if customfields is empty %}sp:hidden{% endif %}">
+                <hr />
 
-{{ View.fireHook('operator.sidebar_ticket') }}
+                <div class="sp-sidebar-panel-header">
+                    <div class="sp-icon" title="{{ Lang.choice('customfield.customfield', 2) }}">
+                        <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                    <h3>{{ Lang.choice('customfield.customfield', 2) }}</h3>
+                </div>
 
-<div class="sp-sidebox {% if customfields is empty %}sp-hidden{% endif %}">
-    <div class="sp-collapsible sp-flex" id="ticketCustomfieldSidebox">
-        <div class="sp-icon">
-            <i class="fas fa-file-alt"></i>
-        </div>
-        <h3>{{ Lang.choice('customfield.customfield', 2) }}</h3>
-        <div class="sp-chevron">
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
-        </div>
-    </div>
+                <div>
+                    <form>
+                        <div class="customfields">
+                            {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+                        </div>
 
-    <div>
-        <form>
-            <div class="customfields">
-                {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+                        {% if can_update_ticket(auth_user(), ticket) %}
+                            <button class="save-fields sp-button-submit" type="button">{{ Lang.get('general.save') }}</button>
+                        {% endif %}
+                    </form>
+                </div>
             </div>
-            {% if can_update_ticket(auth_user(), ticket) %}
-                <button class="save-fields sp-button-submit" type="button">{{ Lang.get('general.save') }}</button>
-            {% endif %}
-        </form>
+        </div>
+
+        <div id="tabUser" class="sp-tab-content sp:hidden">
+            {% include 'operator.' ~ template ~ '.ticket.ticket_context_panel_user' %}
+        </div>
     </div>
 </div>

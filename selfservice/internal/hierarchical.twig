@@ -6,8 +6,8 @@
 
 {% block description %}
     {% if auth_user().hasPermission('create.article') %}
-        <a href="{{ route('selfservice.operator.article.create', {'type': type.id}) }}" class="sp-button print:sp-hidden">
-            <i class="fas fa-plus"></i>&nbsp;
+        <a href="{{ route('selfservice.operator.article.create', {'type': type.id}) }}" class="sp-button sp:print:hidden">
+            <i class="fa-solid fa-plus"></i>&nbsp;
             {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.article', 1)}) }}
         </a>
     {% endif %}
@@ -25,7 +25,7 @@
 
 	{# Latest / Most Popular articles #}
 
-	<ul class="sp-tabs sp-mt-6">
+	<ul class="sp-tabs sp:mt-6">
 		<li id="Popular" class="sp-active">
             <a>{{ Lang.get('selfservice.popular_items') }}</a>
         </li>
@@ -37,7 +37,7 @@
     <div id="tabPopular" class="sp-tab-content">
         {% include 'operator.' ~ template ~ '.selfservice.internal.article_list' with { 'articles': popular } %}
     </div>
-    <div id="tabLatest" class="sp-tab-content sp-hidden">
+    <div id="tabLatest" class="sp-tab-content sp:hidden">
         {% include 'operator.' ~ template ~ '.selfservice.internal.article_list' with { 'articles': latest } %}
     </div>
 

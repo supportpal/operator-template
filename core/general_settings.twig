@@ -88,7 +88,7 @@
 
     </div>
 
-    <div id="tabEmail" class="sp-tab-content sp-hidden">
+    <div id="tabEmail" class="sp-tab-content sp:hidden">
 
         <div class="sp-form-row">
             {{ form_label('attachment_size', Lang.get('core.attachment_size')) }}
@@ -122,7 +122,7 @@
             {{ form_label('email_method', Lang.get('core.email_method')) }}
             <div class="sp-input-container">
                 {% if brand_config(default_brand() ~ '.email_method', 'default') is not same as('default') %}
-                    <div class="sp-alert sp-alert-warning sp-mb-3">
+                    <div class="sp-alert sp-alert-warning sp:mb-3">
                         {{ Lang.get('core.email_method_overridden', {'link': route('core.operator.brand.edit', default_brand())})|raw }}
                     </div>
                 {% endif %}
@@ -142,7 +142,7 @@
 
     </div>
 
-    <div id="tabLocale" class="sp-tab-content sp-hidden">
+    <div id="tabLocale" class="sp-tab-content sp:hidden">
 
         {% include 'operator.' ~ template ~ '.core.forms.locale_tab' with {'record': fields} %}
 
@@ -155,7 +155,7 @@
                         {{ form_select('default_frontend_language', languages) }}
                     </label>
                 </div>
-                <div class="sp-mt-2">
+                <div class="sp:mt-2">
                     <label>
                         <strong>{{ Lang.choice('general.operator', 1) }}</strong> &nbsp;&nbsp;
                         {{ form_select('default_operator_language', languages) }}
@@ -172,7 +172,7 @@
                     <label>{{ form_radio('language_frontend_toggle', 1) }} {{ Lang.get('general.show') }}</label> &nbsp;
                     <label>{{ form_radio('language_frontend_toggle', 0) }} {{ Lang.get('general.hide') }}</label>
                 </div>
-                <div class="sp-mt-2">
+                <div class="sp:mt-2">
                     <strong>{{ Lang.choice('general.operator', 1) }}</strong> &nbsp;&nbsp;
                     <label>{{ form_radio('language_operator_toggle', 1) }} {{ Lang.get('general.show') }}</label> &nbsp;
                     <label>{{ form_radio('language_operator_toggle', 0) }} {{ Lang.get('general.hide') }}</label>
@@ -195,7 +195,7 @@
 
     </div>
 
-    <div id="tabSimpleAuth" class="sp-tab-content sp-hidden">
+    <div id="tabSimpleAuth" class="sp-tab-content sp:hidden">
 
         <div class="sp-form-row">
             {{ form_label('simpleauth_key', Lang.get('core.simpleauth_key')) }}
@@ -216,7 +216,7 @@
 
     </div>
 
-    <div id="tabCaptcha" class="sp-tab-content sp-hidden">
+    <div id="tabCaptcha" class="sp-tab-content sp:hidden">
 
         <div class="sp-form-row">
             {{ form_label('captcha_type', Lang.get('core.captcha_type')) }}
@@ -249,7 +249,7 @@
             </div>
         </div>
 
-        <div class="captcha captcha-recaptcha {% if fields.captcha_type != 2 and fields.captcha_type != 3 %}sp-hidden{% endif %}">
+        <div class="captcha captcha-recaptcha {% if fields.captcha_type != 2 and fields.captcha_type != 3 %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('recaptcha_site_key', Lang.get('core.recaptcha_site_key')) }}
                 <div class="sp-input-container sp-input-group">
@@ -266,7 +266,7 @@
             </div>
         </div>
 
-        <div class="captcha captcha-turnstile {% if fields.captcha_type != 4 %}sp-hidden{% endif %}">
+        <div class="captcha captcha-turnstile {% if fields.captcha_type != 4 %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('turnstile_site_key', Lang.get('core.site_key')) }}
                 <div class="sp-input-container sp-input-group">
@@ -283,7 +283,7 @@
             </div>
         </div>
 
-        <div class="captcha captcha-hcaptcha {% if fields.captcha_type != 5 %}sp-hidden{% endif %}">
+        <div class="captcha captcha-hcaptcha {% if fields.captcha_type != 5 %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('hcaptcha_site_key', Lang.get('core.site_key')) }}
                 <div class="sp-input-container sp-input-group">
@@ -302,7 +302,7 @@
 
     </div>
 
-    <div id="tabDebug" class="sp-tab-content sp-hidden">
+    <div id="tabDebug" class="sp-tab-content sp:hidden">
 
         <div class="sp-form-row">
             {{ form_label('debug_mode', Lang.get('core.debug_mode')) }}

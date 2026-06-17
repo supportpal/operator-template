@@ -9,7 +9,7 @@
     <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">
         {{ type.name }}
     </a>
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {{ Lang.get('selfservice.viewing_article') }}
 {% endblock %}
 
@@ -19,16 +19,16 @@
 
 {% block description %}
 
-    <div class="print:sp-hidden">
+    <div class="sp:print:hidden">
         {% if auth_user().hasPermission('update.article') %}
             <a href="{{ route('selfservice.operator.article.edit', article.id) }}" class="sp-button sp-button-sm">
-                <i class="fas fa-edit"></i>&nbsp;
+                <i class="fa-solid fa-edit"></i>&nbsp;
                 {{ Lang.get('general.edit') }}
             </a> &nbsp;
         {% endif %}
 
         <a href="javascript:window.print()" class="sp-button sp-button-sm">
-            <i class="fas fa-print"></i>&nbsp;
+            <i class="fa-solid fa-print"></i>&nbsp;
             {{ Lang.get('general.print') }}
         </a>
     </div>
@@ -60,14 +60,31 @@
         {% include 'operator.' ~ template ~ '.selfservice.internal.article_related' %}
     {% endif %}
 
+    <!-- Comments -->
     {% if Config.get('settings.comments_enabled') and (article.comments is not empty or
         Config.get('settings.comment_write') == 0 or auth_check()) %}
-        <hr {% if article.comments is empty %}class="print:sp-hidden"{% endif %} />
+        <hr {% if article.comments is empty %}class="sp:print:hidden"{% endif %} />
 
         <a id="comments"></a>
 
-        <!-- Comments -->
-        <h2 {% if article.comments is empty %}class="print:sp-hidden"{% endif %}>{{ Lang.choice('selfservice.comment', 2) }}</h2>
+        <div class="sp:flex sp:items-center sp:mb-6">
+            <h2 class="sp:grow sp:m-0 {% if article.comments is empty %}sp:print:hidden{% endif %}">{{ Lang.choice('selfservice.comment', 2) }}</h2>
+
+            {% if article.comments is not empty %}
+                <div class="sp-description sp:flex-none sp:print:hidden">
+                    {{ Lang.get('general.order_by') }}:&nbsp;
+                    <select class="sp-comment-ordering">
+                        <option value="0" {{ (comment_ordering == '0') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.oldest') }}</option>
+                        <option value="1" {{ (comment_ordering == '1') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.newest') }}</option>
+                        <option value="2" {{ (comment_ordering == '2') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.highest_rated') }}</option>
+                    </select>
+
+                    <span class="sp-loading sp:px-4 sp:py-3 sp:ms-2 sp:bg-secondary sp:rounded sp:align-middle sp:hidden">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                    </span>
+                </div>
+            {% endif %}
+        </div>
 
         {% if Session.has('comment_success') %}
             <div class="sp-alert sp-alert-success">{{ Session.get('comment_success') }}</div>
@@ -75,41 +92,28 @@
             <div class="sp-alert sp-alert-error">{{ Session.get('comment_error') }}</div>
         {% endif %}
 
-        <div class="add-comment-form sp-collapsible print:sp-hidden">
+        <div class="add-comment-form sp-collapsible sp:print:hidden">
             {{ Lang.get('general.add_item', {'item': Lang.choice('selfservice.comment', 1)}) }}
-            <span class="sp-ms-auto">
-                <i class="fas fa-chevron-up"></i>
+            <span class="sp:ms-auto">
+                <i class="fa-solid fa-chevron-up"></i>
             </span>
         </div>
-        <div class="sp-hidden sp-mt-6">
+        <div class="sp:hidden sp:mt-6">
             {% include 'operator.' ~ template ~ '.selfservice.internal.forms.comment' with {type: type.id} %}
         </div>
 
         {% if article.comments is not empty %}
-            <div class="sp-alert sp-alert-error sp-hidden comments-loading">
+            <div class="sp-alert sp-alert-error sp:hidden comments-loading">
                 {{ Lang.get('messages.error_loading_comments') }}
             </div>
 
-            <div class="sp-my-6 sp-description print:sp-hidden">
-                {{ Lang.get('general.order_by') }}:&nbsp;
-                <select class="sp-comment-ordering">
-                    <option value="0" {{ (comment_ordering == '0') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.oldest') }}</option>
-                    <option value="1" {{ (comment_ordering == '1') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.newest') }}</option>
-                    <option value="2" {{ (comment_ordering == '2') ? 'selected="selected"' : '' }}>{{ Lang.get('selfservice.highest_rated') }}</option>
-                </select>
-
-                <span class="sp-loading sp-px-4 sp-py-3 sp-ms-2 sp-bg-secondary sp-rounded sp-align-middle sp-hidden">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </span>
-            </div>
-
             {# Show all the comments #}
-            <div class="sp-comments-block" data-comment-route="{{ route('selfservice.operator.internal.comment') }}">
+            <div class="sp-comments-block sp-messages-container sp:-m-6 sp:mt-0" data-comment-route="{{ route('selfservice.operator.internal.comment') }}">
                 {% include 'operator.' ~ template ~ '.selfservice.internal.comment' with {'comments': article.comments, 'type': type.id} %}
             </div>
 
             {% if comment_total > article.comments|length %}
-                <button class="sp-more-parent-comments sp-button sp-mt-3" data-count="{{ article.comments|length }}">
+                <button class="sp-more-parent-comments sp-button sp:mt-3" data-count="{{ article.comments|length }}">
                     {{ Lang.get('selfservice.show_more_comments') }}
                 </button>
             {% endif %}

@@ -5,8 +5,8 @@
             <a href='{{ article.url(type) }}'>
                 <h4>
                     {% if show_pinned|default is not empty and show_pinned and article.pinned %}
-                        <span class="sp-float-start">
-                            <i class="fas fa-thumbtack sp-text-yellow-600" aria-hidden="true"></i> &nbsp;
+                        <span class="sp:float-start">
+                            <i class="fa-solid fa-thumbtack sp:text-yellow-600" aria-hidden="true"></i> &nbsp;
                         </span>
                     {% endif %}
                     {{ article.title }}
@@ -15,11 +15,11 @@
             </a>
             <ul class="sp-article-details sp-description">
                 <li>
-                    <i class="fas fa-calendar"></i>&nbsp; {{ timeago(article.published_at) }}
+                    <i class="fa-solid fa-calendar"></i>&nbsp; {{ timeago(article.published_at) }}
                 </li>
                 {% if not article.categories.isEmpty() %}
                 <li>
-                    <i class="fas fa-folder"></i>&nbsp;
+                    <i class="fa-solid fa-folder"></i>&nbsp;
                     <ul class="sp-item-list">
                         {% for category in article.categories.sortBy('name') %}
                         <li><a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">{{ category.name }}</a></li>
@@ -29,7 +29,7 @@
                 {% endif %}
                 {% if not article.tags.isEmpty() %}
                 <li>
-                    <i class="fas fa-tags"></i>&nbsp;
+                    <i class="fa-solid fa-tags"></i>&nbsp;
                     <ul class="sp-item-list">
                         {% for tag in article.tags.sortBy('name') %}
                         <li><a href="{{ route('selfservice.operator.internal.tag', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': tag.slug}) }}">{{ tag.name }}</a></li>

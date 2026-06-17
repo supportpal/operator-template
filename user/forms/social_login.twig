@@ -31,7 +31,7 @@
                             <a href="{{ route(integration.getAddon().getSettingsRoute(), {'brand': brand.id}) }}">{{ Lang.get('general.manage_credentials') }}</a>
                         </div>
                     {% else %}
-                        <div class="sp-alert sp-alert-info sp-m-0">
+                        <div class="sp-alert sp-alert-info sp:m-0">
                             {{ Lang.get('core.create_credentials', {'route': route(integration.getAddon().getSettingsRoute(), {'brand': brand.id})})|raw }}
                         </div>
                     {% endif %}

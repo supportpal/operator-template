@@ -1,12 +1,12 @@
 {% if filters is not empty and not filters.isEmpty() %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex" id="ticketFiltersSidebox">
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header sp-collapsible" id="ticketFiltersSidebarPanel">
             <div class="sp-icon">
-                <i class="fas fa-filter"></i>
+                <i class="fa-solid fa-filter"></i>
             </div>
             <h3>{{ Lang.choice('ticket.filter', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -14,30 +14,30 @@
             {% for filter in filters %}
                 <li>
                     <a href="{{ route('ticket.operator.ticket') ~ '?filter=' ~ filter.id }}">
-                        <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ filter.id }}"></span>
-                        <div class="sp-truncate {% if Request.input('filter', 0) == filter.id|trim %}sp-font-bold{% endif %}">
+                        <span class="sp-badge sp:mt-0.5 sp:ms-1 sp:float-end sp:hidden" data-id="{{ filter.id }}"></span>
+                        <div class="sp:truncate {% if Request.input('filter', 0) == filter.id|trim %}sp:font-bold{% endif %}">
                             {{ filter.name }}
                         </div>
                     </a>
                 </li>
             {% endfor %}
             <li>
-                <a href="{{ route('ticket.operator.trashed_tickets') }}" {% if Route.currentRouteName() == 'ticket.operator.trashed_tickets' %}class="sp-font-bold"{% endif %}>
-                    <i class="fas fa-trash"></i>&nbsp; {{ Lang.get('general.trash') }}
+                <a href="{{ route('ticket.operator.trashed_tickets') }}" {% if Route.currentRouteName() == 'ticket.operator.trashed_tickets' %}class="sp:font-bold"{% endif %}>
+                    <i class="fa-solid fa-trash"></i>&nbsp; {{ Lang.get('general.trash') }}
                 </a>
             </li>
         </ul>
     </div>
 {% endif %}
 
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex" id="ticketStatusesSidebox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header sp-collapsible" id="ticketStatusesSidebarPanel">
         <div class="sp-icon">
-            <i class="fas fa-circle"></i>
+            <i class="fa-solid fa-circle"></i>
         </div>
         <h3>{{ Lang.choice('general.status', 2) }}</h3>
         <div class="sp-chevron">
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </div>
     </div>
 
@@ -45,8 +45,8 @@
         {% for status in obj_statuses %}
             <li>
                 <a href="{{ route('ticket.operator.ticket') ~ '?status=' ~ status.id }}">
-                    <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ status.id }}"></span>
-                    <div class="sp-truncate {% if Request.input('status', 0) == status.id|trim %}sp-font-bold{% endif %}">
+                    <span class="sp-badge sp:mt-0.5 sp:ms-1 sp:float-end sp:hidden" data-id="{{ status.id }}"></span>
+                    <div class="sp:truncate {% if Request.input('status', 0) == status.id|trim %}sp:font-bold{% endif %}">
                         {{ status.icon_without_tooltip|raw }}&nbsp;
                         {{ status.name }}
                     </div>
@@ -56,14 +56,14 @@
     </ul>
 </div>
 
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex" id="departmentsSidebox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header sp-collapsible" id="departmentsSidebarPanel">
         <div class="sp-icon">
-            <i class="fas fa-folder"></i>
+            <i class="fa-solid fa-folder"></i>
         </div>
         <h3>{{ Lang.choice('ticket.department', 2) }}</h3>
         <div class="sp-chevron">
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </div>
     </div>
 
@@ -71,8 +71,8 @@
         {% for department in obj_departments %}
             <li>
                 <a href="{{ route('ticket.operator.ticket') ~ '?department=' ~ department.id ~ '&status=' ~ non_resolved_statuses }}">
-                    <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ department.id }}"></span>
-                    <div class="sp-truncate {% if Request.input('department', 0) == department.id|trim %}sp-font-bold{% endif %}">
+                    <span class="sp-badge sp:mt-0.5 sp:ms-1 sp:float-end sp:hidden" data-id="{{ department.id }}"></span>
+                    <div class="sp:truncate {% if Request.input('department', 0) == department.id|trim %}sp:font-bold{% endif %}">
                         {% if department.dashes|default is not empty %}
                             {{ department.dashes|raw }}{{ department.name|replace({ (department.dashes): '' }) }}
                         {% else %}
@@ -86,14 +86,14 @@
 </div>
 
 {% if obj_brands|length > 1 %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex" id="brandsSidebox">
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header sp-collapsible" id="brandsSidebarPanel">
             <div class="sp-icon">
-                <i class="fas fa-sitemap"></i>
+                <i class="fa-solid fa-sitemap"></i>
             </div>
             <h3>{{ Lang.choice('core.brand', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -101,8 +101,8 @@
             {% for brand in obj_brands %}
                 <li>
                     <a href="{{ route('ticket.operator.ticket') ~ '?brand=' ~ brand.id }}">
-                        <span class="sp-badge sp-mt-1/2 sp-ms-1 sp-float-end sp-hidden" data-id="{{ brand.id }}"></span>
-                        <div class="sp-truncate {% if Request.input('brand', 0) == brand.id|trim %}sp-font-bold{% endif %}">
+                        <span class="sp-badge sp:mt-0.5 sp:ms-1 sp:float-end sp:hidden" data-id="{{ brand.id }}"></span>
+                        <div class="sp:truncate {% if Request.input('brand', 0) == brand.id|trim %}sp:font-bold{% endif %}">
                             {{ brand.name }}
                         </div>
                     </a>
@@ -115,14 +115,14 @@
 {% endif %}
 
 {% if obj_priorities.count() > 1 %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex" id="ticketPrioritySidebox">
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header sp-collapsible" id="ticketPrioritySidebarPanel">
             <div class="sp-icon">
-                <i class="fas fa-square-full"></i>
+                <i class="fa-solid fa-square-full"></i>
             </div>
             <h3>{{ Lang.choice('ticket.priority', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -130,7 +130,7 @@
             {% for priority in obj_priorities %}
                 <li>
                     <a href="{{ route('ticket.operator.ticket') ~ '?priority=' ~ priority.id }}">
-                        <div class="sp-truncate {% if Request.input('priority', 0) == priority.id|trim %}sp-font-bold{% endif %}">
+                        <div class="sp:truncate {% if Request.input('priority', 0) == priority.id|trim %}sp:font-bold{% endif %}">
                             {{ priority.icon_without_tooltip|raw }}&nbsp;
                             {{ priority.name }}
                         </div>
@@ -142,14 +142,14 @@
 {% endif %}
 
 {% if total_tags > 0 %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex" id="ticketTagsSidebox">
+    <div class="sp-sidebar-panel sp-hide-on-collapse">
+        <div class="sp-sidebar-panel-header sp-collapsible" id="ticketTagsSidebarPanel">
             <div class="sp-icon">
-                <i class="fas fa-tags"></i>
+                <i class="fa-solid fa-tags"></i>
             </div>
             <h3>{{ Lang.choice('ticket.tag', 2) }}</h3>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -165,23 +165,5 @@
                 </select>
             {% endif %}
         </div>
-    </div>
-{% endif %}
-
-{% if not recentActivity.isEmpty() %}
-    <div class="sp-sidebox">
-        <div class="sp-collapsible sp-flex" id="recentActivitySidebox">
-            <div class="sp-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <h3>{{ Lang.get('ticket.recent_activity') }}</h3>
-            <div class="sp-chevron">
-                <i class="fas fa-chevron-down" aria-hidden="true"></i>
-            </div>
-        </div>
-
-        <ul class="recent-activity">
-            <div class="sp-description">{{ Lang.get('general.loading') }}...</div>
-        </ul>
     </div>
 {% endif %}

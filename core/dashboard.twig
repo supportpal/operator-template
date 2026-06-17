@@ -3,24 +3,24 @@
 {% block content %}
 
     {% if widgets|default is not empty %}
-        <div class="sp-mb-6 sm:sp-flex">
-            <div class="sm:sp-grow">
-                <h1 class="sp-my-0" id="dashboardTitle">{{ Lang.get('core.dashboard') }}</h1>
+        <div class="sp:mb-6 sp:sm:flex">
+            <div class="sp:sm:grow">
+                <h1 class="sp:my-0" id="dashboardTitle">{{ Lang.get('core.dashboard') }}</h1>
             </div>
-            <div class="sm:sp-flex-initial sm:sp-my-1/2">
+            <div class="sp:sm:flex-initial sp:sm:my-0.5">
                 <button id="showModal">{{ Lang.get('core.add_remove_widget') }}</button>
             </div>
         </div>
 
-        <div class="sp-loading sp-p-3 sp-bg-secondary sp-rounded sp-text-center">
+        <div class="sp-loading sp:p-3 sp:bg-secondary sp:rounded sp:text-center">
             {{ Lang.get('general.loading') }}<i class="sp-ellipsis"><i>.</i><i>.</i><i>.</i></i>
         </div>
 
-        <div class="sp-widget-container sp-overflow-hidden">
-            <div id="widgets" class="sp-flex sp-flex-wrap sp--m-3">
+        <div class="sp-widget-container sp:overflow-hidden">
+            <div id="widgets" class="sp:flex sp:flex-wrap sp:-m-3">
                 <!-- Columns are populated with widgets via AJAX -->
-                <div class="sp-widget-column sp-w-full sp-p-3 md:sp-w-1/2" id="1"></div>
-                <div class="sp-widget-column sp-w-full sp-p-3 md:sp-w-1/2" id="2"></div>
+                <div class="sp-widget-column sp:w-full sp:p-3 sp:md:w-1/2" id="1"></div>
+                <div class="sp-widget-column sp:w-full sp:p-3 sp:md:w-1/2" id="2"></div>
             </div>
         </div>
     {% else %}
@@ -76,10 +76,10 @@
                     }
 
                     // Write the widgets to column 1
-                    writeWidgetsToColumn($widgets.find('.sp-widget-column:eq(0)'), column1Widgets);
+                    writeWidgetsToColumn($widgets.find('.sp-widget-column').eq(0), column1Widgets);
 
                     // Write the widgets to column 2
-                    writeWidgetsToColumn($widgets.find('.sp-widget-column:eq(1)'), column2Widgets);
+                    writeWidgetsToColumn($widgets.find('.sp-widget-column').eq(1), column2Widgets);
 
                     // Remove the loading bar
                     $('.sp-loading').hide();
@@ -91,7 +91,7 @@
                 // Ability to move widgets around
                 $(".sp-widget-column").sortable({
                     draggable: '.sp-widget',
-                    ghostClass: 'sp-opacity-50',
+                    ghostClass: 'sp:opacity-50',
                     group: 'widgets',
                     handle: '.sp-widget-header',
                     store: {

@@ -76,7 +76,7 @@
                         </label>
                         <br />
 
-                        <div class="sp-custom-hours sp-hidden">
+                        <div class="sp-custom-hours sp:hidden">
                             {{ form_select('business_hours[' ~ key ~ '][start_hour]', hours,
                                 (recordHours[key] is defined and recordHours[key]['type'] == 2 ? recordHours[key]['start_hour'] : 9)) }}
                             {{ form_select('business_hours[' ~ key ~ '][start_minute]', minutes,
@@ -114,13 +114,13 @@
             for (var i = 1; i <= 7; i++) {
                 var $input = $('input[name="business_hours[' + i + '][type]"]:checked');
                 if ($input.val() == 2) {
-                    $input.parents('.sp-input-container').find('.sp-custom-hours').removeClass('sp-hidden');
+                    $input.parents('.sp-input-container').find('.sp-custom-hours').removeClass('sp:hidden');
                 }
                 $('input[name="business_hours[' + i + '][type]"]').on('change', function() {
                     if ($(this).val() == 2) {
-                        $(this).parents('.sp-input-container').find('.sp-custom-hours').removeClass('sp-hidden');
+                        $(this).parents('.sp-input-container').find('.sp-custom-hours').removeClass('sp:hidden');
                     } else {
-                        $(this).parents('.sp-input-container').find('.sp-custom-hours').addClass('sp-hidden');
+                        $(this).parents('.sp-input-container').find('.sp-custom-hours').addClass('sp:hidden');
                     }
                 });
             }

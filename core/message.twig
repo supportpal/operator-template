@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden delete">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden delete">
         {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden delete">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden delete">
         {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
     </div>
 {% endblock %}
@@ -30,7 +30,7 @@
 
     </div>
 
-    <div id="tabCompose" class="sp-tab-content sp-hidden">
+    <div id="tabCompose" class="sp-tab-content sp:hidden">
 
         {{ form_open({ 'method': 'POST', 'route': 'core.operator.message.store', 'class': 'validate' }) }}
 

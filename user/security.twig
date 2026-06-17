@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
 {% endblock %}
@@ -34,7 +34,7 @@
     </ul>
 
     {% if auth_user().password is not empty and not auth_user().loggedInViaSSO() %}
-        <div id="tabChangePassword" class="sp-tab-content {% if tab is not empty %}sp-hidden{% endif %}">
+        <div id="tabChangePassword" class="sp-tab-content {% if tab is not empty %}sp:hidden{% endif %}">
             {{ form_model(record, {'method': 'POST', 'route': 'user.operator.password', 'class': 'sp-password-form validate'}) }}
 
                 <div class="sp-form-row">
@@ -68,14 +68,14 @@
     {% endif %}
 
     {% if (not auth_user().loggedInViaSSO() and auth_user().password is not empty) or auth_user().loggedInViaLdap() %}
-        <div id="tabTwoFA" class="sp-tab-content {% if not auth_user().loggedInViaLdap() and tab is not same as('twofa') %}sp-hidden{% endif %}">
+        <div id="tabTwoFA" class="sp-tab-content {% if not auth_user().loggedInViaLdap() and tab is not same as('twofa') %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('twofa_enabled', Lang.get('user.two_fa_enabled')) }}
                 <div class="sp-input-container">
-                    <strong class="twofa-enabled sp-text-green-600 {% if not auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                    <strong class="twofa-enabled sp:text-green-600 {% if not auth_user().twofa_enabled %}sp:hidden{% endif %}">
                         {{ Lang.get('general.yes') }}
                     </strong>
-                    <strong class="twofa-enabled sp-text-red-600 {% if auth_user().twofa_enabled %}sp-hidden{% endif %}">
+                    <strong class="twofa-enabled sp:text-red-600 {% if auth_user().twofa_enabled %}sp:hidden{% endif %}">
                         {{ Lang.get('general.no') }}
                     </strong>
                     {% if not Config.get('settings.force_2fa_operators') %}
@@ -114,16 +114,16 @@
     {% endif %}
 
     <div id="tabActiveSessions"
-         class="sp-tab-content {% if ((auth_user().password is not empty and not auth_user().loggedInViaSSO()) or auth_user().loggedInViaLdap()) and tab is not same as('sessions') %}sp-hidden{% endif %}">
-        <div class="sp-description sp-mb-6">{{ Lang.get('user.active_sessions_desc') }}</div>
+         class="sp-tab-content {% if ((auth_user().password is not empty and not auth_user().loggedInViaSSO()) or auth_user().loggedInViaLdap()) and tab is not same as('sessions') %}sp:hidden{% endif %}">
+        <div class="sp-description sp:mb-6">{{ Lang.get('user.active_sessions_desc') }}</div>
 
         {% for session in sessions %}
             <div class="sp-active-session">
-                <hr class="sp-mx-0" />
+                <hr class="sp:mx-0" />
 
-                <div class="sp-flex">
-                    <div class="sp-icon sp-me-4 sp-mt-1">
-                        <i class="fas fa-fw fa-2x {% if session.ua.isMobile() %}fa-mobile-alt{% else %}fa-desktop{% endif %}"></i>
+                <div class="sp:flex">
+                    <div class="sp-icon sp:me-4 sp:mt-1">
+                        <i class="fa-solid fa-2x {% if session.ua.isMobile() %}fa-mobile-alt{% else %}fa-desktop{% endif %}"></i>
                     </div>
                     <div>
                         <strong>{{ session.ip }}</strong><br />
@@ -138,7 +138,7 @@
                         </div>
 
                         {% if not session.current_session %}
-                            <div class="sp-mt-3">
+                            <div class="sp:mt-3">
                                 <button class="sp-revoke-session" data-id="{{ session.session_id }}">
                                     {{ Lang.get('general.revoke') }}
                                 </button>

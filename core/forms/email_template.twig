@@ -53,7 +53,7 @@
             <h2>{{ Lang.get('core.email_content') }}</h2>
             <div class="sp-subtitle-description">{{ Lang.get('core.email_content_desc') }}</div>
 
-            <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp-hidden{% endif %}">
+            <ul class="sp-tabs sp-tabs-bottom {% if brands|length == 1 %}sp:hidden{% endif %}">
                 {% for brand in brands %}
                     <li id="{{ brand.id }}" {% if loop.first %}class="sp-active"{% endif %}>
                         <a>{{ brand.name }}</a>
@@ -62,7 +62,7 @@
             </ul>
 
             {% for brand in brands %}
-                <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp-hidden{% endif %}">
+                <div id="tab{{ brand.id }}" class="sp-tab-content {% if not loop.first %}sp:hidden{% endif %}">
                     {# Add an empty item, we use this for DOM cloning when adding new records #}
                     {% include 'operator.' ~ template ~ '.core.forms.email_template_data' with {'hide': true, 'brand': brand} %}
 
@@ -72,7 +72,7 @@
                         {% endfor %}
                     </div>
 
-                    <div class="sp-form-container sp-border-t-0 {% if not brand.languages|length %}sp-hidden{% endif %}">
+                    <div class="sp-form-container sp:border-t-0 {% if not brand.languages|length %}sp:hidden{% endif %}">
                         <div class="sp-form-row">
                             <label></label>
                             <div class="sp-input-container">

@@ -58,7 +58,7 @@
             {% if oldGroups|default is not empty and oldGroups is not empty %}
                 {# In case there was an error and we're trying to show what they attempted to save #}
                 {% for groupId, group in oldGroups %}
-                    {% include 'operator.' ~ template ~ '.forms.condition_group' %}
+                    {% include 'operator.' ~ template ~ '.forms.condition_group' with {'oldConditions': group.conditions} %}
                 {% endfor %}
             {% else %}
                 {% for groupId, group in record.conditiongroups %}
@@ -67,7 +67,7 @@
             {% endif %}
 
             <div>
-                <div class="plan-conditiongroup-type sp-mb-3">
+                <div class="plan-conditiongroup-type sp:mb-3">
                     {{ form_select('condition_group_type', { 0: Lang.get('ticket.all_groups'), 1: Lang.get('ticket.any_group') },
                         record.condition_group_type|default is not empty ? record.condition_group_type : 0) }}
                 </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="{{ get_template_mode() }} sp-h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
+<html class="{{ get_template_mode() }} sp:h-full" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     {{ View.fireHook('operator.head_start') }}
@@ -12,29 +12,29 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:h-full sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-	<div class="sp-login-container sp-flex sp-flex-col sp-justify-center sp-min-h-full">
+	<div class="sp-login-container sp:flex sp:flex-col sp:justify-center sp:min-h-full">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-container sp-mt-8 sp-mx-auto xs:sp-w-96 xs:sp-my-8 xs:sp-shadow">
-            <div class="sp-p-6 sp-bg-primary-800 sp-text-center xs:sp-rounded-t">
+        <div class="sp:container sp:mt-8 sp:mx-auto sp:xs:w-96 sp:xs:my-8 sp:xs:shadow">
+            <div class="sp:p-6 sp:bg-primary-800 sp:text-center sp:xs:rounded-t-sm">
                 {% block logo %}
                     <img src="{{ get_icon('resources/assets/operator/images/favicon/favicon_white.png') }}"
-                         alt="{{ Lang.get('core.product_name') }}" class="sp-inline sp-max-w-xl" />
+                         alt="{{ Lang.get('core.product_name') }}" class="sp:inline sp:max-w-24" />
                 {% endblock %}
 
-                <h1 class="sp-mt-6 sp-mb-0 sp-text-white sp-text-3xl sp-leading-none">
+                <h1 class="sp:mt-6 sp:mb-0 sp:text-white sp:text-3xl sp:leading-none">
                     {% block content_title %}{{ Lang.get('core.operator_panel') }}{% endblock %}
                 </h1>
             </div>
 
-            <div class="sp-bg-primary xs:sp-rounded-b">
+            <div class="sp:bg-primary sp:xs:rounded-b-sm">
                 {{ View.fireHook('operator.content_start') }}
 
-                <div class="sp-p-6">
+                <div class="sp:p-6">
                     {{ View.fireHook('operator.content_inner_start') }}
 
                     {% block content %}{% endblock %}
@@ -47,9 +47,9 @@
 		</div>
 
         {% if Config.get('settings.language_operator_toggle') == 1 %}
-            <div class="sp-my-8 sp-text-center xs:sp-mt-0">
-                <i class="fas fa-language" title="{{ Lang.choice('general.language', 1) }}"></i> &nbsp;
-                <select name="language" class="sp-bg-tertiary sp-border-tertiary">
+            <div class="sp:my-8 sp:text-center sp:xs:mt-0">
+                <i class="fa-solid fa-language" title="{{ Lang.choice('general.language', 1) }}"></i> &nbsp;
+                <select name="language" class="sp:bg-tertiary sp:border-tertiary">
                     {% for code, language in languages %}
                         <option value="{{ code }}" {% if code == App.getLocale() %}selected="selected"{% endif %}>
                             {{ language }}
@@ -66,7 +66,21 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            // Change language.
+            $('select[name="language"]').on('change', function () {
+                var valueSelected = this.value;
+
+                $.post(laroute.route('core.operator.set.language'), {language: valueSelected})
+                    .always(function () {
+                        var params = new URLSearchParams(window.location.search);
+                        params.set('lang', valueSelected);
+                        window.location.search = params.toString();
+                    });
+            });
+        });
+    </script>
 
 	{% block scripts_footer %}{% endblock %}
 

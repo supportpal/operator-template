@@ -1,15 +1,15 @@
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex {% if module != 'user' %}sp-closed{% endif %}" id="userSettingsBox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header sp-collapsible {% if module != 'user' %}sp-closed{% endif %}" id="userSettingsBox">
         <div class="sp-icon">
-            <i class="fas fa-users"></i>
+            <i class="fa-solid fa-users"></i>
         </div>
         <h3>{{ Lang.choice('user.user', 2) }}</h3>
         <div class="sp-chevron">
-            <i class="fas {% if module == 'user' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+            <i class="fa-solid {% if module == 'user' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
         </div>
     </div>
 
-    <ul {% if module != 'user' %}class="sp-hidden"{% endif %}>
+    <ul {% if module != 'user' %}class="sp:hidden"{% endif %}>
         {% if auth_user().hasPermission('view.usersetting') %}
             <li {% if route starts with 'user.operator.generalsetting' %}class="sp-active"{% endif %}>
                 <a href="{{ route('user.operator.generalsetting') }}">{{ Lang.get("general.generalsetting") }}</a>
@@ -17,7 +17,7 @@
         {% endif %}
 
         {% if auth_user().hasPermission('view.ldapaccount') and Config.get('settings.ldap_enabled', 0) == 1 %}
-            <li {% if route starts with 'user.operator.ldapaccount' %}class="sp-active"{% endif %}>
+            <li {% if route starts with 'user.operator.ldap' %}class="sp-active"{% endif %}>
                 <a href="{{ route('user.operator.ldapaccount') }}">{{ Lang.choice("user.ldap_account", 2) }}</a>
             </li>
         {% endif %}

@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp-hidden{% endif %}">
+            <div class="sp-customfield-options {% if form_getValueAttribute('type') not in [2,4,5,7] %}sp:hidden{% endif %}">
                 <div class="sp-form-row">
                     <label>{{ Lang.get('customfield.options') }}</label>
 
@@ -101,7 +101,7 @@
 
         <div class="sp-form-container">
 
-            <div class="visibility {% if record.depends_on_option_id is not empty %}sp-hidden{% endif %}">
+            <div class="visibility {% if record.depends_on_option_id is not empty %}sp:hidden{% endif %}">
                 {% if brand_count() > 1 %}
                     <div class="sp-form-row sp-form-full">
                         {{ form_label('brand[]', Lang.choice('core.brand', 2)) }}
@@ -155,15 +155,15 @@
                 </div>
             </div>
 
-            <div class="sp-form-row encrypt-field {% if form_getValueAttribute('type') not in [6, 8, 9] %}sp-hidden{% endif %}">
+            <div class="sp-form-row encrypt-field {% if form_getValueAttribute('type') not in [6, 8, 9] %}sp:hidden{% endif %}">
                 {{ form_label('encrypted', Lang.get('customfield.encrypted')) }}
                 <div class="sp-input-container">
                     {% if record|default is not empty and record.exists %}
                         <input type="hidden" name="encrypted" value="{{ record.encrypted }}" />
                         {% if record.encrypted %}
-                            <strong class="sp-text-green-600">{{ Lang.get('general.yes') }}</strong>
+                            <strong class="sp:text-green-600">{{ Lang.get('general.yes') }}</strong>
                         {% else %}
-                            <strong class="sp-text-red-600">{{ Lang.get('general.no') }}</strong>
+                            <strong class="sp:text-red-600">{{ Lang.get('general.no') }}</strong>
                         {% endif %}
                     {% else %}
                         {{ form_check('encrypted', 1, record.encrypted, {'class': 'sp-toggle', 'id': 'toggle_encrypted'}) }}

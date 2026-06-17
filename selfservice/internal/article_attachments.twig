@@ -1,13 +1,13 @@
 {% if not article.getAttachments().isEmpty() %}
-    <h4 class="sp-mt-6 sp-mb-0">{{ Lang.choice('general.attachment', 2) }}</h4>
+    <h4 class="sp:mt-6 sp:mb-0">{{ Lang.choice('general.attachment', 2) }}</h4>
 
-    <div class="print:sp-hidden">
+    <div class="sp:print:hidden">
         <ul class="sp-attachments">
             {% for attachment in article.getAttachments() %}
                 <li>
                     {% if attachment.upload.isPreviewable() %}
                         {% if attachment.upload.isPreviewableVideo() or attachment.upload.isPreviewableAudio() %}
-                            <a class="sp-attachment-preview group"
+                            <a class="sp-attachment-preview sp:group"
                                data-video='{"source": [{"src":"{{ attachment.previewUrl(type, true) }}", "type":"{{ attachment.upload.mime }}"}], "attributes": {"preload": false, "controls": true}}'
                                data-download-url="{{ attachment.downloadLink(type) }}">
                         {% else %}
@@ -17,30 +17,30 @@
                                data-download-url="{{ attachment.downloadLink(type) }}">
                         {% endif %}
                     {% else %}
-                        <a class="sp-group" href="{{ attachment.downloadLink(type) }}">
+                        <a class="sp:group" href="{{ attachment.downloadLink(type) }}">
                     {% endif %}
 
-                        <div class="sp-preview sp-relative sp-h-20 sp--mx-4 sp--mt-2 sp-mb-2 sp-rounded-t sp-text-center">
-                            <div class="sp-h-20 sp-bg-primary sp-border sp-border-b-0 sp-border-secondary sp-rounded-t
-                                group-hover:sp-opacity-25">
+                        <div class="sp-preview sp:relative sp:h-20 sp:-mx-4 sp:-mt-2 sp:mb-2 sp:rounded-t-sm sp:text-center">
+                            <div class="sp:h-20 sp:bg-primary sp:border sp:border-b-0 sp:border-secondary sp:rounded-t
+                                sp:group-hover:opacity-25">
                                 {% if attachment.upload.isPreviewableImage() %}
                                     <span data-preview-url="{{ attachment.previewUrl(type) }}"
                                           data-download-url="{{ attachment.downloadLink(type) }}"
                                           data-icon="{{ attachment.upload.icon }}">
-                                <i class="fas fa-spinner fa-spin fa-fw sp-mt-8"></i>
+                                <i class="fa-solid fa-spinner fa-spin sp:mt-8"></i>
                             </span>
                                 {% else %}
-                                    <span class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp-text-5xl sp-mt-4 group-hover:sp-opacity-0"></span>
+                                    <span class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp:text-5xl sp:mt-4 sp:group-hover:opacity-0"></span>
                                 {% endif %}
                             </div>
 
-                            <div class="sp-preview-hover sp-absolute sp-w-full sp-h-full sp-top-0
-                                sp-pt-{% if attachment.upload.isPreviewableImage() %}4{% else %}3{% endif %}
-                                sp-text-4xl sp-opacity-0 group-hover:sp-opacity-100">
+                            <div class="sp-preview-hover sp:absolute sp:w-full sp:h-full sp:top-0
+                                {% if attachment.upload.isPreviewableImage() %}sp:pt-4{% else %}sp:pt-3{% endif %}
+                                sp:text-4xl sp:opacity-0 sp:group-hover:opacity-100">
                                 {% if attachment.upload.isPreviewable() %}
-                                    <i class="fas {% if attachment.upload.isPreviewableAudio() %}fa-headphones{% else %}fa-eye{% endif %}"></i>
+                                    <i class="fa-solid {% if attachment.upload.isPreviewableAudio() %}fa-headphones{% else %}fa-eye{% endif %}"></i>
                                 {% else %}
-                                    <i class="fas fa-download"></i>
+                                    <i class="fa-solid fa-download"></i>
                                 {% endif %}
                             </div>
                         </div>
@@ -54,7 +54,7 @@
             {% endfor %}
         </ul>
     </div>
-    <div class="sp-hidden print:sp-block">
+    <div class="sp:hidden sp:print:block">
         <ul>
             {% for attachment in article.getAttachments() %}
                 <li>

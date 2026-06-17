@@ -18,8 +18,8 @@
 
 {% block content %}
 
-    <div class="sp-text-center">
-        <div class="sp-text-3xl">
+    <div class="sp:text-center">
+        <div class="sp:text-3xl">
             {% if updateAvailable %}
                 {{ Lang.get('core.update_available') }}
             {% else %}
@@ -27,15 +27,15 @@
             {% endif %}
         </div>
 
-        <div class="sp-flex sp-justify-center sp-my-6">
-            <div class="sp-p-6 sp-bg-secondary sp-rounded-s sp-text-end">
-                <div class="sp-description sp-mb-3">{{ Lang.get('core.installed_version') }}</div>
-                <div class="sp-text-4xl sp-leading-none sp-installed-version sp-mb-3">{{ Config.get('release.version') }}</div>
+        <div class="sp:flex sp:justify-center sp:my-6">
+            <div class="sp:p-6 sp:bg-secondary sp:rounded-s-sm sp:text-end">
+                <div class="sp-description sp:mb-3">{{ Lang.get('core.installed_version') }}</div>
+                <div class="sp:text-4xl sp:leading-none sp-installed-version sp:mb-3">{{ Config.get('release.version') }}</div>
             </div>
 
-            <div class="sp-p-6 sp-bg-tertiary sp-rounded-e sp-text-start">
-                <div class="sp-description sp-mb-3">{{ Lang.get('core.available_version') }}</div>
-                <div class="sp-text-4xl sp-leading-none sp-available-version sp-mb-3">{{ availableVersion.getVersionValue() }}</div>
+            <div class="sp:p-6 sp:bg-tertiary sp:rounded-e-sm sp:text-start">
+                <div class="sp-description sp:mb-3">{{ Lang.get('core.available_version') }}</div>
+                <div class="sp:text-4xl sp:leading-none sp-available-version sp:mb-3">{{ availableVersion.getVersionValue() }}</div>
                 <div class="sp-description">
                     <a href="{{ availableVersion.getReleaseNotes() }}" target="_blank">{{ Lang.get('core.release_notes') }}</a>
                 </div>
@@ -43,22 +43,22 @@
         </div>
 
         {% if updateAvailable %}
-            <div class="sp-mt-6">
+            <div class="sp:mt-6">
                 {% if not isRunningInDocker %}
                     <button class="sp-button-submit sp-start-update" type="button">
-                        <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
+                        <i class="fa-solid fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
                     </button>
                 {% else %}
                     <a href="https://docs.supportpal.com/current/Upgrade+Guide#docker" target="_blank"
                        class="sp-button sp-button-submit">
-                        <i class="fas fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
+                        <i class="fa-solid fa-download"></i>&nbsp; {{ Lang.get('general.update') }}
                     </a>
                 {% endif %}
             </div>
         {% endif %}
 
         {% if licenseInformation.supportStatus == 'Expired' %}
-            <div class="sp-alert sp-alert-error sp-mt-6 sp-mx-auto lg:sp-w-1/2">
+            <div class="sp-alert sp-alert-error sp:mt-6 sp:mx-auto sp:lg:w-1/2">
                 {{ Lang.get('core.support_expired') }}
                 {% if updateAvailable and availableVersion.getVersionValue() != latestVersion %}
                     {{ Lang.get('core.update_permitted_version', {'version': availableVersion.getVersionValue()}) }}
@@ -66,29 +66,29 @@
                 {% elseif updateExists %}
                     {{ Lang.get('core.update_renew_support') }}
                 {% endif %}
-                <div class="sp-mt-2">
+                <div class="sp:mt-2">
                     <button class="sp-renew-support" type="button">{{ Lang.get('core.renew') }}</button>
                 </div>
             </div>
         {% endif %}
 
-        <div class="sp-mt-6">
+        <div class="sp:mt-6">
             {% if not isRunningInDocker %}
                 <button class="sp-update-configure" type="button">
-                    <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
+                    <i class="fa-solid fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
                 </button>
                 &nbsp;
             {% endif %}
             <button class="sp-refresh-version" type="button">
-                <i class="fas fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
+                <i class="fa-solid fa-sync-alt"></i>&nbsp; {{ Lang.get('general.refresh') }}
             </button>
         </div>
     </div>
 
-    <div class="sp-configure-modal-content sp-hidden">
-        <div class="sp-text-start">
-            <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
-            <div class="sp-description sp-mt-3 sp-mb-6">
+    <div class="sp-configure-modal-content sp:hidden">
+        <div class="sp:text-start">
+            <h3 class="sp:m-0">{{ Lang.get('core.binary_paths') }}</h3>
+            <div class="sp-description sp:mt-3 sp:mb-6">
                 {{ Lang.get('core.binary_paths_desc') }}
             </div>
         </div>
@@ -115,9 +115,9 @@
             {{ form_text('tar_path', settings.getTarPath(), {size: '100%'}) }}
         </div>
 
-        <div class="sp-text-start">
-            <h3 class="sp-m-0">{{ Lang.get('core.temporary_path') }}</h3>
-            <div class="sp-description sp-mt-3 sp-mb-6">
+        <div class="sp:text-start">
+            <h3 class="sp:m-0">{{ Lang.get('core.temporary_path') }}</h3>
+            <div class="sp-description sp:mt-3 sp:mb-6">
                 {{ Lang.get('core.temporary_path_desc') }}
             </div>
         </div>

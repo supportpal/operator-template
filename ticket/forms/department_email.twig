@@ -1,4 +1,4 @@
-<div class="departmentEmail sp-form-container {% if hide|default is not empty %}sp-hidden{% endif %}">
+<div class="departmentEmail sp-form-container {% if hide|default is not empty %}sp:hidden{% endif %}">
 
     {{
         form_hidden(
@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    <div class="remote-piping {% if i is not defined or (email is defined and email.type == 3) %}sp-hidden{% endif %}">
+    <div class="remote-piping {% if i is not defined or (email is defined and email.type == 3) %}sp:hidden{% endif %}">
         {% include 'operator.' ~ template ~ '.ticket.forms.department_email_consume_all' %}
 
         <div class="sp-form-row">
@@ -77,19 +77,19 @@
         </div>
     </div>
 
-    <div class="email-piping {% if i is not defined or (email is defined and email.type == 2) %}sp-hidden{% endif %}">
+    <div class="email-piping {% if i is not defined or (email is defined and email.type == 2) %}sp:hidden{% endif %}">
         {% include 'operator.' ~ template ~ '.ticket.forms.department_email_consume_all' %}
 
         <div class="sp-form-row">
             <label></label>
             <div class="sp-alert sp-alert-info sp-alert-m-0">
                 {{ Lang.get('ticket.email_piping_desc') }}<br />
-                <input type="text" class="pipe_path sp-w-full" value="| php -q {{ base_path('pipe') }} --address={{ email|default is not empty ? email.address : '' }}" />
+                <input type="text" class="pipe_path sp:w-full" value="| php -q {{ base_path('pipe') }} --address={{ email|default is not empty ? email.address : '' }}" />
             </div>
         </div>
     </div>
 
-    <div class="email-download {% if i is not defined or (email is defined and email.type == 1) %}sp-hidden{% endif %}">
+    <div class="email-download {% if i is not defined or (email is defined and email.type == 1) %}sp:hidden{% endif %}">
 
         <div class="sp-form-row">
             {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][auth_mech]',  Lang.get('general.authentication')) }}
@@ -106,7 +106,7 @@
         </div>
 
         {% set authMech = form_getValueAttribute('emails[' ~ (i is defined ? i : '') ~ '][auth_mech]') %}
-        <div class="password-form {% if authMech is not empty and authMech != PASSWORD_AUTH %}sp-hidden{% endif %}">
+        <div class="password-form {% if authMech is not empty and authMech != PASSWORD_AUTH %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][password]', Lang.get('general.password')) }}
                 <div class="sp-input-container">
@@ -123,13 +123,13 @@
             </div>
         </div>
 
-        <div class="oauth-form {% if authMech is empty or authMech == PASSWORD_AUTH %}sp-hidden{% endif %}">
+        <div class="oauth-form {% if authMech is empty or authMech == PASSWORD_AUTH %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][provider]', Lang.choice('general.provider', 1)) }}
                 <div class="sp-input-container">
                     {% if oAuthProviders is not empty %}
-                        <div class="sp-flex sp-flex-wrap">
-                            <div class="sp-flex-none sp-w-full sm:sp-w-auto">
+                        <div class="sp:flex sp:flex-wrap">
+                            <div class="sp:flex-none sp:w-full sp:sm:w-auto">
                                 {{ form_select(
                                     'emails[' ~ (i is defined ? i : '') ~ '][provider]',
                                     oAuthProviders,
@@ -137,27 +137,27 @@
                                     hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []
                                 ) }}
                             </div>
-                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ms-3 sm:sp-mt-0">
+                            <div class="sp:flex-none sp:w-full sp:mt-3 sp:sm:w-auto sp:sm:ms-3 sp:sm:mt-0">
                                 {% set hasOAuth = record is defined and email.oauth is not empty %}
                                 {{ form_button(
                                     Lang.get('core.get_access_token'),
-                                    {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp-hidden' : '')}
+                                    {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp:hidden' : '')}
                                 ) }}
                                 {{ form_button(
                                     Lang.get('core.reset_access_token'),
-                                    {'class': 'reset-access-token sp-button-red' ~ (hasOAuth ? '' : ' sp-hidden')}
+                                    {'class': 'reset-access-token sp-button-red' ~ (hasOAuth ? '' : ' sp:hidden')}
                                 ) }}
                             </div>
                         </div>
                     {% endif %}
-                    <div class="{% if oAuthProviders is not empty %}sp-description{% else %}sp-alert sp-alert-error sp-m-0{% endif %}">
+                    <div class="{% if oAuthProviders is not empty %}sp-description{% else %}sp-alert sp-alert-error sp:m-0{% endif %}">
                         {{ Lang.get('ticket.manage_oauth_options', {'route': route('core.operator.integration.index')})|raw }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="sp-form-row sp-hidden">
+        <div class="sp-form-row sp:hidden">
             <label></label>
             <div class="sp-input-container">
                 {{
@@ -174,23 +174,23 @@
             <label></label>
             <div class="sp-input-container">
                 {{ form_button(Lang.get('general.validate_auth'), {'class': 'validate-email'}) }} &nbsp;&nbsp;
-                <span class="validate-auth text-progress sp-text-orange-600 sp-hidden">
-                    <i class='fas fa-spinner fa-spin'></i>&nbsp; {{ Lang.get('messages.in_progress') }}...
+                <span class="validate-auth text-progress sp:text-orange-600 sp:hidden">
+                    <i class='fa-solid fa-spinner fa-spin'></i>&nbsp; {{ Lang.get('messages.in_progress') }}...
                 </span>
-                <span class="validate-auth text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
-                <span class="validate-auth text-fail sp-text-red-600 sp-hidden">
+                <span class="validate-auth text-success sp:text-green-600 sp:hidden">{{ Lang.get('messages.success') }}!</span>
+                <span class="validate-auth text-fail sp:text-red-600 sp:hidden">
                     {{ Lang.get('messages.error') }}!
                     <span class="error-message"></span>
                 </span>
                 {% if email is not defined %}
-                    <div class="sp-configure-email-button sp-mt-6">
+                    <div class="sp-configure-email-button sp:mt-6">
                         {{ form_button(Lang.get('ticket.email_setup_manually')) }}
                     </div>
                 {% endif %}
             </div>
         </div>
 
-        <div class="sp-configure-email {% if email is not defined %}sp-hidden{% endif %}">
+        <div class="sp-configure-email {% if email is not defined %}sp:hidden{% endif %}">
             <div class="sp-form-row email-protocol">
                 {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][protocol]', Lang.get('ticket.protocol')) }}
                 <div class="sp-input-container">
@@ -238,7 +238,7 @@
                         form_number(
                             'emails[' ~ (i is defined ? i : '') ~ '][port]',
                             email|default is not empty ? email.port : '',
-                            {'class': 'sp-w-32', 'min': 0}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
+                            {'class': 'sp:w-32', 'min': 0}|merge((hide|default is not empty or email is empty ? {'disabled': 'disabled'} : []))
                         )
                     }}
                     <div class="sp-description">{{ Lang.get('ticket.department_port') }}</div>
@@ -278,7 +278,7 @@
             </div>
         </div>
 
-        <div class="sp-form-row delete-downloaded {% if email is defined and email.protocol == 1 %}sp-hidden{% endif %}">
+        <div class="sp-form-row delete-downloaded {% if email is defined and email.protocol == 1 %}sp:hidden{% endif %}">
             {{ form_label('emails[' ~ (i is defined ? i : '') ~ '][delete_downloaded]', Lang.get('ticket.delete_downloaded')) }}
             <div class="sp-input-container">
                 {{

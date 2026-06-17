@@ -18,9 +18,9 @@
 </div>
 
 <ul class="sp-attached-files">
-    <li class="sp-flex sp-hidden">
-        <div class="sp-me-2 sp-truncate">
-            <i class="fas fa-file"></i>&nbsp;
+    <li class="sp:flex sp:hidden">
+        <div class="sp:me-2 sp:truncate">
+            <i class="fa-solid fa-file"></i>&nbsp;
 
             <span class="sp-file-information">
                 <span class="sp-filename"></span>
@@ -28,8 +28,8 @@
             </span>
         </div>
 
-        <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="{{ Lang.get('general.remove') }}">
-            <i class="fas fa-times sp-text-white"></i>
+        <div class="sp-delete-attachment sp:hidden" title="{{ Lang.get('general.remove') }}">
+            <i class="fa-solid fa-times sp:text-white"></i>
         </div>
 
         <div class="sp-progress-bar">
@@ -38,9 +38,9 @@
     </li>
     {% if attachments is not empty and not attachments.isEmpty() %}
         {% for attachment in attachments %}
-            <li class="sp-flex">
-                <div class="sp-me-2 sp-truncate">
-                    <i class="fas fa-file"></i>&nbsp;
+            <li class="sp:flex">
+                <div class="sp:me-2 sp:truncate">
+                    <i class="fa-solid fa-file"></i>&nbsp;
 
                     <a href='{{ route(downloadRoute, [ attachment.upload_hash ]) }}' class="sp-file-information">
                         <span class="sp-filename">{{ attachment.original_name }}</span>
@@ -48,19 +48,19 @@
                     </a>
                 </div>
 
-                <div class="sp-delete-attachment sp-bg-red-600"
+                <div class="sp-delete-attachment"
                      {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
                      data-attachment-id="{{ attachment.id }}" data-hash="{{ attachment.upload_hash }}"
                      title="{{ Lang.get('general.remove') }}">
-                    <i class="fas fa-times sp-text-white"></i>
+                    <i class="fa-solid fa-times sp:text-white"></i>
                 </div>
             </li>
         {% endfor %}
     {% elseif old_attachments is not empty %}
         {% for hash, file in old_attachments %}
-            <li class="sp-flex">
-                <div class="sp-me-2 sp-truncate">
-                    <i class="fas fa-file"></i>&nbsp;
+            <li class="sp:flex">
+                <div class="sp:me-2 sp:truncate">
+                    <i class="fa-solid fa-file"></i>&nbsp;
 
                     <span class="sp-file-information">
                         <span class="sp-filename">{{ file }}</span>
@@ -68,23 +68,25 @@
                     </span>
                 </div>
 
-                <div class="sp-delete-attachment sp-bg-red-600"
+                <div class="sp-delete-attachment"
                      {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
                      data-hash="{{ hash }}" title="{{ Lang.get('general.remove') }}">
-                    <i class="fas fa-times sp-text-white"></i>
+                    <i class="fa-solid fa-times sp:text-white"></i>
                 </div>
             </li>
         {% endfor %}
     {% endif %}
 </ul>
 
-<div class="sp-mt-4">
-    <div class="sp-attachment-dragover sp-hidden">
+<div class="sp-attachment-dragover sp:hidden">
+    <div class="sp:m-auto">
         {{ Lang.get('general.drag_and_drop') }}
     </div>
+</div>
 
+<div class="sp:mt-3">
     <label class="sp-file-input">
-        <a class="sp-button"><i class="fas fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}</a>
+        <a class="sp-button"><i class="fa-solid fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}</a>
         <input class="sp-file-upload" type="file" name="files[]" data-url="{{ route(route ~ ".upload") }}" multiple="multiple">
     </label>
 </div>

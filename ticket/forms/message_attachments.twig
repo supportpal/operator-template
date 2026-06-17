@@ -7,10 +7,11 @@
                    value="{{ attachment.original_name }}" />
         {% endfor %}
     </div>
+
     <ul class="sp-attached-files">
-        <li class="sp-flex sp-hidden">
-            <div class="sp-me-2 sp-truncate">
-                <i class="fas fa-file"></i>&nbsp;
+        <li class="sp:flex sp:mt-0 sp:border-t-0 sp:rounded-none sp:hidden">
+            <div class="sp:me-2 sp:truncate">
+                <i class="fa-solid fa-file"></i>&nbsp;
 
                 <span class="sp-file-information">
                     <span class="sp-filename"></span>
@@ -18,18 +19,19 @@
                 </span>
             </div>
 
-            <div class="sp-delete-attachment sp-hidden sp-bg-red-600" title="{{ Lang.get('general.remove') }}">
-                <i class="fas fa-times sp-text-white"></i>
+            <div class="sp-delete-attachment sp:rounded-none sp:hidden" title="{{ Lang.get('general.remove') }}">
+                <i class="fa-solid fa-times sp:text-white"></i>
             </div>
 
             <div class="sp-progress-bar">
                 <div class="sp-bar"></div>
             </div>
         </li>
+
         {% for attachment in message.attachments %}
-            <li class="sp-flex">
-                <div class="sp-me-2 sp-truncate">
-                    <i class="fas fa-file"></i>&nbsp;
+            <li class="sp:flex sp:mt-0 sp:rounded-none">
+                <div class="sp:me-2 sp:truncate">
+                    <i class="fa-solid fa-file"></i>&nbsp;
 
                     <span class="sp-file-information">
                         <span class="sp-filename">{{ attachment.original_name }}</span>
@@ -37,20 +39,22 @@
                     </span>
                 </div>
 
-                <div class="sp-delete-attachment sp-bg-red-600"
+                <div class="sp-delete-attachment"
                      data-url="{{ route('ticket.operator.attachment.destroy') }}"
                      data-attachment-id="{{ attachment.id }}"
                      data-size="{{ attachment.upload.getRawOriginal('size') }}"
                      data-hash="{{ attachment.upload_hash }}"
                      data-silent="false"
                      title="{{ Lang.get('general.remove') }}">
-                    <i class="fas fa-times sp-text-white"></i>
+                    <i class="fa-solid fa-times sp:text-white"></i>
                 </div>
             </li>
         {% endfor %}
     </ul>
 
-    <div class="sp-attachment-dragover sp-mb-0 sp-hidden">
-        {{ Lang.get('general.drag_and_drop') }}
+    <div class="sp-attachment-dragover sp:hidden">
+        <div class="sp:m-auto">
+            {{ Lang.get('general.drag_and_drop') }}
+        </div>
     </div>
 {% endif %}

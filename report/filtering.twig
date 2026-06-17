@@ -1,14 +1,14 @@
 {% if filtering.isTicket() or filtering.isUser() %}
-    <form class="sp-report-filtering sp-my-6">
+    <form class="sp-report-filtering sp:my-6">
 
-        <div class="sp-collapsible sp-cursor-pointer">
+        <div class="sp-collapsible sp:cursor-pointer">
             {{ Lang.get('report.filtering') }}
-            <span class="sp-ms-auto">
-                <i class="fas fa-chevron-up"></i>
+            <span class="sp:ms-auto">
+                <i class="fa-solid fa-chevron-up"></i>
             </span>
         </div>
 
-        <div class="sp-hidden sp-mt-6">
+        <div class="sp:hidden sp:mt-6">
             {% include 'operator.' ~ template ~ '.forms.grid_filtering' %}
         </div>
     </form>

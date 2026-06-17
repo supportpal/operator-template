@@ -11,14 +11,14 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>
-                    <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
+                    <i class="fa-solid fa-filter"></i>
+                    <span class="sp:hidden sp:sm:inline">&nbsp;{{ Lang.get('general.filter') }}</span>
                 </button>
                 <button class="sp-action sp-filter-datepicker" data-active="0">
-                    <i class="fas fa-calendar"></i>
-                    <span class="sp-hidden xs:sp-inline">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="sp:hidden sp:xs:inline">
                         &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
                     </span>
                 </button>
@@ -26,38 +26,38 @@
         </ul>
     </div>
 
-    <div class="sp-sent-email sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+    <div class="sp-sent-email sp-alert sp-alert-success sp-alert-sticky sp:hidden">
         {{ Lang.get('messages.sent_email') }}
     </div>
 {% endblock %}
 
 {% block content %}
 
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
-            <div class="sp-table-row">
+        <div class="sp:table">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('general.recipients', 2) }}:</label>
                 <div id="filter_recipients"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('ticket.from_name') }}:</label>
                 <div id="filter_from_name"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('ticket.from_address') }}:</label>
                 <div id="filter_from_address"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('ticket.subject') }}:</label>
                 <div id="filter_subject"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('general.message', 1) }}:</label>
                 <div id="filter_message"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('general.status', 1) }}:</label>
                 <div id="filter_status"></div>
             </div>

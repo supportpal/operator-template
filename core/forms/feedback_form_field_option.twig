@@ -1,5 +1,5 @@
-<div class="option sp-input-translatable sp-input-translatable-small {% if hide|default is not empty %}sp-hidden{% endif %}">
-    <i class="fas fa-bars sp-sortable-handle" aria-hidden="true"></i> &nbsp;
+<div class="option sp-input-translatable sp-input-translatable-small {% if hide|default is not empty %}sp:hidden{% endif %}">
+    <i class="fa-solid fa-bars sp-sortable-handle" aria-hidden="true"></i> &nbsp;
     {{ form_hidden('options[' ~ (option is defined ? option.id : '') ~ '][id]',
         (option is defined ? option.id : null))
     }}

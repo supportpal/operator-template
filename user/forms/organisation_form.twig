@@ -13,17 +13,17 @@
     {% if record.exists and (auth_user().hasPermission('update.organisation') or auth_user().hasPermission('delete.organisation')) %}
         <div class="sp-quick-actions">
             <ul>
-                <li class="sp-action-group sp-inline-block">
+                <li class="sp-action-group">
                     {% if auth_user().hasPermission('update.organisation') %}
                         <button class="sp-action merge-organisation">
-                            <i class="fas fa-code-merge"></i>&nbsp; {{ Lang.get('general.merge') }}
+                            <i class="fa-solid fa-code-merge"></i>&nbsp; {{ Lang.get('general.merge') }}
                         </button><!--
                     {% else %}
                         <!--
                     {% endif %}
                     {% if auth_user().hasPermission('delete.organisation') %}
                         --><button class="sp-action delete-organisation" title="{{ Lang.get('general.delete') }}">
-                            <i class="fas fa-times"></i>
+                            <i class="fa-solid fa-times"></i>
                         </button>
                     {% else %}
                         -->
@@ -33,10 +33,10 @@
         </div>
     {% endif %}
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.error_action') }}
     </div>
 {% endblock %}
@@ -227,8 +227,9 @@
                 // Delete organisation button
                 $('.delete-organisation').on('click', function() {
                     var showAlert = function () {
+                        var name = $('<div/>').text('{{ record.name|e('js') }}').html();
                         return (new deleteAlert({}))
-                            .fireDefault('{{ Lang.choice('user.organisation', 1) }}', '{{ record.name }}', {});
+                            .fireDefault('{{ Lang.choice('user.organisation', 1) }}', name, {});
                     };
 
                     showAlert().then(function (result) {
@@ -253,15 +254,15 @@
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_organisations') }}',
                         html: '<div>'
-                            + '<div class="sp-alert sp-alert-warning sp-text-start">'
-                            + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
+                            + '<div class="sp-alert sp-alert-warning sp:text-start">'
+                            + '<i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
                             + Lang.get('messages.cannot_be_undone')
                             + '</div>'
-                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-start sp-overflow-y-auto" style="max-height: 15rem;">'
-                            + '<li class="sp-py-1 sp-px-3">'
+                            + '<ul class="sp:list-none sp:p-0 sp:m-0 sp:border sp:border-secondary sp:rounded sp:text-start sp:overflow-y-auto" style="max-height: 15rem;">'
+                            + '<li class="sp:py-1 sp:px-3">'
                                 + '{{ record.name }}<br>'
                                 + '<span class="sp-description">{{ Lang.get('user.owner') }}: {{ record.owner is not empty ? record.owner.email.formatted_name : Lang.get('general.none') }}'
-                                + '{{ record.owner.email is not empty ? ('&lt;' ~ record.owner.email ~ '&gt;')|raw : ''}}</span>'
+                                + '{% if record.owner.email is not empty %}&lt; {{ record.owner.email }}&gt;{% endif %}</span>'
                             + '</li>'
                             + '</ul><br />'
                             + '<label>{{ Lang.get('user.merge_organisation_into') }}</label>'

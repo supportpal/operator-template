@@ -20,23 +20,23 @@
     {% if record.exists and not operator and (auth_user().hasPermission('create.ticket') or auth_user().hasPermission('update.user') or auth_user().hasPermission('delete.user')) %}
         <div class="sp-quick-actions">
             <ul>
-                <li class="sp-action-group sp-inline-block">
+                <li class="sp-action-group">
                     {% if (auth_user().hasPermission('create.ticket')) %}
                         <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
                            class="sp-action sp-button">
-                            <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('ticket.open_new') }}
+                            <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('ticket.open_new') }}
                         </a><!--
                     {% else %}
                         <!--
                     {% endif %}
                     {% if auth_user().hasPermission('update.user') %}
                         --><button class="sp-action merge-user" title="{{ Lang.get('user.merge_users') }}">
-                            <i class="fas fa-code-merge"></i>
+                            <i class="fa-solid fa-code-merge"></i>
                         </button><!--
                     {% endif %}
                     {% if auth_user().hasPermission('delete.user') %}
                         --><button class="sp-action delete-user" title="{{ Lang.get('general.delete') }}">
-                            <i class="fas fa-times"></i>
+                            <i class="fa-solid fa-times"></i>
                         </button>
                     {% else %}
                         -->
@@ -46,10 +46,10 @@
         </div>
     {% endif %}
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.error_action') }}
     </div>
 {% endblock %}
@@ -75,11 +75,11 @@
                     <label>{{ Lang.choice('general.export', 2) }}</label>
                     <div class="sp-input-container">
                         {% if record.exports is not empty %}
-                            <ul class="exports-list sp-attached-files sp-mb-3">
+                            <ul class="exports-list sp-attached-files sp:mb-3">
                                 {% for userExport in record.exports %}
-                                    <li class="sp-flex">
-                                        <div class="sp-me-2 sp-truncate">
-                                            <i class="fas fa-file fa-fw"></i>&nbsp;
+                                    <li class="sp:flex">
+                                        <div class="sp:me-2 sp:truncate">
+                                            <i class="fa-solid fa-file"></i>&nbsp;
 
                                             <span class="sp-file-information">
                                                 <span class="sp-filename">
@@ -91,10 +91,10 @@
                                             </span>
                                         </div>
 
-                                        <div class="sp-delete-attachment sp-bg-red-600"
+                                        <div class="sp-delete-attachment"
                                              data-url="{{ route('core.operator.export.destroy', userExport.export.upload_hash) }}"
                                              title="{{ Lang.get('general.delete') }}">
-                                            <i class="fas fa-times sp-text-white"></i>
+                                            <i class="fa-solid fa-times sp:text-white"></i>
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -104,7 +104,7 @@
                         <button class="export-user" type="button">{{ Lang.get('core.export_data') }}</button>
                         <div class="sp-description">{{ Lang.get("core.export_data_desc") }}</div>
 
-                        <div class="sp-alert sp-alert-info sp-alert-bottom sp-hidden export-scheduled">
+                        <div class="sp-alert sp-alert-info sp-alert-bottom sp:hidden export-scheduled">
                             {{ Lang.get('core.export_data_scheduled') }}
                         </div>
                     </div>
@@ -250,7 +250,7 @@
                 },
                 onChange: function(value) {
                     // If they enter an existing organisation.
-                    if (value.length > 0 && value !== this.getOption(value)[0].textContent) {
+                    if (value.length > 0 && value !== this.getOption(value).textContent) {
                         // Set separate field with organisation ID
                         $('input[name="organisation_id"]').val(value);
 
@@ -281,9 +281,9 @@
             // Show notifications options for managers only
             $('select[name="organisation_access_level"]').on('change', function() {
                 if ($(this).val() == 1 || ! $(this).is(':visible')) {
-                    $('.organisation-notifications').addClass('sp-hidden').find(':input').prop('disabled', true);
+                    $('.organisation-notifications').addClass('sp:hidden').find(':input').prop('disabled', true);
                 } else {
-                    $('.organisation-notifications').removeClass('sp-hidden').find(':input').prop('disabled', false);
+                    $('.organisation-notifications').removeClass('sp:hidden').find(':input').prop('disabled', false);
                 }
             });
 
@@ -400,13 +400,13 @@
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_users') }}',
                         html: '<div>'
-                            + '<div class="sp-alert sp-alert-warning sp-text-start">'
-                                + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
+                            + '<div class="sp-alert sp-alert-warning sp:text-start">'
+                                + '<i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
                                 + Lang.get('messages.cannot_be_undone')
                             + '</div>'
-                            + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-start sp-overflow-y-auto" style="max-height: 15rem;">'
-                                + '<li class="sp-py-1 sp-px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp-max-w-2xs">&nbsp; {{ record.formatted_name }}'
-                                + '{{ record.email is not empty ? ('<br><span class="sp-description">' ~ record.email ~ '</span>')|raw : ''}}'
+                            + '<ul class="sp:list-none sp:p-0 sp:m-0 sp:border sp:border-secondary sp:rounded sp:text-start sp:overflow-y-auto" style="max-height: 15rem;">'
+                                + '<li class="sp:py-1 sp:px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp:max-w-5">&nbsp; {{ record.formatted_name }}'
+                                + '{% if record.email is not empty %}<br><span class="sp-description">{{ record.email }}</span>{% endif %}'
                                 + '</li>'
                             + '</ul><br />'
                             + '<label>{{ Lang.get('user.merge_user_into') }}</label>'
@@ -424,14 +424,14 @@
                                 render: {
                                     item: function (item, escape) {
                                         return '<div class="item">' +
-                                            '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
+                                            '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
                                             escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
                                             (item.email ? ' <span class="sp-description">' + escape('<' + item.email + '>' || '') + '</span>' : '') +
                                             '</div>';
                                     },
                                     option: function (item, escape) {
                                         return '<div>' +
-                                            '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
+                                            '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
                                             escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
                                             (item.email ? '<br /><span class="sp-description">' + escape(item.email || '') + '</span>' : '') +
                                             '</div>';
@@ -496,7 +496,7 @@
                     // Show the alert
                     Swal.fire({
                         title: '{{ Lang.get("core.export_data") }}',
-                        html: '<p class="sp-mt-0">{{ Lang.get("core.export_data_select") }}</p>'
+                        html: '<p class="sp:mt-0">{{ Lang.get("core.export_data_select") }}</p>'
                             + '<form class="export-form" style="text-align: left;">'
                             + '<div class="row">'
                                 + '<div class="item item50"><label>{{ form_check("activity_log", 1, true) }} {{ Lang.get("user.activity_log") }}</label></div>'
@@ -562,7 +562,7 @@
                         title: Lang.get('messages.delete_record', {record: "{{ Lang.choice('general.export', 1) }}"}),
                         html: '<div style="text-align: left">'
                                 + '<div class="sp-alert sp-alert-warning">'
-                                    + '<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
+                                    + '<i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;'
                                     + Lang.get('messages.cannot_be_undone')
                                 + '</div>'
                                 + Lang.get('messages.warn_delete', {name: name, record: "{{ Lang.choice('general.export', 1) }}"})
@@ -617,7 +617,7 @@
                 $('.reset-password').parents('.form-row').hide();
 
                 // Convert input fields to plain text
-                $('.edit-user :input').not('[type=hidden]').replaceWith(function() {
+                $('.edit-user :input').not('[type=hidden], textarea').replaceWith(function() {
                     var value = $(this).val();
 
                     // Checkboxes
@@ -672,8 +672,15 @@
                 // For checklists and radio fields, if there are none selected
                 $('.input-group:not(:has(label))').append('<span>' + Lang.get('general.none') + '</span>');
 
-                // Hide selectize boxes
-                $('.selectize-control').remove();
+                // Make any TinyMCE editors readonly
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.get().forEach(function (editor) {
+                        editor.mode.set('readonly');
+                    });
+                }
+
+                // Hide tom-select boxes
+                $('.ts-control').remove();
             {% endif %}
 
             // Only applies when creating a user as the brand can be changed

@@ -9,45 +9,48 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden delete">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden delete">
         {{ Lang.get('messages.success_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden delete">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden delete">
         {{ Lang.get('messages.error_deleted', { 'item': mb_strtolower(Lang.choice('general.message', 1), 'UTF-8') }) }}
     </div>
 {% endblock %}
 
 {% block content %}
 
-    {% for message in conversation.messages %}
-        <div class="sp-message sp-message-{{ message.id }}">
-            <div class="sp-flex">
-                <div class="sp-flex-initial sp-hidden sp-me-4 md:sp-block">
-                    <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-xs md:sp-max-w-md" />
+    <div class="sp-messages-container sp:-mx-6 sp:border-y sp:border-tertiary">
+        {% for message in conversation.messages %}
+            <div class="sp-message sp-message-{{ message.id }} sp:flex">
+                <div class="sp-message-avatar sp:flex-none sp:hidden sp:w-8 sp:pt-1.5 sp:me-3 sp:z-10 sp:md:block sp:xl:w-12 sp:xl:pt-2 sp:xl:-ms-2">
+                    <img src="{{ message.user.avatar_url }}" class="sp-avatar sp:max-w-8 sp:xl:max-w-12" loading="lazy" />
                 </div>
-                <div class="sp-grow">
+                <div class="sp-message-content sp:grow">
                     <div class="sp-message-header">
                         {% if message.user_id == auth_user().id %}
-                            <span class="sp-float-end">
+                            <span class="sp:float-end">
                                 <button class="sp-action delete-confirm" data-route="{{ route('core.operator.message.destroy', message.id) }}"
                                         data-id="{{ message.id }}" title="{{ Lang.get('general.delete') }}">
-                                    <i class="fas fa-times"></i>
+                                    <i class="fa-solid fa-times"></i>
                                 </button>
                             </span>
                         {% endif %}
 
-                        <div class="sp-name sp-text-lg {% if message.user_id == auth_user().id %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
+                        <div class="sp-name sp:font-bold sp:xl:text-lg {% if message.user_id == auth_user().id %}sp:text-red-700 sp:dark:text-red-300{% else %}sp:text-green-700 sp:dark:text-green-300{% endif %}">
                             {{ message.user.formatted_name }}
                         </div>
                         <div class="sp-description">{{ timeago(message.created_at) }}</div>
                     </div>
+
+                    <div class="sp:px-4 sp:py-3">
+                        <div class="sp-message-text sp:flow-root">
+                            {{ message.purified_message|raw }}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="sp-message-text">
-                {{ message.purified_message|raw }}
-            </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 
     <h2>{{ Lang.get('general.reply') }}</h2>
 

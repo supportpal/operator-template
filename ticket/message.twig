@@ -1,14 +1,25 @@
-<div class="sp-message sp-message-{{ message.id }} {% if unread %}sp-message-collapsible{% else %}sp-message-collapsed{% endif %}
-            {% if message.type == 1 %}sp-note{% elseif message.type == 2 %}sp-forward{% endif %}" data-id="{{ message.id }}">
-    {% include 'operator.' ~ template ~ '.ticket.message_header' %}
-
-    <div class="sp-message-text sp-flow-root">
-        {% include 'operator.' ~ template ~ '.ticket.message_text' %}
+<div class="sp-message sp:flex sp:group {% if unread %}sp-message-collapsible{% else %}sp-message-collapsed{% endif %}
+            {% if message.type == 1 %}sp-note{% elseif message.type == 2 %}sp-forward{% endif %}"
+     data-id="{{ message.id }}" data-timeline-id="{{ timeline.id }}" data-created-at="{{ message.created_at }}"
+     data-user-id="{{ message.user.id }}"
+     data-type="{{ enum('App\\Modules\\Ticket\\Models\\Enums\\TimelineEntry').fromMessageType(message.type).value }}">
+    <div class="sp-message-avatar sp:flex-none sp:hidden sp:w-8 sp:pt-1 sp:me-3 sp:z-10 sp:md:block sp:xl:w-12 sp:xl:pt-2 sp:xl:-ms-2">
+        <img src="{{ message.user.avatar_url }}" class="sp-avatar sp:max-w-8 sp:xl:max-w-12" loading="lazy" />
     </div>
 
-    <div class="sp-message-text-edit sp-hidden">
-        <i class='fas fa-spinner fa-spin'></i>
-    </div>
+    <div class="sp-message-content sp:grow">
+        {% include 'operator.' ~ template ~ '.ticket.message_header' %}
 
-    {% include 'operator.' ~ template ~ '.ticket.message_attachments' %}
+        <div class="sp:px-3 sp:py-3 sp:xl:px-4 sp:overflow-auto">
+            <div class="sp-message-text sp:flow-root">
+                {% include 'operator.' ~ template ~ '.ticket.message_text' %}
+            </div>
+
+            <div class="sp-message-text-edit sp:hidden">
+                <i class='fa-solid fa-spinner fa-spin'></i>
+            </div>
+
+            {% include 'operator.' ~ template ~ '.ticket.message_attachments' %}
+        </div>
+    </div>
 </div>

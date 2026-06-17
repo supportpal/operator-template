@@ -5,7 +5,7 @@
 
     {% set attributes = { 'data-depends-on': customfield.depends_on_option_id } %}
     <div class="sp-form-row {% if customfield.type == 9 %}sp-form-full tox-border-none{% endif %} sp-form-customfields
-                {% if customfield.depends_on_option_id and not customfield.parent_selected %} sp-hidden{% endif %}"
+                {% if customfield.depends_on_option_id and not customfield.parent_selected %} sp:hidden{% endif %}"
          data-field="{{ customfield.id }}"
          data-dependent-children="{{ customfield.children is not empty ? customfield.children|json_encode : "[]" }}"
          data-depends-on-option="{{ customfield.depends_on_option_id }}">
@@ -56,7 +56,7 @@
             {% elseif customfield.type == 3 %}
                 {{ form_text('customfield[' ~ customfield.id ~ ']',
                     customfield.value|default is not empty ? timeWithOffset(customfield.value, false)|date(Config.get('settings.date_format')) : null,
-                    {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;', 'disabled': customfield.value is not empty and customfield.locked ? 'disabled' : null}) }}
+                    {'class': 'datepicker sp:w-40', 'placeholder': '&#xf073;', 'disabled': customfield.value is not empty and customfield.locked ? 'disabled' : null}) }}
 
             {% elseif customfield.type == 4 %}
                 {# Filler value for when select[multiple] is submitted with no values, do not delete! #}
@@ -106,21 +106,21 @@
                     customfield.value is not empty and customfield.locked ? {'disabled': 'disabled', 'rows': 1} : {'rows': 1}) }}
 
             {% elseif customfield.type == 10 %}
-                <div class="sp-table">
-                    <div class="sp-table-row">
-                        <div class="sp-table-cell sp-pe-2"></div>
+                <div class="sp:table">
+                    <div class="sp:table-row">
+                        <div class="sp:table-cell sp:pe-2"></div>
                         {% for i in 1..5 %}
-                            <div class="sp-table-cell sp-px-2 sp-text-center"><strong>{{ i }}</strong></div>
+                            <div class="sp:table-cell sp:px-2 sp:text-center"><strong>{{ i }}</strong></div>
                         {% endfor %}
                     </div>
                     {% for key, option in customfield.options %}
-                        <div class="sp-table-row">
-                            <div class="sp-table-cell sp-pe-2">{{ option }}</div>
+                        <div class="sp:table-row">
+                            <div class="sp:table-cell sp:pe-2">{{ option }}</div>
                             {% for i in 1..5 %}
-                                <div class="sp-table-cell sp-px-2 sp-text-center">
+                                <div class="sp:table-cell sp:px-2 sp:text-center">
                                     {{ form_radio('customfield[' ~ customfield.id ~ '][' ~ key ~ ']', i,
                                         customfield.value is not empty and array_key_exists(key, customfield.value) and customfield.value[key] == i ? true : false,
-                                        customfield.value is not empty and customfield.locked ? {'class': 'sp-m-0', 'disabled': 'disabled'} : {'class': 'sp-m-0'}) }}
+                                        customfield.value is not empty and customfield.locked ? {'class': 'sp:m-0', 'disabled': 'disabled'} : {'class': 'sp:m-0'}) }}
                                 </div>
                             {% endfor %}
                         </div>

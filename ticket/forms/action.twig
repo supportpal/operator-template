@@ -1,7 +1,7 @@
 {% set inputPrefix = 'rules[' ~ (count is defined ? count : '') ~ ']' %}
-<tr class="rule {% if hide|default is not empty %}sp-hidden{% endif %}">
+<tr class="rule {% if hide|default is not empty %}sp:hidden{% endif %}">
     <td class="rule-drag drag-visible">
-        <i class="fas fa-bars sp-sortable-handle" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars sp-sortable-handle" aria-hidden="true"></i>
     </td>
 
     {% if when|default is not empty %}
@@ -16,7 +16,7 @@
 
         <td class="rule-when drag-visible">
             {{ form_number(inputPrefix ~ '[when_time]',
-                rule|default is not empty ? number_format(rule.when_time / 3600, 2) + 0 : 1, {'class': 'sp-hidden sp-w-24', 'min': 0})
+                rule|default is not empty ? number_format(rule.when_time / 3600, 2) + 0 : 1, {'class': 'sp:hidden sp:w-24', 'min': 0})
             }}
 
             {{ form_select(inputPrefix ~ '[when]',
@@ -39,7 +39,7 @@
             {% set value_text = rule|default is not empty and rule.action == 0 ?
                 (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {}
             %}
-            <div class="sp-mb-3">
+            <div class="sp:mb-3">
                 {{ form_editor(inputPrefix ~ '[value_text][text]',
                     value_text.text|default is not empty ? value_text.text : null, {'class': 'text'})
                 }}
@@ -51,11 +51,11 @@
             </label>
         </div>
 
-        <div class="action sp-hidden" data-action="1">
+        <div class="action sp:hidden" data-action="1">
             {% set value_text = rule|default is not empty and rule.action == 1 ?
                 (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {}
             %}
-            <div class="sp-mb-3">
+            <div class="sp:mb-3">
                 {{ form_editor(inputPrefix ~ '[value_text][text]',
                     value_text.text|default is not empty ? value_text.text : '', {'class': 'text'})
                 }}
@@ -65,7 +65,7 @@
                     value_text.email_user|default is not empty ? value_text.email_user : true)
                 }}&nbsp; {{ Lang.get('ticket.send_email_to_users') }}
             </label> &nbsp;&nbsp;
-            <label class="exclude-cc {% if value_text.email_user|default is not empty and not value_text.email_user %}sp-hidden{% endif %}">
+            <label class="exclude-cc {% if value_text.email_user|default is not empty and not value_text.email_user %}sp:hidden{% endif %}">
                 {{ form_check(inputPrefix ~ '[value_text][exclude_cc]', 1,
                     value_text.exclude_cc|default is not empty ? value_text.exclude_cc : false)
                 }}&nbsp; {{ Lang.get('actions.exclude_cc') }} &nbsp;&nbsp;
@@ -77,7 +77,7 @@
             </label>
         </div>
 
-        <div class="action sp-hidden" data-action="2">
+        <div class="action sp:hidden" data-action="2">
             {% if tags is not defined or tags is empty %}
                 {{ Lang.get('ticket.no_tags', { 'route': route('ticket.operator.tag.create') })|raw }}
             {% else %}
@@ -87,7 +87,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="3">
+        <div class="action sp:hidden" data-action="3">
             {% if operators is not defined or operators is empty %}
                 {{ Lang.get('ticket.no_operators_found', {'route': route('user.operator.operator.create')})|raw }}
             {% else %}
@@ -97,7 +97,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="4">
+        <div class="action sp:hidden" data-action="4">
             {% if tags is not defined or tags is empty %}
                 {{ Lang.get('ticket.no_tags', {'route': route('ticket.operator.tag.create')})|raw }}
             {% else %}
@@ -107,7 +107,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="5">
+        <div class="action sp:hidden" data-action="5">
             {% if templates.isEmpty() %}
                 {{ Lang.get('ticket.no_templates', {'route': route('core.operator.emailtemplate.create')})|raw }}
             {% else %}
@@ -117,7 +117,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="6">
+        <div class="action sp:hidden" data-action="6">
             {% if templates.isEmpty() %}
                 {{ Lang.get('ticket.no_templates', {'route': route('core.operator.emailtemplate.create')})|raw }}
             {% else %}
@@ -133,7 +133,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="7">
+        <div class="action sp:hidden" data-action="7">
             {% if departments is not defined or departments is empty %}
                 {{ Lang.get('ticket.no_departments_found', {'route': route('ticket.operator.department.create')})|raw }}
             {% else %}
@@ -143,7 +143,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="8">
+        <div class="action sp:hidden" data-action="8">
             {% if priorities is not defined or priorities is empty %}
                 {{ Lang.get('ticket.no_priorities', {'route': route('ticket.operator.priority.create')})|raw }}
             {% else %}
@@ -153,7 +153,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="9">
+        <div class="action sp:hidden" data-action="9">
             {% if statuses is not defined or statuses is empty %}
                 {{ Lang.get('ticket.no_statuses', {'route': route('ticket.operator.status.create')})|raw }}
             {% else %}
@@ -163,7 +163,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="10">
+        <div class="action sp:hidden" data-action="10">
             {% if templates.isEmpty() %}
                 {{ Lang.get('ticket.no_templates', {'route': route('core.operator.emailtemplate.create')})|raw }}
             {% elseif operatorGroups is not defined or operatorGroups is empty %}
@@ -181,7 +181,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="11">
+        <div class="action sp:hidden" data-action="11">
             {% if templates.isEmpty() %}
                 {{ Lang.get('ticket.no_templates', {'route': route('core.operator.emailtemplate.create')})|raw }}
             {% elseif userGroups is not defined or userGroups is empty %}
@@ -199,7 +199,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="12">
+        <div class="action sp:hidden" data-action="12">
             {% if operators is not defined or operators is empty %}
                 {{ Lang.get('ticket.no_operators_found', {'route': route('user.operator.operator.create')})|raw }}
             {% else %}
@@ -209,7 +209,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="13">
+        <div class="action sp:hidden" data-action="13">
             {% if ticketCustomFields is not defined or ticketCustomFields.isEmpty() %}
                 {{ Lang.get('ticket.no_custom_fields', {'route': route('ticket.operator.customfield.create')})|raw }}
             {% else %}
@@ -222,24 +222,24 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="14">
+        <div class="action sp:hidden" data-action="14">
             {{ Lang.get('general.na') }}
             {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
         </div>
 
-        <div class="action sp-hidden" data-action="15">
+        <div class="action sp:hidden" data-action="15">
             {{ Lang.get('general.na') }}
             {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
         </div>
 
-        <div class="action sp-hidden" data-action="16">
+        <div class="action sp:hidden" data-action="16">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 16 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 16 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_added') }}
             <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="17">
+        <div class="action sp:hidden" data-action="17">
             {% set value = rule.action == 17 ? (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {} %}
             <label>
                 {{ form_check(inputPrefix ~ '[value_text][notify]', 1, value.notify ?? true) }}&nbsp; {{ Lang.get('actions.notify_user') }}
@@ -250,31 +250,31 @@
             </label>
         </div>
 
-        <div class="action sp-hidden" data-action="18">
+        <div class="action sp:hidden" data-action="18">
             {{ Lang.get('general.na') }}
             {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
         </div>
 
-        <div class="action sp-hidden" data-action="19">
+        <div class="action sp:hidden" data-action="19">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 19 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 19 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_removed') }}
             <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="20">
+        <div class="action sp:hidden" data-action="20">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 20 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 20 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_set') }}
             <div class="sp-description">{{ Lang.get('actions.set_due_time_desc') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="21">
+        <div class="action sp:hidden" data-action="21">
             {{ Lang.get('general.na') }}
             {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
         </div>
 
-        <div class="action sp-hidden" data-action="22">
+        <div class="action sp:hidden" data-action="22">
             {% if slaplans is not defined or slaplans is empty %}
                 {{ Lang.get('ticket.no_slaplans', { 'route': route('ticket.operator.slaplan.create') })|raw }}
             {% else %}
@@ -284,16 +284,16 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="23">
+        <div class="action sp:hidden" data-action="23">
             {{ form_text(inputPrefix ~ '[value_text]',
                 rule|default is not empty and rule.action == 23 ? rule.value_text : '{{ ticket.subject }}', {'style': 'width: 100%'})
             }}
-            <div class="sp-alert sp-alert-warning sp-mt-2 sp-mb-0">
+            <div class="sp-alert sp-alert-warning sp:mt-2 sp:mb-0">
                 {{ Lang.get('actions.subject_placeholder') }}
             </div>
         </div>
 
-        <div class="action sp-hidden" data-action="24">
+        <div class="action sp:hidden" data-action="24">
             {% if userGroups is not defined or userGroups is empty %}
                 {{ Lang.get('ticket.no_user_groups', { 'route': route('user.operator.usergroup.create') })|raw }}
             {% else %}
@@ -303,7 +303,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="25">
+        <div class="action sp:hidden" data-action="25">
             {% if userGroups is not defined or userGroups is empty %}
                 {{ Lang.get('ticket.no_user_groups', { 'route': route('user.operator.usergroup.create') })|raw }}
             {% else %}
@@ -313,43 +313,43 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="26">
+        <div class="action sp:hidden" data-action="26">
             {{ form_text(inputPrefix ~ '[value_text]',
                 rule|default is not empty and rule.action == 26 ? rule.value_text : null)
             }}
         </div>
 
-        <div class="action sp-hidden" data-action="27">
+        <div class="action sp:hidden" data-action="27">
             {{ form_text(inputPrefix ~ '[value_text]',
                 rule|default is not empty and rule.action == 27 ? rule.value_text : null)
             }}
             <div class="sp-description">{{ Lang.get('actions.remove_cc_desc') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="28">
+        <div class="action sp:hidden" data-action="28">
             {% set value = rule.action == 28 ? (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {} %}
-            <div class="sp-mb-3">
-                <a class="er-wh-toggle-headers sp-font-bold">{{ Lang.get('ticket.add_remove_headers') }}</a>
-                <div class="{% if value.headers is empty %}sp-hidden{% endif %}">
+            <div class="sp:mb-3">
+                <a class="er-wh-toggle-headers sp:font-bold">{{ Lang.get('ticket.add_remove_headers') }}</a>
+                <div class="{% if value.headers is empty %}sp:hidden{% endif %}">
                     {{ form_source_code(inputPrefix ~ '[value_text][headers]', value.headers, {'class': 'codemirror'}) }}
                 </div>
             </div>
-            <div class="sp-mb-3">
+            <div class="sp:mb-3">
                 {% set methods = {'GET': 'GET', 'POST': 'POST', 'PUT': 'PUT', 'PATCH': 'PATCH', 'DELETE': 'DELETE'} %}
-                <div class="sp-flex">
-                    <div class="sp-flex-none sp-me-3">
+                <div class="sp:flex">
+                    <div class="sp:flex-none sp:me-3">
                         {{ form_select(inputPrefix ~ '[value_text][method]', methods, value.method, {'class': 'er-wh-method'}) }}
                     </div>
-                    <div class="sp-grow">
-                        {{ form_text(inputPrefix ~ '[value_text][url]', value.url, {'placeholder': 'http://www.example.com/webhook', 'class': 'sp-w-full'}) }}
+                    <div class="sp:grow">
+                        {{ form_text(inputPrefix ~ '[value_text][url]', value.url, {'placeholder': 'http://www.example.com/webhook', 'class': 'sp:w-full'}) }}
                     </div>
                 </div>
             </div>
-            <div class="er-wh-content sp-relative sp-mb-3 {% if value.method not in ['POST','PUT','PATCH'] %}sp-hidden{% endif %}">
+            <div class="er-wh-content sp:relative sp:mb-3 {% if value.method not in ['POST','PUT','PATCH'] %}sp:hidden{% endif %}">
                 <strong>{{ Lang.get('general.content') }}</strong>
                 {% set types = { 'application/json': 'application/json', 'application/xml': 'application/xml', 'application/x-www-form-urlencoded': 'application/x-www-form-urlencoded' } %}
                 {{ form_select(inputPrefix ~ '[value_text][content_type]', types, value.content_type) }}
-                <div class="sp-mt-3">
+                <div class="sp:mt-3">
                     {{ form_source_code(inputPrefix ~ '[value_text][content]', value.content, {'class': 'codemirror'}) }}
                 </div>
             </div>
@@ -359,7 +359,7 @@
             <div class="sp-description">{{ Lang.get('ticket.webhook_merge_fields')|raw }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="29">
+        <div class="action sp:hidden" data-action="29">
             {% set value = rule.action == 29 ? (rule.value_text is iterable ? rule.value_text : json_decode(rule.value_text)) : {} %}
             <div class="sp-form-row" style="padding: 0; margin-bottom: 0.5rem">
                 <label style="width: 6rem;">{{ Lang.get('ticket.to') }}</label>
@@ -402,7 +402,7 @@
             </div>
         </div>
 
-        <div class="action sp-hidden" data-action="30">
+        <div class="action sp:hidden" data-action="30">
             {% if operators is not defined or operators is empty %}
                 {{ Lang.get('ticket.no_operators_found', { 'route': route('user.operator.operator.create') })|raw }}
             {% else %}
@@ -412,7 +412,7 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="31">
+        <div class="action sp:hidden" data-action="31">
             {% if operators is not defined or operators is empty %}
                 {{ Lang.get('ticket.no_operators_found', { 'route': route('user.operator.operator.create') })|raw }}
             {% else %}
@@ -422,34 +422,34 @@
             {% endif %}
         </div>
 
-        <div class="action sp-hidden" data-action="32">
+        <div class="action sp:hidden" data-action="32">
             {{ Lang.get('general.na') }}
             {{ form_hidden(inputPrefix ~ '[value_id]', 1) }}
         </div>
 
-        <div class="action sp-hidden" data-action="33">
+        <div class="action sp:hidden" data-action="33">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 33 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 33 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_added') }}
             <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="34">
+        <div class="action sp:hidden" data-action="34">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 34 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 34 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_removed') }}
             <div class="sp-description">{{ Lang.get('actions.only_with_due_time') }}</div>
         </div>
 
-        <div class="action sp-hidden" data-action="35">
+        <div class="action sp:hidden" data-action="35">
             {{ form_number(inputPrefix ~ '[value_text]',
-                rule|default is not empty and rule.action == 35 ? rule.value_text : null, {'class': 'sp-w-24', 'min': 0})
+                rule|default is not empty and rule.action == 35 ? rule.value_text : null, {'class': 'sp:w-24', 'min': 0})
             }}&nbsp; {{ Lang.get('actions.hours_to_be_set') }}
             <div class="sp-description">{{ Lang.get('actions.set_due_time_desc') }}</div>
         </div>
     </td>
 
-    <td class="sp-text-end sp-w-3">
-        <i class="fas fa-times sp-cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
+    <td class="sp:text-end sp:w-3">
+        <i class="fa-solid fa-times sp:cursor-pointer remove-button" title="{{ Lang.get('general.remove') }}"></i>
     </td>
 </tr>

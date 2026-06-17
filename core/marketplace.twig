@@ -10,8 +10,8 @@
 
 {% block content %}
 
-    <div class="sp-flex sp-items-center">
-        <div class="sp-flex-grow">
+    <div class="sp:flex sp:items-center">
+        <div class="sp:grow">
             {% if not authenticated %}
                 <div class="sp-login-button">
                     <a class="sp-button" href="{{ route('core.operator.marketplace.login') }}">
@@ -20,14 +20,15 @@
                 </div>
             {% else %}
                 <div class="sp-description">
+                    {% if account %}
                     {{ Lang.get('user.logged_in_as', {'name': account.fullname}) }}
-                    - <a href="{{ route('core.operator.marketplace.logout') }}">{{ Lang.get('user.logout') }}</a>
+                    - {% endif %}<a href="{{ route('core.operator.marketplace.logout') }}">{{ Lang.get('user.logout') }}</a>
                 </div>
             {% endif %}
         </div>
-        <div class="sp-flex-initial">
+        <div class="sp:flex-initial">
             <button class="sp-configure" type="button">
-                <i class="fas fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
+                <i class="fa-solid fa-wrench"></i>&nbsp; {{ Lang.get('general.configure') }}
             </button>
         </div>
     </div>
@@ -35,10 +36,10 @@
     {% if addons.isNotEmpty() %}
         {% for category, categoryAddons in addons %}
             {% if categoryAddons.isNotEmpty() %}
-                <div class="sp-flex sp-items-center">
+                <div class="sp:flex sp:items-center">
                     <h2>{{ category }}</h2>
-                    {% if Request.get('category') is empty %}
-                        <div class="sp-ms-4">
+                    {% if Request.input('category') is empty %}
+                        <div class="sp:ms-4">
                             <a class="sp-button sp-button-sm"
                                href="{{ route('core.operator.marketplace.index', {'category': categoryAddons.first().getCategory().getSlug()}) }}">
                                 {{ Lang.get('general.view_all') }}
@@ -47,34 +48,34 @@
                     {% endif %}
                 </div>
 
-                <div class="sp-flex sp-flex-wrap sp--m-3/2">
+                <div class="sp:flex sp:flex-wrap sp:-m-1.5">
                     {% for addon in categoryAddons %}
-                        <div class="sp-w-full sp-p-3/2 sm:sp-w-1/2 lg:sp-w-1/3">
-                            <a class="sp-addon-card sp-flex sp-h-full sp-p-4 sp-border sp-border-tertiary sp-rounded hover:sp-shadow" data-id="{{ addon.id }}">
-                                <div class="sp-flex-none sp-me-4">
-                                    <img src="{{ addon.logoUri }}" alt="{{ addon.name }}" class="sp-h-12 sp-w-12 sp-rounded-full" />
+                        <div class="sp:w-full sp:p-1.5 sp:sm:w-1/2 sp:lg:w-1/3">
+                            <a class="sp-addon-card sp:flex sp:h-full sp:p-4 sp:border sp:border-tertiary sp:rounded sp:hover:shadow" data-id="{{ addon.id }}">
+                                <div class="sp:flex-none sp:me-4">
+                                    <img src="{{ addon.logoUri }}" alt="{{ addon.name }}" class="sp:h-12 sp:w-12 sp:rounded-full" />
                                 </div>
-                                <div class="sp-grow">
+                                <div class="sp:grow">
                                     <strong>{{ addon.name }}</strong><br />
                                     <div class="sp-description">{{ addon.tagline }}</div>
-                                    <div class="sp-description sp-mt-2">
+                                    <div class="sp-description sp:mt-2">
                                     {% if addon.getBilling() is not empty %}
                                         {% if addon.getBilling().billingcycle is same as('free') %}
-                                            <span class="sp-badge sp-me-2 sp-bg-green-600 sp-uppercase">{{ Lang.get('general.free') }}</span>
+                                            <span class="sp-badge sp:me-2 sp:bg-green-600 sp:uppercase">{{ Lang.get('general.free') }}</span>
                                         {% else %}
-                                            <span class="sp-badge sp-me-2 sp-bg-red-600 sp-uppercase">{{ Lang.get('general.commercial') }}</span>
+                                            <span class="sp-badge sp:me-2 sp:bg-red-600 sp:uppercase">{{ Lang.get('general.commercial') }}</span>
                                         {% endif %}
                                     {% endif %}
                                     {% if addon.isInstalled() %}
-                                        <span class="{% if addon.isUpdateAvailable() %}sp-text-green-600{% endif %}">
+                                        <span class="{% if addon.isUpdateAvailable() %}sp:text-green-600{% endif %}">
                                             {% if addon.isUpdateAvailable() %}
-                                                <i class="fa-solid fa-fw fa-circle-arrow-down"></i> {{ Lang.get('core.update_available') }}
+                                                <i class="fa-solid fa-circle-arrow-down"></i> {{ Lang.get('core.update_available') }}
                                             {% elseif addon.isUnlicensed() %}
-                                                <i class="fa-solid fa-fw fa-circle-exclamation"></i> {{ Lang.get('license.unlicensed') }}
+                                                <i class="fa-solid fa-circle-exclamation"></i> {{ Lang.get('license.unlicensed') }}
                                             {% elseif addon.isActive() %}
-                                                <i class="fa-solid fa-fw fa-circle-check"></i> {{ Lang.get('general.active') }}
+                                                <i class="fa-solid fa-circle-check"></i> {{ Lang.get('general.active') }}
                                             {% else %}
-                                                <i class="fa-solid fa-fw fa-circle-minus"></i> {{ Lang.get('general.inactive') }}
+                                                <i class="fa-solid fa-circle-minus"></i> {{ Lang.get('general.inactive') }}
                                             {% endif %}
                                         </span>
                                     {% endif %}
@@ -87,13 +88,13 @@
             {% endif %}
         {% endfor %}
     {% else %}
-        <p class="sp-description sp-mb-0">{{ Lang.get('core.no_addons_found') }}</p>
+        <p class="sp-description sp:mb-0">{{ Lang.get('core.no_addons_found') }}</p>
     {% endif %}
 
-    <div class="sp-configure-modal-content sp-hidden">
-        <div class="sp-text-start">
-            <h3 class="sp-m-0">{{ Lang.get('core.binary_paths') }}</h3>
-            <div class="sp-description sp-mt-3 sp-mb-6">
+    <div class="sp-configure-modal-content sp:hidden">
+        <div class="sp:text-start">
+            <h3 class="sp:m-0">{{ Lang.get('core.binary_paths') }}</h3>
+            <div class="sp-description sp:mt-3 sp:mb-6">
                 {{ Lang.get('core.binary_paths_desc') }}
             </div>
         </div>
@@ -118,7 +119,7 @@
         $(document).ready(function() {
             $('.sp-addon-card').on('click', function () {
                 Swal.fire({
-                    html: '<div class="sp-addon-popup sp-text-start"></div>',
+                    html: '<div class="sp-addon-popup sp:text-start"></div>',
                     confirmButtonText: "{{ Lang.get('general.continue') }}",
                     showConfirmButton: false,
                     showCancelButton: false,
@@ -137,14 +138,14 @@
                 var $button = $(this);
 
                 $button.prop('disabled', true)
-                    .html('{{ Lang.get('general.installing') }} &nbsp;<i class="fas fa-spinner fa-spin"></i>');
+                    .html('{{ Lang.get('general.installing') }} &nbsp;<i class="fa-solid fa-spinner fa-spin"></i>');
 
                 $.post(laroute.route('core.operator.marketplace.install', {'id': $(this).data('id')}))
                     .done(function (data) {
                         if (data.status === 'success') {
                             $button.remove();
 
-                            $('.sp-manage-addon, .sp-addon-message-installed').removeClass('sp-hidden');
+                            $('.sp-manage-addon, .sp-addon-message-installed').removeClass('sp:hidden');
                         } else {
                             Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
                         }
@@ -158,7 +159,7 @@
                 var $button = $(this);
 
                 $button.prop('disabled', true)
-                    .html('{{ Lang.get('general.installing') }} &nbsp;<i class="fas fa-spinner fa-spin"></i>');
+                    .html('{{ Lang.get('general.installing') }} &nbsp;<i class="fa-solid fa-spinner fa-spin"></i>');
 
                 $.post(laroute.route('core.operator.marketplace.purchase', {'id': $(this).data('id')}))
                     .done(function (data) {
@@ -168,8 +169,8 @@
                             } else {
                                 $button.remove();
 
-                                $('.sp-addon-purchase-description').addClass('sp-hidden');
-                                $('.sp-manage-addon, .sp-cancel-addon, .sp-addon-message-installed').removeClass('sp-hidden');
+                                $('.sp-addon-purchase-description').addClass('sp:hidden');
+                                $('.sp-manage-addon, .sp-cancel-addon, .sp-addon-message-installed').removeClass('sp:hidden');
                             }
                         } else {
                             Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
@@ -184,14 +185,14 @@
                 var $button = $(this);
 
                 $button.prop('disabled', true)
-                    .html('{{ Lang.get('general.updating') }} &nbsp;<i class="fas fa-spinner fa-spin"></i>');
+                    .html('{{ Lang.get('general.updating') }} &nbsp;<i class="fa-solid fa-spinner fa-spin"></i>');
 
                 $.post(laroute.route('core.operator.marketplace.update', {'id': $button.data('id')}))
                     .done(function (data) {
                         if (data.status === 'success') {
                             $button.remove();
 
-                            $('.sp-addon-message-updated').removeClass('sp-hidden');
+                            $('.sp-addon-message-updated').removeClass('sp:hidden');
                         } else {
                             Swal.fire('{{ Lang.get('messages.error') }}', '', 'error');
                         }
@@ -205,7 +206,7 @@
                 var $button = $(this);
 
                 $button.prop('disabled', true)
-                    .html('{{ Lang.get('general.cancelling') }} &nbsp;<i class="fas fa-spinner fa-spin"></i>');
+                    .html('{{ Lang.get('general.cancelling') }} &nbsp;<i class="fa-solid fa-spinner fa-spin"></i>');
 
                 $.post(laroute.route('core.operator.marketplace.cancel', {'id': $button.data('id'), 'whmcsId': $button.data('whmcs-id')}))
                     .done(function (data) {

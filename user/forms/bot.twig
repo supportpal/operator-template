@@ -13,10 +13,10 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.success_action') }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden action">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden action">
         {{ Lang.get('messages.error_action') }}
     </div>
 {% endblock %}
@@ -39,12 +39,12 @@
                 {{ form_label('avatar', Lang.get('user.avatar')) }}
                 <div class="sp-input-container">
                     <img class="sp-avatar" src="{{ record.avatar_url }}" />
-                    <div class="{% if record.getRawOriginal('avatar') is not null %}sp-button-group{% endif %} sp-mt-3">
+                    <div class="{% if record.getRawOriginal('avatar') is not null %}sp-button-group{% endif %} sp:mt-3">
                         <label class="sp-button">
-                            <input type="file" name="avatar" class="sp-hidden" data-url="{{ route('user.operator.avatar.upload', {id: record.id}) }}" />
+                            <input type="file" name="avatar" class="sp:hidden" data-url="{{ route('user.operator.avatar.upload', {id: record.id}) }}" />
                             {{ Lang.get('general.update') }}
                         </label>
-                        <button class="remove-avatar {% if record.getRawOriginal('avatar') is null %}sp-hidden{% endif %}" type="button"
+                        <button class="remove-avatar {% if record.getRawOriginal('avatar') is null %}sp:hidden{% endif %}" type="button"
                                 data-url="{{ route('user.operator.avatar.delete', {id: record.id}) }}">
                             {{ Lang.get('general.remove') }}
                         </button>

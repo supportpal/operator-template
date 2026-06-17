@@ -6,9 +6,9 @@
 
 {% block breadcrumb %}
     {{ Lang.get('selfservice.selfservice') }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <a href="{{ route('selfservice.operator.comment.index') }}">{{ Lang.choice('selfservice.comment', 2) }}</a>
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <strong>{{ Lang.get('selfservice.reply_to_comment') }}</strong>
 {% endblock %}
 
@@ -25,7 +25,7 @@
         <div class="sp-form-row">
             {{ form_label('author', Lang.get('selfservice.comment_by')) }}
             <div class="sp-input-container">
-                <img src="{{ record.author.avatar_url }}" class="sp-avatar sp-max-w-2xs" />
+                <img src="{{ record.author.avatar_url }}" class="sp-avatar sp:max-w-5" />
                 <a href='{{ route("user.operator.user.edit", [ record.author_id ]) }}'>
                     {{ record.author.formatted_name }}
                 </a>

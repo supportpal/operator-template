@@ -27,19 +27,19 @@
                 <div class="sp-input-container">
                     <div class="sp-duration">
                         {{ form_number('resolved_time_days',
-                            resolved_time_days|default is not empty ? resolved_time_days : 1, {'class': 'sp-w-20', 'min': 0})
+                            resolved_time_days|default is not empty ? resolved_time_days : 1, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
                         {{ form_number('resolved_time_hours',
-                            resolved_time_hours|default is not empty ? resolved_time_hours : 0, {'class': 'sp-w-20', 'min': 0})
+                            resolved_time_hours|default is not empty ? resolved_time_hours : 0, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
                         {{ form_number('resolved_time_minutes',
-                            resolved_time_minutes|default is not empty ? resolved_time_minutes : 0, {'class': 'sp-w-20', 'min': 0})
+                            resolved_time_minutes|default is not empty ? resolved_time_minutes : 0, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
@@ -52,23 +52,31 @@
                 <div class="sp-input-container">
                     <div class="sp-duration">
                         {{ form_number('expiry_time_days',
-                            expiry_time_days|default is not empty ? expiry_time_days : 7, {'class': 'sp-w-20', 'min': 0})
+                            expiry_time_days|default is not empty ? expiry_time_days : 7, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
                         {{ form_number('expiry_time_hours',
-                            expiry_time_hours|default is not empty ? expiry_time_hours : 0, {'class': 'sp-w-20', 'min': 0})
+                            expiry_time_hours|default is not empty ? expiry_time_hours : 0, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
                         {{ form_number('expiry_time_minutes',
-                            expiry_time_minutes|default is not empty ? expiry_time_minutes : 0, {'class': 'sp-w-20', 'min': 0})
+                            expiry_time_minutes|default is not empty ? expiry_time_minutes : 0, {'class': 'sp:w-20', 'min': 0})
                         }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">{{ Lang.get('ticket.expires_after_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('notify_feedback', Lang.get('ticket.notify_feedback')) }}
+                <div class="sp-input-container">
+                    {{ form_select('notify_feedback', feedbackNotificationOptions, record.notify_feedback.value|default(2)) }}
+                    <div class="sp-description">{{ Lang.get('ticket.notify_feedback_desc') }}</div>
                 </div>
             </div>
         {% endblock %}

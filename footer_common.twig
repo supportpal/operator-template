@@ -10,7 +10,7 @@
 <script src="{{ asset_rev('resources/assets/general/js/routes.min.js') }}"></script>
 <script>
     laroute.set_absolute({{ Config.get('laroute.absolute', false) }});
-    laroute.set_root_url("{{ url('/') }}");
+    laroute.set_root_url("{{ preg_replace('#/index.php(/|$)#', '', url('/')) }}"); // Remove /index.php from the end if it's there
     laroute.set_routes({{ routeCollection|raw }});
     laroute.set_prefix('{{ Config.get('laroute.prefix', '') }}');
     laroute.set_asset_params({v: '{{ Config.get('release.version') }}'});
@@ -29,7 +29,7 @@
         (function (App, Echo) {
             App.Notifications.setType("{{ Config.get('settings.operator' ~ auth_user().id ~ '.browser_notifications') }}")
             App.Notifications.setDesktopIcon("{{ get_icon('resources/assets/operator/images/favicon/favicon_space.png') }}")
-            App.Notifications.configure(new Echo({{ echoConfig|raw }}), "{{ auth_user().id }}")
+            App.Notifications.configure(new Echo.default({{ echoConfig|raw }}), "{{ auth_user().id }}")
         })(App, Echo);
     </script>
 {% endif %}

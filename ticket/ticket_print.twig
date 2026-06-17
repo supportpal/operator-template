@@ -6,154 +6,48 @@
 
     <title>{{ ticket.subject }}</title>
 
+    <meta name="notes-url-id" content="{{ notesUrlId }}" />
+    <meta name="timeline-url-id" content="{{ timelineUrlId }}" />
+
     {% include 'operator.' ~ template ~ '.head_common' %}
 
     {{ View.fireHook('operator.head') }}
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-break-words xs:sp-px-6 print:sp-p-0">
-        {{ View.fireHook('frontend.wrapper_start') }}
+    <div class="sp:wrap-break-word sp:xs:px-6 sp:print:p-0">
+        {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-mx-auto sp-mt-6 xs:sp-mb-6">
+        <div class="sp:mx-auto sp:mt-6 sp:xs:mb-6">
             {{ View.fireHook('operator.content_start') }}
             {{ View.fireHook('operator.content_inner_start') }}
 
             <!-- Success / failure message box -->
-            <div class="sp-alert sp-hidden"></div>
+            <div class="sp-alert sp:hidden"></div>
 
-            <h2 class="sp-ms-4 sp-text-primary xs:sp-ms-0">{{ ticket.subject }}</h2>
+            <h2 class="sp:ms-4 sp:text-primary sp:xs:ms-0">{{ ticket.subject }}</h2>
 
-            <div class="sp-title-description sp-ms-4 xs:sp-ms-0">
-                {% if ticket.trashed() %}
-                    <span class="sp-me-2">
-                        <i class="fas fa-trash" title="{{ Lang.get('general.trash') }}"></i>
-                    </span>
-                {% endif %}
+            {% include 'operator.' ~ template ~ '.ticket.ticket_print_metadata' %}
 
-                {% if ticket.internal %}
-                    <span class="sp-tag sp-bg-red-600 sp-text-white sp-me-2">{{ Lang.get('ticket.internal') }}</span>
-                {% endif %}
+            <div class="sp-collapsible sp:flex sp:bg-tertiary sp:mt-6 sp:mb-1 sp:rounded-none sp:xs:rounded">
+                <h3 class="sp:grow sp:m-0">{{ Lang.get('general.activity') }}</h3>
 
-                {% if ticket.isOpenedOnBehalfOf() %}
-                    {{ Lang.get('ticket.on_behalf_of') }}
-                    <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-                    {% if ticket.user.organisation_id is not empty %}
-                        (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
-                    {% endif %}
-                    {{ Lang.get('general.by') }}
-                    {{ ticket.openedBy().formatted_name }}
-                {% else %}
-                    {{ Lang.get('general.submitted_by') }}
-                    <a href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">{{ ticket.user.formatted_name }}</a>
-                    {% if ticket.user.organisation_id is not empty %}
-                        (<a href="{{ route('user.operator.organisation.edit', ticket.user.organisation_id) }}">{{ ticket.user.organisation.name }}</a>)
-                    {% endif %}
-                {% endif %}
-                <span class="sp-channel-name">{{ Lang.get('ticket.via_channel', {'channel': ticket.channel.formatted_name}) }}</span>
+                {% include 'operator.' ~ template ~ '.ticket.ticket_filter_timeline' %}
+
+                <div class="sp-chevron sp:ms-3 sp:print:hidden">
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </div>
             </div>
 
-            <hr />
-
-            <h3 class="sp-ms-4 xs:sp-ms-0">{{ Lang.get('ticket.ticket_details') }}</h3>
-
-            <div class="sp-p-6 sp-pb-1 sp-bg-primary xs:sp-rounded">
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('general.number') }}</label>
-                    <div class="sp-input-container">
-                        {{ ticket.number }}
-                    </div>
+            <div class="sp-messages-container" data-position="inline">
+                <div class="sp-loading sp:p-3 sp:mx-6 sp:bg-secondary sp:rounded sp:text-center">
+                    <i class="fa-solid fa-spinner fa-pulse"></i>
+                    {{ Lang.get('general.loading') ~ '...'  }}
                 </div>
-
-                <div class="sp-form-row">
-                    <label>{{ Lang.get('ticket.submitted') }}</label>
-                    <div class="sp-input-container">
-                        {{ formatDate(ticket.created_at) }}
-                    </div>
-                </div>
-
-                {% if brand_count() > 1 %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.choice('core.brand', 1) }}</label>
-                        <div class="sp-input-container">{{ ticket.brand.name }}</div>
-                    </div>
-                {% endif %}
-
-                <div class="sp-form-row">
-                    <label>{{ Lang.choice('ticket.department', 1) }}</label>
-                    <div class="sp-input-container">{{ ticket.department.name }}</div>
-                </div>
-
-                <div class="sp-form-row">
-                    <label>{{ Lang.choice('general.status', 1) }}</label>
-                    <div class="sp-input-container">
-                        <span class="sp-badge" style="background-color: {{ ticket.status.colour }}">
-                            {{ ticket.status.name }}
-                        </span>
-                    </div>
-                </div>
-
-                {% if priority_count > 1 %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.choice('ticket.priority', 1) }}</label>
-                        <div class="sp-input-container">
-                            <span class="sp-badge" style="background-color: {{ ticket.priority.colour }}">
-                                {{ ticket.priority.name }}
-                            </span>
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if ticket.tags.isNotEmpty() %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.choice('ticket.tag', 2) }}</label>
-                        <div class="sp-input-container">
-                            {{ ticket.tags.sortby('name').pluck('name').join(', ') }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if ticket.assigned.isNotEmpty() %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.get('ticket.assigned_operator') }}</label>
-                        <div class="sp-input-container">
-                            {{ ticket.assigned.sortby('formatted_name').pluck('formatted_name').join(', ') }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if ticket.sla_plan_id is not null %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.choice('ticket.sla_plan', 1) }}</label>
-                        <div class="sp-input-container">{{ ticket.slaplan.name }}</div>
-                    </div>
-                {% endif %}
-
-                {% if ticket.due_time is not null %}
-                    <div class="sp-form-row">
-                        <label>{{ Lang.get('ticket.due_time') }}</label>
-                        <div class="sp-input-container">
-                            {% if ticket.reply_due_time is not empty %}
-                                {{ format_due_time(ticket.reply_due_time, false) }}<br />
-                            {% endif %}
-                            {{ format_due_time(ticket.resolve_due_time) }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
-            </div>
-
-            <h3 class="sp-ms-4 xs:sp-ms-0">{{ Lang.choice('general.message', 2) }}</h3>
-
-            <div class="sp-messages-container">
-                {% for message in messages %}
-                    {% include 'operator.' ~ template ~ '.ticket.message' with {'message': message, 'unread': true} %}
-                {% endfor %}
             </div>
 
             {{ View.fireHook('operator.content_inner_end') }}
@@ -171,7 +65,7 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
 
     <!-- File upload -->
-    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/fileupload.min.js') }}"></script>
 
     <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
@@ -181,9 +75,27 @@
 
     <script src="{{ asset_rev('resources/assets/dist/ticket-view.js') }}"></script>
     <script>
+        Swal.showLoading();
         var replyOrder = '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}';
-        App.extend('OperatorTicketView', new SpTicket.OperatorTicket);
-        App.extend('TicketView', new SpTicket.TicketView(App.OperatorTicketView, replyOrder));
+        App.extend('OperatorTicketView', new SpTicket.OperatorTicket(
+            "{{ auth_user().id }}",
+            replyOrder,
+            {{ Config.get('settings.default_resolved_status') }},
+            {{ ticket.department.email_templates|json_encode()|raw }},
+        ));
+        App.extend('TicketView', new SpTicket.TicketView(
+            App.OperatorTicketView,
+            "{{ ticket.id }}",
+            2, // Show all messages
+            replyOrder
+        ));
+        App.TicketView.setPrinting(true);
+        App.TicketView.load(function() {
+            // After initial messages are loaded, load all collapsed sections and then print
+            App.TicketView.loadAllCollapsedSections().always(function() {
+                App.OperatorTicketView.print();
+            });
+        });
     </script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
@@ -191,7 +103,7 @@
         var ticket = new App.ticket({authUserId: "{{ auth_user().id }}"});
 
         $(document).ready(function() {
-            ticket.highlightUserMentions($('.sp-message'));
+            App.OperatorTicketView.initMessage($('.sp-message'));
 
             // Date picker
             $('.datepicker').datepicker();
@@ -199,7 +111,18 @@
             // Timepicker
             $('.timepicker').timepicker();
 
-            App.OperatorTicketView.print();
+            // Hide collapsed section headers in print view.
+            $('.sp-collapsible').on('click', function () {
+                $(this).toggleClass('sp:print:hidden');
+            });
+
+            // Prevent .sp-collapsible from collapsing when clicking on .sp-filter-timeline
+            $('.sp-collapsible').on('click', function (e) {
+                if ($(e.target).closest('.sp-filter-timeline').length > 0) {
+                    e.stopPropagation();
+                    $('.sp-filter-timeline .sp-dropdown').toggle();
+                }
+            });
         });
     </script>
 

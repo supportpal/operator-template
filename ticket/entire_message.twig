@@ -4,6 +4,9 @@
 <head>
     {{ View.fireHook('operator.head_start') }}
 
+    <meta name="notes-url-id" content="{{ notesUrlId }}" />
+    <meta name="timeline-url-id" content="{{ timelineUrlId }}" />
+
     <title>{{ ticket.subject }}</title>
 
     {% include 'operator.' ~ template ~ '.head_common' %}
@@ -12,138 +15,45 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-break-words xs:sp-p-6 print:sp-p-0">
+    <div class="sp:wrap-break-word sp:xs:p-6 sp:print:p-0">
         {{ View.fireHook('operator.wrapper_start') }}
 
         <!-- Success / failure message box -->
-        <div class="sp-alert sp-hidden"></div>
+        <div class="sp-alert sp:hidden"></div>
 
-        <div class="sp-all-attachments sp-alert sp-alert-info sp-hidden">
+        <div class="sp-all-attachments sp-alert sp-alert-info sp:hidden">
             {{ Lang.get('ticket.downloading') }}
         </div>
 
         {% if not Request.has('print') %}
-            <button class="print-button sp-button-submit sp-ms-3 sp-float-end print:sp-hidden">
-                <i class="fas fa-print"></i>&nbsp; {{ Lang.get('general.print') }}
+            <button class="print-button sp-button-submit sp:ms-3 sp:float-end sp:print:hidden">
+                <i class="fa-solid fa-print"></i>&nbsp; {{ Lang.get('general.print') }}
             </button>
         {% endif %}
 
-        <h2 class="sp-ms-4 sp-text-primary xs:sp-mt-0 xs:sp-ms-0">{{ ticket.subject }}</h2>
+        <h2 class="sp:ms-4 sp:mt-0 sp:text-primary sp:xs:ms-0">{{ ticket.subject }}</h2>
 
-        <hr class="sp-hidden print:sp-block" />
+        {% if Request.has('print') %}
+            {% include 'operator.' ~ template ~ '.ticket.ticket_print_metadata' %}
+
+            <div class="sp:flex sp:px-4 sp:py-2 sp:mt-6 sp:mb-1 sp:bg-tertiary sp:rounded-none sp:xs:rounded">
+                <h3 class="sp:grow sp:m-0">{{ Lang.choice('general.message', 1) }}</h3>
+            </div>
+        {% endif %}
 
         <div>
             {{ View.fireHook('operator.content_start') }}
 
             <div class="sp-messages-container">
-                <div class="sp-message sp-message-{{ message.id }} sp-border-0 sp-rounded-none sp-shadow xs:sp-rounded print:sp-p-0 print:sp-shadow-none"
-                     data-id="{{ message.id }}">
-                    {{ View.fireHook('operator.content_inner_start') }}
+                {{ View.fireHook('operator.content_inner_start') }}
 
-                    <div class="sp-flex">
-                        <div class="sp-flex-initial sp-me-4">
-                            <img src="{{ message.user.avatar_url }}" class="sp-avatar sp-max-w-md" />
-                        </div>
-                        <div class="sp-grow">
-                            <div class="sp-message-header">
-                                <span class="sp-name sp-text-lg {% if message.by == 0 %}sp-text-red-600{% else %}sp-text-green-600{% endif %}">
-                                    {{ message.user.formatted_name }}
-                                </span>
-                                <div class="sp-description">
-                                    {% if message.type == 2 %}
-                                        {{ Lang.get('ticket.forwarded_to') }} <strong>{{ message.getForwardRecipients() }}</strong>
-                                        {% set emaillog = message.emaillog.where('type', 0).first() %}
-                                        {% if emaillog is not null %}
-                                            &nbsp;(<a href="{{ route('core.operator.emaillog.show', [ emaillog.id ]) }}" target="_blank">{{ Lang.get('user.view_email') }}</a>)
-                                        {% endif %}
-                                    {% else %}
-                                        {% if message.by == 0 %}
-                                            {{ Lang.get('general.staff') }}
-                                            {% if message.type == 1 %}({{ Lang.choice('general.note', 1) }}){% endif %}
-                                        {% else %}
-                                            {{ Lang.choice('user.user', 1) }}
-                                        {% endif %}
-                                    {% endif %}
-                                    &nbsp;&middot;&nbsp; {{ formatDate(message.created_at) }}
-                                    <div class="sp-message-edit-history sp-inline-block">
-                                        {% if editHistory.get(message.id) is not null %}
-                                            {% include 'operator.' ~ template ~ '.ticket.message_edit_history' with {edit: editHistory.get(message.id)} %}
-                                        {% endif %}
-                                    </div>
-                                    &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
-                                    {% set emaillog = message.emaillog.where('type', '!=', 0).first() %}
-                                    {% if emaillog is not null %}
-                                        <div class="sp-dropdown-container sp-message-header-interactive">
-                                            <span class="sp-action">
-                                                ({{ Lang.get('general.show_details') }})
-                                            </span>
-                                            <div class="sp-dropdown sp-cursor-auto">
-                                                <ul>
-                                                    {% if emaillog.to is not empty %}
-                                                        <li class="sp-dropdown-item sp-dropdown-item-interactive">
-                                                            <label>{{ Lang.get('ticket.to') }}</label>
-                                                            <div class="sp-text-primary">{{ emaillog.to|join(', ') }}</div>
-                                                        </li>
-                                                    {% endif %}
-                                                    {% if emaillog.cc is not empty %}
-                                                        <li class="sp-dropdown-item sp-dropdown-item-interactive">
-                                                            <label>{{ Lang.get('ticket.cc') }}</label>
-                                                            <div class="sp-text-primary">{{ emaillog.cc|join(', ') }}</div>
-                                                        </li>
-                                                    {% endif %}
-                                                    <li class="sp-dropdown-item sp-dropdown-item-interactive">
-                                                        <label>{{ Lang.get('ticket.from') }}</label>
-                                                        <div class="sp-text-primary">
-                                                            {{ emaillog.from_name ~ ' <' ~ emaillog.from_address ~ '>' }}
-                                                        </div>
-                                                    </li>
-                                                    {% if auth_user().hasPermission('view.emaillog') %}
-                                                        <li>
-                                                            <a href="{{ route('core.operator.emaillog.show', [ emaillog.id ]) }}" target="_blank">
-                                                                {{ Lang.get('user.view_email') }}
-                                                            </a>
-                                                        </li>
-                                                    {% endif %}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                {% include 'operator.' ~ template ~ '.ticket.message' with {unread: true, canUpdateTicket: false} %}
 
-                    <div class="sp-message-text">
-                        <div dir="auto">
-                            {{ message.purified_text|raw }}
-                        </div>
-                    </div>
-
-                    <div class="print:sp-hidden">
-                        {% include 'operator.' ~ template ~ '.ticket.message_attachments' %}
-                    </div>
-
-                    {% if not message.attachments.isEmpty() %}
-                        <div class="sp-hidden print:sp-block">
-                            <h4 class="sp-mt-6 sp-mb-0">{{ Lang.choice('general.attachment', 2) }}</h4>
-
-                            <ul>
-                                {% for attachment in message.attachments %}
-                                    <li>
-                                        {{ attachment.original_name }}
-                                        <span class="sp-description">({{ attachment.upload.size }})</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                    {{ View.fireHook('operator.content_inner_end') }}
-                </div>
+                {{ View.fireHook('operator.content_inner_end') }}
             </div>
 
             {{ View.fireHook('operator.content_end') }}
@@ -156,19 +66,27 @@
 
     {% include 'operator.' ~ template ~ '.footer_common' %}
 
-    <!-- WYSIWYG Editor -->
-    <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
-
     <!-- Attachments: dependencies = sweet alerts and jquery fileupload -->
-    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/fileupload.min.js') }}"></script>
 
     <!-- Attachment previews -->
     <script src="{{ asset_rev('resources/assets/libs/att.preview/js/att.preview.min.js') }}"></script>
 
     <script src="{{ asset_rev('resources/assets/dist/ticket-view.js') }}"></script>
     <script>
-        App.extend('OperatorTicketView', new SpTicket.OperatorTicket);
-        App.extend('TicketView', new SpTicket.TicketView(App.OperatorTicketView));
+        var replyOrder = '{{ auth_user().isAscendingReplyOrder() ? 'ASC' : 'DESC' }}';
+        App.extend('OperatorTicketView', new SpTicket.OperatorTicket(
+            "{{ auth_user().id }}",
+            replyOrder,
+            {{ Config.get('settings.default_resolved_status') }},
+            {{ ticket.department.email_templates|json_encode()|raw }},
+        ));
+        App.extend('TicketView', new SpTicket.TicketView(
+            App.OperatorTicketView,
+            "{{ ticket.id }}",
+            {{ Config.get('settings.ticket_notes_position') }},
+            replyOrder
+        ));
     </script>
 
     <script src="{{ asset_rev('resources/assets/operator/js/ticket.js') }}"></script>
@@ -177,7 +95,7 @@
         var ticket = new App.ticket({authUserId: "{{ auth_user().id }}"});
 
         $(document).ready(function() {
-            ticket.highlightUserMentions($('.sp-message'));
+            App.OperatorTicketView.initMessage($('.sp-message'));
 
             {% if Request.has('print') %}
                 window.print();
@@ -186,6 +104,11 @@
             // Show print dialog when clicking the "Print" button.
             $('.print-button').on('click', function () {
                 window.print();
+            });
+
+            // Hide collapsed section headers in print view.
+            $('.sp-collapsible').on('click', function () {
+                $(this).toggleClass('sp:print:hidden');
             });
         });
     </script>

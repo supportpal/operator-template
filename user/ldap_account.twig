@@ -1,5 +1,7 @@
 {% extends parent_template %}
 
+{% set ldapTab = ldapTab|default('accounts') %}
+
 {% block sidebar %}
     {% include 'operator.' ~ template ~ '.settings_sidebar' %}
 {% endblock %}
@@ -11,12 +13,12 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
-                <a href="{{ route('user.operator.ldapaccount.create') }}" class="sp-action sp-button">
-                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+            <li class="sp-action-group">
+                <a href="{{ ldapTab == 'servers' ? route('user.operator.ldapserver.create') : route('user.operator.ldapaccount.create') }}" class="sp-action sp-button">
+                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a><!--
                 --><button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
@@ -25,6 +27,15 @@
 
 {% block content %}
 
+    <ul class="sp-tabs">
+        <li class="{{ ldapTab == 'servers' ? 'sp-active' : '' }}">
+            <a href="{{ route('user.operator.ldapserver') }}">{{ Lang.choice('general.server', 2) }}</a>
+        </li>
+        <li class="{{ ldapTab == 'accounts' ? 'sp-active' : '' }}">
+            <a href="{{ route('user.operator.ldapaccount') }}">{{ Lang.choice('general.account', 2) }}</a>
+        </li>
+    </ul>
+
     {% if not extension_loaded('ldap') %}
         <div class="sp-alert sp-alert-warning">
             <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
@@ -32,26 +43,33 @@
         </div>
     {% endif %}
 
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
-            <div class="sp-table-row">
-                <label>{{Lang.get('user.ldap_server') }}:</label>
-                <div id="filter_server"></div>
-            </div>
-            <div class="sp-table-row">
-                <label>{{ Lang.get('user.ldap_username') }}:</label>
-                <div id="filter_username"></div>
-            </div>
-            <div class="sp-table-row">
-                <label>{{ Lang.get('user.ldap_rdn') }}:</label>
-                <div id="filter_rdn"></div>
-            </div>
+        <div class="sp:table">
+            {% if ldapTab == 'servers' %}
+                <div class="sp:table-row">
+                    <label>{{ Lang.get('user.ldap_server_hostname') }}:</label>
+                    <div id="filter_hostname"></div>
+                </div>
+            {% else %}
+                <div class="sp:table-row">
+                    <label>{{ Lang.choice('user.ldap_server', 1) }}:</label>
+                    <div id="filter_server"></div>
+                </div>
+                <div class="sp:table-row">
+                    <label>{{ Lang.get('user.ldap_username') }}:</label>
+                    <div id="filter_username"></div>
+                </div>
+                <div class="sp:table-row">
+                    <label>{{ Lang.get('user.ldap_rdn') }}:</label>
+                    <div id="filter_rdn"></div>
+                </div>
+            {% endif %}
         </div>
     </div>
 
-	{{ table.render()|raw }}
+    {{ table.render()|raw }}
 
 {% endblock %}
 
@@ -65,11 +83,17 @@
             /**
              * Initialise the filters
              */
-            oTable.yadcf([
-                {column_number : 0, filter_container_id: "filter_server", filter_type: "text", filter_delay: 500},
-                {column_number : 1, filter_container_id: "filter_username", filter_type: "text", filter_delay: 500},
-                {column_number : 2, filter_container_id: "filter_rdn", filter_type: "text", filter_delay: 500},
-            ]);
+            {% if ldapTab == 'servers' %}
+                oTable.yadcf([
+                    {column_number : 0, filter_container_id: "filter_hostname", filter_type: "text", filter_delay: 500},
+                ]);
+            {% else %}
+                oTable.yadcf([
+                    {column_number : 0, filter_container_id: "filter_server", filter_type: "text", filter_delay: 500},
+                    {column_number : 1, filter_container_id: "filter_username", filter_type: "text", filter_delay: 500},
+                    {column_number : 2, filter_container_id: "filter_rdn", filter_type: "text", filter_delay: 500},
+                ]);
+            {% endif %}
         });
     </script>
 {% endblock %}

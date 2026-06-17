@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+        <div class="parentToggle {% if record.parent_id != 0 %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('public', Lang.get('general.public')) }}
                 <div class="sp-input-container">
@@ -77,20 +77,20 @@
 
     {% set collapseFormat = record.ticket_number_format is empty %}
     <div class="sp-form-container {% if collapseFormat %}sp-collapsed{% endif %} parentToggle
-                {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+                {% if record.parent_id != 0 %}sp:hidden{% endif %}">
         <div class="sp-form-row">
             {{ form_label('ticket_number_format', Lang.get('ticket.ticket_format')) }}
             <div class="sp-input-container">
-                <div class="{% if collapseFormat %}sp-hidden{% endif %}">
+                <div class="{% if collapseFormat %}sp:hidden{% endif %}">
                     {{ form_text('ticket_number_format') }}<br />
                 </div>
                 <div class="sp-description">{{ Lang.get('ticket.department_no_format') }}
-                    <span class="{% if collapseFormat %}sp-hidden{% endif %}"><br />{{ Lang.get('ticket.ticket_format_desc')|raw }}</span>
+                    <span class="{% if collapseFormat %}sp:hidden{% endif %}"><br />{{ Lang.get('ticket.ticket_format_desc')|raw }}</span>
                 </div>
             </div>
         </div>
         <div class="sp-chevron">
-            <i class="fas fa-chevron-up" aria-hidden="true"></i>
+            <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
         </div>
     </div>
 
@@ -99,7 +99,7 @@
             <div class="sp-form-row" id="departmentSettings">
                 {{ form_label('dept_priorities', Lang.get('ticket.department_priority')) }}
                 <div class="sp-input-container sp-input-group">
-                    <div class="sp-hidden">
+                    <div class="sp:hidden">
                         <div class="sp-description">
                             <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
                             &nbsp;|&nbsp;
@@ -114,7 +114,7 @@
                 </div>
             </div>
             <div class="sp-chevron">
-                <i class="fas fa-chevron-up" aria-hidden="true"></i>
+                <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
             </div>
         </div>
     {% else %}
@@ -174,7 +174,7 @@
 
     </div>
 
-    <div class="parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}" id="emailAccounts">
+    <div class="parentToggle {% if record.parent_id != 0 %}sp:hidden{% endif %}" id="emailAccounts">
 
         <h2>{{ Lang.get('ticket.email_accounts') }}</h2>
 
@@ -245,15 +245,15 @@
             </div>
         </div>
 
-        <div class="sp-form-container sp-collapsed parentToggle {% if record.parent_id != 0 %}sp-hidden{% endif %}">
+        <div class="sp-form-container sp-collapsed parentToggle {% if record.parent_id != 0 %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('from_name', Lang.get('ticket.display_name')) }}
                 <div class="sp-input-container">
-                    <div class="sp-hidden">
+                    <div class="sp:hidden">
                         {{ form_text('from_name', null, {'style': 'width: 90%;'}) }}
                     </div>
                     <div class="sp-description">{{ Lang.get('ticket.display_name_desc') }}
-                        <span class="sp-hidden">{{ Lang.get('ticket.display_name_options')|raw }}</span>
+                        <span class="sp:hidden">{{ Lang.get('ticket.display_name_options')|raw }}</span>
                     </div>
                 </div>
             </div>
@@ -265,9 +265,9 @@
 
         <div class="sp-form-container department-templates">
 
-            <div class="sp-flex sp-flex-wrap sp--m-3">
+            <div class="sp:flex sp:flex-wrap sp:-m-3">
 
-                <div class="sp-w-full sm:sp-w-1/2 sp-p-3">
+                <div class="sp:w-full sp:sm:w-1/2 sp:p-3">
                     <h3>{{ Lang.get('core.user_templates') }}</h3>
 
                     <div class="sp-form-row">
@@ -347,7 +347,7 @@
                         </div>
                     </div>
 
-                    <div id="disableRepliesTemplate" class="sp-form-row {% if not record.disable_user_email_replies %}sp-hidden{% endif %}">
+                    <div id="disableRepliesTemplate" class="sp-form-row {% if not record.disable_user_email_replies %}sp:hidden{% endif %}">
                         {{ form_label('user_ticket_disablereplies', Lang.get('ticket.email_replies_disabled')) }}
                         <div class="sp-input-container">
                             {% if emailTemplates['user_ticket_disablereplies']|length == 0 %}
@@ -358,7 +358,7 @@
                         </div>
                     </div>
 
-                    <div id="registeredOnlyTemplate" class="sp-form-row {% if not record.registered_only %}sp-hidden{% endif %}">
+                    <div id="registeredOnlyTemplate" class="sp-form-row {% if not record.registered_only %}sp:hidden{% endif %}">
                         {{ form_label('user_ticket_registeredonly', Lang.get('ticket.registered_users')) }}
                         <div class="sp-input-container">
                             {% if emailTemplates['user_ticket_registeredonly']|length == 0 %}
@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <div class="sp-w-full sm:sp-w-1/2 sp-p-3">
+                <div class="sp:w-full sp:sm:w-1/2 sp:p-3">
                     <h3>{{ Lang.get('core.operator_templates') }}</h3>
 
                     <div class="sp-form-row">
@@ -445,6 +445,17 @@
                                 {{ Lang.get('core.template_disabled') }}
                             {% else %}
                                 {{ form_select('operator_department_changed', emailTemplates['operator_department_changed'], record.email_templates['operator_department_changed']) }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="sp-form-row">
+                        {{ form_label('operator_ticket_feedback', Lang.get('ticket.feedback_notification')) }}
+                        <div class="sp-input-container">
+                            {% if emailTemplates['operator_ticket_feedback']|length == 0 %}
+                                {{ Lang.get('core.template_disabled') }}
+                            {% else %}
+                                {{ form_select('operator_ticket_feedback', emailTemplates['operator_ticket_feedback'], record.email_templates['operator_ticket_feedback']) }}
                             {% endif %}
                         </div>
                     </div>

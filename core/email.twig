@@ -12,21 +12,21 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-m-6 sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+<body class="sp:m-6 sp:bg-secondary sp:text-primary sp:print:bg-primary" data-disable-pace>
 
     {{ View.fireHook('operator.body_start') }}
 
-    <div class="sp-container sp-m-auto">
+    <div class="sp:container sp:m-auto">
         {{ View.fireHook('operator.wrapper_start') }}
 
-        <div class="sp-bg-primary sp-shadow sp-break-words xs:sp-rounded print:sp-shadow-none">
+        <div class="sp:bg-primary sp:wrap-break-word sp:xs:rounded">
             {{ View.fireHook('operator.content_start') }}
 
-            <div class="sp-p-6 print:sp-p-0">
+            <div class="sp:p-6 sp:print:p-0">
                 {{ View.fireHook('operator.content_inner_start') }}
 
                 {% if record.raw is not empty %}
-                    <div class="sp-mb-6 md:sp-mb-0 md:sp-float-end">
+                    <div class="sp:mb-6 sp:md:mb-0 sp:md:float-end">
                         <a href="{{ route('core.operator.email.log.raw', [ record.id ]) }}" class="sp-button">
                             {{ Lang.get('core.view_original') }}
                         </a> &nbsp;&nbsp;
@@ -36,9 +36,9 @@
                     </div>
                 {% endif %}
 
-                <h2 class="sp-mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
+                <h2 class="sp:mt-0">{{ Lang.choice('general.detail', 2) }}</h2>
 
-                <div class="sp-mb-6 md:sp-p-6 md:sp-pb-0 md:sp-border md:sp-border-secondary md:sp-rounded">
+                <div class="sp:mb-6 sp:md:p-6 sp:md:pb-0 sp:md:border sp:md:border-secondary sp:md:rounded">
 
                     <div class="sp-form-row">
                         <label>{{ Lang.get('ticket.subject') }}</label>
@@ -120,9 +120,9 @@
 
                 </div>
 
-                <h2 class="sp-my-6">{{ Lang.get('general.content') }}</h2>
+                <h2 class="sp:my-6">{{ Lang.get('general.content') }}</h2>
 
-            <div class="sp-email-content sp-p-6 sp-border sp-border-secondary sp-rounded sp-overflow-x-auto">
+            <div class="sp-email-content sp:p-6 sp:border sp:border-secondary sp:rounded sp:overflow-x-auto">
                 <div dir="auto">
                     {{ Purifier.clean(record.contents) }}
                 </div>
@@ -130,13 +130,13 @@
 
                 {% if record.attachments.count() > 0 %}
                     <div class="sp-email-attachments">
-                        <h2 class="sp-my-6">{{ Lang.choice('general.attachment', 2) }}</h2>
+                        <h2 class="sp:my-6">{{ Lang.choice('general.attachment', 2) }}</h2>
 
                         <ul class="sp-attached-files">
                             {% for attachment in record.attachments %}
-                                <li class="sp-email-attachment sp-flex">
-                                    <div class="sp-me-2 sp-truncate">
-                                        <i class="fas fa-file fa-fw"></i>&nbsp;
+                                <li class="sp-email-attachment sp:flex">
+                                    <div class="sp:me-2 sp:truncate">
+                                        <i class="fa-solid fa-file"></i>&nbsp;
 
                                         <span class="sp-file-information">
                                             <span class="sp-filename">{{ attachment.filename }}</span>
@@ -145,10 +145,10 @@
                                     </div>
 
                                     {% if canDeleteAttachments %}
-                                        <div class="sp-delete-attachment sp-bg-red-600"
+                                        <div class="sp-delete-attachment"
                                              data-url="{{ route('core.operator.emailqueueattachment.destroy', {'queue_id': record.id, 'attachment_id': attachment.id }) }}"
                                              title="{{ Lang.get('general.remove') }}">
-                                            <i class="fas fa-times sp-text-white"></i>
+                                            <i class="fa-solid fa-times sp:text-white"></i>
                                         </div>
                                     {% endif %}
                                 </li>

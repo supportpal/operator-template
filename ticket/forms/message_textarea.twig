@@ -2,33 +2,163 @@
     {{ form_editor('text', editorContent, {"class": "textarea", "data-route": route, "size": "50x3", "id": textareaId}) }}
 </div>
 
-<div class="sp-flex sp-items-stretch sp-px-1 sp-bg-secondary sp-border sp-border-t-0 sp-border-tertiary sp-rounded-b">
+{{ form_hidden('close_after_submit', 1) }}
+
+{% include 'operator.' ~ template ~ '.ticket.forms.message_attachments' with {'ticket': ticket, 'message': draft, 'allow_attachments': allow_attachments} %}
+
+<div class="sp:flex sp:bg-secondary sp:border sp:border-t-0 sp:border-tertiary sp:rounded-b-sm sp:divide-x sp:divide-tertiary">
     {% if allow_attachments %}
-        <label class="sp-file-input sp-flex-none sp-inline-block sp-px-2 sp-py-3/2 sp-text-sm sp-cursor-pointer hover:sp-text-secondary">
-            <i class="fas fa-paperclip"></i>
-            <span class="sp-hidden md:sp-inline">&nbsp;{{ Lang.get('general.add_attachment') }}</span>
+        <label class="sp-file-input sp:flex-none sp:flex sp:items-center sp:px-3 sp:text-sm sp:cursor-pointer sp:hover:text-secondary"
+               title="{{ Lang.get('general.add_attachment') }}">
+            <i class="fa-solid fa-paperclip"></i>
             <input class="sp-file-upload" type="file" name="files[]"
                    data-url="{{ route('ticket.operator.attachment.upload') }}" multiple="multiple">
         </label>
-
-        <div class="tox-button-separator"></div>
     {% endif %}
 
-    <span class="save-draft sp-inline-block sp-px-3/2 sp-py-1 sp-cursor-pointer hover:sp-text-secondary"
-          title="{{ Lang.get('ticket.save_draft') }}">
-        <i class="fas fa-save"></i>
-    </span>
+    <div class="sp:grow sp:flex sp:items-center sp:px-1.5 sp:truncate">
+        <div class="save-draft sp:px-1.5 sp:py-2 sp:cursor-pointer sp:hover:text-secondary"
+              title="{{ Lang.get('ticket.save_draft') }}">
+            <i class="fa-solid fa-save"></i>
+        </div>
 
-    <span class="discard-draft sp-inline-block sp-px-3/2 sp-py-1 sp-cursor-pointer hover:sp-text-secondary
-                 {% if draft|default is empty %}sp-hidden{% endif %}"
-          title="{{ Lang.get('ticket.discard_draft') }}">
-        <i class="fas fa-eraser"></i>
-    </span>
+        <div class="discard-draft sp:px-1.5 sp:py-2 sp:cursor-pointer sp:hover:text-secondary
+                 {% if draft|default is empty %}sp:hidden{% endif %}"
+              title="{{ Lang.get('ticket.discard_draft') }}">
+            <i class="fa-solid fa-eraser"></i>
+        </div>
 
-    <span class="draft-success sp-description sp-inline-block sp-px-2 sp-py-3/2 sp-text-xs sp-truncate
-                 sm:sp-text-sm {% if draft|default is empty %}sp-hidden{% endif %}">
-        {% if draft|default is not empty %}
-            {{ Lang.get('ticket.draft_saved', {'time': formatDate(draft.updated_at)}) }}
+        <div class="draft-success sp-description sp:inline-block sp:px-1.5 sp:text-xs sp:truncate sp:sm:text-sm
+                    {% if draft|default is empty %}sp:hidden{% endif %}">
+            {% if draft|default is not empty %}
+                {{ Lang.get('ticket.draft_saved', {'time': timeago(draft.updated_at)})|raw }}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="sp:flex-none sp:flex sp:items-center sp:divide-x sp:divide-tertiary">
+        <label class="sp:cursor-pointer sp:hover:text-secondary">
+            <span class="sp:hidden">{{ form_check('back_to_grid', 1, note ? null : operator.default_reply_options['back_to_grid']) }}</span>
+            <span class="sp-back-to-grid-go sp:block sp:px-3 sp:py-2 {% if note or not operator.default_reply_options['back_to_grid'] %}sp:hidden{% endif %}"
+                  title="{{ Lang.get('ticket.back_to_grid') }}">
+                <i class="fa-solid fa-arrow-left"></i>
+            </span>
+            <span class="sp-back-to-grid-stay sp:block sp:px-3 sp:py-2 {% if not note and operator.default_reply_options['back_to_grid'] %}sp:hidden{% endif %}"
+                  title="{{ Lang.get('ticket.stay_on_ticket') }}">
+                <i class="fa-solid fa-arrow-down"></i>
+            </span>
+        </label>
+
+        {% if ticket.user_id == auth_user().id and not note %}
+            {# If it's an internal ticket and the ticket owner is replying, use the default reply status from ticket settings #}
+            {% set status_id = Config.get('settings.default_reply_status') %}
+        {% elseif operator.default_reply_options['to_status'] == 0 or note %}
+            {# If the default reply options set status option is set to '-- Unchanged --' or a note, keep same status #}
+            {% set status_id = ticket.status_id %}
+        {% elseif not note %}
+            {# Use the operator's default reply option setting #}
+            {% set status_id = operator.default_reply_options['to_status'] %}
         {% endif %}
-    </span>
+
+        {% if status_id not in statuses.pluck('id') %}
+            {# If the status is no longer valid, fall back to the ticket's current status #}
+            {% set status_id = ticket.status_id %}
+        {% endif %}
+
+        {{ form_hidden('to_status', status_id) }}
+
+        <div class="sp-dropdown-container sp:relative">
+            <div class="sp-action sp:px-3 sp:py-2 sp:cursor-pointer sp:leading-none" title="{{ Lang.get('ticket.set_status') }}">
+                {{ statuses.where('id', status_id).first().icon_without_tooltip|raw }}
+            </div>
+            <div class="sp-dropdown sp:bottom-0 sp:end-0 sp:py-1 sp:mb-10">
+                <ul class="sp:text-end sp:md:text-start">
+                    <li class="sp:px-3 sp:py-1.5">
+                        <h4 class="sp:m-0">
+                            {{ Lang.get('ticket.set_status') }}
+                        </h4>
+                    </li>
+                    {% for status in statuses %}
+                        <li {% if status.id == status_id %}class="sp-selected"{% endif %}>
+                            <a class="sp-to-status" data-id="{{ status.id }}">
+                                {{ status.icon_without_tooltip|raw }}<span class="sp-status-name sp:ms-2">{{ status.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="sp-reply-options sp-dropdown-container sp:relative">
+            <span class="sp-action sp-button sp:px-1 sp:rounded-none"
+                  title="{{ forward ? Lang.get('ticket.forward_options') : note ? Lang.get('ticket.note_options') : Lang.get('ticket.reply_options') }}">
+                <i class="fa-solid fa-ellipsis-v"></i>
+            </span>
+            <div class="sp-dropdown sp:bottom-0 sp:end-0 sp:py-1 sp:mb-10">
+                <ul class="sp:text-end sp:md:text-start">
+                    <li class="sp:px-3 sp:py-1.5">
+                        <h4 class="sp:m-0">
+                            {{ forward ? Lang.get('ticket.forward_options') : note ? Lang.get('ticket.note_options') : Lang.get('ticket.reply_options') }}
+                        </h4>
+                    </li>
+
+                    {% if not forward and not note and ticket.department_email_id is not empty
+                        and toEmails is not empty and (not ticket.internal or ticket.user_id != auth_user().id)
+                    %}
+                        <li class="sp:px-3 sp:py-1.5">
+                            <label {% if ticket.department.getUserEmailTemplate('ticket_reply') is null %}title="{{ Lang.get('ticket.department_template_disabled') }}"{% endif %}>
+                                {{ form_check('send_email_to_users', 1, operator.default_reply_options['send_email_to_users'],
+                                    ticket.department.getUserEmailTemplate('ticket_reply') is null ? {'disabled': 'disabled'} : {}) }}
+                                {{ Lang.get('ticket.send_email_to_users') }}
+                            </label>
+                        </li>
+                    {% endif %}
+
+                    {% if not forward %}
+                        {% if note %}
+                            {% set emailTemplate, defaultValue = ticket.department.getOperatorEmailTemplate('ticket_note'), true %}
+                        {% else %}
+                            {% set emailTemplate, defaultValue = ticket.department.getOperatorEmailTemplate('operator_ticket_reply'),
+                                ticket.internal and ticket.user_id == auth_user().id ? true : ticket.department.notify_operators
+                            %}
+                        {% endif %}
+                        <li class="sp:px-3 sp:py-1.5">
+                            <label {% if emailTemplate is null %}title="{{ Lang.get('ticket.department_template_disabled') }}"{% endif %}>
+                                {{ form_check('send_email_to_operators', 1, defaultValue, emailTemplate is null ? {'disabled': 'disabled'} : {}) }}
+                                {{ Lang.get('ticket.send_email_to_operators') }}
+                            </label>
+                        </li>
+                    {% endif %}
+
+                    <li class="sp:px-3 sp:py-1.5">
+                        <label>
+                            {{ form_check('take_ownership', 1, note ? null : operator.default_reply_options['take_ownership']) }}
+                            {{ Lang.get('ticket.take_ownership') }}
+                        </label>
+                    </li>
+
+                    {% if ticket.sla_plan_id is not empty and ticket.due_time is not empty %}
+                        <li class="sp:px-3 sp:py-1.5">
+                            <label>
+                                {{ form_check('pause_duetime', 1, note ? null : operator.default_reply_options['pause_duetime']) }}
+                                {{ Lang.get('ticket.pause_duetime') }}
+                            </label>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp:flex-none sp:flex sp-reply-button">
+        <button type="submit" class="sp-button-submit sp:rounded-none sp:rounded-ee sp:lg:hidden
+                                     {% if note %}sp-button-orange{% elseif forward %}sp-button-purple{% endif %}"
+                title="{{ submit_name }}">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+        <button type="submit" class="sp-button-submit sp:rounded-none sp:rounded-ee sp:hidden sp:lg:block
+                                     {% if note %}sp-button-orange{% elseif forward %}sp-button-purple{% endif %}">
+            <i class="fa-solid fa-paper-plane sp:me-3"></i>{{ submit_name }}
+        </button>
+    </div>
 </div>

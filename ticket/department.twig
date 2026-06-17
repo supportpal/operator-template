@@ -11,19 +11,19 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <a href="{{ route('ticket.operator.department.create') }}"
                    class="sp-action sp-button">
-                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a>
             </li>
         </ul>
     </div>
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden ordering">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden ordering">
         {{ Lang.get('messages.success_ordering') }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden ordering">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden ordering">
         {{ Lang.get('messages.error_ordering') }}
     </div>
 {% endblock %}
@@ -98,7 +98,7 @@
             // Add sortable table
             $('table').sortable({
                 draggable: 'tbody',
-                ghostClass: 'sp-opacity-50',
+                ghostClass: 'sp:opacity-50',
 
                 // Update the order in the database
                 store: {

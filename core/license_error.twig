@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <noscript class="sp-alert sp-alert-error sp-block">
+    <noscript class="sp-alert sp-alert-error sp:block">
         {{ Lang.get('core.javascript_required') }}
     </noscript>
 
@@ -28,11 +28,11 @@
     <div>
 
         {% if licenseResponse is not empty %}
-            <h2 class="sp-mt-0">{{ Lang.get('license.server_response') }}:</h2>
+            <h2 class="sp:mt-0">{{ Lang.get('license.server_response') }}:</h2>
 
             {{ licenseResponse }}
         {% else %}
-            <h2 class="sp-mt-0">{{ Lang.get('license.reasons') }}</h2>
+            <h2 class="sp:mt-0">{{ Lang.get('license.reasons') }}</h2>
 
             <ul>
                 <li>{{ Lang.get('license.incorrect_license') }}</li>
@@ -49,15 +49,15 @@
 
         <p>{{ Lang.get('license.need_to_reissue')|raw }}</p>
 
-        <button class="retry sp-button sp-button-submit sp-w-full sp-mb-4">{{ Lang.get('general.retry') }}</button>
+        <button class="retry sp-button sp-button-submit sp:w-full sp:mb-4">{{ Lang.get('general.retry') }}</button>
 
-        <a class="license-key sp-button sp-w-full sp-mb-4">{{ Lang.get('license.enter_new_key') }}</a>
+        <a class="license-key sp-button sp:w-full sp:mb-4">{{ Lang.get('license.enter_new_key') }}</a>
 
-        <div class="sp-text-center">
+        <div class="sp:text-center">
             <a href="https://www.supportpal.com/manage/" class="sp-description" target="_blank">{{ Lang.get('license.assistance') }}</a>
         </div>
 
-        <div class="enter-license sp-hidden">
+        <div class="enter-license sp:hidden">
             <hr />
 
             <h2>{{ Lang.get('license.new_key') }}</h2>
@@ -66,9 +66,9 @@
 
             {{ form_open({ 'method': 'POST', 'route': 'core.operator.license.update' }) }}
                 {{ csrf_field() }}
-                {{ form_text('license_key', null, {'class': 'sp-w-full sp-mb-3', 'placeholder': Lang.get('license.license_key')}) }}
+                {{ form_text('license_key', null, {'class': 'sp:w-full sp:mb-3', 'placeholder': Lang.get('license.license_key')}) }}
 
-                {{ form_submit(Lang.get('license.submit'), {'class': 'sp-w-full'}) }}
+                {{ form_submit(Lang.get('license.submit'), {'class': 'sp:w-full'}) }}
             {{ form_close() }}
         </div>
 

@@ -65,7 +65,7 @@
                         <label for="toggle_allow_all_files"></label>
                         {{ form_hidden('allowed_files', allowAllValue) }}
                     </div>
-                    <div class="sp-mt-3 sp-allowed-files {% if allow_all_files %}sp-hidden{% endif %}">
+                    <div class="sp:mt-3 sp-allowed-files {% if allow_all_files %}sp:hidden{% endif %}">
                         {{ form_text('allowed_files', allow_all_files ? defaultAllowedFileTypes : null, allow_all_files ? {'disabled': 'disabled'} : {}) }}
                     </div>
                     <div class="sp-description">{{ Lang.get('ticket.allowed_files_desc') }}</div>
@@ -74,7 +74,7 @@
 
         </div>
 
-        <div id="tabStatuses" class="sp-tab-content sp-hidden">
+        <div id="tabStatuses" class="sp-tab-content sp:hidden">
 
             <div class="sp-form-row">
                 {{ form_label('default_open_status', Lang.get('ticket.default_open_status')) }}
@@ -102,21 +102,21 @@
 
         </div>
 
-        <div id="tabInactive" class="sp-tab-content sp-hidden">
+        <div id="tabInactive" class="sp-tab-content sp:hidden">
 
             <div class="sp-form-row">
                 {{ form_label('waiting_response_time', Lang.get('ticket.waiting_response_time')) }}
                 <div class="sp-input-container">
                     <div class="sp-duration">
-                        {{ form_number('waiting_response_time[days]', waitingTime['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('waiting_response_time[days]', waitingTime['days'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('waiting_response_time[hours]', waitingTime['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('waiting_response_time[hours]', waitingTime['hours'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('waiting_response_time[minutes]', waitingTime['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('waiting_response_time[minutes]', waitingTime['minutes'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">
@@ -130,15 +130,15 @@
                 {{ form_label('inactive_close_time', Lang.get('ticket.close_inactive_tickets')) }}
                 <div class="sp-input-container">
                     <div class="sp-duration">
-                        {{ form_number('inactive_close_time[days]', inactiveTime['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('inactive_close_time[days]', inactiveTime['days'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('inactive_close_time[hours]', inactiveTime['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('inactive_close_time[hours]', inactiveTime['hours'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('inactive_close_time[minutes]', inactiveTime['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('inactive_close_time[minutes]', inactiveTime['minutes'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">
@@ -162,7 +162,7 @@
 <script>
     $(function () {
         $('input[name="allow_all_files"]').on('change', function () {
-            $('.sp-allowed-files').toggleClass('sp-hidden')
+            $('.sp-allowed-files').toggleClass('sp:hidden')
                 .find('input').attr('disabled', $(this).is(':checked'));
         });
     })

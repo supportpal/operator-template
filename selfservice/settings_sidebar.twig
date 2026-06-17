@@ -1,15 +1,15 @@
-<div class="sp-sidebox">
-    <div class="sp-collapsible sp-flex {% if module != 'selfservice' %}sp-closed{% endif %}" id="selfServiceSettingsBox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header sp-collapsible {% if module != 'selfservice' %}sp-closed{% endif %}" id="selfServiceSettingsBox">
         <div class="sp-icon">
-            <i class="fas fa-info-circle"></i>
+            <i class="fa-solid fa-info-circle"></i>
         </div>
         <h3>{{ Lang.get('selfservice.selfservice') }}</h3>
         <div class="sp-chevron">
-            <i class="fas {% if module == 'selfservice' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
+            <i class="fa-solid {% if module == 'selfservice' %}fa-chevron-down{% else %}fa-chevron-up{% endif %}" aria-hidden="true"></i>
         </div>
     </div>
 
-    <ul {% if module != 'selfservice' %}class="sp-hidden"{% endif %}>
+    <ul {% if module != 'selfservice' %}class="sp:hidden"{% endif %}>
         {% if auth_user().hasPermission('view.selfservicefeedbackform') %}
             <li {% if route starts with 'selfservice.operator.feedbackform' %}class="sp-active"{% endif %}>
                 <a href="{{ route('selfservice.operator.feedbackform.index') }}">{{ Lang.choice("ticket.feedback_form", 2) }}</a>

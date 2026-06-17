@@ -11,20 +11,20 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="sp-task-run sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+    <div class="sp-task-run sp-alert sp-alert-success sp-alert-sticky sp:hidden">
         {{ Lang.get('core.task_ran') }}
     </div>
-    <div class="sp-task-run sp-alert sp-alert-error sp-alert-sticky sp-hidden">
+    <div class="sp-task-run sp-alert sp-alert-error sp-alert-sticky sp:hidden">
         {{ Lang.get('core.task_failed') }}
-        <span class="sp-error-message sp-hidden"></span>
+        <span class="sp-error-message sp:hidden"></span>
     </div>
 {% endblock %}
 
@@ -39,15 +39,15 @@
         {% endif %}
     </div>
 
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
-            <div class="sp-table-row">
+        <div class="sp:table">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.name') }}:</label>
                 <div id="filter_name"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.description') }}:</label>
                 <div id="filter_description"></div>
             </div>

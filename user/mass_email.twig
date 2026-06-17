@@ -69,10 +69,10 @@
             <div class="sp-form-row">
                 {{ form_label('from_name', Lang.get('general.from')) }}
                 <div class="sp-input-container">
-                    <div class="sp-mb-3 lg:sp-inline-block lg:sp-mb-0 lg:sp-me-2">
+                    <div class="sp:mb-3 sp:lg:inline-block sp:lg:mb-0 sp:lg:me-2">
                         {{ form_text('from_name', '', {'size': 25}) }}
                     </div>
-                    <div class="md:sp-inline-block">
+                    <div class="sp:md:inline-block">
                         {{ form_text('from_email', '', {'size': 35}) }}
                     </div>
                 </div>
@@ -99,40 +99,43 @@
             <div class="sp-form-row sp-form-full">
                 {{ form_label('contents', Lang.choice('general.message', 1)) }}
                 <div class="sp-input-container">
-                    <div>
+                    <div class="sp:relative">
                         {{ form_editor_mf('contents', (record|default is not empty ? replyTemplate : '')) }}
+
                         {% if cumulative_attachment_limit != 0 %}
-                        <ul class="sp-attached-files">
-                            <li class="sp-flex sp-hidden">
-                                <div class="sp-me-2 sp-truncate">
-                                    <i class="fas fa-file"></i>&nbsp;
+                            <ul class="sp-attached-files">
+                                <li class="sp:flex sp:hidden">
+                                    <div class="sp:me-2 sp:truncate">
+                                        <i class="fa-solid fa-file"></i>&nbsp;
 
-                                    <span class="sp-file-information">
-                                        <span class="sp-filename"></span>
-                                        <span class="sp-description sp-filesize"></span>
-                                    </span>
+                                        <span class="sp-file-information">
+                                            <span class="sp-filename"></span>
+                                            <span class="sp-description sp-filesize"></span>
+                                        </span>
+                                    </div>
+
+                                    <div class="sp-delete-attachment sp:hidden"
+                                         title="{{ Lang.get('general.remove') }}">
+                                        <i class="fa-solid fa-times sp:text-white"></i>
+                                    </div>
+
+                                    <div class="sp-progress-bar">
+                                        <div class="sp-bar"></div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="sp-attachment-dragover sp:hidden">
+                                <div class="sp:m-auto">
+                                    {{ Lang.get('general.drag_and_drop') }}
                                 </div>
+                            </div>
 
-                                <div class="sp-delete-attachment sp-hidden sp-bg-red-600"
-                                     title="{{ Lang.get('general.remove') }}">
-                                    <i class="fas fa-times sp-text-white"></i>
-                                </div>
-
-                                <div class="sp-progress-bar">
-                                    <div class="sp-bar"></div>
-                                </div>
-                            </li>
-                        </ul>
-
-                        <div class="sp-attachment-dragover sp-mb-0 sp-hidden">
-                            {{ Lang.get('general.drag_and_drop') }}
-                        </div>
-
-                        <label class="sp-inline-block sp-button sp-mt-3">
-                            <i class="fas fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}
-                            <input class="sp-file-upload sp-hidden" type="file" name="files[]"
-                                   data-url="{{ route('user.operator.attachment.upload') }}" multiple="multiple">
-                        </label>
+                            <label class="sp:inline-block sp-button sp:mt-3">
+                                <i class="fa-solid fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}
+                                <input class="sp-file-upload sp:hidden" type="file" name="files[]"
+                                       data-url="{{ route('user.operator.attachment.upload') }}" multiple="multiple">
+                            </label>
                         {% endif %}
                     </div>
 
@@ -146,7 +149,7 @@
                 <div class="sp-form-row">
                     {{ form_label('batch_number', Lang.get('user.email_per_batch')) }}
                     <div class="sp-input-container">
-                        {{ form_number('batch_number', 50, {'class': 'sp-w-24', 'min': 1}) }}
+                        {{ form_number('batch_number', 50, {'class': 'sp:w-24', 'min': 1}) }}
                         <div class="sp-description">{{ Lang.get('user.email_per_batch_desc') }}</div>
                     </div>
                 </div>
@@ -154,7 +157,7 @@
                 <div class="sp-form-row">
                     {{ form_label('batch_interval', Lang.get('user.batch_interval')) }}
                     <div class="sp-input-container">
-                        {{ form_number('batch_interval', 1, {'class': 'sp-w-24', 'min': 1}) }}
+                        {{ form_number('batch_interval', 1, {'class': 'sp:w-24', 'min': 1}) }}
                         <div class="sp-description">{{ Lang.get('user.batch_interval_desc') }}</div>
                     </div>
                 </div>
@@ -183,12 +186,10 @@
     <script src="{{ asset_rev('resources/assets/libs/editor.min.js') }}"></script>
 
     <!-- Attachments -->
-    <script src="{{ asset_rev('resources/assets/libs/fileupload/js/jquery.fileupload.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/dist/fileupload.min.js') }}"></script>
     <script>
-        new FileUpload({
-            blueimp: {
-                cumulativeMaxFileSize: {{ cumulative_attachment_limit }}
-            }
+        new SpFileUpload.FileUpload({
+            cumulativeMaxFileSize: {{ cumulative_attachment_limit }}
         });
     </script>
 
@@ -206,7 +207,7 @@
             // If we have multiple brands
             if ($('select[name="brand_id"]').length) {
                 var $brandSelectize = $('select[name="brand_id"]').selectize({
-                    plugins: ['disableDelete'],
+                    plugins: ['disable_delete'],
                     placeholder: Lang.get('core.select_brand'),
                     onChange: function (item) {
                         // Set the from name and email based on the brand
@@ -246,7 +247,7 @@
                             }
 
                             return '<div>' +
-                                '<img class="sp-avatar sp-max-w-2xs" src="' + escape(item.avatar_url) + '" /> &nbsp;' +
+                                '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" /> &nbsp;' +
                                 escape(item.formatted_name) + (item.organisation ? ' (' + escape(item.organisation || '') + ')' : '') +
                                 (item.email ? '<br /><span class="sp-description">' + escape(item.email || '') + '</span>' : '') +
                                 '</div>';

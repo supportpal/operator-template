@@ -6,47 +6,47 @@
 
 {% block breadcrumb %}
     {{ Lang.get('selfservice.selfservice') }}
-    &nbsp;&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
+    &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     <strong>{{ Lang.choice('selfservice.comment', 2) }}</strong>
 {% endblock %}
 
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden update">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden update">
         {{ Lang.get('messages.success_updated', { 'item': mb_strtolower(Lang.choice('selfservice.comment', 1), 'UTF-8') }) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden update">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden update">
         {{ Lang.get('messages.error_updated', { 'item': mb_strtolower(Lang.choice('selfservice.comment', 1), 'UTF-8') }) }}
     </div>
 {% endblock %}
 
 {% block content %}
-    <div class="sp-filter-results sp-hidden">
+    <div class="sp-filter-results sp:hidden">
         <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-        <div class="sp-table">
-            <div class="sp-table-row">
+        <div class="sp:table">
+            <div class="sp:table-row">
                 <label>{{ Lang.get('general.by')|capitalize }}:</label>
                 <div id="filter_by"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('selfservice.article', 1) }}:</label>
                 <div id="filter_article"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('selfservice.type', 1) }}:</label>
                 <div id="filter_type"></div>
             </div>
-            <div class="sp-table-row">
+            <div class="sp:table-row">
                 <label>{{ Lang.choice('core.brand', 1) }}:</label>
                 <div id="filter_brand"></div>
             </div>

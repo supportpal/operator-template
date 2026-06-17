@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp-hidden sp-user-access-update">
+    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden sp-user-access-update">
         {{ Lang.get('messages.success_updated', {'item': mb_strtolower(Lang.choice('user.organisation', 1), 'UTF-8')}) }}
     </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp-hidden sp-user-access-update">
+    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden sp-user-access-update">
         {{ Lang.get('messages.error_updated', {'item': mb_strtolower(Lang.choice('user.organisation', 1), 'UTF-8')}) }}
     </div>
 {% endblock %}

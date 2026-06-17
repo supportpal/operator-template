@@ -11,12 +11,12 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <a href="{{ route('ticket.operator.cannedresponse.create') }}" class="sp-action sp-button">
-                    <i class="fas fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
                 </a><!--
                 --><button class="sp-action sp-filter-grid">
-                    <i class="fas fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
                 </button>
             </li>
         </ul>
@@ -29,23 +29,23 @@
 
     <div id="tabResponses" class="tabContent">
 
-        <div class="sp-filter-results sp-hidden">
+        <div class="sp-filter-results sp:hidden">
             <h3>{{ Lang.get('general.filter_results') }}</h3>
 
-            <div class="sp-table">
-                <div class="sp-table-row">
+            <div class="sp:table">
+                <div class="sp:table-row">
                     <label>{{ Lang.get('general.name') }}:</label>
                     <div id="filter_response_name"></div>
                 </div>
-                <div class="sp-table-row">
+                <div class="sp:table-row">
                     <label>{{ Lang.choice('ticket.tag', 1) }}:</label>
                     <div id="filter_response_tag"></div>
                 </div>
-                <div class="sp-table-row">
+                <div class="sp:table-row">
                     <label>{{ Lang.get('general.public') }}:</label>
                     <div id="filter_response_public"></div>
                 </div>
-                <div class="sp-table-row">
+                <div class="sp:table-row">
                     <label>{{ Lang.choice('user.operator_group', 1) }}:</label>
                     <div id="filter_response_group"></div>
                 </div>

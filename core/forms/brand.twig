@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div id="tabBranding" class="sp-tab-content sp-hidden">
+        <div id="tabBranding" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('brand_colour', Lang.get('general.colour')) }}
                 <div class="sp-input-container">
@@ -174,7 +174,7 @@
             </div>
         </div>
 
-        <div id="tabEmail" class="sp-tab-content sp-hidden">
+        <div id="tabEmail" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('default_email', Lang.get('core.default_email_addr')) }}
                 <div class="sp-input-container">
@@ -229,7 +229,7 @@
             {% endif %}
         </div>
 
-        <div id="tabLocale" class="sp-tab-content sp-hidden">
+        <div id="tabLocale" class="sp-tab-content sp:hidden">
             {% include 'operator.' ~ template ~ '.core.forms.locale_tab' %}
 
             <div class="sp-form-row">

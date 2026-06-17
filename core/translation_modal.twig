@@ -1,23 +1,23 @@
-<div class="sp-translatable-modal sp-absolute sp-w-full sp-mt-1 sp-bg-primary sp-rounded sp-shadow sp-z-50 sp-hidden">
-    <div class="sp-modal-content sp-p-3 sp-pt-3/2 sp-overflow-auto" style="max-height: 240px;">
-        <div class="sp-no-translations sp-pt-3/2 {% if all.existing|length %}sp-hidden{% endif %}">
+<div class="sp-translatable-modal sp:absolute sp:w-full sp:mt-1 sp:bg-primary sp:rounded sp:shadow sp:z-50 sp:hidden">
+    <div class="sp-modal-content sp:p-3 sp:pt-1.5 sp:overflow-auto" style="max-height: 240px;">
+        <div class="sp-no-translations sp:pt-1.5 {% if all.existing|length %}sp:hidden{% endif %}">
             {{ Lang.get('core.no_existing_translations') }}
         </div>
 
-        <div class="sp-translations {% if not all.existing|length %}sp-hidden{% endif %}">
+        <div class="sp-translations {% if not all.existing|length %}sp:hidden{% endif %}">
             {% for key, translations in all %}
                 <div class="{{ key }}-translations">
                     {% for translation in translations %}
-                        <div class="sp-translation sp-form-row {% if key == 'missing' %}sp-hidden{% endif %}"
+                        <div class="sp-translation sp-form-row sp:mb-0 {% if key == 'missing' %}sp:hidden{% endif %}"
                                 data-locale="{{ translation.locale }}"
                                 data-display-name="{{ translation.display_name }}">
-                            <label for="{{ translation.input_name }}" class="sp-block sp-mb-1 sp-font-bold">
+                            <label for="{{ translation.input_name }}" class="sp:block sp:mb-1 sp:font-bold">
                                 <span>{{ translation.display_name }}</span>
-                                <i class="fas fa-times sp-remove-translation sp-float-end sp-my-1 sp-text-red-600 hover:sp-cursor-pointer"
+                                <i class="fa-solid fa-times sp-remove-translation sp:float-end sp:my-1 sp:text-red-600 sp:hover:cursor-pointer"
                                    aria-hidden="true" title="{{ Lang.get('general.remove') }}"></i>
                             </label>
                             {% set disabledInputOpts = key == 'missing' ? {'disabled': 'disabled'} : {} %}
-                            {{ call_user_func(input_type, translation.input_name, translation.value, {'autocomplete': 'off', 'exactValue': true}|merge(disabledInputOpts))|raw }}
+                            {{ call_user_func(input_type, translation.input_name, translation.value, {'autocomplete': 'off', 'exactValue': true}|merge(disabledInputOpts)|merge(input_opts))|raw }}
                         </div>
                     {% endfor %}
                 </div>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="sp-p-3 sp-pt-0 {% if all.missing|length == 0 %}sp-hidden{% endif %}">
+    <div class="sp:p-3 sp:pt-0 {% if all.missing|length == 0 %}sp:hidden{% endif %}">
         <select name="sp-translation-add">
             <option value>{{ Lang.get('core.add_translation') }}...</option>
             {% for data in all.missing %}

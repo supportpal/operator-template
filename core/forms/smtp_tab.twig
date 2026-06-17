@@ -11,7 +11,7 @@
     <div class="sp-form-row">
         {{ form_label('smtp_port', Lang.get('core.smtp_port')) }}
         <div class="sp-input-container">
-            {{ form_number('smtp_port', null, {'class': 'sp-w-32', 'min': 0}) }}
+            {{ form_number('smtp_port', null, {'class': 'sp:w-32', 'min': 0}) }}
         </div>
     </div>
 
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="password-form {% if record.smtp_auth_mech is not empty and record.smtp_auth_mech != PASSWORD_AUTH %}sp-hidden{% endif %}">
+        <div class="password-form {% if record.smtp_auth_mech is not empty and record.smtp_auth_mech != PASSWORD_AUTH %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('smtp_password', Lang.get('core.smtp_password')) }}
                 <div class="sp-input-container">
@@ -67,34 +67,34 @@
         </div>
 
         {% set hasOAuth = record is defined and record.smtp_oauth is not empty %}
-        <div class="oauth-form {% if record.smtp_auth_mech is empty or record.smtp_auth_mech == PASSWORD_AUTH %}sp-hidden{% endif %}">
+        <div class="oauth-form {% if record.smtp_auth_mech is empty or record.smtp_auth_mech == PASSWORD_AUTH %}sp:hidden{% endif %}">
             <div class="sp-form-row">
                 {{ form_label('smtp_provider', Lang.choice('general.provider', 1)) }}
                 <div class="sp-input-container sp-input-group">
                     {% if oAuthProviders is not empty %}
-                        <div class="sp-flex sp-flex-wrap">
-                            <div class="sp-flex-none sp-w-full sm:sp-w-auto">
+                        <div class="sp:flex sp:flex-wrap">
+                            <div class="sp:flex-none sp:w-full sp:sm:w-auto">
                                 {{ form_select('smtp_provider', oAuthProviders, record.smtp_oauth.provider) }}
                             </div>
-                            <div class="sp-flex-none sp-w-full sp-mt-3 sm:sp-w-auto sm:sp-ms-3 sm:sp-mt-0">
+                            <div class="sp:flex-none sp:w-full sp:mt-3 sp:sm:w-auto sp:sm:ms-3 sp:sm:mt-0">
                                 {{ form_button(
                                     Lang.get('core.get_access_token'),
-                                    {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp-hidden' : '')}
+                                    {'class': 'get-access-token sp-button-orange' ~ (hasOAuth ? ' sp:hidden' : '')}
                                 ) }}
                                 {{ form_button(
                                     Lang.get('core.reset_access_token'),
-                                    {'class': 'reset-access-token sp-button-red' ~ (hasOAuth ? '' : ' sp-hidden')}
+                                    {'class': 'reset-access-token sp-button-red' ~ (hasOAuth ? '' : ' sp:hidden')}
                                 ) }}
                             </div>
                         </div>
                     {% endif %}
-                    <div class="{% if oAuthProviders is not empty %}sp-description{% else %}sp-alert sp-alert-error sp-m-0{% endif %}">
+                    <div class="{% if oAuthProviders is not empty %}sp-description{% else %}sp-alert sp-alert-error sp:m-0{% endif %}">
                         {{ Lang.get('ticket.manage_oauth_options', {'route': route('core.operator.integration.index')})|raw }}
                     </div>
                 </div>
             </div>
 
-            <div class="sp-form-row sp-hidden">
+            <div class="sp-form-row sp:hidden">
                 <label></label>
                 <div class="sp-input-container">
                     {{ form_hidden('smtp_oauth_data') }}
@@ -107,11 +107,11 @@
         <label></label>
         <div class="sp-input-container">
             {{ form_button(Lang.get('general.validate_auth'), { 'class': 'validate-smtp' }) }} &nbsp;&nbsp;
-            <span class="validate-auth text-progress sp-text-orange-600 sp-hidden">
-                    <i class='fas fa-spinner fa-spin'></i> {{ Lang.get('messages.in_progress') }}...
+            <span class="validate-auth text-progress sp:text-orange-600 sp:hidden">
+                    <i class='fa-solid fa-spinner fa-spin'></i> {{ Lang.get('messages.in_progress') }}...
                 </span>
-            <span class="validate-auth text-success sp-text-green-600 sp-hidden">{{ Lang.get('messages.success') }}!</span>
-            <span class="validate-auth text-fail sp-text-red-600 sp-hidden">
+            <span class="validate-auth text-success sp:text-green-600 sp:hidden">{{ Lang.get('messages.success') }}!</span>
+            <span class="validate-auth text-fail sp:text-red-600 sp:hidden">
                     {{ Lang.get('messages.error') }}!
                     <span class="error-message"></span>
                 </span>

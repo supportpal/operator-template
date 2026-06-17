@@ -8,7 +8,7 @@
     {{ form_hidden('type_id', type) }}
     {{ form_hidden('parent_id') }}
 
-    <p class="sp-replying-to sp-description sp-hidden">
+    <p class="sp-replying-to sp-description sp:hidden">
         {{ Lang.get('selfservice.replying_to') }} <strong><span class="sp-reply-name"></span></strong>
         &nbsp;
         {{ form_button(Lang.get('general.cancel'), {'class': 'sp-cancel-reply sp-button sp-button-sm'}) }}
@@ -29,7 +29,7 @@
     </div>
 
     {% if article.comments is not empty %}
-        <hr />
+        <hr class="sp:mb-0" />
     {% endif %}
 
 {{ form_close() }}

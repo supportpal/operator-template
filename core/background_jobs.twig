@@ -11,10 +11,10 @@
 {% block precontent %}
     <div class="sp-quick-actions">
         <ul>
-            <li class="sp-action-group sp-inline-block">
+            <li class="sp-action-group">
                 <button class="sp-action sp-filter-datepicker" data-active="0">
-                    <i class="fas fa-calendar"></i>
-                    <span class="sp-hidden xs:sp-inline">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="sp:hidden sp:xs:inline">
                         &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
                     </span>
                 </button>
@@ -22,7 +22,7 @@
         </ul>
     </div>
 
-    <div class="sp-retry-success sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+    <div class="sp-retry-success sp-alert sp-alert-success sp-alert-sticky sp:hidden">
         {{ Lang.get('messages.success_action') }}
     </div>
 {% endblock %}

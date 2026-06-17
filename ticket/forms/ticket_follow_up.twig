@@ -1,4 +1,4 @@
-<form class="followup-form {% if followup|default is empty %}sp-hidden{% endif %}" data-method="{{ method }}" data-uri="{{ route }}">
+<form class="followup-form {% if followup|default is empty %}sp:hidden{% endif %}" data-method="{{ method }}" data-uri="{{ route }}">
 
     <h2>{{ Lang.get(followup|default is empty ? 'general.add_item' : 'general.edit_item', {'item': Lang.get('ticket.follow_up')}) }}</h2>
 
@@ -7,40 +7,40 @@
     <div class="sp-form-row">
         {{ form_label('followup_date', Lang.get('ticket.follow_up_date')) }}
             <div class="sp-input-container">
-                <label class="sp-inline-block sp-me-2">{{ form_radio('date_type', 0, true) }} {{ Lang.get('ticket.exact_date_time') }}</label>
-                <label class="sp-inline-block">{{ form_radio('date_type', 1) }} {{ Lang.get('ticket.time_from_now') }}</label>
-                <div class="followup-exact sp-mt-2">
-                    <div class="sp-block xs:sp-inline-block">
+                <label class="sp:inline-block sp:me-2">{{ form_radio('date_type', 0, true) }} {{ Lang.get('ticket.exact_date_time') }}</label>
+                <label class="sp:inline-block">{{ form_radio('date_type', 1) }} {{ Lang.get('ticket.time_from_now') }}</label>
+                <div class="followup-exact sp:mt-2">
+                    <div class="sp:block sp:xs:inline-block">
                         {{ form_text('followup_date', followup|default is not empty
                                 ? timeWithOffset(followup.time, false)|date(Config.get('settings.date_format'))
                                 : "now"|date(Config.get('settings.date_format'), getTimezone()),
-                            {'class': 'datepicker sp-w-40', 'placeholder': '&#xf073;'}) }}
+                            {'class': 'datepicker sp:w-40', 'placeholder': '&#xf073;'}) }}
                     </div>
-                    <div class="sp-block sp-mt-2 xs:sp-inline-block xs:sp-mt-0">
+                    <div class="sp:block sp:mt-2 sp:xs:inline-block sp:xs:mt-0">
                         {{ form_text('followup_time', followup|default is not empty
                                 ? timeWithOffset(followup.time, false)|date(Config.get('settings.time_format'))
                                 : "now"|date(Config.get('settings.time_format'), getTimezone()),
-                            {'class': 'timepicker sp-w-32', 'placeholder': '&#xf017;'}) }}
+                            {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}) }}
                     </div>
                 </div>
-                <div class="followup-difference sp-mt-2 sp-hidden">
+                <div class="followup-difference sp:mt-2 sp:hidden">
                     <div class="sp-duration">
-                        {{ form_number('followup_days', 1, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('followup_days', 1, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('followup_hours', 0, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('followup_hours', 0, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('followup_minutes', 0, {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('followup_minutes', 0, {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                 </div>
             </div>
     </div>
 
-    <div class="sp-form-row followup-status {% if followup|default is not empty %}sp-hidden{% endif %}">
+    <div class="sp-form-row followup-status {% if followup|default is not empty %}sp:hidden{% endif %}">
         {{ form_label('followup_status', Lang.get('ticket.set_status')) }}
         <div class="sp-input-container">
             {{ form_select('followup_status', follow_up_statuses) }}
@@ -49,7 +49,7 @@
     </div>
 
     {% if ticket.sla_plan_id|default is not empty and ticket.due_time is not empty %}
-        <div class="sp-form-row followup-sla {% if followup|default is not empty %}sp-hidden{% endif %}">
+        <div class="sp-form-row followup-sla {% if followup|default is not empty %}sp:hidden{% endif %}">
             {{ form_label('followup_sla', Lang.get('ticket.pause_duetime')) }}
             <div class="sp-input-container">
                 {{ form_check('followup_sla', 1, 0, {'class': 'sp-toggle', 'id': 'toggle_followup_sla'}) }}
@@ -65,8 +65,8 @@
 
         {{ form_hidden('ticket_id', ticket.id, {'disabled': 'disabled'}) }}
 
-        <div class="sp--mx-6">
-            <table class="sp-table-grid rule-table sp-mb-3 {% if followup|default is empty or followup.actions.isEmpty() %}sp-hidden{% endif %}">
+        <div class="sp:-mx-6">
+            <table class="sp-table-grid rule-table sp:mb-3 {% if followup|default is empty or followup.actions.isEmpty() %}sp:hidden{% endif %}">
                 <thead>
                     <tr>
                         <th width="14"></th>

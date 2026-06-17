@@ -1,0 +1,78 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {% if record|default is not empty and record.exists %}
+        {{ Lang.get('general.edit_item', {'item': Lang.choice('user.ldap_server', 1)}) }}
+    {% else %}
+        {{ Lang.get('general.add_item', {'item': Lang.choice('user.ldap_server', 1)}) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% if not extension_loaded('ldap') %}
+        <div class="sp-alert sp-alert-warning">
+            <strong>{{ Lang.get('messages.missing_extension') }}</strong><br />
+            <span>{{ Lang.get('messages.php_ldap_missing') }}</span>
+        </div>
+    {% endif %}
+
+    {% if record|default is not empty and record.exists %}
+        {{ form_model(record, {'route': [ 'user.operator.ldapserver.update', record.id ], 'method': 'PUT', 'class': 'validate', 'enctype': 'multipart/form-data'}) }}
+    {% else %}
+        {{ form_open({'route': 'user.operator.ldapserver.store', 'class': 'validate', 'enctype': 'multipart/form-data'}) }}
+    {% endif %}
+
+        <div class="sp-form-container">
+            <div class="sp-form-row">
+                {{ form_label('hostname', Lang.get('user.ldap_server_hostname')) }}
+                <div class="sp-input-container">
+                    {{ form_text('hostname', null, {'class': 'sp:w-full'}) }}
+                    <div class="sp-description">{{ Lang.get('user.ldap_server_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('start_tls', Lang.get('core.start_tls')) }}
+                <div class="sp-input-container">
+                    {{ form_check('start_tls', 1, null, {'class': 'sp-toggle', 'id': 'toggle_start_tls'}) }}
+                    <label for="toggle_start_tls"></label>
+                    <div class="sp-description">{{ Lang.get('user.ldap_start_tls_desc') }}</div>
+                </div>
+            </div>
+
+            <div class="sp-form-row">
+                {{ form_label('ca_cert', Lang.get('user.ldap_ca_cert')) }}
+                <div class="sp-input-container">
+                    {% if record.caCertUpload %}
+                        <div class="sp:mb-2">
+                            <span class="sp:text-sm">{{ record.caCertUpload.filename }}</span>
+                            <label class="sp:ml-4">
+                                {{ form_check('ca_cert_delete', 1, null, {'id': 'ca_cert_delete'}) }}
+                                {{ Lang.get('general.delete') }}
+                            </label>
+                        </div>
+                    {% endif %}
+                    {{ form_file('ca_cert') }}
+                    <div class="sp-description">{{ Lang.get('user.ldap_ca_cert_desc') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-form-button">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+<div class="sp-filter-timeline sp-dropdown-container sp:flex-none sp:relative sp:font-normal sp:hidden sp:md:inline-block sp:print:hidden">
+    <button class="sp-action sp-button-sm" title="{{ Lang.get('ticket.filter_timeline') }}">
+        <i class="fa-solid fa-filter"></i>
+    </button>
+    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-9">
+        <ul>
+            <div class="sp-input-group">
+                <li class="sp:px-3 sp:py-1.5">
+                    <div class="sp:flex sp:items-center sp:gap-x-3">
+                        <h4 class="sp:m-0 sp:grow">{{ Lang.choice('general.message', 2) }}</h4>
+                        <div class="sp:flex-none sp:text-xs sp:text-secondary sp:text-right">
+                            <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                            <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                        </div>
+                    </div>
+                </li>
+                {% for option in enum('App\\Modules\\Ticket\\Models\\Enums\\TimelineEntry').messageCases() %}
+                    {% set noteOptionHidden = option == enum('App\\Modules\\Ticket\\Models\\Enums\\TimelineEntry').Note
+                        and Config.get('settings.ticket_notes_position') == 1 %}
+
+                    <li class="sp:px-3 sp:py-1.5 {% if noteOptionHidden %}sp:hidden{% endif %}">
+                        {{ form_check(option.value, 1, noteOptionHidden ? 1 : option in auth_user().opsettings.ticket_timeline_filtering) }} {{ option.name() }}
+                    </li>
+                {% endfor %}
+            </div>
+            <hr class="sp:mx-0 sp:my-1" />
+            <div class="sp-input-group">
+                <li class="sp:px-3 sp:py-1.5">
+                    <div class="sp:flex sp:items-center sp:gap-x-3">
+                        <h4 class="sp:m-0 sp:grow">{{ Lang.get('user.activity_log') }}</h4>
+                        <div class="sp:flex-none sp:text-xs sp:text-secondary sp:text-right">
+                            <button class="as-link check_all">{{ Lang.get('general.check_all') }}</button>
+                            <button class="as-link uncheck_all">{{ Lang.get('general.uncheck_all') }}</button>
+                        </div>
+                    </div>
+                </li>
+                {% for option in enum('App\\Modules\\Ticket\\Models\\Enums\\TimelineEntry').logCases() %}
+                    <li class="sp:px-3 sp:py-1.5">
+                        {{ form_check(option.value, 1, option in auth_user().opsettings.ticket_timeline_filtering) }} {{ option.name() }}
+                    </li>
+                {% endfor %}
+            </div>
+        </ul>
+    </div>
+</div>
+

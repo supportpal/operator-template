@@ -1,12 +1,19 @@
-<div class="sp-sidebox">
+<div class="sp-sidebar-panel">
+    <div class="sp-sidebar-panel-header">
+        <div class="sp-icon">
+            <i class="fa-solid fa-chart-bar"></i>
+        </div>
+        <h3>{{ Lang.choice('report.report', 2) }}</h3>
+    </div>
+
     <ul>
-        <li {% if Route.currentRouteName() is same as('report.operator.index') %}class="sp-font-bold"{% endif %}>
+        <li {% if Route.currentRouteName() is same as('report.operator.index') %}class="sp:font-bold"{% endif %}>
             <a href="{{ route('report.operator.index') }}">
                 {{ Lang.get('report.reports_home') }}
             </a>
         </li>
         {% if auth_user().hasPermission('view.manage_report') %}
-            <li {% if Route.currentRouteName() is same as('report.operator.manage.index') %}class="sp-font-bold"{% endif %}>
+            <li {% if Route.currentRouteName() is same as('report.operator.manage.index') %}class="sp:font-bold"{% endif %}>
                 <a href="{{ route('report.operator.manage.index') }}">
                     {{ Lang.get('report.manage_reports') }}
                 </a>
@@ -15,32 +22,23 @@
     </ul>
 </div>
 
-{% if reports is not empty %}
-    <div class="sp-sidebox">
-        <div class="sp-flex">
+{% for report in reports %}
+    <div class="sp-sidebar-panel">
+        <div class="sp-sidebar-panel-header">
             <div class="sp-icon">
-                <i class="fas fa-chart-bar"></i>
+                {{ report.icon|raw }}
             </div>
-            <h3>{{ Lang.choice('report.report', 2) }}</h3>
+            <h3 class="sp:text-base">{{ report.name }}</h3>
         </div>
 
-        {% for report in reports %}
-            <div class="sp-mt-4 sp-mb-2 sp-flex">
-                <div class="sp-flex-initial">
-                    {{ report.icon|raw }}
-                </div>
-                <h4 class="sp-m-0">{{ report.name }}</h4>
-            </div>
-
-            <ul class="sp-list-disc">
-                {% for dashboard in report.dashboards %}
-                    <li {% if Request.input('name') == dashboard.uriKey() %}class="sp-font-bold"{% endif %}>
-                        <a href="{{ route('report.operator.dashboard', {'name': dashboard.uriKey()}) }}">
-                            {{ dashboard.name() }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endfor %}
+        <ul>
+            {% for dashboard in report.dashboards %}
+                <li {% if Request.input('name') == dashboard.uriKey() %}class="sp:font-bold"{% endif %}>
+                    <a href="{{ route('report.operator.dashboard', {'name': dashboard.uriKey()}) }}">
+                        {{ dashboard.name() }}
+                     </a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
-{% endif %}
+{% endfor %}

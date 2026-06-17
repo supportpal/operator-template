@@ -27,7 +27,7 @@
             </li>
         </ul>
 
-        <div id="tabGeneral" class="sp-tab-content sp-hidden">
+        <div id="tabGeneral" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('toggle_use_gravatar', Lang.get('user.use_gravatar')) }}
                 <div class="sp-input-container">
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="sp-form-row {% if Config.get('settings.captcha_type') == 0 %}sp-hidden{% endif %}">
+            <div class="sp-form-row {% if Config.get('settings.captcha_type') == 0 %}sp:hidden{% endif %}">
                 {{ form_label('registration_captcha', Lang.get('user.user_reg_captcha')) }}
                 <div class="sp-input-container">
                     {{ form_check('registration_captcha', 1, null, {'class': 'sp-toggle', 'id': 'toggle_registration_captcha'}) }}
@@ -75,7 +75,7 @@
             <div class="sp-form-row">
                 {{ form_label('user_password_length', Lang.get('user.password_length')) }}
                 <div class="sp-input-container">
-                    {{ form_number('user_password_length', null, {'class': 'sp-w-24', 'min': 1}) }}
+                    {{ form_number('user_password_length', null, {'class': 'sp:w-24', 'min': 1}) }}
                     <div class="sp-description">{{ Lang.get('user.password_length_desc') }}</div>
                 </div>
             </div>
@@ -108,7 +108,7 @@
             <div class="sp-form-row">
                 {{ form_label('ban_after_count_user', Lang.get('user.ban_after_count')) }}
                 <div class="sp-input-container">
-                    {{ form_number('ban_after_count_user', null, {'class': 'sp-w-24', 'min': 0}) }}
+                    {{ form_number('ban_after_count_user', null, {'class': 'sp:w-24', 'min': 0}) }}
                     <div class="sp-description">{{ Lang.get('user.ban_after_count_user') }}</div>
                 </div>
             </div>
@@ -117,15 +117,15 @@
                 {{ form_label('ban_length_user', Lang.get('user.ban_length')) }}
                 <div class="sp-input-container">
                     <div class="sp-duration">
-                        {{ form_number('ban_length_user[days]', banLengthUser['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_user[days]', banLengthUser['days'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('ban_length_user[hours]', banLengthUser['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_user[hours]', banLengthUser['hours'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('ban_length_user[minutes]', banLengthUser['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_user[minutes]', banLengthUser['minutes'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">{{ Lang.get('user.ban_length_desc') }}</div>
@@ -133,7 +133,7 @@
             </div>
         </div>
 
-        <div id="tabOperators" class="sp-tab-content sp-hidden">
+        <div id="tabOperators" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('operator_name_format', Lang.get('user.user_name_format')) }}
                 <div class="sp-input-container">
@@ -168,7 +168,7 @@
             <div class="sp-form-row">
                 {{ form_label('operator_password_length', Lang.get('user.password_length')) }}
                 <div class="sp-input-container">
-                    {{ form_number('operator_password_length', null, {'class': 'sp-w-24', 'min': 1}) }}
+                    {{ form_number('operator_password_length', null, {'class': 'sp:w-24', 'min': 1}) }}
                     <div class="sp-description">{{ Lang.get('user.password_length_desc') }}</div>
                 </div>
             </div>
@@ -201,7 +201,7 @@
             <div class="sp-form-row">
                 {{ form_label('ban_after_count_operator', Lang.get('user.ban_after_count')) }}
                 <div class="sp-input-container">
-                    {{ form_number('ban_after_count_operator', null, {'class': 'sp-w-24', 'min': 0}) }}
+                    {{ form_number('ban_after_count_operator', null, {'class': 'sp:w-24', 'min': 0}) }}
                     <div class="sp-description">{{ Lang.get('user.ban_after_count_operator') }}</div>
                 </div>
             </div>
@@ -210,15 +210,15 @@
                 {{ form_label('ban_length_operator', Lang.get('user.ban_length')) }}
                 <div class="sp-input-container">
                     <div class="sp-duration">
-                        {{ form_number('ban_length_operator[days]', banLengthOperator['days'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_operator[days]', banLengthOperator['days'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.day', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('ban_length_operator[hours]', banLengthOperator['hours'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_operator[hours]', banLengthOperator['hours'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.hour', 2) }}</div>
                     </div>
                     <div class="sp-duration">
-                        {{ form_number('ban_length_operator[minutes]', banLengthOperator['minutes'], {'class': 'sp-w-20', 'min': 0}) }}
+                        {{ form_number('ban_length_operator[minutes]', banLengthOperator['minutes'], {'class': 'sp:w-20', 'min': 0}) }}
                         <div class="sp-description">{{ Lang.choice('general.minute', 2) }}</div>
                     </div>
                     <div class="sp-description">{{ Lang.get('user.ban_length_desc') }}</div>
@@ -226,7 +226,7 @@
             </div>
         </div>
 
-        <div id="tabOrganisations" class="sp-tab-content sp-hidden">
+        <div id="tabOrganisations" class="sp-tab-content sp:hidden">
             <div class="sp-form-row">
                 {{ form_label('organisations_enabled', Lang.get('user.organisations_enabled')) }}
                 <div class="sp-input-container">

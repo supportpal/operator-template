@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="{{ get_template_mode() }} sp-h-full print:sp-h-auto" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
+<html class="{{ get_template_mode() }} sp:h-full sp:print:h-auto" dir="{{ get_template_dir() }}" lang="{{ App.getLocale() }}">
 
 <head>
     {{ View.fireHook('operator.head_start') }}
@@ -17,30 +17,30 @@
     {{ View.fireHook('operator.head_end') }}
 </head>
 
-<body class="sp-h-full sp-bg-primary sp-text-primary print:sp-h-auto">
+<body class="sp:h-full sp:bg-primary sp:text-primary sp:print:h-auto">
 
 {{ View.fireHook('operator.body_start') }}
 
-<header id="header" class="sp-relative sp-w-full sp-bg-primary-800 sp-leading-none sp-z-10002 lg:sp-fixed print:sp-hidden">
+<header id="header" class="sp:relative sp:w-full sp:bg-primary-800 sp:leading-none sp:z-10002 sp:lg:fixed sp:print:hidden">
     {{ View.fireHook('operator.header_start') }}
 
     {% block header %}
-        <div class="sp-flex">
-            <div class="sp-flex-none">
-                <a href="{{ route('core.operator.dashboard') }}" class="sp-block sp-p-2 sm:sp-px-4 hover:sp-bg-primary-900">
+        <div class="sp:flex sp:items-center">
+            <div class="sp:flex-none">
+                <a href="{{ route('core.operator.dashboard') }}" class="sp:block sp:px-3 sp:py-2 sp:lg:px-4 sp:hover:bg-primary-900">
                     <img src="{{ get_icon('resources/assets/operator/images/logo_icon.png') }}"
-                         alt="{{ Config.get('settings.brand_name') }}" class="sp-h-8" />
+                         alt="{{ Config.get('settings.brand_name') }}" class="sp:h-8" />
                 </a>
             </div>
 
-            <nav class="sp-absolute sp-hidden sp-start-0 sp-w-full sp-min-w-0 sp-bg-primary-800 sp-border-b sp-border-primary-900 sp-top-100
-                        sp-whitespace-nowrap lg:sp-grow lg:sp-static lg:sp-inline-block lg:sp-w-auto lg:sp-bg-auto lg:sp-border-0">
-                <ul class="sp-relative">
+            <nav class="sp:absolute sp:hidden sp:start-0 sp:w-full sp:min-w-0 sp:bg-primary-800 sp:border-b sp:border-primary-900 sp:top-full
+                        sp:whitespace-nowrap sp:lg:grow sp:lg:static sp:lg:inline-block sp:lg:w-auto sp:lg:bg-auto sp:lg:border-0">
+                <ul class="sp:relative">
                     {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.ticket|create.ticket') %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true" id="ticketHeaderDropdown">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="true" id="ticketHeaderDropdown">
                             <a class="sp-nav-item">
                                 {{ Lang.choice('ticket.ticket', 2) }}
-                                <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs lg:sp-p-0 lg:sp-ms-1 lg:sp-float-none"
+                                <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs sp:lg:p-0 sp:lg:ms-1 sp:lg:float-none"
                                    aria-hidden="true"></i>
                             </a>
                             <ul class="sp-nav-dropdown">
@@ -54,12 +54,12 @@
                                         <li class="sp-multi-list" aria-haspopup="false">
                                             <div class="sp-title">{{ Lang.get('ticket.recent_tickets') }}</div>
                                             {% for recentTicket in recentTickets %}
-                                                <a href="{{ route('ticket.operator.ticket.show', recentTicket.id) }}" class="sp-group">
+                                                <a href="{{ route('ticket.operator.ticket.show', recentTicket.id) }}" class="sp:group">
                                                     {% if recentTicket.trashed() %}
-                                                        <i class="fas fa-trash sp-text-secondary" title="{{ Lang.get('general.trash') }}"></i>
+                                                        <i class="fa-solid fa-trash sp:text-secondary" title="{{ Lang.get('general.trash') }}"></i>
                                                     {% endif %}
                                                     {{ recentTicket.status.icon|raw }}
-                                                    <span class="sp-description group-hover:sp-text-white">#{{ recentTicket.number }}</span> {{ recentTicket.subject }}
+                                                    <span class="sp-description sp:group-hover:text-white">#{{ recentTicket.number }}</span> {{ recentTicket.subject }}
                                                 </a>
                                             {% endfor %}
                                         </li>
@@ -86,10 +86,10 @@
                         </li>
                     {% endif %}
                     {% if auth_user().hasPermission('view.user|view.organisation|view.operator|view.massemail') %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true" id="userHeaderDropdown">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="true" id="userHeaderDropdown">
                             <a class="sp-nav-item">
                                 {{ Lang.choice('user.user', 2) }}
-                                <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs lg:sp-p-0 lg:sp-ms-1 lg:sp-float-none"
+                                <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs sp:lg:p-0 sp:lg:ms-1 sp:lg:float-none"
                                    aria-hidden="true"></i>
                             </a>
                             <ul class="sp-nav-dropdown">
@@ -147,19 +147,19 @@
                     {% if isModuleEnabled('Selfservice')
                         and auth_user().hasPermission('view.comment|view.selfservicetag|view.selfservicetypes|view.article|view.category')
                     %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="true">
                             <a class="sp-nav-item">
                                 {{ Lang.get('selfservice.selfservice') }}
-                                <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs lg:sp-p-0 lg:sp-ms-1 lg:sp-float-none"
+                                <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs sp:lg:p-0 sp:lg:ms-1 sp:lg:float-none"
                                    aria-hidden="true"></i>
                             </a>
                             <ul class="sp-nav-dropdown">
                                 {% if auth_user().hasPermission('view.selfservicetype') %}
                                     {% if assignedBrands.count() > 1 %}
-                                        <li class="sp-relative" aria-haspopup="true">
+                                        <li class="sp:relative" aria-haspopup="true">
                                             <a class="sp-nav-sub-menu">
                                                 {{ Lang.choice('selfservice.type', 2) }}
-                                                <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs" aria-hidden="true"></i>
+                                                <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs" aria-hidden="true"></i>
                                             </a>
                                             <ul class="sp-nav-dropdown">
                                                 {% for brand in assignedBrands %}
@@ -202,18 +202,18 @@
                                 {% endif %}
                                 {% if auth_user().hasPermission('view.comment') %}
                                     <li aria-haspopup="false">
-                                        <a href="{{ route('selfservice.operator.comment.index') }}" class="lg:sp-rounded-b">
+                                        <a href="{{ route('selfservice.operator.comment.index') }}" class="sp:lg:rounded-b-sm">
                                             {{ Lang.choice('selfservice.comment', 2) }}
                                         </a>
                                     </li>
                                 {% endif %}
                                 {% if internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
-                                    <li class="sp-internal-selfservice sp-relative lg:sp-hidden" aria-haspopup="true">
+                                    <li class="sp-internal-selfservice sp:relative sp:lg:hidden" aria-haspopup="true">
                                         <a class="sp-nav-sub-menu">
                                             {{ Lang.get('selfservice.internal') }}
-                                            <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs" aria-hidden="true"></i>
+                                            <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs" aria-hidden="true"></i>
                                         </a>
-                                        <ul class="sp-nav-dropdown lg:sp-rounded-se">
+                                        <ul class="sp-nav-dropdown">
                                             {% for brand in assignedBrands %}
                                                 {% if internalTypes.where('brand_id', brand.id).count() %}
                                                     <li class="sp-multi-list" aria-haspopup="false">
@@ -234,23 +234,23 @@
                         </li>
                     {% endif %}
                     {% if isModuleEnabled('Report') and auth_user().hasPermission('view.report') %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('report.operator.index') }}">{{ Lang.choice('report.report', 2) }}</a>
                         </li>
                     {% endif %}
                     {% if auth_user().canViewSettings() %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="false">
                             <a class="sp-nav-item" id="settingsNavigation" href="{{ route('core.operator.setting') }}">
                                 {{ Lang.choice('general.setting', 2) }}
                             </a>
                         </li>
                     {% endif %}
                     {% if auth_user().hasPermission('view.addon') %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="false">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('core.operator.marketplace.index') }}">
                                 {{ Lang.choice('core.addon', 2) }}
                                 {% if addonUpdates is not empty and addonUpdates > 0 %}
-                                    <span class="sp-badge sp-ms-1">
+                                    <span class="sp-badge sp:ms-1">
                                         {{ addonUpdates }}
                                     </span>
                                 {% endif %}
@@ -258,10 +258,10 @@
                         </li>
                     {% endif %}
                     {% if auth_user().hasPermission('view.emaillog|view.emailqueue|view.license|view.operatorlog|view.phpinfo|view.activitylog') %}
-                        <li class="sp-block lg:sp-inline-block" aria-haspopup="true">
+                        <li class="sp:block sp:lg:inline-block" aria-haspopup="true">
                             <a class="sp-nav-item">
                                 {{ Lang.get('core.utilities') }}
-                                <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs lg:sp-p-0 lg:sp-ms-1 lg:sp-float-none"
+                                <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs sp:lg:p-0 sp:lg:ms-1 sp:lg:float-none"
                                    aria-hidden="true"></i>
                             </a>
                             <ul class="sp-nav-dropdown">
@@ -280,15 +280,15 @@
                                     </li>
                                 {% endif %}
                                 {% if auth_user().hasPermission('view.emaillog|view.operatorlog|view.activitylog') %}
-                                    <li class="sp-relative" aria-haspopup="true">
+                                    <li class="sp:relative" aria-haspopup="true">
                                         <a class="sp-nav-sub-menu">
                                             {{ Lang.choice('core.log', 2) }}
-                                            <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs" aria-hidden="true"></i>
+                                            <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs" aria-hidden="true"></i>
                                         </a>
-                                        <ul class="sp-nav-dropdown lg:sp-rounded-se">
+                                        <ul class="sp-nav-dropdown">
                                             {% if auth_user().hasPermission('view.emaillog') %}
                                                 <li aria-haspopup="false">
-                                                    <a href="{{ route('core.operator.emaillog') }}" class="lg:sp-rounded-se">
+                                                    <a href="{{ route('core.operator.emaillog') }}">
                                                         {{ Lang.get('core.email_log') }}
                                                     </a>
                                                 </li>
@@ -318,12 +318,12 @@
                                     </li>
                                 {% endif %}
                                 {% if auth_user().hasPermission('view.phpinfo|view.systemcleanup') %}
-                                    <li class="sp-relative" aria-haspopup="true">
-                                        <a class="sp-nav-sub-menu lg:sp-rounded-es">
+                                    <li class="sp:relative" aria-haspopup="true">
+                                        <a class="sp-nav-sub-menu">
                                             {{ Lang.get('general.system') }}
-                                            <i class="fas sp-chevron sp-py-1/2 sp-float-end sp-text-xs" aria-hidden="true"></i>
+                                            <i class="fa-solid sp-chevron sp:py-0.5 sp:float-end sp:text-xs" aria-hidden="true"></i>
                                         </a>
-                                        <ul class="sp-nav-dropdown lg:sp-rounded-se">
+                                        <ul class="sp-nav-dropdown">
                                             {% if auth_user().hasPermission('view.background_jobs') %}
                                                 <li aria-haspopup="false">
                                                     <a href="{{ route('core.operator.background_jobs') }}">
@@ -333,7 +333,7 @@
                                             {% endif %}
                                             {% if auth_user().hasPermission('view.phpinfo') and function_exists('phpinfo') %}
                                                 <li aria-haspopup="false">
-                                                    <a href="{{ route('core.operator.phpinfo') }}" class="lg:sp-rounded-se">
+                                                    <a href="{{ route('core.operator.phpinfo') }}">
                                                         {{ Lang.get('core.php_info') }}
                                                     </a>
                                                 </li>
@@ -369,11 +369,11 @@
                     {{ View.fireHook('operator.navigation') }}
 
                     {% if auth_user().hasPermission('view.private_messaging') %}
-                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                    <li class="sp:block sp:lg:hidden" aria-haspopup="false">
                         <a class="sp-nav-item sp-private-messages" href="{{ route('core.operator.message.index') }}">
                             {{ Lang.choice('general.message', 2) }}
                             {% if notificationCount|default is not empty and notificationCount > 0 %}
-                                <span class="sp-badge sp-px-2 sp-py-1 sp-ms-1 sp-text-xs">
+                                <span class="sp-badge sp:px-2 sp:py-1 sp:ms-1 sp:text-xs">
                                     {{ notificationCount }}
                                 </span>
                             {% endif %}
@@ -381,24 +381,24 @@
                     </li>
                     {% endif %}
 
-                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                    <li class="sp:block sp:lg:hidden" aria-haspopup="false">
                         <a class="sp-nav-item" href="{{ route('user.operator.personalsetting') }}">
                             {{ Lang.get('user.personal_settings') }}
                         </a>
                     </li>
-                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                    <li class="sp:block sp:lg:hidden" aria-haspopup="false">
                         <a class="sp-nav-item" href="{{ route('user.operator.security') }}">
                             {{ Lang.get('user.security_settings') }}
                         </a>
                     </li>
                     {% if isModuleEnabled('Ticket') and auth_user().hasPermission('view.replytemplate') %}
-                        <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                        <li class="sp:block sp:lg:hidden" aria-haspopup="false">
                             <a class="sp-nav-item" href="{{ route('user.operator.replytemplate') }}">
                                 {{ Lang.choice('user.reply_template', 2) }}
                             </a>
                         </li>
                     {% endif %}
-                    <li class="sp-block lg:sp-hidden" aria-haspopup="false">
+                    <li class="sp:block sp:lg:hidden" aria-haspopup="false">
                         <a class="sp-nav-item logout-link" data-url="{{ route('user.operator.logout') }}" data-method="post" rel="nofollow">
                             {{ Lang.get('user.logout') }}
                         </a>
@@ -406,28 +406,31 @@
                 </ul>
             </nav>
 
-            <div class="search-container sp-grow sp-py-3/2 sp-bg-primary-800 sp-z-10 lg:sp-flex-none lg:sp-px-3 xl:sp-w-64">
-                <form class="search-form sp-relative" action="{{ route('core.operator.search') }}" method="get" name="search_form" autocomplete="off">
+            <div class="search-container sp:grow sp:py-1.5 sp:bg-primary-800 sp:z-10 sp:lg:flex-none sp:lg:mx-2 sp:xl:w-64 sp:xl:mx-3">
+                <form class="search-form sp:relative" action="{{ route('core.operator.search') }}" method="get" name="search_form" autocomplete="off">
                     <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." autocomplete="on" class="search" readonly="readonly" />
                     {% if Config.get('settings.operator' ~ auth_user().id ~ '.shortcuts_enabled') %}
-                        <kbd class="sp-search-shortcut sp-absolute sp-top-3/2 sp-end-3/2 sp-px-2 sp-py-1 sp-bg-primary-700 sp-rounded sp-text-primary-100 sp-font-bold sp-z-10001 lg:sp-hidden xl:sp-inline-block">/</kbd>
+                        {% set search_shortcut = shortcut_mappings ? shortcut_mappings[2]|default('/') : '/' %}
+                        <kbd class="sp-search-shortcut sp:absolute sp:top-1.5 sp:end-1.5 sp:px-2 sp:py-1 sp:bg-primary-700 sp:rounded sp:text-primary-100 sp:font-bold sp:z-10001 sp:lg:hidden sp:xl:inline-block">
+                            {{ search_shortcut }}
+                        </kbd>
                     {% endif %}
-                    <div class="sp-search-clear sp-absolute sp-hidden sp-top-3/2 sp-end-3/2 sp-px-2 sp-py-1 sp-bg-primary-700 sp-rounded sp-text-primary-100 sp-font-bold sp-z-10001 sp-cursor-pointer">
+                    <div class="sp-search-clear sp:absolute sp:hidden sp:top-1.5 sp:end-1.5 sp:p-1 sp:bg-primary-700 sp:rounded sp:text-primary-100 sp:font-bold sp:z-10001 sp:cursor-pointer">
                         <i class="fa-solid fa-xmark"></i>
                     </div>
                 </form>
             </div>
 
             {% if updateExists and auth_user().hasPermission('view.systemupdate') %}
-                <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
-                    <div class="sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3">
+                <div class="sp:flex-none sp:bg-primary-800 sp:z-10">
+                    <div class="sp:hidden sp:lg:inline-block sp:lg:relative sp:lg:py-2">
                         <a href="{{ route('core.operator.systemupdate') }}" title="{{ Lang.get('core.update_available') }}"
-                           class="sp-inline-flex sp-p-1/2 sp-me-4 sp-text-white hover:sp-text-white">
-                            <div class="sp-flex-auto">
-                                <span class="fa-stack sp-text-2xs">
-                                    <i class="fas fa-download fa-stack-2x"></i>
-                                    <span class="sp-text-primary-300">
-                                        <i class="fas fa-circle fa-stack-1x sp-transform sp-translate-x-2 sp--translate-y-2"></i>
+                           class="sp:inline-flex sp:p-2 sp:me-2 sp:text-white sp:hover:text-white">
+                            <div class="sp:flex-auto">
+                                <span class="fa-stack sp:text-[0.5rem]">
+                                    <i class="fa-solid fa-download fa-stack-2x"></i>
+                                    <span class="sp:text-primary-300">
+                                        <i class="fa-solid fa-circle fa-stack-1x sp:transform sp:translate-x-2 sp:-translate-y-2"></i>
                                     </span>
                                 </span>
                             </div>
@@ -437,16 +440,16 @@
             {% endif %}
 
             {% if auth_user().hasPermission('view.private_messaging') %}
-            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
-                <div class="sp-private-messages sp-hidden lg:sp-inline-block lg:sp-relative lg:sp-py-3" id="privateMessages">
-                    <a href="{{ route('core.operator.message.index') }}" class="sp-inline-flex sp-p-1/2 sp-me-2 sp-text-white"
+            <div class="sp:flex-none sp:bg-primary-800 sp:z-10">
+                <div class="sp-private-messages sp:hidden sp:lg:inline-block sp:lg:relative sp:lg:py-2" id="privateMessages">
+                    <a href="{{ route('core.operator.message.index') }}" class="sp:inline-flex sp:p-0.5 sp:mx-2 sp:text-white"
                        title="{{ Lang.get('core.private_messages') }}">
-                        <div class="sp-flex-auto">
-                            <i class="fas fa-comments sp-text-lg"></i>
+                        <div class="sp:flex-auto">
+                            <i class="fa-solid fa-comments sp:text-lg"></i>
                         </div>
                         {% if notificationCount|default is not empty and notificationCount > 0 %}
-                            <div class="sp-flex-auto sp-ms-3/2">
-                                <span class="sp-badge sp-px-3/2 sp-py-1/2 sp-text-xs">{{ notificationCount }}</span>
+                            <div class="sp:flex-auto sp:-ms-1.5">
+                                <span class="sp-badge sp:px-1.5 sp:py-0.5 sp:text-xs">{{ notificationCount }}</span>
                             </div>
                         {% endif %}
                     </a>
@@ -454,22 +457,22 @@
             </div>
             {% endif %}
 
-            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
+            <div class="sp:flex-none sp:bg-primary-800 sp:z-10">
                 {% if isModuleEnabled('Selfservice') and internalTypes.whereIn('brand_id', assignedBrands.pluck('id').all()).count() %}
-                    <div class="sp-hidden lg:sp-inline-block">
-                        <div class="sp-block sp-mx-1">
-                            <ul class="sp-relative">
+                    <div class="sp:hidden sp:lg:inline-block">
+                        <div class="sp:block sp:mx-1">
+                            <ul class="sp:relative">
                                 <li class="sp-internal-selfservice" aria-haspopup="true">
-                                    <div class="sp-nav-item sp-nav-icon-item sp-flex sp-px-1 sp-py-3 sp-text-white sp-leading-normal hover:sp-bg-primary-800">
-                                        <div class="sp-flex-auto sp-py-1 sp-ms-1 sp-me-2">
-                                            <i class="fas fa-book sp-float-start"></i>
+                                    <div class="sp-nav-item sp-nav-icon-item sp:flex sp:px-1 sp:py-3 sp:text-white sp:leading-[1.5] sp:hover:bg-primary-800">
+                                        <div class="sp:flex-auto sp:py-1 sp:ms-1 sp:me-2">
+                                            <i class="fa-solid fa-book sp:float-start"></i>
                                         </div>
-                                        <div class="sp-flex-auto">
-                                            <i class="fas sp-chevron sp-text-xs" aria-hidden="true"></i>
+                                        <div class="sp:flex-auto">
+                                            <i class="fa-solid sp-chevron sp:text-xs" aria-hidden="true"></i>
                                         </div>
                                     </div>
 
-                                    <ul class="sp-nav-dropdown sp-end-0 sp-text-end">
+                                    <ul class="sp-nav-dropdown sp:end-0 sp:text-end">
                                         {% for brand in assignedBrands %}
                                             {% if internalTypes.where('brand_id', brand.id).count() %}
                                                 <li class="sp-multi-list" aria-haspopup="false">
@@ -491,22 +494,22 @@
                 {% endif %}
             </div>
 
-            <div class="sp-flex-none sp-bg-primary-800 sp-z-10">
-                <div class="sp-hidden lg:sp-inline-block">
-                    <div class="sp-block">
-                        <ul class="sp-relative">
+            <div class="sp:flex-none sp:bg-primary-800 sp:z-10">
+                <div class="sp:hidden sp:lg:inline-block">
+                    <div class="sp:block">
+                        <ul class="sp:relative">
                             <li aria-haspopup="true">
-                                <div class="sp-nav-item sp-nav-icon-item sp-flex sp-px-1 sp-py-3 sp-pe-5 hover:sp-bg-primary-800">
-                                    <div class="sp-flex-auto sp-mx-2">
+                                <div class="sp-nav-item sp-nav-icon-item sp:flex sp:px-1 sp:py-3 sp:pe-5 sp:hover:bg-primary-800">
+                                    <div class="sp:flex-auto sp:mx-2">
                                         <img src="{{ auth_user().avatar_url }}" alt="{{ Lang.choice('general.operator', 1) }}"
-                                             class="sp-avatar sp-max-w-xs" />
+                                             class="sp-avatar sp:max-w-6" />
                                     </div>
-                                    <div class="sp-flex-auto sp-leading-normal">
-                                        <i class="fas sp-chevron sp-text-white sp-text-xs" aria-hidden="true"></i>
+                                    <div class="sp:flex-auto sp:leading-[1.5]">
+                                        <i class="fa-solid sp-chevron sp:text-white sp:text-xs" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
-                                <ul class="sp-nav-dropdown sp-end-0 sp-text-end sp-truncate">
+                                <ul class="sp-nav-dropdown sp:end-0 sp:text-end sp:truncate">
                                     <li aria-haspopup="false">
                                         <a href="{{ route('user.operator.personalsetting') }}">{{ Lang.get('user.personal_settings') }}</a>
                                     </li>
@@ -533,9 +536,9 @@
                 </div>
             </div>
 
-            <div class="sp-mobile-nav sp-bg-primary-800 sp-p-2 lg:sp-hidden">
-                <div class="sp-px-3/2 sp-py-1 sp-bg-primary-800 sp-rounded sp-border sp-border-white sp-text-white
-                            sp-cursor-pointer hover:sp-bg-white hover:sp-text-primary-800">
+            <div class="sp-mobile-nav sp:bg-primary-800 sp:px-3 sp:py-1.5 sp:lg:hidden">
+                <div class="sp:px-2 sp:py-1.5 sp:bg-primary-800 sp:rounded sp:border sp:border-primary-600 sp:text-white
+                            sp:cursor-pointer sp:hover:bg-primary-600">
                     <svg focusable="false" viewBox="0 0 24 24">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
                     </svg>
@@ -547,36 +550,38 @@
     {{ View.fireHook('operator.header_end') }}
 </header>
 
-<div id="wrapper" class="sp-flex sp-overflow-hidden lg:sp-pt-12 print:sp-h-auto print:sp-overflow-auto print:sp-pt-0">
+<div id="wrapper" class="sp:flex sp:overflow-hidden sp:lg:pt-12 sp:print:h-auto sp:print:overflow-auto sp:print:pt-0">
     {{ View.fireHook('operator.wrapper_start') }}
 
     {% set sidebarContent = block('sidebar') ?? '' %}
     {% if sidebarContent|trim is not empty %}
-        <div id="sidebar" class="sp-flex-none sp-w-6 sp-bg-secondary sp-border-e sp-border-tertiary sp-z-10001 sm:sp-w-8 print:sp-hidden
-                                 {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? 'sp-sidebar-closed' : 'lg:sp-w-72' }}">
-            <div class="sp-sidebar-inner sp-h-full">
-                {{ View.fireHook('operator.sidebar_start') }}
+        {% set navSidebarCookie = app.request.cookies.get('navigation-sidebar') %}
+        <div id="navigation-sidebar"
+             class="sp-sidebar sp:flex-none sp:w-11 sp:bg-secondary sp:border-e sp:border-tertiary sp:z-10001 sp:print:hidden
+                    {{ navSidebarCookie is same as('sp-sidebar-closed') ? 'sp-sidebar-closed' : 'sp:lg:w-72' }}">
+            <div class="sp-sidebar-inner sp:h-full">
+                {{ View.fireHook('operator.navigation_sidebar_start') }}
 
                 {{ sidebarContent|raw }}
 
-                {{ View.fireHook('operator.sidebar_end') }}
+                {{ View.fireHook('operator.navigation_sidebar_end') }}
             </div>
 
-            <div class="sp-toggle-sidebar sp-fixed sp-bottom-0 sp--start-4 sp-px-3/2 sp-py-2 sp-ms-6 sm:sp-ms-8 sp-mb-4 sp-rounded-full
-                            sp-shadow-md sp-text-secondary sp-leading-none sp-cursor-pointer sp-z-10001 hover:sp-text-primary
-                            {{ app.request.cookies.get('sidebar') == 'sp-sidebar-closed' ? '' : 'lg:sp-ms-72' }}">
-                <i class="fas fa-fw sp-chevron"></i>
+            <div class="sp-toggle-sidebar sp:fixed sp:bottom-0 sp:-start-4 sp:px-1.5 sp:py-2 sp:ms-11 sp:mb-4 sp:rounded-full
+                        sp:shadow-md sp:text-secondary sp:leading-none sp:cursor-pointer sp:z-10001 sp:hover:text-primary
+                        {{ navSidebarCookie is same as('sp-sidebar-closed') ? '' : 'sp:lg:ms-72' }}">
+                <i class="fa-solid sp-chevron"></i>
             </div>
         </div>
     {% endif %}
 
-    <div id="content" class="sp-content sp-grow sp-relative sp-bg-primary sp-overflow-y-auto print:sp-overflow-x-hidden">
+    <div id="content" class="sp-content sp:grow sp:relative sp:bg-primary sp:overflow-y-auto sp:print:overflow-x-hidden">
         {# Extra div needed to fix Safari position sticky issue (#2393) #}
         <div>
             {{ View.fireHook('operator.content_start') }}
 
             {% if Config.get('settings.maintenance_mode') %}
-                <div class="sp-alert sp-alert-warning sp-mb-0 sp-rounded-none">
+                <div class="sp-alert sp-alert-warning sp:mb-0 sp:rounded-none">
                     {{ Lang.get('messages.maintenance_mode') }}
                 </div>
             {% endif %}
@@ -585,29 +590,29 @@
 
             {% if systemHealthErrors and auth_user().hasPermission('view.system_health') %}
                 <div class="sp-alert sp-alert-sticky sp-alert-error">
-                    <i class="fas fa-fw fa-heartbeat"></i>&nbsp;
+                    <i class="fa-solid fa-heartbeat"></i>&nbsp;
                     {{ Lang.get('core.system_health_errors', {'link': route('core.operator.system_health') })|raw }}
                 </div>
             {% endif %}
 
             <!-- Box to display success/error messages generated by JavaScript -->
-            <div class="sp-alert sp-alert-sticky sp-hidden" id="js-message-box"></div>
+            <div class="sp-alert sp-alert-sticky sp:hidden" id="js-message-box"></div>
 
             {% if Session.has('success') %}
                 <div class="sp-alert sp-alert-sticky sp-alert-success">
-                    <i class="fas fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
+                    <i class="fa-solid fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
                     {{ Session.get('success') }}
                 </div>
             {% elseif (Session.has('error') or Session.has('email_error')) %}
                 <div class="sp-alert sp-alert-sticky sp-alert-error">
-                    <i class="fas fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
+                    <i class="fa-solid fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
                     {{ Purifier.clean(implode('<br /><br />', array_filter([ Session.get('error'), Session.get('email_error')|e ])) )|raw }}
                 </div>
             {% endif %}
 
             {% if errors|default is not empty and errors.count() %}
                 <div class="sp-alert sp-alert-sticky sp-alert-error">
-                    <i class="fas fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
+                    <i class="fa-solid fa-times sp-alert-close" title="{{ Lang.get('general.close') }}"></i>
                     <strong>{{ Lang.get('messages.please_correct') }}</strong><br />
                     {% for error in errors.unique() %}
                         {{ Purifier.clean(error) }}<br />
@@ -615,24 +620,24 @@
                 </div>
             {% endif %}
 
-            <div class="sp-content-inner sp-relative sp-p-6 print:sp-p-0 print:sp-pt-6">
+            <div class="sp-content-inner sp:relative sp:p-6 sp:print:p-0 sp:print:pt-6">
                 {{ View.fireHook('operator.content_inner_start') }}
 
                 {% block pageTitle %}
                     {% if title is not empty %}
                         {% if docsLink is not empty %}
-                            <div class="sp-flex sp-mb-6">
-                                <div class="sp-grow">
+                            <div class="sp:flex sp:mb-6">
+                                <div class="sp:grow">
                         {% endif %}
 
-                        <h1 id="pageTitle" {% if docsLink is not empty %}class="sp-mb-0"{% endif %}>{{ title|raw }}</h1>
+                        <h1 id="pageTitle" {% if docsLink is not empty %}class="sp:mb-0"{% endif %}>{{ title|raw }}</h1>
 
                         {% if docsLink is not empty %}
                                 </div>
-                                <div class="sp-flex-none sp-mt-1/2 print:sp-hidden">
+                                <div class="sp:flex-none sp:mt-0.5 sp:print:hidden">
                                     <a href="{{ docsLink }}" target="_blank"
-                                       class="sp-block sp-mt-1/2 sp-ms-3 sp-text-xl sp-text-gray-400 hover:sp-text-gray-600 sm:sp-mt-2">
-                                        <i class="fas fa-question-circle"></i>
+                                       class="sp:block sp:mt-0.5 sp:ms-3 sp:text-xl sp:text-tertiary sp:hover:text-secondary sp:sm:mt-2">
+                                        <i class="fa-solid fa-question-circle"></i>
                                     </a>
                                 </div>
                             </div>
@@ -659,6 +664,16 @@
         </div>
     </div>
 
+    {% set contextPanelContent = (block('context_sidebar') ?? '') ~ View.fireHook('operator.context_panel') %}
+    {% if contextPanelContent is not empty %}
+        <div id="context-sidebar" class="sp-sidebar sp:flex-none sp:flex sp:max-w-full sp:print:hidden">
+            <div class="sp-context-sidebar-content sp-sidebar-inner sp:hidden sp:shrink sp:bg-primary sp:border-s sp:border-tertiary sp:overflow-y-auto">
+                {{ contextPanelContent|raw }}
+            </div>
+            <div class="sp-context-sidebar-tabs sp:flex-none sp:flex sp:flex-col sp:w-11 sp:bg-secondary sp:border-s sp:border-tertiary"></div>
+        </div>
+    {% endif %}
+
     {{ View.fireHook('operator.wrapper_end') }}
 </div>
 
@@ -669,13 +684,13 @@
 <!-- Global Javascript Functions -->
 <script src="{{ asset_rev('resources/assets/operator/js/mobile.js') }}"></script>
 <script src="{{ asset_rev('resources/assets/operator/js/main.js') }}"></script>
-<script src="{{ asset_rev('resources/assets/operator/js/shortcuts.js') }}"></script>
+<script src="{{ asset_rev('resources/assets/dist/shortcuts.js') }}"></script>
 <script src="{{ asset_rev('resources/assets/operator/js/search.js') }}"></script>
 
 {% block scripts_footer %}{% endblock %}
 
-<!-- Collapsible side boxes -->
-<script src="{{ asset_rev('resources/assets/operator/js/sidebox.js') }}"></script>
+<!-- Navigation sidebar and context sidebar -->
+<script src="{{ asset_rev('resources/assets/operator/js/sidebar.js') }}"></script>
 
 {% set enabled = Config.get('settings.product_tour_enabled', null) %}
 {% if enabled == '1' or enabled is null %}

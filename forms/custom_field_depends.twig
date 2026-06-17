@@ -4,8 +4,8 @@
     <div class="sp-form-row sp-selectize-inline-block">
         {{ form_label('depends_on_field_id', Lang.get('customfield.depends_on')) }}
         <div class="sp-input-container">
-            <div class="{% if collapseDepends %}sp-hidden{% endif %}">
-                <div class="sp-mb-3">
+            <div class="{% if collapseDepends %}sp:hidden{% endif %}">
+                <div class="sp:mb-3">
                     {{ form_select('depends_on_field_id', dependentFields, record.dependsOn.field_id, {'data-route': route}) }}
                 </div>
 
@@ -18,6 +18,6 @@
         </div>
     </div>
     <div class="sp-chevron">
-        <i class="fas fa-chevron-up" aria-hidden="true"></i>
+        <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
     </div>
 </div>

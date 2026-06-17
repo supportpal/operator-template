@@ -15,11 +15,11 @@
 {% block content %}
 
     {% for key, provider in providers %}
-        <div class="sp-flex sp-items-center sp-px-6 sp-py-3 sp-mb-6 sp-border sp-border-secondary sp-rounded">
-            <div class="sp-grow">
+        <div class="sp:flex sp:items-center sp:px-6 sp:py-3 sp:mb-6 sp:border sp:border-secondary sp:rounded">
+            <div class="sp:grow">
                 <strong>{{ provider.formatted_name }}</strong>
             </div>
-            <div class="sp-flex-none">
+            <div class="sp:flex-none">
                 <a class="sp-button" href="{{ route('user.operator.sociallogin.edit', provider.name|lower) }}">
                     {{ Lang.get('general.manage') }}
                 </a>
