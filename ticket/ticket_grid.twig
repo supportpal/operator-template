@@ -18,13 +18,15 @@
                 {% if (auth_user().hasPermission('create.ticket')) %}
                     <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
                        class="sp-action sp-button" id="openNewTicket">
-                        <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.add') }}</span>
                     </a><!--
                 {% else %}
                     <!--
                 {% endif %}
                 --><button class="sp-action sp:inline-block sp-filter-results">
-                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>
+                    <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.filter') }}</span>
                 </button>
             </li><!--
 
@@ -749,8 +751,10 @@
             });
 
             // Focus on selectize dropdown on clicking on action.
-            $quickActions.find('.sp-action.sp-has-selectize').on('click', function () {
-                $(this).next().find('select')[0].selectize.focus();
+            $quickActions.find('.sp-dropdown').on('sp.dropdown.show', function () {
+                if ($(this).prev('.sp-action').hasClass('sp-has-selectize')) {
+                    $(this).find('select')[0].selectize.focus();
+                }
             });
 
             // Apply macro

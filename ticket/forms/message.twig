@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="sp-draft-preview sp:absolute sp:h-full sp:w-full sp:p-6 sp:z-10001 sp:hidden">
+    <div class="sp-draft-preview sp:h-full sp:p-6 sp:hidden">
         <div class="sp:flex sp:flex-col sp:relative sp:h-full sp:w-full sp:bg-primary sp:border sp:border-tertiary sp:rounded">
             <div class="sp-draft-preview-loading sp:absolute sp:h-full sp:w-full sp:bg-secondary sp:rounded sp:hidden">
                 <div class="sp:flex sp:items-center sp:justify-center sp:h-full sp:w-full">
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <form class="message-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:overflow-y-auto sp:hidden" data-ticket-id="{{ ticket.id }}">
+    <form class="message-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:hidden" data-ticket-id="{{ ticket.id }}">
         {% set channelAddonInstance = ChannelFactory.getChannel(ticket.channel.name) %}
         {% if not channelAddonInstance.canReplyToTicket(ticket, auth_user()) %}
             <div class="sp-alert sp-alert-error sp:m-0">
@@ -155,7 +155,7 @@
         {% endif %}
     </form>
 
-    <form class="notes-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:overflow-y-auto sp:hidden" data-ticket-id="{{ ticket.id }}">
+    <form class="notes-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:hidden" data-ticket-id="{{ ticket.id }}">
         {{ form_hidden('reply_type', 1) }}
 
         <div class="reply-form sp:relative sp:grow sp:flex sp:flex-col sp:min-h-0">
@@ -175,7 +175,7 @@
         </div>
     </form>
 
-    <form class="forward-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:overflow-y-auto sp:hidden"
+    <form class="forward-form validate sp:flex sp:flex-col sp:h-full sp:p-6 sp:hidden"
           data-cumulative-max-file-size="{{ cumulative_attachment_limit }}" data-ticket-id="{{ ticket.id }}">
         {{ form_hidden('reply_type', 2) }}
 

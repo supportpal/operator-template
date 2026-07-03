@@ -18,10 +18,12 @@
             <li class="sp-action-group">
                 <a href="{{ operator|default is not empty and operator ? route('user.operator.operatorgroup.create') : route('user.operator.usergroup.create') }}"
                    class="sp-action sp-button">
-                    <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('general.add') }}
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.add') }}</span>
                 </a><!--
                 --><button class="sp-action sp-filter-grid">
-                    <i class="fa-solid fa-filter"></i>&nbsp; {{ Lang.get('general.filter') }}
+                    <i class="fa-solid fa-filter"></i>
+                    <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.filter') }}</span>
                 </button>
             </li>
         </ul>

@@ -65,13 +65,13 @@
         {% endif %}
     </div>
 
+    {% if canUpdateTicket is not defined %}
+        {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
+    {% endif %}
+    {% if canUpdateTicket %}
     <div class="sp-message-actions sp:flex-none sp:group-[:not(.sp-message-collapsed):hover]:inline-block sp:-mx-2 sp:-my-1 sp:print:hidden
                 sp:pointer-fine:hidden sp:pointer-fine:absolute sp:pointer-fine:-top-1 sp:pointer-fine:end-3 sp:pointer-fine:px-3 sp:pointer-fine:py-1
                 sp:pointer-fine:m-0 sp:pointer-fine:bg-secondary sp:pointer-fine:border sp:pointer-fine:border-tertiary sp:pointer-fine:shadow sp:pointer-fine:rounded-full">
-        {% if canUpdateTicket is not defined %}
-            {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
-        {% endif %}
-        {% if canUpdateTicket %}
             <span class="split-ticket sp:inline-block sp:p-1.5 sp:pe-0 sp:leading-0 sp:hidden">
                 {{ form_check('split', 1, false, {'data-id': message.id}) }}
             </span>
@@ -148,6 +148,6 @@
                     </ul>
                 </div>
             </div>
-        {% endif %}
     </div>
+    {% endif %}
 </div>
