@@ -51,7 +51,11 @@
                 {% endif %}
             {% elseif addon.isUpdateAvailable() %}
                 <button class="sp-addon-update sp:me-2" data-id="{{ addon.id }}" {% if not supportsSpVersion %}disabled="disabled"{% endif %}>
-                    {{ Lang.get('general.update') }}
+                    {% if addon.isActive() %}
+                        {{ Lang.get('general.update') }}
+                    {% else %}
+                        {{ Lang.get('core.update_and_activate') }}
+                    {% endif %}
                 </button>
             {% endif %}
 

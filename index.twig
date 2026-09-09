@@ -577,7 +577,7 @@
 
     <div id="content" class="sp-content sp:grow sp:relative sp:bg-primary sp:overflow-y-auto sp:print:overflow-x-hidden">
         {# Extra div needed to fix Safari position sticky issue (#2393) #}
-        <div>
+        <div class="sp:@container">
             {{ View.fireHook('operator.content_start') }}
 
             {% if Config.get('settings.maintenance_mode') %}

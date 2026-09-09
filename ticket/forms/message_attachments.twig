@@ -9,34 +9,24 @@
     </div>
 
     <ul class="sp-attached-files">
-        <li class="sp:flex sp:mt-0 sp:border-t-0 sp:rounded-none sp:hidden">
-            <div class="sp:me-2 sp:truncate">
-                <i class="fa-solid fa-file"></i>&nbsp;
+        <li class="sp:hidden">
+            <div class="sp-file-information">
+                <span class="sp-filename sp-truncate-middle"></span>
 
-                <span class="sp-file-information">
-                    <span class="sp-filename"></span>
-                    <span class="sp-description sp-filesize"></span>
-                </span>
+                <div class="sp-progress-bar">
+                    <div class="sp-bar"></div>
+                </div>
             </div>
 
-            <div class="sp-delete-attachment sp:rounded-none sp:hidden" title="{{ Lang.get('general.remove') }}">
+            <div class="sp-delete-attachment sp:hidden" title="{{ Lang.get('general.remove') }}">
                 <i class="fa-solid fa-times sp:text-white"></i>
-            </div>
-
-            <div class="sp-progress-bar">
-                <div class="sp-bar"></div>
             </div>
         </li>
 
         {% for attachment in message.attachments %}
-            <li class="sp:flex sp:mt-0 sp:rounded-none">
-                <div class="sp:me-2 sp:truncate">
-                    <i class="fa-solid fa-file"></i>&nbsp;
-
-                    <span class="sp-file-information">
-                        <span class="sp-filename">{{ attachment.original_name }}</span>
-                        <span class="sp-description sp-filesize">({{ attachment.upload.size }})</span>
-                    </span>
+            <li>
+                <div class="sp-file-information">
+                    <span class="sp-filename sp-truncate-middle" data-truncate="{{ attachment.original_name }}">{{ attachment.original_name }}</span>
                 </div>
 
                 <div class="sp-delete-attachment"

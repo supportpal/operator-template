@@ -34,7 +34,7 @@
     </div>
 </div>
 
-<div class="sp:p-6 sp:pb-1 sp:bg-primary sp:xs:rounded">
+<div class="sp:p-6 sp:pb-1 sp:bg-primary sp:xs:rounded sp:print:px-0">
     <div class="sp-form-row">
         <label>{{ Lang.get('general.number') }}</label>
         <div class="sp-input-container">
@@ -113,10 +113,12 @@
                 {% if ticket.reply_due_time is not empty %}
                     {{ format_due_time(ticket.reply_due_time, false) }}<br />
                 {% endif %}
-                {{ format_due_time(ticket.resolve_due_time) }}
+                {% if ticket.resolve_due_time is not empty %}
+                    {{ format_due_time(ticket.resolve_due_time) }}
+                {% endif %}
             </div>
         </div>
     {% endif %}
 
-    {% include 'operator.' ~ template ~ '.forms.custom_fields' %}
+    {% include 'operator.' ~ template ~ '.forms.custom_fields' with {'customfields': customfields|filter(item => item.value is not null)} %}
 </div>

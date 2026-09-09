@@ -18,35 +18,25 @@
 </div>
 
 <ul class="sp-attached-files">
-    <li class="sp:flex sp:hidden">
-        <div class="sp:me-2 sp:truncate">
-            <i class="fa-solid fa-file"></i>&nbsp;
+    <li class="sp:hidden">
+        <div class="sp-file-information">
+            <span class="sp-filename sp-truncate-middle"></span>
 
-            <span class="sp-file-information">
-                <span class="sp-filename"></span>
-                <span class="sp-description sp-filesize"></span>
-            </span>
+            <div class="sp-progress-bar">
+                <div class="sp-bar"></div>
+            </div>
         </div>
 
         <div class="sp-delete-attachment sp:hidden" title="{{ Lang.get('general.remove') }}">
             <i class="fa-solid fa-times sp:text-white"></i>
         </div>
-
-        <div class="sp-progress-bar">
-            <div class="sp-bar"></div>
-        </div>
     </li>
     {% if attachments is not empty and not attachments.isEmpty() %}
         {% for attachment in attachments %}
-            <li class="sp:flex">
-                <div class="sp:me-2 sp:truncate">
-                    <i class="fa-solid fa-file"></i>&nbsp;
-
-                    <a href='{{ route(downloadRoute, [ attachment.upload_hash ]) }}' class="sp-file-information">
-                        <span class="sp-filename">{{ attachment.original_name }}</span>
-                        <span class="sp-description sp-filesize">({{ attachment.upload.size }})</span>
-                    </a>
-                </div>
+            <li>
+                <a href='{{ route(downloadRoute, [ attachment.upload_hash ]) }}' class="sp-file-information">
+                    <span class="sp-filename sp-truncate-middle" data-truncate="{{ attachment.original_name }}">{{ attachment.original_name }}</span>
+                </a>
 
                 <div class="sp-delete-attachment"
                      {% if deleteFromServer is not defined or deleteFromServer %}data-url="{{ route(route ~ ".destroy") }}"{% endif %}
@@ -58,14 +48,9 @@
         {% endfor %}
     {% elseif old_attachments is not empty %}
         {% for hash, file in old_attachments %}
-            <li class="sp:flex">
-                <div class="sp:me-2 sp:truncate">
-                    <i class="fa-solid fa-file"></i>&nbsp;
-
-                    <span class="sp-file-information">
-                        <span class="sp-filename">{{ file }}</span>
-                        <span class="sp-description sp-filesize"></span>
-                    </span>
+            <li>
+                <div class="sp-file-information">
+                    <span class="sp-filename sp-truncate-middle" data-truncate="{{ file }}">{{ file }}</span>
                 </div>
 
                 <div class="sp-delete-attachment"

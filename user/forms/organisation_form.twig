@@ -17,16 +17,12 @@
                     {% if auth_user().hasPermission('update.organisation') %}
                         <button class="sp-action merge-organisation">
                             <i class="fa-solid fa-code-merge"></i>&nbsp; {{ Lang.get('general.merge') }}
-                        </button><!--
-                    {% else %}
-                        <!--
+                        </button>
                     {% endif %}
                     {% if auth_user().hasPermission('delete.organisation') %}
-                        --><button class="sp-action delete-organisation" title="{{ Lang.get('general.delete') }}">
+                        <button class="sp-action delete-organisation" title="{{ Lang.get('general.delete') }}">
                             <i class="fa-solid fa-times"></i>
                         </button>
-                    {% else %}
-                        -->
                     {% endif %}
                 </li>
             </ul>
@@ -220,7 +216,6 @@
                 createFilter: function(input) {
                     return input.length <= 191;
                 },
-                maxItems: null,
             });
 
             {% if record.exists %}

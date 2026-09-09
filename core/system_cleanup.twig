@@ -8,15 +8,6 @@
     {{ Lang.get('core.system_cleanup_desc') }}
 {% endblock %}
 
-{% block precontent %}
-    <div class="sp-alert sp-alert-success sp-alert-sticky sp:hidden">
-        {{ Lang.get('messages.success_action') }}
-    </div>
-    <div class="sp-alert sp-alert-error sp-alert-sticky sp:hidden">
-        {{ Lang.get('messages.error_action') }}
-    </div>
-{% endblock %}
-
 {% block content %}
 
     <hr />
@@ -318,20 +309,15 @@
                     dataType: 'json'
                 }).done(function(response) {
                     if (response.status == 'success') {
-                        $('.sp-alert.sp-alert-success').show(500).delay(5000).hide(500);
-                        if (response.data != 'undefined') {
-                            // Update count
-                            $('.' + name + '.count').text(response.data);
-                        }
+                        Swal.fire('{{ Lang.get('messages.success') }}', '{{ Lang.get('core.purge_in_background') }}', 'success');
                     } else {
-                        $('.sp-alert.sp-alert-error').show(500).delay(5000).hide(500);
+                        Swal.fire('{{ Lang.get('messages.error') }}', '{{ Lang.get('messages.error_action') }}', 'error');
                     }
                 }).fail(function() {
-                    $('.sp-alert.sp-alert-error').show(500).delay(5000).hide(500);
+                    Swal.fire('{{ Lang.get('messages.error') }}', '{{ Lang.get('messages.error_action') }}', 'error');
                 }).always(function () {
                     $this.removeAttr('disabled').find('i').remove();
                 })
-
             });
 
             // Date picker

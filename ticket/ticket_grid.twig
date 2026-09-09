@@ -20,41 +20,33 @@
                        class="sp-action sp-button" id="openNewTicket">
                         <i class="fa-solid fa-plus"></i>
                         <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.add') }}</span>
-                    </a><!--
-                {% else %}
-                    <!--
+                    </a>
                 {% endif %}
-                --><button class="sp-action sp:inline-block sp-filter-results">
+                <button class="sp-action sp:inline-block sp-filter-results">
                     <i class="fa-solid fa-filter"></i>
                     <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.filter') }}</span>
                 </button>
-            </li><!--
+            </li>
 
             {% if trashed_only %}
                 {% if auth_user().hasPermission('update.ticket|delete.ticket') %}
-                    --><li class="sp-action-group sp-grid-actions sp:hidden">
+                    <li class="sp-action-group sp-grid-actions sp:hidden">
                         {% if (auth_user().hasPermission('update.ticket')) %}
                             <button class="sp-action restore-ticket" disabled="disabled" title="{{ Lang.get('general.restore') }}">
                                 <i class="fa-solid fa-undo"></i>
-                            </button><!--
-                        {% else %}
-                            <!--
+                            </button>
                         {% endif %}
                         {% if (auth_user().hasPermission('delete.ticket')) %}
-                        --><button class="sp-action delete-forever-ticket" disabled="disabled" title="{{ Lang.get('general.delete_forever') }}">
-                            <i class="fa-solid fa-times"></i>
-                        </button>
-                        {% else %}
-                            -->
+                            <button class="sp-action delete-forever-ticket" disabled="disabled" title="{{ Lang.get('general.delete_forever') }}">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
                         {% endif %}
                     </li>
-                {% else %}
-                    -->
                 {% endif %}
             {% else %}
                 {% if auth_user().hasPermission('update.ticket|delete.ticket_trash') %}
                     {% if auth_user().hasPermission('update.ticket') %}
-                        --><li class="sp-action-group sp-grid-actions sp:hidden">
+                        <li class="sp-action-group sp-grid-actions sp:hidden">
                             <div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_department') }}">
                                     <i class="fa-solid fa-folder"></i>
@@ -75,8 +67,8 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div><!--
-                            --><div class="sp-dropdown-container">
+                            </div>
+                            <div class="sp-dropdown-container">
                                 <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_status') }}">
                                     <i class="fa-solid fa-circle"></i>
                                 </button>
@@ -92,114 +84,107 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div><!--
-                            -->{% if obj_priorities.count() > 1 %}<div class="sp-dropdown-container">
-                                <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
-                                    <i class="fa-solid fa-square-full"></i>
-                                </button>
-                                <div class="sp-dropdown sp:top-0 sp:mt-12">
-                                    <div>
-                                        <select name="priority">
-                                            <option value="">{{ Lang.get('ticket.change_priority') }}...</option>
-                                            {% for priority in obj_priorities %}
-                                                <option value="{{ priority.id }}" data-data='{{ priority|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
-                                                    {{ priority.name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                            </div>
+                            {% if obj_priorities.count() > 1 %}
+                                <div class="sp-dropdown-container">
+                                    <button class="sp-action sp-has-selectize" title="{{ Lang.get('ticket.change_priority') }}">
+                                        <i class="fa-solid fa-square-full"></i>
+                                    </button>
+                                    <div class="sp-dropdown sp:top-0 sp:mt-12">
+                                        <div>
+                                            <select name="priority">
+                                                <option value="">{{ Lang.get('ticket.change_priority') }}...</option>
+                                                {% for priority in obj_priorities %}
+                                                    <option value="{{ priority.id }}" data-data='{{ priority|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
+                                                        {{ priority.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>{% endif %}<!--
+                            {% endif %}
+                        </li>
+                    {% endif %}
 
-                        --><li class="sp-action-group sp-grid-actions sp:hidden">
-                            <div class="sp-dropdown-container sp:xs:relative">
-                                <button class="sp-action" title="{{ Lang.get('ticket.assigned_operator') }}">
-                                    <i class="fa-solid fa-user-tie"></i>
+                    <li class="sp-action-group sp-grid-actions sp:hidden">
+                        <div class="sp-dropdown-container sp:xs:relative">
+                            <button class="sp-action" title="{{ Lang.get('ticket.assigned_operator') }}">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </button>
+                            <div class="sp-dropdown sp:top-0 sp:start-0 sp:mt-12 sp:ms-1 sp:xs:start-auto sp:xs:end-0
+                                        sp:xs:me-0 sp:sm:start-0 sp:sm:ms-0">
+                                <div>
+                                    <select name="assign">
+                                        <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
+                                    </select>
+
+                                    <div class="sp-description sp:my-3 sp:border-b sp:border-secondary sp:text-center sp:leading-0">
+                                        <span class="sp:bg-primary sp:px-4">{{ Lang.get('general.or') }}</span>
+                                    </div>
+
+                                    <select name="unassign">
+                                        <option value="">{{ Lang.get('ticket.unassign_operator') }}...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {% if total_tags > 0 %}
+                            <div class="sp-dropdown-container sp:relative">
+                                <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
+                                    <i class="fa-solid fa-tags"></i>
                                 </button>
-                                <div class="sp-dropdown sp:top-0 sp:start-0 sp:mt-12 sp:ms-1 sp:xs:start-auto sp:xs:end-0
-                                            sp:xs:me-0 sp:sm:start-0 sp:sm:ms-0">
+                                <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
                                     <div>
-                                        <select name="assign">
-                                            <option value="">{{ Lang.get('ticket.assign_operator') }}...</option>
-                                        </select>
+                                        <select name="tag"></select>
 
                                         <div class="sp-description sp:my-3 sp:border-b sp:border-secondary sp:text-center sp:leading-0">
                                             <span class="sp:bg-primary sp:px-4">{{ Lang.get('general.or') }}</span>
                                         </div>
 
-                                        <select name="unassign">
-                                            <option value="">{{ Lang.get('ticket.unassign_operator') }}...</option>
-                                        </select>
+                                        <select name="remove_tag"></select>
                                     </div>
                                 </div>
-                            </div><!--
-                            {% if total_tags > 0 %}
-                                --><div class="sp-dropdown-container sp:relative">
-                                    <button class="sp-action" title="{{ Lang.choice('ticket.tag', 2) }}">
-                                        <i class="fa-solid fa-tags"></i>
-                                    </button>
-                                    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
-                                        <div>
-                                            <select name="tag">
-                                                <option value="">{{ Lang.get('ticket.add_tag') }}...</option>
-                                            </select>
-
-                                            <div class="sp-description sp:my-3 sp:border-b sp:border-secondary sp:text-center sp:leading-0">
-                                                <span class="sp:bg-primary sp:px-4">{{ Lang.get('general.or') }}</span>
-                                            </div>
-
-                                            <select name="remove_tag">
-                                                <option value="">{{ Lang.get('ticket.remove_tag') }}...</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% else %}
-                                -->
-                            {% endif %}
-                        </li><!--
-
-                        {% if not obj_macros.isEmpty() %}
-                            --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
-                                <div class="sp-dropdown-container">
-                                    <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
-                                        <i class="fa-solid fa-bolt-lightning"></i>
-                                    </button>
-                                    <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
-                                        <ul class="sp:text-end sp:sm:text-start">
-                                            {% for macro in obj_macros %}
-                                                <li>
-                                                    <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
-                                                        {{ macro.name }}
-                                                    </a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li><!--
-                        {% else %}
-                            <!--
+                            </div>
                         {% endif %}
-                    {% else %}
-                        <!--
+                    </li>
+
+                    {% if not obj_macros.isEmpty() %}
+                        <li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
+                            <div class="sp-dropdown-container">
+                                <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
+                                    <i class="fa-solid fa-bolt-lightning"></i>
+                                </button>
+                                <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1 sp:sm:start-0 sp:sm:ms-1 sp:sm:me-0">
+                                    <ul class="sp:text-end sp:sm:text-start">
+                                        {% for macro in obj_macros %}
+                                            <li>
+                                                <a class="apply-macro" data-macro="{{ macro.id }}" data-description="{{ macro.description }}">
+                                                    {{ macro.name }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
                     {% endif %}
 
-                    --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
+                    {% if auth_user().hasPermission('update.ticket|delete.ticket_trash') %}
+                    <li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
                         {% if auth_user().hasPermission('update.ticket') %}
                             <button class="sp-action reply-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('general.reply') }}">
                                 <i class="fa-solid fa-reply"></i>
-                            </button><!--
-                            --><button class="sp-action take-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
+                            </button>
+                            <button class="sp-action take-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('ticket.take') }}">
                                 <i class="fa-solid fa-hand"></i>
-                            </button><!--
-                            --><button class="sp-action close-ticket sp:pe-6! sp:hidden sp:md:inline-block"
+                            </button>
+                            <button class="sp-action close-ticket sp:pe-6 sp:hidden sp:md:inline-block"
                                    title="{{ Lang.get('general.close') }}">
                             <i class="fa-solid fa-check"></i>
                             </button>
                             <div class="close-ticket-options sp-dropdown-container sp:relative sp:hidden sp:md:inline-block">
-                                <button class="sp-action sp:w-5 sp:px-1! sp:-ms-6!">
+                                <button class="sp-action sp:w-5 sp:px-1 sp:-ms-5 sp:me-1">
                                     <i class="fa-solid fa-chevron-down fa-2xs"></i>
                                 </button>
                                 <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1">
@@ -215,15 +200,16 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </div><!--
-                            --><button class="sp-action delete-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
-                                <i class="fa-solid fa-trash"></i>
-                            </button><!--
-                        {% else %}
-                            <!--
+                            </div>
                         {% endif %}
-                    --></li><!--
-                    --><li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
+                        {% if auth_user().hasPermission('delete.ticket_trash') %}
+                            <button class="sp-action delete-ticket sp:hidden sp:md:inline-block" disabled="disabled" title="{{ Lang.get('general.move_to_trash') }}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        {% endif %}
+                    </li>
+                    {% endif %}
+                    <li class="sp-action-group sp-grid-actions sp:relative sp:hidden">
                         <div class="sp-dropdown-container">
                             <button class="sp-action">
                                 <i class="fa-solid fa-ellipsis-v"></i>
@@ -285,8 +271,6 @@
                             </div>
                         </div>
                     </li>
-                {% else %}
-                    -->
                 {% endif %}
             {% endif %}
         </ul>
@@ -393,12 +377,12 @@
                     $()
                 })
                 .on('click', '.sp-attached-files .sp-delete-attachment', function(e) {
+                    var $self = $(this);
                     var url = $(this).data('url');
                     var hash = $(this).data('hash');
                     var $listItem = $(this).parents('li');
 
-                    // Hide cross
-                    $(this).hide();
+                    $(this).addClass('sp-disabled').attr('disabled', 'disabled');
 
                     // DELETE the file!
                     $.ajax({
@@ -414,8 +398,7 @@
                             }
                         },
                         error: function(result) {
-                            // Show cross again
-                            $(this).show();
+                            $self.addClass('sp-disabled').removeAttr('disabled');
                         }
                     });
                 });
@@ -464,7 +447,17 @@
             $('.sp-grid-filtering').on('click', '.update-filtering', function() {
                 var datatableApi = $datatable.dataTable().api();
                 var settings = datatableApi.settings()[0];
-                settings.ajax.data = [];
+
+                // Keep the 'permanent' parameters, for the user, organisation and trashed
+                // ticket grids, they can't be represented in the filtering form.
+                var data = {};
+                $.each([ 'user', 'organisation', 'trashed' ], function (index, name) {
+                    if (settings.ajax.data && typeof settings.ajax.data[name] !== 'undefined') {
+                        data[name] = settings.ajax.data[name];
+                    }
+                });
+
+                settings.ajax.data = data;
 
                 // Add custom filter conditions to parameters
                 $.each($('.sp-grid-filtering :input').serializeArray(), function(index, value) {
@@ -494,19 +487,15 @@
                         + '    <input type="hidden" name="attachment[]" disabled="disabled" />'
                         + '</div>'
                         + '<ul class="sp-attached-files">'
-                        + '    <li class="sp:flex sp:hidden">'
-                        + '        <div class="sp:me-2 sp:truncate">'
-                        + '            <i class="fa-solid fa-file"></i> &nbsp;'
-                        + '            <span class="sp-file-information">'
-                        + '                <span class="sp-filename"></span>'
-                        + '                <span class="sp-description sp-filesize"></span>'
-                        + '            </span>'
+                        + '    <li class="sp:hidden">'
+                        + '        <div class="sp-file-information">'
+                        + '            <span class="sp-filename sp-truncate-middle"></span>'
+                        + '            <div class="sp-progress-bar">'
+                        + '                <div class="sp-bar"></div>'
+                        + '            </div>'
                         + '        </div>'
                         + '        <div class="sp-delete-attachment sp:hidden" title="' + Lang.get("general.remove") + '">'
                         + '            <i class="fa-solid fa-times sp:text-white"></i>'
-                        + '        </div>'
-                        + '        <div class="sp-progress-bar">'
-                        + '            <div class="sp-bar"></div>'
                         + '        </div>'
                         + '    </li>'
                         + '</ul>'
@@ -692,65 +681,33 @@
                 },
             });
 
-            var tagSelectizeOpts = {
-                valueField: 'id',
-                labelField: 'name',
-                searchField: [ 'name' ],
-                load: function(query, callback) {
-                    if (!query.length) return callback();
-
-                    $.get(laroute.route('ticket.operator.tag.search'), { q: query })
-                        .done(function(res) { callback(res.data); })
-                        .fail(function() { callback(); });
-                },
-                render: {
-                    option: function(item, escape) {
-                        return '<div>'
-                            + '<i class="fa-solid fa-circle" style="color: ' + escape(item.colour) +'"></i>'
-                            + '&nbsp; ' + escape(item.name)
-                            + '</div>';
-                    }
-                },
+            var tagSelectizeOpts = tagSelectizeConfig({
                 onChange: function (value) {
                     $onChange(this, '{{ route('ticket.operator.action.updateTags') }}', value);
                 },
-            };
+            });
             $quickActions.find('select[name="tag"]').selectize($.extend({}, tagSelectizeOpts, {
+                placeholder: '{{ Lang.get('actions.add_tag') }}...',
                 valueField: 'name',
                 create: {% if auth_user().hasPermission('create.tickettag') %}true{% else %}false{% endif %},
-                createFilter: function (input) {
-                    return input.length <= 45;
-                },
             }));
-            $quickActions.find('select[name="remove_tag"]').selectize(tagSelectizeOpts);
+            $quickActions.find('select[name="remove_tag"]').selectize($.extend({}, tagSelectizeOpts, {
+                placeholder: '{{ Lang.get('actions.remove_tag') }}...',
+            }));
 
             // Process assign/unassign operator
-            $quickActions.find('select[name="assign"], select[name="unassign"]').selectize({
-                valueField: 'id',
-                searchField: [ 'formatted_name', 'email' ],
-                load: function(query, callback) {
-                    if (!query.length) return callback();
+            $quickActions.find('select[name="assign"], select[name="unassign"]').selectize(ajaxSelectizeConfig(
+                laroute.route('ticket.operator.ticket.operator_search'),
+                operatorSelectizeConfig({
+                    onChange: function (value) {
+                        if (value) {
+                            assignOperator(getSelectedRows(), value, $(this.input).attr('name') === 'unassign');
 
-                    $.get(laroute.route('ticket.operator.ticket.operator_search'), {q: query})
-                        .done(function(res) { callback(res.data); })
-                        .fail(function() { callback(); })
-                },
-                render: {
-                    option: function(item, escape) {
-                        return '<div>'
-                            + '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" />&nbsp; '
-                            + escape(item.formatted_name)
-                            + '</div>';
+                            this.clear(true);
+                        }
                     }
-                },
-                onChange: function (value) {
-                    if (value) {
-                        assignOperator(getSelectedRows(), value, $(this.input).attr('name') === 'unassign');
-
-                        this.clear(true);
-                    }
-                }
-            });
+                })
+            ));
 
             // Focus on selectize dropdown on clicking on action.
             $quickActions.find('.sp-dropdown').on('sp.dropdown.show', function () {

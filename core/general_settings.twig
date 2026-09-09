@@ -200,7 +200,27 @@
         <div class="sp-form-row">
             {{ form_label('simpleauth_key', Lang.get('core.simpleauth_key')) }}
             <div class="sp-input-container">
-                {{ form_text('simpleauth_key', null, {'size': 40}) }}
+                {# Generate button - hidden once a key exists #}
+                <button type="button" class="generate-simpleauth-key {% if maskedSimpleAuthKey is not null %}sp:hidden{% endif %}"
+                        data-url="{{ route('core.operator.generalsetting.regenerate_simpleauth_key') }}">
+                    <i class="fa-solid fa-key"></i>&nbsp; {{ Lang.get('core.simpleauth_key_generate') }}
+                </button>
+
+                {# Key row - hidden until a key has been generated #}
+                <div class="simpleauth-key-wrap sp:flex sp:items-center sp:gap-x-3 {% if maskedSimpleAuthKey is null %}sp:hidden{% endif %}">
+                    <input type="text" class="simpleauth-key sp:font-mono" readonly="readonly" size="40"
+                           value="{{ maskedSimpleAuthKey }}" />
+                    <a class="copy sp:hidden" title="{{ Lang.get('general.copy') }}">
+                        <i class="fa-solid fa-copy"></i>
+                    </a>
+                    <a class="regenerate-simpleauth-key" title="{{ Lang.get('core.simpleauth_key_generate') }}"
+                       data-url="{{ route('core.operator.generalsetting.regenerate_simpleauth_key') }}">
+                        <i class="fa-solid fa-refresh"></i>
+                    </a>
+                </div>
+                <div class="sp-alert sp-alert-warning simpleauth-key-once-alert sp:my-3 sp:hidden" role="alert">
+                    {{ Lang.get('general.copy_now_shown_once') }}
+                </div>
                 <div class="sp-description">{{ Lang.get('core.simpleauth_key_desc') }}</div>
             </div>
         </div>
@@ -260,7 +280,10 @@
             <div class="sp-form-row">
                 {{ form_label('recaptcha_secret_key', Lang.get('core.recaptcha_secret_key')) }}
                 <div class="sp-input-container sp-input-group">
-                    {{ form_text('recaptcha_secret_key', null, {'size': 45}) }}
+                    {{ form_password('recaptcha_secret_key', {'size': 45, 'autocomplete': 'new-password'}) }}
+                    {% if fields.recaptcha_secret_key is not empty %}
+                        <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                    {% endif %}
                     <div class="sp-description">{{ Lang.get('core.recaptcha_desc')|raw }}</div>
                 </div>
             </div>
@@ -277,7 +300,10 @@
             <div class="sp-form-row">
                 {{ form_label('turnstile_secret_key', Lang.get('core.secret_key')) }}
                 <div class="sp-input-container sp-input-group">
-                    {{ form_text('turnstile_secret_key', null, {'size': 45}) }}
+                    {{ form_password('turnstile_secret_key', {'size': 45, 'autocomplete': 'new-password'}) }}
+                    {% if fields.turnstile_secret_key is not empty %}
+                        <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                    {% endif %}
                     <div class="sp-description">{{ Lang.get('core.turnstile_desc')|raw }}</div>
                 </div>
             </div>
@@ -294,7 +320,10 @@
             <div class="sp-form-row">
                 {{ form_label('hcaptcha_secret_key', Lang.get('core.secret_key')) }}
                 <div class="sp-input-container sp-input-group">
-                    {{ form_text('hcaptcha_secret_key', null, {'size': 45}) }}
+                    {{ form_password('hcaptcha_secret_key', {'size': 45, 'autocomplete': 'new-password'}) }}
+                    {% if fields.hcaptcha_secret_key is not empty %}
+                        <div class="sp-description">({{ Lang.get('general.only_enter_to_change') }})</div>
+                    {% endif %}
                     <div class="sp-description">{{ Lang.get('core.hcaptcha_desc')|raw }}</div>
                 </div>
             </div>
@@ -337,6 +366,75 @@
 
         $(function () {
             sslWarning.init();
+        });
+
+        $(function () {
+            tippy('.copy', {content: '{{ Lang.get('general.copy') }}'});
+            const copiedTippy = tippy('.copy', {
+                trigger: 'manual',
+                'content': '{{ Lang.get('general.copied') }}'
+            })[0];
+
+            const $tabSimpleAuth = $('#tabSimpleAuth');
+
+            /**
+             * After a key is revealed (generated or regenerated), replace the input value
+             * with the full plain-text key, show the copy button and the "copy now" warning.
+             */
+            function revealSimpleAuthKey(plainKey) {
+                const $wrap = $tabSimpleAuth.find('.simpleauth-key-wrap');
+
+                // Show the key row in case it was hidden (first-time generate)
+                $tabSimpleAuth.find('.generate-simpleauth-key').addClass('sp:hidden');
+                $wrap.removeClass('sp:hidden');
+
+                $wrap.find('.simpleauth-key').val(plainKey);
+                $wrap.find('.copy').removeClass('sp:hidden');
+                $tabSimpleAuth.find('.simpleauth-key-once-alert').removeClass('sp:hidden');
+            }
+
+            $tabSimpleAuth
+                .on('click', '.generate-simpleauth-key', function () {
+                    const self = $(this);
+                    self.attr('disabled', true);
+                    $.post(self.data('url'))
+                        .done(function (res) {
+                            if (res.status !== 'success') return;
+                            revealSimpleAuthKey(res.data.simpleauth_key);
+                        })
+                        .always(() => self.attr('disabled', false));
+                })
+                .on('click', '.copy', function () {
+                    navigator.clipboard.writeText($(this).siblings('.simpleauth-key').val());
+                    if (copiedTippy) {
+                        copiedTippy.show();
+                        setTimeout(() => copiedTippy.hide(), 1000);
+                    }
+                })
+                .on('click', '.regenerate-simpleauth-key', function () {
+                    const self = $(this);
+                    Swal.fire({
+                        title: Lang.get('messages.are_you_sure'),
+                        html: '{{ Lang.get('core.change_simpleauth_key') }}',
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#e74c3c",
+                        confirmButtonText: Lang.get('messages.yes_im_sure'),
+                        showLoaderOnConfirm: true,
+                        preConfirm: function () {
+                            return $.post(self.data('url'))
+                                .done(function (res) {
+                                    if (res.status === 'success') {
+                                        revealSimpleAuthKey(res.data.simpleauth_key);
+                                    }
+                                })
+                                .always(() => Swal.close());
+                        },
+                        allowOutsideClick: function () {
+                            return ! Swal.isLoading();
+                        }
+                    });
+                });
         });
     </script>
 {% endblock %}

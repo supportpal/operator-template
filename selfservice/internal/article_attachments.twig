@@ -4,51 +4,26 @@
     <div class="sp:print:hidden">
         <ul class="sp-attachments">
             {% for attachment in article.getAttachments() %}
-                <li>
-                    {% if attachment.upload.isPreviewable() %}
-                        {% if attachment.upload.isPreviewableVideo() or attachment.upload.isPreviewableAudio() %}
-                            <a class="sp-attachment-preview sp:group"
-                               data-video='{"source": [{"src":"{{ attachment.previewUrl(type, true) }}", "type":"{{ attachment.upload.mime }}"}], "attributes": {"preload": false, "controls": true}}'
-                               data-download-url="{{ attachment.downloadLink(type) }}">
+                <li data-download-url="{{ attachment.downloadLink(type) }}" data-filename="{{ attachment.original_name }}">
+                    <a class="{% if attachment.upload.isPreviewableVideo() or attachment.upload.isPreviewableAudio() or attachment.upload.isPreviewableImage() %}sp-attachment-preview {% endif %}"
+                        {% if attachment.upload.isPreviewable() %}
+                            data-download-url="{{ attachment.downloadLink(type) }}"
+                            {% if attachment.upload.isPreviewableVideo() or attachment.upload.isPreviewableAudio() %}
+                                data-video='{"source": [{"src":"{{ attachment.previewUrl(type, true) }}", "type":"{{ attachment.upload.mime }}"}], "attributes": {"preload": false, "controls": true}}'
+                            {% else %}
+                                href="{{ attachment.previewUrl(type, true) }}"
+                                {% if not attachment.upload.isPreviewableImage() %}target="_blank"{% endif %}
+                            {% endif %}
                         {% else %}
-                            <a class="{% if attachment.upload.isPreviewableImage() %}sp-attachment-preview{% endif %} group"
-                               {% if not attachment.upload.isPreviewableImage() %}target="_blank"{% endif %}
-                               href="{{ attachment.previewUrl(type, true) }}"
-                               data-download-url="{{ attachment.downloadLink(type) }}">
-                        {% endif %}
-                    {% else %}
-                        <a class="sp:group" href="{{ attachment.downloadLink(type) }}">
-                    {% endif %}
-
-                        <div class="sp-preview sp:relative sp:h-20 sp:-mx-4 sp:-mt-2 sp:mb-2 sp:rounded-t-sm sp:text-center">
-                            <div class="sp:h-20 sp:bg-primary sp:border sp:border-b-0 sp:border-secondary sp:rounded-t
-                                sp:group-hover:opacity-25">
-                                {% if attachment.upload.isPreviewableImage() %}
-                                    <span data-preview-url="{{ attachment.previewUrl(type) }}"
-                                          data-download-url="{{ attachment.downloadLink(type) }}"
-                                          data-icon="{{ attachment.upload.icon }}">
-                                <i class="fa-solid fa-spinner fa-spin sp:mt-8"></i>
-                            </span>
-                                {% else %}
-                                    <span class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp:text-5xl sp:mt-4 sp:group-hover:opacity-0"></span>
-                                {% endif %}
-                            </div>
-
-                            <div class="sp-preview-hover sp:absolute sp:w-full sp:h-full sp:top-0
-                                {% if attachment.upload.isPreviewableImage() %}sp:pt-4{% else %}sp:pt-3{% endif %}
-                                sp:text-4xl sp:opacity-0 sp:group-hover:opacity-100">
-                                {% if attachment.upload.isPreviewable() %}
-                                    <i class="fa-solid {% if attachment.upload.isPreviewableAudio() %}fa-headphones{% else %}fa-eye{% endif %}"></i>
-                                {% else %}
-                                    <i class="fa-solid fa-download"></i>
-                                {% endif %}
-                            </div>
+                            href="{{ attachment.downloadLink(type) }}"
+                        {% endif %}>
+                        <div class="sp-attachment-icon">
+                            <div class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp:text-xl"></div>
                         </div>
-
-                        <div>
-                            <div class="sp-attachment-name">{{ attachment.original_name }}</div>
-                            <div class="sp-description">{{ attachment.upload.size }}</div>
+                        <div class="sp-attachment-name sp-truncate-middle" data-truncate="{{ attachment.original_name }}" data-truncate-length="30">
+                            {{ attachment.original_name }}
                         </div>
+                        <div class="sp-attachment-size sp-description">{{ attachment.upload.size }}</div>
                     </a>
                 </li>
             {% endfor %}

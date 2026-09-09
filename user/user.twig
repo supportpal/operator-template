@@ -19,16 +19,14 @@
                     <a href="{{ route('user.operator.operator.create') }}" class="sp-action sp-button">
                         <i class="fa-solid fa-plus"></i>
                         <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.add') }}</span>
-                    </a><!--
+                    </a>
                 {% elseif (operator|default is empty or not operator) and auth_user().hasPermission('create.user') %}
                     <a href="{{ route('user.operator.user.create') }}" class="sp-action sp-button">
                         <i class="fa-solid fa-plus"></i>
                         <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.add') }}</span>
-                    </a><!--
-                {% else %}
-                    <!--
+                    </a>
                 {% endif %}
-                --><button class="sp-action sp-filter-grid">
+                <button class="sp-action sp-filter-grid">
                     <i class="fa-solid fa-filter"></i>
                     <span class="sp:hidden sp:xs:inline">&nbsp; {{ Lang.get('general.filter') }}</span>
                 </button>
@@ -41,7 +39,7 @@
                     </button>
                 {% endif %}
                 {% if not groups.isEmpty() and auth_user().hasPermission('update.user') %}
-                    <select class="change-group">
+                    <select class="change-group sp:ms-1">
                         <option value="">{{ Lang.get('user.add_group') }}...</option>
                         {% for group in groups %}
                             <option value="{{ group.id }}">{{ group.name }}</option>

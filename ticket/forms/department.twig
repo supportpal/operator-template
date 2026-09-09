@@ -144,9 +144,8 @@
             {{ form_label('dept_operators', Lang.get('ticket.department_operator')) }}
             <div class="sp-input-container">
                 <select name="dept_operators[]" multiple="multiple">
-                    {% for operator in operators %}
-                        <option {% if in_array(operator.id, recordOperators) %}selected="selected"{% endif %}
-                            data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
+                    {% for operator in record.operators %}
+                        <option selected="selected" data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
                             {{ operator.formatted_name }}
                         </option>
                     {% endfor %}
@@ -159,14 +158,11 @@
             {{ form_label('default_assignedto', Lang.get('ticket.department_default_assign')) }}
             <div class="sp-input-container">
                 <select name="default_assignedto[]" multiple="multiple">
-                    {% if record.exists %}
-                        {% for operator in record.fetchAssignedOperators() %}
-                            <option {% if in_array(operator.id, record.default_assignedto) %}selected='selected'{% endif %}
-                                data-data='{{ operator|json_encode(constant("JSON_FORCE_OBJECT")) }}' value='{{ operator.id }}'>
-                                {{ operator.formatted_name }}
-                            </option>
-                        {% endfor %}
-                    {% endif %}
+                    {% for operator in record.getDefaultAssignedOperatorsAttribute() %}
+                        <option selected='selected' data-data='{{ operator|json_encode(constant("JSON_FORCE_OBJECT")) }}' value='{{ operator.id }}'>
+                            {{ operator.formatted_name }}
+                        </option>
+                    {% endfor %}
                 </select>
                 <div class="sp-description">{{ Lang.get('ticket.dept_default_assign_desc') }}</div>
             </div>

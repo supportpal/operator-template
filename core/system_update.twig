@@ -137,7 +137,7 @@
 {% block scripts_footer %}
     <script>
         $(document).ready(function() {
-            var contents = '{{ Lang.get('core.waiting_for_update_start') }}';
+            var contents;
 
             App.Notifications.connector()
                 .private('App.Installer')
@@ -161,8 +161,10 @@
                 });
 
             $('.sp-start-update').on('click', function () {
-                var $this = $(this);
+                // Reset contents in case there is an error and they try again.
+                contents = '{{ Lang.get('core.waiting_for_update_start') }}';
 
+                var $this = $(this);
                 $this.prop('disabled', true);
 
                 Swal.fire({

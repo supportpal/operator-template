@@ -2,7 +2,7 @@
 
     <div class="sp-form-row">
         {{ form_label('reply_template[' ~ brand.id ~ '][' ~ department ~ '][department]', Lang.choice('ticket.department', 1)) }}
-        <div class="sp-input-container">
+        <div class="sp-input-container sp:flex sp:items-center sp:gap-x-3">
             {{
                 form_hidden(
                     'reply_template[' ~ brand.id ~ '][' ~ department ~ '][department]',
@@ -17,13 +17,12 @@
                 {% else %}
                     {{ replyTemplate.department.name }}
                 {% endif %}
-            </span> &nbsp;
+            </span>
 
             <!-- Only don't show on default brand, -- Any -- department -->
             {{ form_button(Lang.get('general.remove'),
                 {'class': 'remove-button' ~ (brand.id == 'Default' and replyTemplate.department.name is empty ? ' sp:hidden' : '')}
             ) }}
-
         </div>
     </div>
 

@@ -1,82 +1,108 @@
 <div>
-    <img src="{{ ticket.user.avatar_url }}" class="sp-avatar sp:max-w-8" />
-    &nbsp;
-    {% if can_update_ticket(auth_user(), ticket) %}
-        <a class="edit-user sp:font-bold sp:border-b sp:border-primary-800 sp:border-dotted sp:hover:border-solid">
+    <div class="sp:flex sp:items-center sp:gap-x-3">
+        <img src="{{ ticket.user.avatar_url }}" class="sp-avatar sp:max-w-8" />
+        {% if can_update_ticket(auth_user(), ticket) %}
+            <a class="edit-user sp:font-bold sp:border-b sp:border-primary-800 sp:border-dotted sp:hover:border-solid">
+                {{ ticket.user.formatted_name }}
+            </a>
+        {% else %}
             {{ ticket.user.formatted_name }}
-        </a>
-    {% else %}
-        {{ ticket.user.formatted_name }}
-    {% endif %}
-    {% if ticket.user.groups is not empty %}
-        {% for group in ticket.user.groups %}
-            <i class="fa-solid fa-circle sp:ms-1" style="color: {{ group.colour }};" title="{{ group.name }}"></i>
-        {% endfor %}
-    {% endif %}
-
-    <div class="update-user sp:hidden">
-        {{ form_select('user', [], null, {'class': 'sp:my-2'}) }}
-
-        {% if auth_user().hasPermission('create.user') %}
-            <div class="create-new-user">
-                <a class="new-user-toggle">
-                    <i class="fa-solid fa-plus" aria-hidden="true"></i>&nbsp; {{ Lang.get('ticket.create_new_user') }}
-                </a>
-
-                <form class="new-user-form sp:hidden sp:my-2">
-                    <input type="hidden" name="ticket" value="{{ ticket.id }}" />
-                    <label>
-                        {{ form_text('firstname', null, { 'placeholder': Lang.get('user.firstname') }) }}
-                    </label><br />
-                    <label>
-                        {{ form_text('lastname', null, { 'placeholder': Lang.get('user.lastname') }) }}
-                    </label><br />
-                    <label>
-                        {{ form_email('email', null, { 'placeholder': Lang.get('general.email') }) }}
-                    </label>
-                    {% if Config.get('settings.organisations_enabled') %}
-                        <br />
-                        <label>
-                            {{ form_select('organisation') }}
-                        </label>
-                        <input type="hidden" name="organisation_id" />
-                    {% endif %}
-
-                    {{ form_button(Lang.get('general.save')) }}
-                </form>
-            </div>
         {% endif %}
+        {% if ticket.user.groups is not empty %}
+            <span>
+                {% for group in ticket.user.groups %}
+                    <i class="fa-solid fa-circle" style="color: {{ group.colour }};" title="{{ group.name }}"></i>
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="update-user sp:hidden sp:mt-4 sp:border sp:border-tertiary sp:rounded">
+        <div class="sp:px-3 sp:py-2 sp:bg-secondary sp:font-bold">
+            {{ Lang.get('ticket.change_user') }}
+        </div>
+
+        <div class="sp:p-3">
+            {{ form_select('user') }}
+
+            {% if auth_user().hasPermission('create.user') %}
+                <div class="create-new-user sp:mt-3 sp:pt-3 sp:border-t sp:border-tertiary">
+                    <button class="new-user-toggle as-link sp:w-full">
+                        <i class="fa-solid fa-plus sp:me-1" aria-hidden="true"></i>
+                        {{ Lang.get('ticket.create_new_user') }}
+                    </button>
+
+                    <form class="new-user-form sp:hidden sp:mt-4">
+                        <input type="hidden" name="ticket" value="{{ ticket.id }}" />
+                        <div class="sp-form-row sp:mb-2">
+                            {{ form_text('firstname', null, {'placeholder': Lang.get('user.firstname')}) }}
+                        </div>
+                        <div class="sp-form-row sp:mb-2">
+                            {{ form_text('lastname', null, {'placeholder': Lang.get('user.lastname')}) }}
+                        </div>
+                        <div class="sp-form-row sp:mb-2">
+                            {{ form_email('email', null, {'placeholder': Lang.get('general.email')}) }}
+                        </div>
+                        {% if Config.get('settings.organisations_enabled') %}
+                            <div class="sp-form-row sp:mb-2">
+                                {{ form_select('organisation') }}
+                            </div>
+                            <input type="hidden" name="organisation_id" />
+                        {% endif %}
+
+                        {{ form_button(Lang.get('general.save')) }}
+                    </form>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
 <hr />
 
 <div>
-    <a class="sp-description" href="{{ route('user.operator.user.edit', { 'id': ticket.user.id }) }}" target="_blank">
+    <a class="sp-description" href="{{ route('user.operator.user.edit', ticket.user.id) }}" target="_blank">
         {{ Lang.get('user.profile') }}
     </a>
 </div>
 
-{% if ticket.user.email|default is not empty %}
-    {% if Config.get('settings.organisations_enabled') and ticket.user.organisation is not empty %}
-        <i class="fa-solid fa-building"></i> &nbsp; <a href="{{ ticket.user.organisation.url|raw }}">{{ ticket.user.organisation.name }}</a><br />
-    {% endif %}
-    <i class="fa-solid fa-envelope"></i> &nbsp; {{ ticket.user.email }}
-    {% if not ticket.user.email_verified %}
-        <i class="fa-solid fa-exclamation-circle sp:text-orange-600" aria-hidden="true" title="{{ Lang.get('user.unverified_email_desc') }}"></i>
-    {% endif %}<br />
-    {% if ticket.user.email_verified %}
-        <i class="fa-solid fa-calendar"></i> &nbsp; {{ Lang.get('user.signed_up') }} {{ timeago(ticket.user.created_at) }}<br />
+<ul class="sp:ps-0 sp:mt-1 sp:list-none sp:*:flex sp:*:items-baseline sp:*:gap-x-2 sp:**:[.fa-solid]:flex-none">
+    {% if ticket.user.email|default is not empty %}
+        {% if Config.get('settings.organisations_enabled') and ticket.user.organisation is not empty %}
+            <li>
+                <i class="fa-solid fa-building"></i>
+                <a href="{{ ticket.user.organisation.url|raw }}">{{ ticket.user.organisation.name }}</a>
+            </li>
+        {% endif %}
+        <li>
+            <i class="fa-solid fa-envelope"></i>
+            {{ ticket.user.email }}
+            {% if not ticket.user.email_verified %}
+                <i class="fa-solid fa-exclamation-circle sp:text-orange-600" aria-hidden="true" title="{{ Lang.get('user.unverified_email_desc') }}"></i>
+            {% endif %}
+        </li>
+        {% if ticket.user.email_verified %}
+            <li>
+                <i class="fa-solid fa-calendar"></i>
+                <span>{{ Lang.get('user.signed_up') }} {{ timeago(ticket.user.created_at) }}</span>
+            </li>
 
-        {% if ticket.user.last_active_at > 0 %}
-            <i class="fa-solid fa-clock"></i> &nbsp; {{ Lang.get('user.last_active') }} {{ timeago(ticket.user.last_active_at) }}<br />
+            {% if ticket.user.last_active_at > 0 %}
+                <li>
+                    <i class="fa-solid fa-clock"></i>
+                    <span>{{ Lang.get('user.last_active') }} {{ timeago(ticket.user.last_active_at) }}</span>
+                </li>
+            {% endif %}
         {% endif %}
     {% endif %}
-{% endif %}
 
-{% if ticket.user.country|default is not empty %}
-    <i class="fa-solid fa-globe"></i> &nbsp; {{ countries()[ticket.user.country] }}<br />
-{% endif %}
+    {% if ticket.user.country|default is not empty %}
+        <li>
+            <i class="fa-solid fa-globe"></i>
+            {{ countries()[ticket.user.country] }}
+        </li>
+    {% endif %}
+</ul>
 
 {% if ticket.user.notes is not empty %}
     <div class="sp-description sp:mt-3">{{ Lang.choice('general.note', 2) }}</div>
@@ -86,18 +112,22 @@
 {% if userTickets.count() %}
     <hr />
 
-    <a class="sp-description" href="{{ route('user.operator.user.ticket', [ ticket.user_id ]) }}">
+    <a class="sp-description" href="{{ route('user.operator.user.ticket', ticket.user_id) }}">
         {{ Lang.get('ticket.recent_tickets') }}
     </a>
 
-    <ul class="sp:ps-0 sp:mt-1">
+    <ul class="sp:ps-0 sp:mt-1 sp:list-none">
         {% for userTicket in userTickets %}
-        <li class="sp:truncate">
-            {{ userTicket.status.icon|raw }} &nbsp;
-            <a href="{{ route('ticket.operator.ticket.show', [ userTicket.id ]) }}" target="_blank">
-                {{ userTicket.subject }}
-            </a>
-            <div class="sp-description sp:text-xs">
+        <li>
+            <div class="sp:flex sp:items-center sp:gap-x-2">
+                <div class="sp:flex-none">{{ userTicket.status.icon|raw }}</div>
+                <div class="sp:grow sp:truncate">
+                    <a href="{{ route('ticket.operator.ticket.show', userTicket.id) }}" target="_blank">
+                        {{ userTicket.subject }}
+                    </a>
+                </div>
+            </div>
+            <div class="sp-description sp:text-xs sp:truncate">
                 {% if userTicket.trashed() %}<i class="fa-solid fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
                 {{ userTicket.department.name }} &nbsp;&middot;&nbsp; {{ timeago(userTicket.created_at) }}
             </div>
@@ -109,18 +139,22 @@
 {% if not ticket.internal and organisationTickets.count() %}
     <hr />
 
-    <a class="sp-description" href="{{ route('user.operator.organisation.ticket', [ ticket.user.organisation_id ]) }}">
+    <a class="sp-description" href="{{ route('user.operator.organisation.ticket', ticket.user.organisation_id) }}">
         {{ Lang.get('ticket.organisation_tickets') }}
     </a>
 
-    <ul class="sp:ps-0 sp:mt-1">
+    <ul class="sp:ps-0 sp:mt-1 sp:list-none">
         {% for organisationTicket in organisationTickets %}
-        <li class="sp:truncate">
-            {{ organisationTicket.status.icon|raw }} &nbsp;
-            <a href="{{ route('ticket.operator.ticket.show', [ organisationTicket.id ]) }}" target="_blank">
-                {{ organisationTicket.subject }}
-            </a>
-            <div class="sp-description sp:text-xs">
+        <li>
+            <div class="sp:flex sp:items-center sp:gap-x-2">
+                <div class="sp:flex-none">{{ organisationTicket.status.icon|raw }}</div>
+                <div class="sp:grow sp:truncate">
+                    <a href="{{ route('ticket.operator.ticket.show', organisationTicket.id) }}" target="_blank">
+                        {{ organisationTicket.subject }}
+                    </a>
+                </div>
+            </div>
+            <div class="sp-description sp:text-xs sp:truncate">
                 {% if organisationTicket.trashed() %}<i class="fa-solid fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
                 {{ organisationTicket.department.name }} &nbsp;&middot;&nbsp; {{ timeago(organisationTicket.created_at) }}
             </div>
@@ -136,14 +170,18 @@
         {{ Lang.get('ticket.ticket_other_brands') }}
     </div>
 
-    <ul class="sp:ps-0 sp:mt-1">
+    <ul class="sp:ps-0 sp:mt-1 sp:list-none">
         {% for otherBrandTicket in otherBrandTickets %}
-            <li class="sp:truncate">
-                {{ otherBrandTicket.status.icon|raw }} &nbsp;
-                <a href="{{ route('ticket.operator.ticket.show', [ otherBrandTicket.id ]) }}" target="_blank">
-                    {{ otherBrandTicket.subject }}
-                </a>
-                <div class="sp-description sp:text-xs">
+            <li>
+                <div class="sp:flex sp:items-center sp:gap-x-2">
+                    <div class="sp:flex-none">{{ otherBrandTicket.status.icon|raw }}</div>
+                    <div class="sp:grow sp:truncate">
+                        <a href="{{ route('ticket.operator.ticket.show', [ otherBrandTicket.id ]) }}" target="_blank">
+                            {{ otherBrandTicket.subject }}
+                        </a>
+                    </div>
+                </div>
+                <div class="sp-description sp:text-xs sp:truncate">
                     {% if otherBrandTicket.trashed() %}<i class="fa-solid fa-trash" title="{{ Lang.get('general.trash') }}"></i> &nbsp;&middot;&nbsp; {% endif %}
                     {{ otherBrandTicket.brand.name }} &nbsp;&middot;&nbsp; {{ timeago(otherBrandTicket.created_at) }}
                 </div>

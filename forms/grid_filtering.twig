@@ -1,3 +1,4 @@
+{% set allowMultiSelect = true %}
 {% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
 
 {% if currentFilter|default is not empty %}

@@ -21,7 +21,8 @@
                 {
                     'class': 'sp:w-full',
                     'data-selected': selectedCondition,
-                    'data-field': (condition.value is defined and condition.value_extra is not empty ? condition.value : '')
+                    'data-field': (condition.value is defined and condition.value_extra is not empty ? condition.value : ''),
+                    'data-value': (condition.value is defined ? condition.value : '')
                 }
             )
         }}
@@ -31,7 +32,10 @@
                 {
                     '0': Lang.get('general.is'),
                     '1': Lang.get('general.is_not')
-                },
+                } + (allowMultiSelect|default is not empty ? {
+                    '13': Lang.get('general.is_one_of'),
+                    '14': Lang.get('general.is_not_one_of')
+                } : { }),
                 condition|default is not empty ? condition.operator : null, { 'class': 'operator0' }) }}
 
         {{ form_select(inputPrefix ~ '[operator]',

@@ -29,19 +29,19 @@
                     {% if auth_user().hasPermission('update.ticket') %}
                         <button class="sp-action restore-ticket" title="{{ Lang.get('general.restore') }}">
                             <i class="fa-solid fa-undo"></i>
-                        </button><!--
+                        </button>
                     {% endif %}
                     {% if auth_user().hasPermission('delete.ticket') %}
-                        --><button class="sp-action delete-forever-ticket" title="{{ Lang.get('general.delete_forever') }}">
+                        <button class="sp-action delete-forever-ticket" title="{{ Lang.get('general.delete_forever') }}">
                             <i class="fa-solid fa-times"></i>
                         </button>
                     {% endif %}
-                </li><!--
-                --><li class="sp-action-group">
+                </li>
+                <li class="sp-action-group">
                     <button class="sp-action expand-messages sp:hidden" title="{{ Lang.get('general.expand_all') }}">
                         <i class="fa-solid fa-expand-arrows-alt"></i>
-                    </button><!--
-                    --><button class="sp-action collapse-messages sp:hidden" title="{{ Lang.get('general.collapse_all') }}">
+                    </button>
+                    <button class="sp-action collapse-messages sp:hidden" title="{{ Lang.get('general.collapse_all') }}">
                         <i class="fa-solid fa-compress"></i>
                     </button>
                 </li>
@@ -59,8 +59,8 @@
                                 </span>
                             </span>
                             <span class="sp:hidden sp:md:inline">&nbsp;{{ Lang.get('general.reply') }}</span>
-                        </button><!--
-                        --><button class="sp-action sp:inline-flex sp:items-center" data-type="1">
+                        </button>
+                        <button class="sp-action sp:inline-flex sp:items-center" data-type="1">
                             <span class="fa-stack sp:me-0.5 sp:text-[0.5rem]">
                                 <i class="fa-solid fa-sticky-note fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp:text-yellow-600 {% if otherDrafts.where('type', '=', 1).isEmpty() %}sp:hidden{% endif %}">
@@ -71,8 +71,8 @@
                                 </span>
                             </span>
                             <span class="sp:hidden sp:md:inline">&nbsp;{{ Lang.choice('general.note', 1) }}</span>
-                        </button><!--
-                        --><button class="sp-action sp:inline-flex sp:items-center" data-type="2">
+                        </button>
+                        <button class="sp-action sp:inline-flex sp:items-center" data-type="2">
                             <span class="fa-stack sp:me-0.5 sp:text-[0.5rem]">
                                 <i class="fa-solid fa-share fa-stack-2x"></i>
                                 <span class="sp-other-draft-icon sp:text-yellow-600 {% if otherDrafts.where('type', '=', 2).isEmpty() %}sp:hidden{% endif %}">
@@ -84,10 +84,10 @@
                             </span>
                             <span class="sp:hidden sp:md:inline">&nbsp;{{ Lang.get('ticket.forward') }}</span>
                         </button>
-                    </li><!--
+                    </li>
 
                     {% if not macros.isEmpty() %}
-                        --><li class="sp-action-group sp:xs:relative">
+                        <li class="sp-action-group sp:xs:relative">
                             <div class="sp-dropdown-container">
                                 <button class="sp-action" title="{{ Lang.choice('ticket.macro', 2) }}">
                                     <i class="fa-solid fa-bolt-lightning"></i>
@@ -104,20 +104,20 @@
                                     </ul>
                                 </div>
                             </div>
-                        </li><!--
+                        </li>
                     {% endif %}
 
-                    --><li class="sp-action-group sp:hidden sp:md:inline-block">
+                    <li class="sp-action-group sp:hidden sp:md:flex">
                         <button class="sp-action take-ticket {% if in_array(auth_user().id, ticket.assigned.pluck('id').all()) and ticket.assigned.count() == 1 %}sp:hidden{% endif %}"
                                 title="{{ Lang.get('ticket.take') }}">
                             <i class="fa-solid fa-hand"></i>
-                        </button><!--
-                        --><button class="sp-action close-ticket sp:pe-6! {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp:hidden{% endif %}"
+                        </button>
+                        <button class="sp-action close-ticket sp:pe-6 {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp:hidden{% endif %}"
                                    title="{{ Lang.get('general.close') }}">
                             <i class="fa-solid fa-check"></i>
                         </button>
                         <div class="close-ticket-options sp-dropdown-container sp:relative {% if ticket.status_id == Config.get('settings.default_resolved_status') %}sp:hidden{% endif %}">
-                            <button class="sp-action sp:w-5 sp:px-1! sp:-ms-6!">
+                            <button class="sp-action sp:w-5 sp:px-1 sp:-ms-5 sp:me-1">
                                 <i class="fa-solid fa-chevron-down fa-2xs"></i>
                             </button>
                             <div class="sp-dropdown sp:top-0 sp:end-0 sp:mt-12 sp:me-1">
@@ -133,28 +133,24 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div><!--
+                        </div>
                         {% if not ticket.trashed() and auth_user().hasPermission('delete.ticket_trash') %}
-                            --><button class="sp-action delete-ticket" title="{{ Lang.get('general.move_to_trash') }}">
+                            <button class="sp-action delete-ticket" title="{{ Lang.get('general.move_to_trash') }}">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
-                        {% else %}
-                        -->
                         {% endif %}
-                    </li><!--
+                    </li>
 
-                    --><li class="sp-action-group split-ticket-action sp:hidden">
+                    <li class="sp-action-group split-ticket-action sp:hidden">
                         {{ form_open({'route': ['ticket.operator.ticket.split', ticket.id]}) }}
                             <button class="sp-action split-ticket-button" title="{{ Lang.get('ticket.split_selected_replies') }}">
                                 <i class="fa-solid fa-object-ungroup"></i>
                             </button>
                         {{ form_close() }}
-                    </li><!--
-                {% else %}
-                    <!--
+                    </li>
                 {% endif %}
 
-                --><li class="sp-action-group sp:relative">
+                <li class="sp-action-group sp:relative">
                     <div class="sp-dropdown-container">
                         <button class="sp-action">
                             <i class="fa-solid fa-ellipsis-v"></i>

@@ -51,9 +51,9 @@
                 )
             }}
 
-            {% if email_template.language.name is empty %}
-                <div class="sp:mt-3">
-                    {{ form_button(Lang.get('general.reset'), {'class': 'reset-button', 'data-id': record.id}) }}
+            {% if record.exists and email_template.language.name is empty %}
+                <div class="sp-editor-buttons-toolbar sp-button-group sp:mt-3">
+                    {{ form_button('<i class="fa-solid fa-eraser"></i>&nbsp; ' ~ Lang.get('general.reset'), {'class': 'reset-button', 'data-id': record.id}) }}
                 </div>
             {% endif %}
         </div>

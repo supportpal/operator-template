@@ -3,7 +3,7 @@
      data-id="{{ message.id }}" data-timeline-id="{{ timeline.id }}" data-created-at="{{ message.created_at }}"
      data-user-id="{{ message.user.id }}"
      data-type="{{ enum('App\\Modules\\Ticket\\Models\\Enums\\TimelineEntry').fromMessageType(message.type).value }}">
-    <div class="sp-message-avatar sp:flex-none sp:hidden sp:w-8 sp:pt-1 sp:me-3 sp:z-10 sp:md:block sp:xl:w-12 sp:xl:pt-2 sp:xl:-ms-2">
+    <div class="sp-message-avatar sp:flex-none sp:hidden sp:w-8 sp:pt-1 sp:me-3 sp:z-10 sp:md:block sp:xl:w-12 sp:xl:pt-2 sp:xl:-ms-2 sp:print:hidden">
         <img src="{{ message.user.avatar_url }}" class="sp-avatar sp:max-w-8 sp:xl:max-w-12" loading="lazy" />
     </div>
 

@@ -4,7 +4,7 @@
 <head>
     {{ View.fireHook('operator.head_start') }}
 
-    <title>{{ ticket.subject }}</title>
+    <title>(#{{ ticket.number }}) {{ ticket.subject }}</title>
 
     <meta name="notes-url-id" content="{{ notesUrlId }}" />
     <meta name="timeline-url-id" content="{{ timelineUrlId }}" />
@@ -33,7 +33,7 @@
 
             {% include 'operator.' ~ template ~ '.ticket.ticket_print_metadata' %}
 
-            <div class="sp-collapsible sp:flex sp:bg-tertiary sp:mt-6 sp:mb-1 sp:rounded-none sp:xs:rounded">
+            <div class="sp-collapsible sp:flex sp:bg-tertiary sp:mt-6 sp:mb-1 sp:rounded-none sp:xs:rounded sp:print:mt-3">
                 <h3 class="sp:grow sp:m-0">{{ Lang.get('general.activity') }}</h3>
 
                 {% include 'operator.' ~ template ~ '.ticket.ticket_filter_timeline' %}

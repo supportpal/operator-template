@@ -18,7 +18,7 @@
                         <div class="sp-attachment-icon">
                             <div class="fiv-viv fiv-icon-{{ attachment.upload.icon }} sp:text-xl"></div>
                         </div>
-                        <div class="sp-attachment-name" data-filename="{{ attachment.original_name }}">
+                        <div class="sp-attachment-name sp-truncate-middle" data-truncate="{{ attachment.original_name }}" data-truncate-length="40">
                             {{ attachment.original_name }}
                         </div>
                         <div class="sp-attachment-size sp-description">{{ attachment.upload.size }}</div>

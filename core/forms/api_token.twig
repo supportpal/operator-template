@@ -32,10 +32,29 @@
             <div class="sp-form-row">
                 {{ form_label('token', Lang.get('core.token')) }}
                 <div class="sp-input-container">
-                    {{ form_text('token', null, {'size': 40}) }}
-                    <div class="sp:mt-2">
-                        <a class="sp-button regenerate">{{ Lang.get('core.regenerate_token') }}</a>
-                    </div>
+                    {% if not record.exists %}
+                        {# Token not yet generated - it's created server side when the record is saved #}
+                        <div class="sp-alert sp-alert-info">
+                            {{ Lang.get('core.token_generate_after_create') }}
+                        </div>
+                    {% else %}
+                        <div class="token-wrap sp:flex sp:items-center sp:gap-x-3">
+                            <input type="text" class="token sp:font-mono" readonly="readonly" size="40"
+                                   value="{{ revealedToken|default ?: maskedToken }}" />
+                            <a class="copy {% if revealedToken|default is empty %}sp:hidden{% endif %}"
+                               title="{{ Lang.get('general.copy') }}">
+                                <i class="fa-solid fa-copy"></i>
+                            </a>
+                            <a class="regenerate" title="{{ Lang.get('core.regenerate_token') }}"
+                               data-url="{{ route('core.operator.apitoken.regenerate_token', record.id) }}">
+                                <i class="fa-solid fa-refresh"></i>
+                            </a>
+                        </div>
+                        <div class="sp-alert sp-alert-warning token-once-alert sp:mt-3 sp:mb-0 {% if revealedToken|default is empty %}sp:hidden{% endif %}"
+                             role="alert">
+                            {{ Lang.get('general.copy_now_shown_once') }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -67,22 +86,57 @@
     {% endif %}
 
     <script>
-        function randomString(length) {
-            var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!%&#=+?'
-            var result = '';
-            for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
-            return result;
-        }
+        $(function () {
+            tippy('.copy', {content: '{{ Lang.get('general.copy') }}'});
+            const copiedTippy = tippy('.copy', {
+                trigger: 'manual',
+                'content': '{{ Lang.get('general.copied') }}'
+            })[0];
 
-        // Update token field
-        $(document).ready(function() {
-            if ($('input[name=token]').val() == '') {
-                $('input[name=token]').val(randomString(32));
+            const $wrap = $('.token-wrap');
+
+            /**
+             * After a token is revealed (regenerated), replace the input value with the full
+             * plain-text token, show the copy button and the "copy now" warning.
+             */
+            function revealToken(plainToken) {
+                $wrap.find('.token').val(plainToken);
+                $wrap.find('.copy').removeClass('sp:hidden');
+                $('.token-once-alert').removeClass('sp:hidden');
             }
 
-            $('.regenerate').on('click', function() {
-                $('input[name=token]').val(randomString(32));
-            });
+            $wrap
+                .on('click', '.copy', function () {
+                    navigator.clipboard.writeText($(this).siblings('.token').val());
+                    if (copiedTippy) {
+                        copiedTippy.show();
+                        setTimeout(() => copiedTippy.hide(), 1000);
+                    }
+                })
+                .on('click', '.regenerate', function () {
+                    const self = $(this);
+                    Swal.fire({
+                        title: Lang.get('messages.are_you_sure'),
+                        html: '{{ Lang.get('core.change_token') }}',
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#e74c3c",
+                        confirmButtonText: Lang.get('messages.yes_im_sure'),
+                        showLoaderOnConfirm: true,
+                        preConfirm: function () {
+                            return $.post(self.data('url'))
+                                .done(function (res) {
+                                    if (res.status === 'success') {
+                                        revealToken(res.data.token);
+                                    }
+                                })
+                                .always(() => Swal.close());
+                        },
+                        allowOutsideClick: function () {
+                            return ! Swal.isLoading();
+                        }
+                    });
+                });
         });
     </script>
 {% endblock %}

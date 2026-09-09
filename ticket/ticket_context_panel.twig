@@ -33,7 +33,12 @@
             <ul class="sp-ticket-details">
                 <li>
                     <div class="sp-title">{{ Lang.get('general.number') }}</div>
-                    <div class="sp-detail">#{{ ticket.number }}</div>
+                    <div class="sp-detail">
+                        #{{ ticket.number }}
+                        <button class="sp-copy-ticket-number as-link sp:ms-2" data-clipboard-text="#{{ ticket.number }}">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
                 </li>
                 {% if brand_count() > 1 %}
                     <li>
@@ -94,7 +99,7 @@
                         <div class="sp-detail">
                             <select class="assign-tags" name="tag[]" multiple="multiple">
                                 {% for tag in ticket.tags.sortBy('name') %}
-                                    <option selected="selected" data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ tag.original_name }}'>
+                                    <option selected="selected" value='{{ tag.original_name }}' data-data='{{ tag|json_encode(constant('JSON_FORCE_OBJECT')) }}'>
                                         {{ tag.name }}
                                     </option>
                                 {% endfor %}
@@ -157,20 +162,29 @@
 
                             <div class="update-duetime sp:hidden sp:my-2">
                                 {{ form_hidden('duetime_type', 1) }}
-                                {{ form_text('duetime_date',
-                                    ticket.duetimes.reply_due_time is not empty
-                                    ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
-                                    {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
-                                ) }}
-                                {{ form_text('duetime_time',
-                                    ticket.duetimes.reply_due_time is not empty
-                                    ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
-                                    {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
-                                ) }}
-                                &nbsp; <button class="as-link update"><i class="fa-solid fa-check"></i></button>
-                                <span class="remove-duetime {% if ticket.duetimes.reply_due_time is empty %}sp:hidden{% endif %}">
-                                &nbsp; <button class="as-link remove"><i class="fa-solid fa-eraser"></i></button>
-                                </span>
+                                <div>
+                                    {{ form_text('duetime_date',
+                                        ticket.duetimes.reply_due_time is not empty
+                                        ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
+                                        {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
+                                    ) }}
+                                </div>
+                                <div class="sp:flex sp:items-center sp:gap-x-2">
+                                    {{ form_text('duetime_time',
+                                        ticket.duetimes.reply_due_time is not empty
+                                        ? timeWithOffset(ticket.duetimes.reply_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
+                                        {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
+                                    ) }}
+                                    <span class="sp-button-group">
+                                        <button class="update" title="{{ Lang.get('general.update') }}">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                        <button class="remove {% if ticket.duetimes.reply_due_time is empty %}sp:hidden{% endif %}"
+                                                title="{{ Lang.get('general.clear') }}">
+                                            <i class="fa-solid fa-eraser"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -185,20 +199,29 @@
 
                             <div class="update-duetime sp:hidden sp:mt-2">
                                 {{ form_hidden('duetime_type', 0) }}
-                                {{ form_text('duetime_date',
-                                    ticket.duetimes.resolve_due_time is not empty
-                                    ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
-                                    {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
-                                ) }}
-                                {{ form_text('duetime_time',
-                                    ticket.duetimes.resolve_due_time is not empty
-                                    ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
-                                    {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
-                                ) }}
-                                &nbsp; <button class="as-link update"><i class="fa-solid fa-check"></i></button>
-                                <span class="remove-duetime {% if ticket.duetimes.resolve_due_time is empty %}sp:hidden{% endif %}">
-                                &nbsp; <button class="as-link remove"><i class="fa-solid fa-eraser"></i></button>
-                                </span>
+                                <div>
+                                    {{ form_text('duetime_date',
+                                        ticket.duetimes.resolve_due_time is not empty
+                                        ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.date_format')) : "now"|date(Config.get('settings.date_format'), getTimezone()),
+                                        {'class': 'datepicker sp:w-full sp:mb-2', 'placeholder': '&#xf073;'}
+                                    ) }}
+                                </div>
+                                <div class="sp:flex sp:items-center sp:gap-x-2">
+                                    {{ form_text('duetime_time',
+                                        ticket.duetimes.resolve_due_time is not empty
+                                        ? timeWithOffset(ticket.duetimes.resolve_due_time, false)|date(Config.get('settings.time_format')) : "now"|date(Config.get('settings.time_format'), getTimezone()),
+                                        {'class': 'timepicker sp:w-32', 'placeholder': '&#xf017;'}
+                                    ) }}
+                                    <span class="sp-button-group">
+                                        <button class="update" title="{{ Lang.get('general.update') }}">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                        <button class="remove {% if ticket.duetimes.resolve_due_time is empty %}sp:hidden{% endif %}"
+                                                title="{{ Lang.get('general.clear') }}">
+                                            <i class="fa-solid fa-eraser"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

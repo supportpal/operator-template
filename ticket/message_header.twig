@@ -24,7 +24,9 @@
         </span>
         &nbsp;&middot;&nbsp; {{ Lang.get('ticket.via_channel', {'channel': message.channel.formatted_name}) }}
         {% if message.user_ip_address %}
-            <i class="fa-solid fa-desktop" title="{{ Lang.get('general.ip_address') ~ ': ' ~ message.user_ip_address }}"></i>
+            <i class="fa-solid fa-desktop sp-copy-tooltip"
+               data-clipboard-text="{{ message.user_ip_address }}"
+               data-title="{{ Lang.get('general.ip_address') ~ ': ' ~ message.user_ip_address }}"></i>
         {% endif %}
         {% set emaillog = message.emaillog.where('type', '!=', 0).first() %}
         {% if emaillog is not null %}
@@ -65,13 +67,13 @@
         {% endif %}
     </div>
 
-    {% if canUpdateTicket is not defined %}
-        {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
-    {% endif %}
-    {% if canUpdateTicket %}
     <div class="sp-message-actions sp:flex-none sp:group-[:not(.sp-message-collapsed):hover]:inline-block sp:-mx-2 sp:-my-1 sp:print:hidden
                 sp:pointer-fine:hidden sp:pointer-fine:absolute sp:pointer-fine:-top-1 sp:pointer-fine:end-3 sp:pointer-fine:px-3 sp:pointer-fine:py-1
                 sp:pointer-fine:m-0 sp:pointer-fine:bg-secondary sp:pointer-fine:border sp:pointer-fine:border-tertiary sp:pointer-fine:shadow sp:pointer-fine:rounded-full">
+        {% if canUpdateTicket is not defined %}
+            {% set canUpdateTicket = can_update_ticket(auth_user(), ticket) %}
+        {% endif %}
+        {% if canUpdateTicket %}
             <span class="split-ticket sp:inline-block sp:p-1.5 sp:pe-0 sp:leading-0 sp:hidden">
                 {{ form_check('split', 1, false, {'data-id': message.id}) }}
             </span>
@@ -97,12 +99,15 @@
                 </button>
             </div>
 
-            <div class="sp-dropdown-container">
-                <button class="sp-action sp-button-sm sp:px-2">
-                    <i class="fa-solid fa-ellipsis-v"></i>
-                </button>
-                <div class="sp-dropdown sp:end-0">
-                    <ul class="sp:text-end">
+        {% endif %}
+
+        <div class="sp-dropdown-container">
+            <button class="sp-action sp-button-sm sp:px-2">
+                <i class="fa-solid fa-ellipsis-v"></i>
+            </button>
+            <div class="sp-dropdown sp:end-0">
+                <ul class="sp:text-end">
+                    {% if canUpdateTicket %}
                         <li class="sp:md:hidden sp:pointer-coarse:block">
                             <a class="edit-button">{{ Lang.get('general.edit_item', {'item': mb_strtolower(Lang.choice('general.message', 1))}) }}</a>
                         </li>
@@ -119,35 +124,41 @@
                                 {{ Lang.get('ticket.unpin') }}
                             </a>
                         </li>
-                        <li>
-                            <a class="print-message" href="{{ route('ticket.operator.message.show', {'id': message.id, 'print': '1'}) }}"
-                               target="_blank">
-                                {{ Lang.get('general.print') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="link-message">{{ Lang.get('ticket.copy_link') }}</a>
-                        </li>
+                    {% endif %}
+                    <li>
+                        <a class="print-message" href="{{ route('ticket.operator.message.show', {'id': message.id, 'print': '1'}) }}"
+                           target="_blank">
+                            {{ Lang.get('general.print') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="link-message">{{ Lang.get('ticket.copy_link') }}</a>
+                    </li>
+                    {% if canUpdateTicket %}
                         <li>
                             <a class="forward-message">{{ Lang.get('ticket.forward_message') }}</a>
                         </li>
                         <li>
                             <a class="forward-from-here">{{ Lang.get('ticket.forward_from_here') }}</a>
                         </li>
+                    {% endif %}
+                    {% if canUpdateTicket or auth_user().hasPermission('create.ticket') %}
                         <li>
                             <a class="link-ticket" data-href="{{ route('ticket.operator.ticket.createStep1', {'link_message': message.id}) }}">
                                 {{ Lang.get('ticket.create_linked_ticket') }}
                             </a>
                         </li>
+                    {% endif %}
+                    {% if canUpdateTicket %}
                         <li>
                             <a class="delete-confirm" data-route="{{ route('ticket.operator.message.destroy', [ message.id ]) }}"
                                data-id="{{ message.id }}">
                                 {{ Lang.get('ticket.delete_message') }}
                             </a>
                         </li>
-                    </ul>
-                </div>
+                    {% endif %}
+                </ul>
             </div>
+        </div>
     </div>
-    {% endif %}
 </div>

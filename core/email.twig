@@ -64,6 +64,11 @@
                                 {{ Lang.get('core.incoming') }}
                             {% elseif record.type == 2 %}
                                 {{ Lang.get('core.incoming_spam') }}
+                                {% if record.spam_rule_id != null and auth_user().hasPermission('view.spamrule') %}
+                                    &nbsp;<a href="{{ route('core.operator.spamrule.edit', record.spam_rule_id) }}" target="_blank" title="{{ Lang.get('core.view_matched_rule') }}">
+                                        <i class="fa-solid fa-external-link-alt sp:text-sm" aria-hidden="true"></i>
+                                    </a>
+                                {% endif %}
                             {% elseif record.type == 3 %}
                                 {{ Lang.get('core.incoming_throttled') }}
                             {% elseif record.type == 16 %}
@@ -134,14 +139,9 @@
 
                         <ul class="sp-attached-files">
                             {% for attachment in record.attachments %}
-                                <li class="sp-email-attachment sp:flex">
-                                    <div class="sp:me-2 sp:truncate">
-                                        <i class="fa-solid fa-file"></i>&nbsp;
-
-                                        <span class="sp-file-information">
-                                            <span class="sp-filename">{{ attachment.filename }}</span>
-                                            <span class="sp-description sp-filesize">({{ attachment.size }})</span>
-                                        </span>
+                                <li class="sp-email-attachment">
+                                    <div class="sp-file-information {% if not canDeleteAttachments %}sp:rounded-e{% endif %}">
+                                        <span class="sp-filename sp-truncate-middle" data-truncate="{{ attachment.filename }}">{{ attachment.filename }}</span>
                                     </div>
 
                                     {% if canDeleteAttachments %}

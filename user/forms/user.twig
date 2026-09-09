@@ -25,21 +25,17 @@
                         <a href="{{ route('ticket.operator.ticket.createStep1', (record.formatted_name is not null ? {'user': record.id} : {})) }}"
                            class="sp-action sp-button">
                             <i class="fa-solid fa-plus"></i>&nbsp; {{ Lang.get('ticket.open_new') }}
-                        </a><!--
-                    {% else %}
-                        <!--
+                        </a>
                     {% endif %}
                     {% if auth_user().hasPermission('update.user') %}
-                        --><button class="sp-action merge-user" title="{{ Lang.get('user.merge_users') }}">
+                        <button class="sp-action merge-user" title="{{ Lang.get('user.merge_users') }}">
                             <i class="fa-solid fa-code-merge"></i>
-                        </button><!--
+                        </button>
                     {% endif %}
                     {% if auth_user().hasPermission('delete.user') %}
-                        --><button class="sp-action delete-user" title="{{ Lang.get('general.delete') }}">
+                        <button class="sp-action delete-user" title="{{ Lang.get('general.delete') }}">
                             <i class="fa-solid fa-times"></i>
                         </button>
-                    {% else %}
-                        -->
                     {% endif %}
                 </li>
             </ul>
@@ -77,19 +73,10 @@
                         {% if record.exports is not empty %}
                             <ul class="exports-list sp-attached-files sp:mb-3">
                                 {% for userExport in record.exports %}
-                                    <li class="sp:flex">
-                                        <div class="sp:me-2 sp:truncate">
-                                            <i class="fa-solid fa-file"></i>&nbsp;
-
-                                            <span class="sp-file-information">
-                                                <span class="sp-filename">
-                                                    <a href="{{ route('core.operator.export.download', userExport.export.upload_hash) }}">
-                                                        {{ userExport.export.upload.filename }}
-                                                    </a>
-                                                </span>
-                                                <span class="sp-description sp-filesize">({{ userExport.export.upload.size }})</span>
-                                            </span>
-                                        </div>
+                                    <li>
+                                        <a href="{{ route('core.operator.export.download', userExport.export.upload_hash) }}" class="sp-file-information">
+                                            <span class="sp-filename sp-truncate-middle" data-truncate="{{ userExport.export.upload.filename }}">{{ userExport.export.upload.filename }}</span>
+                                        </a>
 
                                         <div class="sp-delete-attachment"
                                              data-url="{{ route('core.operator.export.destroy', userExport.export.upload_hash) }}"

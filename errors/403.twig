@@ -1,15 +1,19 @@
-{% extends 'operator.' ~ template ~ '.index' %}
+{% extends upgradeInProgress ? 'errors.error' : 'operator.' ~ template ~ '.index' %}
 
 {% block title %}
-    403 - {{ Lang.get('messages.forbidden') }}
+    {{ Lang.get('messages.forbidden') }} - (403)
 {% endblock %}
 
 {% block content %}
-    <div class="sp-alert sp-alert-error sp-alert-with-icon">
-        <i class="sp-alert-icon fa-solid fa-ban"></i>
-        <div class="sp-alert-content">
-            <strong>{{ Lang.get('messages.error') }}!</strong><br />
-            {{ Lang.get('messages.not_permitted') }}
+    {% if upgradeInProgress %}
+        <p>{{ Lang.get('installer.upgrade_in_progress') }}</p>
+    {% else %}
+        <div class="sp-alert sp-alert-error sp-alert-with-icon">
+            <i class="sp-alert-icon fa-solid fa-ban"></i>
+            <div class="sp-alert-content">
+                <strong>{{ Lang.get('messages.error') }}!</strong><br />
+                {{ Lang.get('messages.not_permitted') }}
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}

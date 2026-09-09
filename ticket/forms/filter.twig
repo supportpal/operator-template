@@ -54,6 +54,7 @@
 
         <div class="sp-form-container">
 
+            {% set allowMultiSelect = true %}
             {% include 'operator.' ~ template ~ '.forms.condition_group' with {'hide': true} %}
             {% if oldGroups|default is not empty and oldGroups is not empty %}
                 {# In case there was an error and we're trying to show what they attempted to save #}

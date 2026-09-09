@@ -72,14 +72,7 @@
                     <div class="sp-input-container">
                         <div class="sp-description sp:mb-2">{{ Lang.get('user.ldap_operator_desc') }}</div>
 
-                        <select name="operator" class="ldap_operator">
-                            <option></option>
-                            {% for operator in operators %}
-                            <option data-data='{{ operator|json_encode(constant('JSON_FORCE_OBJECT')) }}' value='{{ operator.id }}'>
-                                {{ operator.formatted_name }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        <select name="operator" class="ldap_operator"></select>
 
                         <input type="button" class="sp-button sp:mt-2" id="btnClear" value="{{ Lang.get('general.clear') }}" />
                     </div>
@@ -159,69 +152,66 @@
             });
 
             // Search for an existing operator
-            var $select = $('select[name="operator"]').selectize({
-                valueField: 'id',
-                labelField: 'formatted_name',
-                searchField: 'formatted_name',
-                copyClassesToDropdown: true,
-                create: false,
-                placeholder: Lang.get('user.select_operator'),
-                render: {
-                    option: function(item, escape) {
-                        return '<div data-data="' + escape(item) + '">' +
+            var $select = $('select[name="operator"]').selectize(ajaxSelectizeConfig(
+                laroute.route('user.operator.ldapaccount.operator.search'),
+                operatorSelectizeConfig({
+                    render: {
+                        option: function(item, escape) {
+                            return '<div data-data="' + escape(item) + '">' +
                                 '<img class="sp-avatar sp:max-w-5" src="' + escape(item.avatar_url) + '" />&nbsp; ' +
                                 '<span class="title">' +
                                 '<span class="name">' + escape(item.formatted_name) + '</span> ' +
                                 '</span>' +
                                 '<span class="sp-description">' + escape('<' + item.email + '>' || '') + '</span>' +
                                 '</div>';
-                    },
-                    item: function(item, escape) {
-                        return '<div class="item" data-data="' + escape(JSON.stringify(item)) + '">' +
+                        },
+                        item: function(item, escape) {
+                            return '<div class="item" data-data="' + escape(JSON.stringify(item)) + '">' +
                                 '<span class="name">' + escape(item.formatted_name) + '</span>' +
                                 '</div>';
-                    }
-                },
-                onItemAdd: function(value, item) {
-                    // Hide and disable the active option
-                    $('.sp-active-option').hide().find('input').prop('disabled', true);
+                        }
+                    },
+                    onItemAdd: function(value, item) {
+                        // Hide and disable the active option
+                        $('.sp-active-option').hide().find('input').prop('disabled', true);
 
-                    // Load the operator details into the form
-                    var operator = $(item).data('data');
+                        // Load the operator details into the form
+                        var operator = $(item).data('data');
 
-                    for (var key in operator) {
-                        if (operator.hasOwnProperty(key)) {
-                            var obj = operator[key],
-                                    selector = ':input[name="' + key + '"]:not([type="file"])';
+                        for (var key in operator) {
+                            if (operator.hasOwnProperty(key)) {
+                                var obj = operator[key],
+                                        selector = ':input[name="' + key + '"]:not([type="file"])';
 
-                            // If we can find the selector and the value is not empty
-                            if ($(selector).length !== 0 && typeof obj !== 'undefined' && obj !== null) {
-                                $(selector).val(obj);
+                                // If we can find the selector and the value is not empty
+                                if ($(selector).length !== 0 && typeof obj !== 'undefined' && obj !== null) {
+                                    $(selector).val(obj);
+                                }
                             }
                         }
+
+                        // Set the operator groups
+                        if (typeof operator.groups !== 'undefined') {
+                            // Clear the existing input
+                            var $selector = $(':input[name="groups[]"]')[0].selectize;
+                            $selector.clear(true);
+
+                            // Set operator groups
+                            $.each(operator.groups, function () {
+                                if (this.hasOwnProperty('id')) {
+                                    $selector.setValue(this.id);
+                                }
+                            });
+
+                            // Disable selectize
+                            $selector.disable();
+                        }
+
+                        // Disable all the inputs in the form
+                        $('#operator_details').find(':input:not(input[name=id], #btnClear)').prop('disabled', true);
                     }
-
-                    // Set the operator groups
-                    if (typeof operator.groups !== 'undefined') {
-                        // Clear the existing input
-                        var $selector = $(':input[name="groups[]"]')[0].selectize;
-                        $selector.clear(true);
-
-                        // Set operator groups
-                        $.each(operator.groups, function () {
-                            if (this.hasOwnProperty('id')) {
-                                $selector.setValue(this.id);
-                            }
-                        });
-
-                        // Disable selectize
-                        $selector.disable();
-                    }
-
-                    // Disable all the inputs in the form
-                    $('#operator_details').find(':input:not(input[name=id], #btnClear)').prop('disabled', true);
-                }
-            });
+                })
+            ));
 
             // Groups select box
             $('select[name="groups[]"]').selectize({

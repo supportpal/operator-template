@@ -67,9 +67,11 @@
                                         {% endif %}
                                     {% endif %}
                                     {% if addon.isInstalled() %}
-                                        <span class="{% if addon.isUpdateAvailable() %}sp:text-green-600{% endif %}">
-                                            {% if addon.isUpdateAvailable() %}
-                                                <i class="fa-solid fa-circle-arrow-down"></i> {{ Lang.get('core.update_available') }}
+                                        <span>
+                                            {% if addon.isActive() and addon.isUpdateAvailable() %}
+                                                <span class="sp:text-green-600">
+                                                    <i class="fa-solid fa-circle-arrow-down"></i> {{ Lang.get('core.update_available') }}
+                                                </span>
                                             {% elseif addon.isUnlicensed() %}
                                                 <i class="fa-solid fa-circle-exclamation"></i> {{ Lang.get('license.unlicensed') }}
                                             {% elseif addon.isActive() %}

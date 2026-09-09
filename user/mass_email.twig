@@ -83,7 +83,7 @@
                     {{ form_label('load_template', Lang.get('user.load_template')) }}
                     <div class="sp-input-container">
                         {{ form_select('load_template', templates) }}&nbsp;&nbsp;
-                        {{ form_button(Lang.get('user.clear_template'), {'class': 'clear-form'}) }}
+                        {{ form_button('<i class="fa-solid fa-eraser"></i>&nbsp; ' ~ Lang.get('user.clear_template'), {'class': 'clear-form'}) }}
                         <div class="sp-description">{{ Lang.get('user.load_template_desc') }}</div>
                     </div>
                 </div>
@@ -98,40 +98,37 @@
 
             <div class="sp-form-row sp-form-full">
                 {{ form_label('contents', Lang.choice('general.message', 1)) }}
-                <div class="sp-input-container">
-                    <div class="sp:relative">
-                        {{ form_editor_mf('contents', (record|default is not empty ? replyTemplate : '')) }}
+                <div class="sp-input-container sp:relative">
+                    {{ form_editor_mf('contents', (record|default is not empty ? replyTemplate : '')) }}
 
-                        {% if cumulative_attachment_limit != 0 %}
-                            <ul class="sp-attached-files">
-                                <li class="sp:flex sp:hidden">
-                                    <div class="sp:me-2 sp:truncate">
-                                        <i class="fa-solid fa-file"></i>&nbsp;
-
-                                        <span class="sp-file-information">
-                                            <span class="sp-filename"></span>
-                                            <span class="sp-description sp-filesize"></span>
-                                        </span>
-                                    </div>
-
-                                    <div class="sp-delete-attachment sp:hidden"
-                                         title="{{ Lang.get('general.remove') }}">
-                                        <i class="fa-solid fa-times sp:text-white"></i>
-                                    </div>
+                    {% if cumulative_attachment_limit != 0 %}
+                        <ul class="sp-attached-files">
+                            <li class="sp:hidden">
+                                <div class="sp-file-information">
+                                    <span class="sp-filename sp-truncate-middle"></span>
 
                                     <div class="sp-progress-bar">
                                         <div class="sp-bar"></div>
                                     </div>
-                                </li>
-                            </ul>
-
-                            <div class="sp-attachment-dragover sp:hidden">
-                                <div class="sp:m-auto">
-                                    {{ Lang.get('general.drag_and_drop') }}
                                 </div>
-                            </div>
 
-                            <label class="sp:inline-block sp-button sp:mt-3">
+                                <div class="sp-delete-attachment sp:hidden"
+                                     title="{{ Lang.get('general.remove') }}">
+                                    <i class="fa-solid fa-times sp:text-white"></i>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="sp-attachment-dragover sp:hidden">
+                            <div class="sp:m-auto">
+                                {{ Lang.get('general.drag_and_drop') }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="sp-editor-buttons-toolbar sp-button-group sp:mt-3">
+                        {% if cumulative_attachment_limit != 0 %}
+                            <label class="sp:inline-block sp-button">
                                 <i class="fa-solid fa-paperclip"></i>&nbsp; {{ Lang.get('general.add_attachment') }}
                                 <input class="sp-file-upload sp:hidden" type="file" name="files[]"
                                        data-url="{{ route('user.operator.attachment.upload') }}" multiple="multiple">
@@ -229,7 +226,6 @@
             {% if record is not defined %}
             var enablePlugins = ['restore_on_backspace', 'remove_button'];
                 $('select[name="to[]"]').selectize($.extend({ }, emailSelectizeConfig(enablePlugins), {
-                    maxItems: null,
                     placeholder: Lang.get('user.select_user_groups'),
                     render: {
                         item: function(item, escape) {

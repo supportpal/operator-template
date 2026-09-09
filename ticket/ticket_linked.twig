@@ -15,10 +15,10 @@
     <ul class="linked-tickets sp:ps-0 {% if ticket.linked is not empty %}sp:mt-1{% endif %} sp:font-normal sp:list-none">
         {% for linkedTicket in ticket.linked %}
             <li>
-                <div class="sp:flex sp:items-center">
+                <div class="sp:flex sp:items-center sp:gap-x-2">
+                    <div class="sp:flex-none">{{ linkedTicket.status.icon|raw }}</div>
                     <div class="sp:grow sp:truncate">
-                        {{ linkedTicket.status.icon|raw }}&nbsp;
-                        <a href="{{ route('ticket.operator.ticket.show', [ linkedTicket.id ]) }}" target="_blank">
+                        <a href="{{ route('ticket.operator.ticket.show', linkedTicket.id) }}" target="_blank">
                             {{ linkedTicket.subject }}
                         </a>
                     </div>

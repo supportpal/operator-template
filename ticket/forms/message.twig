@@ -1,14 +1,13 @@
 <div class="ticket-reply-form sp:flex sp:flex-col sp:max-h-[60vh] sp:[@media_(max-height:640px)]:max-h-[calc(100vh-6rem)]
             sp:sticky sp:bottom-0 sp:-m-6 sp:mt-6 sp:scroll-mt-12 sp:bg-primary sp:border-t sp:border-tertiary sp:z-50 sp:hidden">
     <div class="sp-reply-form-header sp:sticky sp:top-0 sp:z-10002">
-        <div class="sp-reply-form-resize-handle sp:hidden sp:absolute sp:inset-0 sp:h-2 sp:cursor-ns-resize sp:z-10 sp:sm:block"></div>
+        <div class="sp-reply-form-resize-handle sp:absolute sp:inset-0 sp:h-2 sp:touch-none sp:cursor-ns-resize sp:z-10 sp:pointer-coarse:h-4"></div>
 
         <div class="sp:flex sp:items-center sp:absolute sp:end-0 sp:p-1 sp:bg-secondary sp:border sp:border-t-0 sp:border-e-0 sp:border-tertiary sp:rounded-es sp:gap-x-1 sp:text-xs sp:z-10">
             {% for otherDraft in otherDrafts %}
                 <button type="button" class="sp-reply-form-draft sp-button-orange sp:px-2 sp:py-0.5 sp:animate-pulse sp:hidden"
                         data-message-id="{{ otherDraft.id }}" data-type="{{ otherDraft.type }}"
-                        data-title="{{ Lang.get('ticket.drafting_message', {'name': otherDraft.user.formatted_name, 'time': timeago(otherDraft.updated_at)}) }}"
-                        title="{{ Lang.get('ticket.drafting_message', {'name': otherDraft.user.formatted_name, 'time': ''}) }}">
+                        data-title="{{ Lang.get('ticket.drafting_message', {'name': otherDraft.user.formatted_name|e, 'time': timeago(otherDraft.updated_at)}) }}">
                     <i class="fa-solid fa-pen"></i>
                 </button>
             {% endfor %}
@@ -25,10 +24,11 @@
             <button type="button" class="sp-reply-form-resize sp:px-2 sp:py-0.5 sp:hidden" title="{{ Lang.get('general.resize') }}">
                 <i class="fa-solid fa-compress"></i>
             </button>
-            <button type="button" class="sp-reply-form-sticky sp:px-2 sp:py-0.5 sp:hidden" title="{{ Lang.get('ticket.pin') }}">
+            {# data-sticky is the state each button switches to, and the one it's hidden in. #}
+            <button type="button" class="sp-reply-form-sticky sp:px-2 sp:py-0.5 sp:hidden" data-sticky="true" title="{{ Lang.get('ticket.pin') }}">
                 <i class="fa-solid fa-thumbtack"></i>
             </button>
-            <button type="button" class="sp-reply-form-sticky sp:px-2 sp:py-0.5" title="{{ Lang.get('ticket.unpin') }}">
+            <button type="button" class="sp-reply-form-sticky sp:px-2 sp:py-0.5" data-sticky="false" title="{{ Lang.get('ticket.unpin') }}">
                 <i class="fa-solid fa-thumbtack-slash"></i>
             </button>
         </div>
@@ -64,14 +64,14 @@
                 {{ form_hidden('reply_all', 1) }}
 
                 {% if ticket.department_email_id is not empty %}
-                    <div class="recipients {% if ticket.isCcAllowed() and (organisationEmails is not empty or ticket.cc is not empty) %}with-cc{% endif %}">
+                    <div class="recipients">
                         <div class="sp:flex">
                             <div class="reply-all sp:flex-none sp:inline-block {{ ticket.isCcAllowed() ? 'reply-all-permitted' : '' }}"
                                     {% if not ticket.isCcAllowed() or (organisationEmails is empty and ticket.cc is empty) %}style="display: none"{% endif %}>
                                 <div class="sp-dropdown-container">
-                                    <a class="sp-action sp-button sp-button-sm sp:px-2 sp:m-1">
+                                    <a class="sp-action sp-button sp-button-sm sp:p-1 sp:px-2 sp:m-1 sp:me-0">
                                         <i class="sp-icon fa-solid fa-reply-all" aria-hidden="true"></i>
-                                        <i class="fa-solid fa-chevron-down sp:text-tertiary sp:text-xs"></i>
+                                        <i class="fa-solid fa-chevron-down sp:text-secondary sp:text-xs"></i>
                                     </a>
                                     <div class="sp-dropdown">
                                         <ul>
@@ -92,34 +92,35 @@
                                 </div>
                             </div>
                             <div class="sp:grow sp:overflow-hidden">
-                                <div class="sp-simplified-recipients sp:p-2 sp:ps-1 sp:truncate sp:cursor-pointer">
-                                    <span class="sp:px-2 sp:text-secondary"
-                                        {% if ticket.isCcAllowed() and (organisationEmails is not empty and ticket.cc is not empty) %}style="display: none"{% endif %}>
-                                        {{ Lang.get('ticket.to') }}
-                                    </span>
+                                <div class="sp-simplified-recipients sp:p-2 sp:px-3 sp:cursor-pointer sp:sm:flex sp:sm:items-baseline sp:sm:gap-x-2">
+                                    <div class="sp:flex-none">
+                                        <span class="sp:text-secondary">{{ Lang.get('ticket.to') }}:</span>
+                                        <span class="sp-reply-recipients">{{ toEmails.join(', ') }}</span>
+                                    </div>
 
-                                    <span class="sp-reply-recipients" {% if ticket.isCcAllowed() %}style="display: none"{% endif %}>
-                                        {{ toEmails.join(', ') }}
-                                    </span>
-
-                                    <span class="sp-reply-all-recipients" {% if not ticket.isCcAllowed() %}style="display: none"{% endif %}>
-                                        {{ toEmails.concat(organisationEmails).concat(ticket.cc).join(', ') }}
-                                    </span>
+                                    <div class="sp-recipients-summary sp:text-secondary sp:truncate sp:hover:text-primary">
+                                        {% if ticket.isCcAllowed() %}
+                                            <span class="sp-summary-item sp-summary-cc"
+                                                  data-label="{{ Lang.get('ticket.cc') }}" data-source="select[name='cc[]']"></span>
+                                        {% endif %}
+                                        <span class="sp-summary-item sp-summary-from"
+                                              data-label="{{ Lang.get('ticket.from') }}" data-source="select[name='department_email']"></span>
+                                    </div>
                                 </div>
 
                                 <div class="sp-full-recipients sp:w-full" style="display: none">
                                     <div class="sp:table sp:w-full">
                                         <div class="sp:table-row">
-                                            <div class="sp:table-cell sp:cursor-pointer">{{ Lang.get('ticket.from') }}</div>
+                                            <div class="sp:table-cell">{{ Lang.get('ticket.from') }}</div>
                                             <div class="sp:table-cell">{{ form_select('department_email', fromEmails, ticket.department_email_id) }}</div>
                                         </div>
                                         <div class="sp:table-row">
-                                            <div class="sp:table-cell sp:cursor-pointer">{{ Lang.get('ticket.to') }}</div>
+                                            <div class="sp:table-cell">{{ Lang.get('ticket.to') }}</div>
                                             <div class="sp:table-cell to-emails">{{ toEmails.join(', ') }}</div>
                                         </div>
                                         {% if ticket.isCcAllowed() %}
                                             <div class="sp:table-row cc-emails">
-                                                <div class="sp:table-cell sp:cursor-pointer">{{ Lang.get('ticket.cc') }}</div>
+                                                <div class="sp:table-cell">{{ Lang.get('ticket.cc') }}</div>
                                                 <div class="sp:table-cell">
                                                     <select name="cc[]" multiple="multiple">
                                                         {% for email in organisationEmails %}
@@ -183,66 +184,70 @@
             {{ form_hidden('ticket_id', ticketId) }}
             {{ form_hidden('reply_all', 1) }}
 
-            <div class="recipients sp:table sp:w-full">
-                <div class="sp:table-row">
-                    <div class="sp:table-cell">{{ Lang.get('ticket.from') }}</div>
-                    <div class="sp:table-cell">
-                        {{ form_select('from_address', fromEmails + {'me': auth_user().formatted_name ~ ' <' ~ auth_user().email ~ '>'},
-                            draft_forward is not empty ? draft_forward.extra.from_address : ticket.department_email_id)
-                        }}
+            <div class="recipients">
+                <div class="sp:table sp:w-full">
+                    <div class="from-email sp:table-row" style="display: none">
+                        <div class="sp:table-cell">{{ Lang.get('ticket.from') }}</div>
+                        <div class="sp:table-cell sp:pb-0">
+                            {{ form_select('from_address', fromEmails + {'me': auth_user().formatted_name ~ ' <' ~ auth_user().email ~ '>'},
+                                draft_forward is not empty ? draft_forward.extra.from_address : ticket.department_email_id)
+                            }}
+                        </div>
+                    </div>
+                    <div class="to-emails sp:table-row">
+                        <div class="sp:table-cell sp:pt-1">{{ Lang.get('ticket.to') }}</div>
+                        <div class="sp:table-cell sp:pt-1">
+                            <select name="to_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.to_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="cc-emails sp:table-row" style="display: none">
+                        <div class="sp:table-cell">{{ Lang.get('ticket.cc') }}</div>
+                        <div class="sp:table-cell">
+                            <select name="cc_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.cc_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bcc-emails sp:table-row" style="display: none">
+                        <div class="sp:table-cell">{{ Lang.get('ticket.bcc') }}</div>
+                        <div class="sp:table-cell">
+                            <select name="bcc_address[]" multiple="multiple">
+                                {% if draft_forward is not empty %}
+                                    {% for address in draft_forward.extra.bcc_address %}
+                                        <option value="{{ address }}" selected="selected">{{ address }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sp:table-row" style="display: none">
+                        <div class="sp:table-cell">{{ Lang.get('ticket.subject') }}</div>
+                        <div class="sp:table-cell">
+                            {{ form_text('subject', draft_forward is not empty ? draft_forward.extra.subject : 'FW: ' ~ ticket.subject,
+                                {'class': 'sp:w-full'}) }}
+                        </div>
                     </div>
                 </div>
-                <div class="sp:table-row">
-                    <div class="sp:table-cell">{{ Lang.get('ticket.to') }}</div>
-                    <div class="sp:table-cell sp:relative">
-                    <span class="sp:absolute sp:end-0 sp:px-2 sp:-mt-7 sp:z-10 sp:sm:px-4 sp:sm:py-2 sp:sm:mt-0">
-                        {% if draft_forward is empty or draft_forward.extra.cc_address is empty %}
-                            <a class="add-cc sp:text-secondary">{{ Lang.get('ticket.add_cc') }}</a>
-                        {% endif %}
-                        {% if draft_forward is empty or draft_forward.extra.bcc_address is empty %}
-                            <a class="add-bcc sp:ms-2 sp:text-secondary">{{ Lang.get('ticket.add_bcc') }}</a>
-                        {% endif %}
-                    </span>
 
-                        <select name="to_address[]" multiple="multiple">
-                            {% if draft_forward is not empty %}
-                                {% for address in draft_forward.extra.to_address %}
-                                    <option value="{{ address }}" selected="selected">{{ address }}</option>
-                                {% endfor %}
-                            {% endif %}
-                        </select>
-                    </div>
-                </div>
-                <div class="cc-emails sp:table-row" {% if draft_forward is empty or draft_forward.extra.cc_address is empty %}style="display: none"{% endif %}">
-                    <div class="sp:table-cell">{{ Lang.get('ticket.cc') }}</div>
-                    <div class="sp:table-cell">
-                        <select name="cc_address[]" multiple="multiple">
-                            {% if draft_forward is not empty %}
-                                {% for address in draft_forward.extra.cc_address %}
-                                    <option value="{{ address }}" selected="selected">{{ address }}</option>
-                                {% endfor %}
-                            {% endif %}
-                        </select>
-                    </div>
-                </div>
-                <div class="bcc-emails sp:table-row" {% if draft_forward is empty or draft_forward.extra.bcc_address is empty %}style="display: none"{% endif %}">
-                    <div class="sp:table-cell">{{ Lang.get('ticket.bcc') }}</div>
-                    <div class="sp:table-cell">
-                        <select name="bcc_address[]" multiple="multiple">
-                            {% if draft_forward is not empty %}
-                                {% for address in draft_forward.extra.bcc_address %}
-                                    <option value="{{ address }}" selected="selected">{{ address }}</option>
-                                {% endfor %}
-                            {% endif %}
-                        </select>
-                    </div>
-                </div>
-                <div class="sp:table-row">
-                    <div class="sp:table-cell">{{ Lang.get('ticket.subject') }}</div>
-                    <div class="sp:table-cell">
-                        {{ form_text('subject', draft_forward is not empty ? draft_forward.extra.subject : 'FW: ' ~ ticket.subject,
-                            {'class': 'sp:w-full'}) }}
-                    </div>
+                <div class="sp-recipients-summary sp:px-2 sp:pb-1 sp:text-secondary sp:hover:text-primary sp:cursor-pointer sp:truncate  sp:hover:text-primary">
+                    <span class="sp-summary-item sp-summary-from"
+                          data-label="{{ Lang.get('ticket.from') }}" data-source="select[name='from_address']"></span>
+                    <span class="sp-summary-item sp-summary-cc"
+                          data-label="{{ Lang.get('ticket.cc') }}" data-source="select[name='cc_address[]']"></span>
+                    <span class="sp-summary-item sp-summary-bcc"
+                          data-label="{{ Lang.get('ticket.bcc') }}" data-source="select[name='bcc_address[]']"></span>
+                    <span class="sp-summary-item sp-summary-subject"
+                          data-label="{{ Lang.get('ticket.subject') }}" data-source="input[name='subject']"></span>
                 </div>
             </div>
 
