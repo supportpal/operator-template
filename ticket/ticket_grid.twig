@@ -10,6 +10,10 @@
     {% endif %}
 {% endblock %}
 
+{% block title %}
+    {{ title }}
+{% endblock %}
+
 {% block precontent %}
 
     <div class="sp-quick-actions">
@@ -696,18 +700,23 @@
             }));
 
             // Process assign/unassign operator
-            $quickActions.find('select[name="assign"], select[name="unassign"]').selectize(ajaxSelectizeConfig(
-                laroute.route('ticket.operator.ticket.operator_search'),
-                operatorSelectizeConfig({
-                    onChange: function (value) {
-                        if (value) {
-                            assignOperator(getSelectedRows(), value, $(this.input).attr('name') === 'unassign');
+            $quickActions.find('select[name="assign"], select[name="unassign"]').each(function () {
+                var unassign = $(this).attr('name') === 'unassign';
 
-                            this.clear(true);
+                $(this).selectize(ajaxSelectizeConfig(
+                    laroute.route('ticket.operator.ticket.operator_search'),
+                    operatorSelectizeConfig({
+                        placeholder: (unassign ? '{{ Lang.get('ticket.unassign_operator') }}' : '{{ Lang.get('ticket.assign_operator') }}') + '...',
+                        onChange: function (value) {
+                            if (value) {
+                                assignOperator(getSelectedRows(), value, unassign);
+
+                                this.clear(true);
+                            }
                         }
-                    }
-                })
-            ));
+                    })
+                ));
+            });
 
             // Focus on selectize dropdown on clicking on action.
             $quickActions.find('.sp-dropdown').on('sp.dropdown.show', function () {

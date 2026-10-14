@@ -653,7 +653,8 @@
                         value = Lang.get('general.na');
                     }
 
-                    return '<span>' + value + '</span>'
+                    // Set as text, the value is user input.
+                    return $('<span>').text(value);
                 });
 
                 // For checklists and radio fields, if there are none selected

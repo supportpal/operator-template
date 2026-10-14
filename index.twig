@@ -5,7 +5,7 @@
     {{ View.fireHook('operator.head_start') }}
 
     {% set title = block('title') is defined ? block('title') : '' %}
-    <title>{% if title is not empty %}{{ title|raw }} - {% endif %}{{ Lang.get('core.product_name') }} {{ Lang.get('core.operator_panel') }}</title>
+    <title>{% if title|trim is not empty %}{{ title|raw }} - {% endif %}{{ Lang.get('core.product_name') }} {{ Lang.get('core.operator_panel') }}</title>
 
     {% block meta %}{% endblock %}
 
@@ -624,7 +624,7 @@
                 {{ View.fireHook('operator.content_inner_start') }}
 
                 {% block pageTitle %}
-                    {% if title is not empty %}
+                    {% if title|trim is not empty %}
                         {% if docsLink is not empty %}
                             <div class="sp:flex sp:mb-6">
                                 <div class="sp:grow">

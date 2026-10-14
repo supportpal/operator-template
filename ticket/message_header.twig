@@ -16,7 +16,7 @@
             {% endif %}
         {% endif %}
         &nbsp;&middot;&nbsp;
-        {{ timeago(message.created_at) }}
+        {% if printing %}{{ formatDate(message.created_at) }}{% else %}{{ timeago(message.created_at) }}{% endif %}
         <span class="sp-message-edit-history">
             {% if editHistory.get(message.id) is not null %}
                 {% include 'operator.' ~ template ~ '.ticket.message_edit_history' with {edit: editHistory.get(message.id)} %}
