@@ -227,8 +227,9 @@
                 // Delete organisation button
                 $('.delete-organisation').on('click', function() {
                     var showAlert = function () {
+                        var name = '{{ record.name|e('js') }}';
                         return (new deleteAlert({}))
-                            .fireDefault('{{ Lang.choice('user.organisation', 1) }}', '{{ record.name }}', {});
+                            .fireDefault('{{ Lang.choice('user.organisation', 1) }}', name, {});
                     };
 
                     showAlert().then(function (result) {
@@ -250,6 +251,13 @@
 
                 // Merge organisation button
                 $('.merge-organisation').on('click', function() {
+                    const mergeName = $('<div/>').text('{{ record.name|e('js') }}').html();
+                    const ownerEmail = $('<div/>').text('{{ record.owner.email|e('js') }}').html();
+                    let ownerName = $('<div/>').text('{{ record.owner.formatted_name|e('js') }}').html();
+                    if (ownerName.trim().length === 0) {
+                        ownerName = '{{ Lang.get('general.none') }}'
+                    }
+
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_organisations') }}',
                         html: '<div>'
@@ -259,9 +267,9 @@
                             + '</div>'
                             + '<ul class="sp-list-none sp-p-0 sp-m-0 sp-border sp-border-secondary sp-rounded sp-text-start sp-overflow-y-auto" style="max-height: 15rem;">'
                             + '<li class="sp-py-1 sp-px-3">'
-                                + '{{ record.name }}<br>'
-                                + '<span class="sp-description">{{ Lang.get('user.owner') }}: {{ record.owner is not empty ? record.owner.email.formatted_name : Lang.get('general.none') }}'
-                                + '{{ record.owner.email is not empty ? ('&lt;' ~ record.owner.email ~ '&gt;')|raw : ''}}</span>'
+                                + mergeName + '<br>'
+                                + '<span class="sp-description">{{ Lang.get('user.owner') }}: ' + ownerName
+                                + '{% if record.owner.email is not empty %} &lt;' + ownerEmail + '&gt;{% endif %}</span>'
                             + '</li>'
                             + '</ul><br />'
                             + '<label>{{ Lang.get('user.merge_organisation_into') }}</label>'

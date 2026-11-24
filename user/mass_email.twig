@@ -242,7 +242,7 @@
                         option: function(item, escape) {
                             // Not a user
                             if (typeof item.formatted_name === 'undefined') {
-                                return '<div>' + item.text + '</div>';
+                                return '<div>' + escape(item.text) + '</div>';
                             }
 
                             return '<div>' +
