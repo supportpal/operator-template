@@ -219,7 +219,7 @@
                                                     <li class="sp-multi-list" aria-haspopup="false">
                                                         <div class="sp-title">{{ brand.name }}</div>
                                                         {% for type in internalTypes.where('brand_id', brand.id) %}
-                                                            <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}"
+                                                            <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}"
                                                                {% if type.content == 1 %}target="_blank"{% endif %}>
                                                                 {{ type.name }}
                                                             </a>
@@ -478,7 +478,7 @@
                                                 <li class="sp-multi-list" aria-haspopup="false">
                                                     <div class="sp-title">{{ brand.name }}</div>
                                                     {% for type in internalTypes.where('brand_id', brand.id) %}
-                                                        <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}"
+                                                        <a href="{{ type.content == 1 ? type.url : route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}"
                                                            {% if type.content == 1 %}target="_blank"{% endif %}>
                                                             {{ type.name }}
                                                         </a>

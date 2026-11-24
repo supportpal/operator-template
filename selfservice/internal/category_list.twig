@@ -5,7 +5,7 @@
         {% for category in categories %}
             {% if not category.articles.isEmpty() %}
             <div class="sp:w-full sp:md:w-1/2">
-                <a class='sp-category-title sp:block sp:px-4 sp:py-2 sp:mb-3 sp:bg-secondary sp:rounded sp:font-bold' href='{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}'>
+                <a class='sp-category-title sp:block sp:px-4 sp:py-2 sp:mb-3 sp:bg-secondary sp:rounded sp:font-bold' href='{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug(), 'slug': category.routeSlug()}) }}'>
                     <i class="fa-solid fa-folder-open"></i>&nbsp; {{ category.name }} ({{ category.count }})
                 </a>
                 <ul class="sp-category-article-list">

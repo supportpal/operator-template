@@ -6,7 +6,7 @@
 
 {% block breadcrumb %}
     {{ parent() }}
-    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">{{ type.name }}</a> &nbsp;&raquo;&nbsp;
+    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}">{{ type.name }}</a> &nbsp;&raquo;&nbsp;
     {{ Lang.get('core.search_results') }}
 {% endblock %}
 

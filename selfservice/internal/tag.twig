@@ -6,7 +6,7 @@
 
 {% block breadcrumb %}
     {{ parent() }}
-    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">{{ type.name }}</a>
+    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}">{{ type.name }}</a>
     &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {{ tag.name }}
 {% endblock %}

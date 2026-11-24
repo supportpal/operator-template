@@ -6,10 +6,10 @@
 
 {% block breadcrumb %}
     {{ parent() }}
-    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}">{{ type.name }}</a>
+    <a href="{{ route('selfservice.operator.internal.index', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}">{{ type.name }}</a>
     &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% for category in breadcrumb %}
-        <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">{{ category.name }}</a>
+        <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug(), 'slug': category.routeSlug()}) }}">{{ category.name }}</a>
         &nbsp;&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;
     {% endfor %}
     {{ categoryName }}

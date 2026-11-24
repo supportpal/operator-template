@@ -1,5 +1,5 @@
 <div class="sp-sidebar-panel sp-hide-on-collapse">
-    <form name="search" action="{{ route('selfservice.operator.internal.search', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug}) }}" method="get">
+    <form name="search" action="{{ route('selfservice.operator.internal.search', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug()}) }}" method="get">
         <input type="search" name="query" placeholder="{{ Lang.get('general.search') }}..." class="sp:w-full" />
     </form>
 </div>
@@ -19,7 +19,7 @@
         <ul>
             {% for category in categories %}
                 <li>
-                    <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': category.slug}) }}">
+                    <a href="{{ route('selfservice.operator.internal.category', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug(), 'slug': category.routeSlug()}) }}">
                         {% if category.count is not empty %}
                             <span class="sp-badge sp:float-end">{{ category.count }}</span>
                         {% endif %}
@@ -49,7 +49,7 @@
         <ul>
             {% for tag in tags %}
                 <li>
-                    <a class="sp-tag" href="{{ route('selfservice.operator.internal.tag', {'brand': type.brand_id, 'operatorSelfserviceType': type.slug, 'slug': tag.slug}) }}">
+                    <a class="sp-tag" href="{{ route('selfservice.operator.internal.tag', {'brand': type.brand_id, 'operatorSelfserviceType': type.routeSlug(), 'slug': tag.routeSlug()}) }}">
                         {{ tag.name }}
                     </a>
                 </li>

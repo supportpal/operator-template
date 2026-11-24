@@ -357,7 +357,7 @@
                 // Delete user button
                 $('.delete-user').on('click', function() {
                     var section = '{{ Lang.choice('user.user', 1) }}',
-                        name = $('<div/>').text($('input[name=email]').val()).html(),
+                        name = $('input[name=email]').val(),
                         relations = {{ relations|json_encode|raw }};
 
                     var showAlert = function () {
@@ -384,6 +384,9 @@
 
                 // Merge user button
                 $('.merge-user').on('click', function() {
+                    const mergeName  = $('<div/>').text('{{ record.formatted_name|e('js') }}').html();
+                    const mergeEmail = $('<div/>').text('{{ record.email|e('js') }}').html();
+
                     Swal.fire({
                         title: '{{ Lang.get('user.merge_users') }}',
                         html: '<div>'
@@ -392,8 +395,8 @@
                                 + Lang.get('messages.cannot_be_undone')
                             + '</div>'
                             + '<ul class="sp:list-none sp:p-0 sp:m-0 sp:border sp:border-secondary sp:rounded sp:text-start sp:overflow-y-auto" style="max-height: 15rem;">'
-                                + '<li class="sp:py-1 sp:px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp:max-w-5">&nbsp; {{ record.formatted_name }}'
-                                + '{% if record.email is not empty %}<br><span class="sp-description">{{ record.email }}</span>{% endif %}'
+                                + '<li class="sp:py-1 sp:px-3"><img src="{{ record.avatar_url }}" class="sp-avatar sp:max-w-5">&nbsp; ' + mergeName
+                                + '{% if record.email is not empty %}<br><span class="sp-description">' + mergeEmail + '</span>{% endif %}'
                                 + '</li>'
                             + '</ul><br />'
                             + '<label>{{ Lang.get('user.merge_user_into') }}</label>'
